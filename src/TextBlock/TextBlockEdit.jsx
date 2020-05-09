@@ -176,6 +176,19 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
           });
         }}
       >
+        <div className={cx('toolbar-wrapper', { active: showToolbar })}>
+          {selected && (
+            <>
+              <Button
+                onMouseDown={() => setShowToolbar(!showToolbar)}
+                active={showToolbar}
+                icon={toggleIcon}
+                style={{ float: 'right' }}
+              />
+              {showToolbar ? <SlateToolbar /> : ''}
+            </>
+          )}
+        </div>
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
@@ -191,19 +204,6 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
             }
           }}
         />
-        <div className={cx('toolbar-wrapper', { active: showToolbar })}>
-          {selected && (
-            <>
-              <Button
-                onMouseDown={() => setShowToolbar(!showToolbar)}
-                active={showToolbar}
-                icon={toggleIcon}
-                style={{ float: 'right' }}
-              />
-              {showToolbar ? <SlateToolbar /> : ''}
-            </>
-          )}
-        </div>
       </Slate>
     </div>
   );

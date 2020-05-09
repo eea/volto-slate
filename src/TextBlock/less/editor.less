@@ -8,15 +8,17 @@
 
 & {
   .slate-editor {
-    display: flex;
-    flex-flow: nowrap;
+    // display: flex;
+    // flex-flow: nowrap;
 
     &.selected {
       .toolbar-wrapper {
+        position: relative;
+        top: -8px;
+        right: -7px;
         padding: 3px;
       }
     }
-
 
     &.show-toolbar {
       flex-flow: wrap;
@@ -33,10 +35,12 @@
     }
 
     .toolbar-wrapper {
-      background-color: #EFEFEF;
+      background-color: #f6f6f6;
+      float: right;
 
       &.active {
-        width: 100%;
+        width: calc(100% + 14px);
+        height: 32px;
       }
     }
   }

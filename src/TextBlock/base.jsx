@@ -3,9 +3,9 @@ import { Node } from 'slate';
 
 const Placeholder = props => {
   return (
-    <pre style={{ backgroundColor: 'red' }} {...props.attributes}>
-      <code>{props.children}</code>
-    </pre>
+    <span style={{ backgroundColor: 'red' }} {...props.attributes}>
+      {props.children}
+    </span>
   );
 };
 
@@ -45,6 +45,10 @@ export const Leaf = ({ attributes, children, leaf }) => {
 
   if (leaf.underline) {
     children = <u>{children}</u>;
+  }
+
+  if (leaf.placeholder) {
+    children = <span style={{ backgroundColor: 'red' }}>{children}</span>;
   }
 
   return <span {...attributes}>{children}</span>;

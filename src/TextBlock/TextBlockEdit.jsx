@@ -16,6 +16,7 @@ import quoteIcon from '@plone/volto/icons/quote.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import toggleIcon from '@plone/volto/icons/freedom.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
+import uglyIcon from '@plone/volto/icons/frustrated.svg';
 
 import { Icon } from '@plone/volto/components';
 // import { Button as UIButton } from 'semantic-ui-react';
@@ -151,6 +152,8 @@ const SlateToolbar = props => (
 
     <BlockButton format="numbered-list" icon={listNumberedIcon} />
     <BlockButton format="bulleted-list" icon={listBulletIcon} />
+
+    <MarkButton format="placeholder" icon={uglyIcon} />
   </Toolbar>
 );
 
@@ -176,7 +179,9 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
           });
         }}
       >
-        <div className={cx('toolbar-wrapper', { active: showToolbar })}>
+        <div
+          className={cx('toolbar-wrapper', { active: showToolbar && selected })}
+        >
           {selected && (
             <>
               <Button

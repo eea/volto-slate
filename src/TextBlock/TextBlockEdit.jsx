@@ -88,10 +88,10 @@ export const Button = React.forwardRef(
       color: reversed
         ? active
           ? 'white'
-          : '#aaa'
+          : '#888'
         : active
         ? ' black'
-        : '#ccc',
+        : '#888',
     };
 
     return (
@@ -162,7 +162,9 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <div className={cx('slate-editor', { 'show-toolbar': showToolbar })}>
+    <div
+      className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
+    >
       <Slate
         editor={editor}
         value={value || initialValue}

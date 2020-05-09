@@ -11,6 +11,13 @@
     display: flex;
     flex-flow: nowrap;
 
+    &.selected {
+      .toolbar-wrapper {
+        padding: 3px;
+      }
+    }
+
+
     &.show-toolbar {
       flex-flow: wrap;
     }
@@ -26,6 +33,8 @@
     }
 
     .toolbar-wrapper {
+      background-color: #EFEFEF;
+
       &.active {
         width: 100%;
       }

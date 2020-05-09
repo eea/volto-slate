@@ -1,0 +1,16 @@
+/* Needed by semantic.less */
+@type: 'extra';
+@element: 'custom';
+
+@import (multiple, reference, optional) '~@package/../theme/theme.config';
+
+/* Enables customization of addons */
+.loadAddonOverrides() {
+  @import (optional) "@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.overrides";
+}
+
+/* Helper to load variables */
+.loadAddonVariables() {
+  @import (optional) "@{addonelement}.variables";
+  @import (optional) "@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.variables";
+}

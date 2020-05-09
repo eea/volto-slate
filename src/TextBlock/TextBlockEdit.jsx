@@ -1,14 +1,33 @@
 import isHotkey from 'is-hotkey';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { createEditor, Transforms, Editor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
+import { Slate, Editable, withReact, useSlate } from 'slate-react';
 import { withHistory } from 'slate-history';
+import cx from 'classnames';
+import { Element, Leaf, serialize } from './base';
+
+import boldIcon from '@plone/volto/icons/bold.svg';
+import codeIcon from '@plone/volto/icons/code.svg';
+import headingIcon from '@plone/volto/icons/heading.svg';
+import italicIcon from '@plone/volto/icons/italic.svg';
+import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
+import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
+import quoteIcon from '@plone/volto/icons/quote.svg';
+import subheadingIcon from '@plone/volto/icons/subheading.svg';
+import toggleIcon from '@plone/volto/icons/freedom.svg';
+import underlineIcon from '@plone/volto/icons/underline.svg';
+
+import { Icon } from '@plone/volto/components';
+// import { Button as UIButton } from 'semantic-ui-react';
+
+import './less/editor.less';
 
 const HOTKEYS = {
   'mod+b': 'bold',
   'mod+i': 'italic',
   'mod+u': 'underline',
   'mod+`': 'code',
+  'mod+&': 'placeholder',
 };
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -61,123 +80,130 @@ const isMarkActive = (editor, format) => {
   return marks ? marks[format] === true : false;
 };
 
-const Element = ({ attributes, children, element }) => {
-  switch (element.type) {
-    case 'block-quote':
-      return <blockquote {...attributes}>{children}</blockquote>;
-    case 'bulleted-list':
-      return <ul {...attributes}>{children}</ul>;
-    case 'heading-one':
-      return <h1 {...attributes}>{children}</h1>;
-    case 'heading-two':
-      return <h2 {...attributes}>{children}</h2>;
-    case 'list-item':
-      return <li {...attributes}>{children}</li>;
-    case 'numbered-list':
-      return <ol {...attributes}>{children}</ol>;
-    default:
-      return <p {...attributes}>{children}</p>;
-  }
+export const Button = React.forwardRef(
+  ({ className, active, reversed, icon, style, ...props }, ref) => {
+    style = {
+      ...style,
+      cursor: 'pointer',
+      color: reversed
+        ? active
+          ? 'white'
+          : '#aaa'
+        : active
+        ? ' black'
+        : '#ccc',
+    };
+
+    return (
+      <span {...props} ref={ref} style={style} className={cx(className)}>
+        <Icon name={icon} size="24px" />
+      </span>
+    );
+  },
+);
+
+const BlockButton = ({ format, icon }) => {
+  const editor = useSlate();
+  return (
+    <Button
+      active={isBlockActive(editor, format)}
+      onMouseDown={event => {
+        event.preventDefault();
+        toggleBlock(editor, format);
+      }}
+      icon={icon}
+    />
+  );
 };
 
-const Leaf = ({ attributes, children, leaf }) => {
-  if (leaf.bold) {
-    children = <strong>{children}</strong>;
-  }
-
-  if (leaf.code) {
-    children = <code>{children}</code>;
-  }
-
-  if (leaf.italic) {
-    children = <em>{children}</em>;
-  }
-
-  if (leaf.underline) {
-    children = <u>{children}</u>;
-  }
-
-  return <span {...attributes}>{children}</span>;
+const MarkButton = ({ format, icon }) => {
+  const editor = useSlate();
+  return (
+    <Button
+      active={isMarkActive(editor, format)}
+      onMouseDown={event => {
+        event.preventDefault();
+        toggleMark(editor, format);
+      }}
+      icon={icon}
+    />
+  );
 };
 
-// const BlockButton = ({ format, icon }) => {
-//   const editor = useSlate();
-//   return (
-//     <Button
-//       active={isBlockActive(editor, format)}
-//       onMouseDown={event => {
-//         event.preventDefault();
-//         toggleBlock(editor, format);
-//       }}
-//     >
-//       <Icon>{icon}</Icon>
-//     </Button>
-//   );
-// };
-//
-// const MarkButton = ({ format, icon }) => {
-//   const editor = useSlate();
-//   return (
-//     <Button
-//       active={isMarkActive(editor, format)}
-//       onMouseDown={event => {
-//         event.preventDefault();
-//         toggleMark(editor, format);
-//       }}
-//     >
-//       <Icon>{icon}</Icon>
-//     </Button>
-//   );
-// };
-//
-//
+export const Menu = React.forwardRef(({ className, ...props }, ref) => (
+  <div {...props} ref={ref} className={cx(className, 'slate-menu')} />
+));
 
-const TextBlockEdit = ({ block, data, onChangeBlock }) => {
-  // console.log('props', props);
-  // const [value, setValue] = useState(initialValue);
+export const Toolbar = React.forwardRef(({ className, ...props }, ref) => (
+  <Menu {...props} ref={ref} className={cx(className, 'slate-toolbar')} />
+));
+
+const SlateToolbar = props => (
+  <Toolbar>
+    <MarkButton format="bold" icon={boldIcon} />
+    <MarkButton format="italic" icon={italicIcon} />
+    <MarkButton format="underline" icon={underlineIcon} />
+    <MarkButton format="code" icon={codeIcon} />
+
+    <BlockButton format="heading-one" icon={headingIcon} />
+    <BlockButton format="heading-two" icon={subheadingIcon} />
+    <BlockButton format="block-quote" icon={quoteIcon} />
+
+    <BlockButton format="numbered-list" icon={listNumberedIcon} />
+    <BlockButton format="bulleted-list" icon={listBulletIcon} />
+  </Toolbar>
+);
+
+const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
   const { value } = data;
+  const [showToolbar, setShowToolbar] = useState(false);
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
   return (
-    <Slate
-      editor={editor}
-      value={value || initialValue}
-      onChange={value => {
-        console.log('edited value', value);
-        onChangeBlock(block, { ...data, value });
-        // setValue(value);
-      }}
-    >
-      {/* <Toolbar> */}
-      {/*   <MarkButton format="bold" icon="format_bold" /> */}
-      {/*   <MarkButton format="italic" icon="format_italic" /> */}
-      {/*   <MarkButton format="underline" icon="format_underlined" /> */}
-      {/*   <MarkButton format="code" icon="code" /> */}
-      {/*   <BlockButton format="heading-one" icon="looks_one" /> */}
-      {/*   <BlockButton format="heading-two" icon="looks_two" /> */}
-      {/*   <BlockButton format="block-quote" icon="format_quote" /> */}
-      {/*   <BlockButton format="numbered-list" icon="format_list_numbered" /> */}
-      {/*   <BlockButton format="bulleted-list" icon="format_list_bulleted" /> */}
-      {/* </Toolbar> */}
-      {/* autoFocus */}
-      <Editable
-        renderElement={renderElement}
-        renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
-        spellCheck
-        onKeyDown={event => {
-          for (const hotkey in HOTKEYS) {
-            if (isHotkey(hotkey, event)) {
-              event.preventDefault();
-              const mark = HOTKEYS[hotkey];
-              toggleMark(editor, mark);
-            }
-          }
+    <div className={cx('slate-editor', { 'show-toolbar': showToolbar })}>
+      <Slate
+        editor={editor}
+        value={value || initialValue}
+        onChange={value => {
+          onChangeBlock(block, {
+            ...data,
+            value,
+            plaintext: serialize(value || []),
+          });
         }}
-      />
-    </Slate>
+      >
+        <Editable
+          renderElement={renderElement}
+          renderLeaf={renderLeaf}
+          placeholder="Enter some rich text…"
+          spellCheck
+          onKeyDown={event => {
+            for (const hotkey in HOTKEYS) {
+              if (isHotkey(hotkey, event)) {
+                event.preventDefault();
+                const mark = HOTKEYS[hotkey];
+                toggleMark(editor, mark);
+              }
+            }
+          }}
+        />
+        <div className={cx('toolbar-wrapper', { active: showToolbar })}>
+          {selected && (
+            <>
+              <Button
+                onMouseDown={() => setShowToolbar(!showToolbar)}
+                active={showToolbar}
+                icon={toggleIcon}
+                style={{ float: 'right' }}
+              />
+              {showToolbar ? <SlateToolbar /> : ''}
+            </>
+          )}
+        </div>
+      </Slate>
+    </div>
   );
 };
 export default TextBlockEdit;

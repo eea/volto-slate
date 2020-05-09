@@ -12,6 +12,7 @@
     "slate": "^0.58.0",
     "slate-history": "^0.58.0",
     "slate-hyperscript": "^0.58.0",
+    "slate-plain-serializer": "0.7.13",
     "slate-react": "^0.58.0"
   }
 }

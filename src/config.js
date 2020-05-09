@@ -6,7 +6,7 @@ export function applyConfig(config) {
     id: 'slate',
     title: 'Slate',
     icon: codeSVG,
-    group: 'bise',
+    group: 'text',
     view: TextBlockView,
     edit: TextBlockEdit,
     restricted: false,

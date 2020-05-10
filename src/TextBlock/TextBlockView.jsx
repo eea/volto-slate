@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
-import { Element, Leaf } from './base';
+import { Element, Leaf } from './../editor/render';
 
 const TextBlockView = ({ data }) => {
   const { value } = data;

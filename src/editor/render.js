@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React from 'react';
 import { Node } from 'slate';
 
 const Placeholder = props => {
@@ -10,6 +10,7 @@ const Placeholder = props => {
 };
 
 export const Element = ({ attributes, children, element }) => {
+  console.log('element', element);
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
@@ -23,7 +24,7 @@ export const Element = ({ attributes, children, element }) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
-    case 'placeholder':
+    case 'mark-red':
       return <Placeholder {...attributes}>{children}</Placeholder>;
     default:
       return <p {...attributes}>{children}</p>;
@@ -47,8 +48,8 @@ export const Leaf = ({ attributes, children, leaf }) => {
     children = <u>{children}</u>;
   }
 
-  if (leaf.placeholder) {
-    children = <span style={{ backgroundColor: 'red' }}>{children}</span>;
+  if (leaf['mark-red']) {
+    children = <Placeholder children={children} />;
   }
 
   return <span {...attributes}>{children}</span>;

@@ -40,6 +40,7 @@ export const availableButtons = {
     <BlockButton format="numbered-list" icon={listNumberedIcon} />
   ),
   'bulleted-list': <BlockButton format="bulleted-list" icon={listBulletIcon} />,
+
   // 'mark-red': <BlockButton format="mark-red" icon={quoteIcon} />,
 
   ...settings.slate?.availableButtons,

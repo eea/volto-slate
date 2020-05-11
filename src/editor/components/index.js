@@ -6,9 +6,12 @@ import { Icon } from '@plone/volto/components';
 import { useSlate } from 'slate-react';
 import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from '../utils';
 
+import toggleIcon from '@plone/volto/icons/freedom.svg';
+
 export { Icon };
 export { HoveringSlateToolbar } from './HoveringToolbar';
 export { Portal } from './Portal';
+export { SlateToolbar } from './SlateToolbar';
 
 export const Button = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {
@@ -31,6 +34,7 @@ export const Button = React.forwardRef(
     );
   },
 );
+
 export const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
   return (
@@ -41,6 +45,22 @@ export const BlockButton = ({ format, icon }) => {
         toggleBlock(editor, format);
       }}
       icon={icon}
+    />
+  );
+};
+
+export const MasterToggleButton = ({ active, onToggle, ...props }) => {
+  // TODO: use flexbox to right-align this button inside the toolbar
+  // (not relevant in the current layout of the toolbar)
+  return (
+    <Button
+      {...props}
+      active={active}
+      icon={toggleIcon}
+      onMouseDown={event => {
+        onToggle();
+        event.preventDefault();
+      }}
     />
   );
 };

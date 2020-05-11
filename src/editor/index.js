@@ -3,15 +3,14 @@ import cx from 'classnames';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useMemo, useCallback, useState, Fragment } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 
-import { HOTKEYS, toolbarButtons, availableButtons } from './config';
+import { HOTKEYS } from './config';
 
 import { Element, Leaf } from './render';
-import { Toolbar, Button, HoveringSlateToolbar } from './components';
+import { HoveringSlateToolbar, SlateToolbar } from './components';
 import { toggleMark } from './utils';
 
-import toggleIcon from '@plone/volto/icons/freedom.svg';
 import './less/editor.less';
 
 const initialValue = [
@@ -21,22 +20,21 @@ const initialValue = [
   },
 ];
 
-const SlateToolbar = props => (
-  <Toolbar>
-    {toolbarButtons.map(name => (
-      <Fragment key={name}>{availableButtons[name]}</Fragment>
-    ))}
-  </Toolbar>
-);
-
-const SlateEditor = ({ selected, value, onChange }) => {
+const SlateEditor = ({
+  selected,
+  value,
+  onChange,
+  initiallyShowHoveringToolbar,
+}) => {
   const [showToolbar, setShowToolbar] = useState(false);
-  const /* [ */ showHoveringToolbar /* , setShowHoveringToolbar] */ = useState(
-      true,
-    )[0];
+
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+
+  function handleOnToggle() {
+    setShowToolbar(!showToolbar);
+  }
 
   return (
     <div
@@ -46,19 +44,12 @@ const SlateEditor = ({ selected, value, onChange }) => {
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
-          {selected && (
-            <>
-              <Button
-                onMouseDown={() => setShowToolbar(!showToolbar)}
-                active={showToolbar}
-                icon={toggleIcon}
-                style={{ float: 'right' }}
-              />
-              {showToolbar ? <SlateToolbar /> : ''}
-            </>
-          )}
+          {selected && <>{showToolbar ? <SlateToolbar /> : ''}</>}
         </div>
-        {showHoveringToolbar ? <HoveringSlateToolbar /> : ''}
+        <HoveringSlateToolbar
+          onToggle={handleOnToggle}
+          mainToolbarShown={showToolbar}
+        />
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}

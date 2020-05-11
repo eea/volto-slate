@@ -4,11 +4,15 @@ import { Editor, Range } from 'slate';
 import { availableButtons, hoveringToolbarButtons } from '../config';
 
 import { css } from 'emotion';
-import { Toolbar, Portal } from '../components';
+import { Toolbar, Portal, MasterToggleButton } from '../components';
 
-export const HoveringSlateToolbar = () => {
+export const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
   const ref = useRef();
   const editor = useSlate();
+
+  function handleOnToggle() {
+    onToggle();
+  }
 
   useEffect(() => {
     const el = ref.current;
@@ -52,14 +56,19 @@ export const HoveringSlateToolbar = () => {
           left: -10000px;
           margin-top: -6px;
           opacity: 0;
-          background-color: #222;
-          border-radius: 4px;
+          background-color: #fff;
+          border-radius: 0.1rem;
+          border: 0.1rem solid gray;
           transition: opacity 0.5s;
         `}
       >
         {hoveringToolbarButtons.map(name => (
           <Fragment key={name}>{availableButtons[name]}</Fragment>
         ))}
+        <MasterToggleButton
+          active={mainToolbarShown}
+          onToggle={handleOnToggle}
+        />
       </Toolbar>
     </Portal>
   );

@@ -2,68 +2,17 @@
 
 import cx from 'classnames';
 import React from 'react';
-import { Icon } from '@plone/volto/components';
 import { useSlate } from 'slate-react';
-import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from '../utils';
+import { isMarkActive, toggleMark } from '../utils';
 
-import toggleIcon from '@plone/volto/icons/freedom.svg';
+import { Button } from './Button';
 
-export { Icon };
+export { Button };
 export { HoveringSlateToolbar } from './HoveringToolbar';
 export { Portal } from './Portal';
 export { SlateToolbar } from './SlateToolbar';
-
-export const Button = React.forwardRef(
-  ({ className, active, reversed, icon, style, ...props }, ref) => {
-    style = {
-      ...style,
-      cursor: 'pointer',
-      color: reversed
-        ? active
-          ? 'white'
-          : '#888'
-        : active
-        ? ' black'
-        : '#888',
-    };
-
-    return (
-      <span {...props} ref={ref} style={style} className={cx(className)}>
-        <Icon name={icon} size="24px" />
-      </span>
-    );
-  },
-);
-
-export const BlockButton = ({ format, icon }) => {
-  const editor = useSlate();
-  return (
-    <Button
-      active={isBlockActive(editor, format)}
-      onMouseDown={event => {
-        event.preventDefault();
-        toggleBlock(editor, format);
-      }}
-      icon={icon}
-    />
-  );
-};
-
-export const MasterToggleButton = ({ active, onToggle, ...props }) => {
-  // TODO: use flexbox to right-align this button inside the toolbar
-  // (not relevant in the current layout of the toolbar)
-  return (
-    <Button
-      {...props}
-      active={active}
-      icon={toggleIcon}
-      onMouseDown={event => {
-        onToggle();
-        event.preventDefault();
-      }}
-    />
-  );
-};
+export { BlockButton } from './BlockButton';
+export { MasterToggleButton } from './MasterToggleButton';
 
 export const MarkButton = ({ format, icon }) => {
   const editor = useSlate();

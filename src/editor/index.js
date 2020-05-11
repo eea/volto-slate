@@ -4,13 +4,14 @@ import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useMemo, useCallback, useState, Fragment } from 'react';
-import toggleIcon from '@plone/volto/icons/freedom.svg';
 
 import { HOTKEYS, toolbarButtons, availableButtons } from './config';
+
 import { Element, Leaf } from './render';
-import { Toolbar, Button } from './components';
+import { Toolbar, Button, HoveringSlateToolbar } from './components';
 import { toggleMark } from './utils';
 
+import toggleIcon from '@plone/volto/icons/freedom.svg';
 import './less/editor.less';
 
 const initialValue = [
@@ -30,6 +31,9 @@ const SlateToolbar = props => (
 
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
+  const /* [ */ showHoveringToolbar /* , setShowHoveringToolbar] */ = useState(
+      true,
+    )[0];
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
   const editor = useMemo(() => withHistory(withReact(createEditor())), []);
@@ -54,6 +58,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
             </>
           )}
         </div>
+        {showHoveringToolbar ? <HoveringSlateToolbar /> : ''}
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}

@@ -4,7 +4,11 @@ import cx from 'classnames';
 import React from 'react';
 import { Icon } from '@plone/volto/components';
 import { useSlate } from 'slate-react';
-import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from './utils';
+import { isBlockActive, isMarkActive, toggleBlock, toggleMark } from '../utils';
+
+export { Icon };
+export { HoveringSlateToolbar } from './HoveringToolbar';
+export { Portal } from './Portal';
 
 export const Button = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {

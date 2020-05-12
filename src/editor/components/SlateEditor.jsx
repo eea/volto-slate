@@ -38,7 +38,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
-          {selected && <>{showToolbar ? <Toolbar /> : ''}</>}
+          {selected && showToolbar && <Toolbar />}
         </div>
         <Editable
           renderElement={renderElement}

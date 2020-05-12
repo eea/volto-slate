@@ -10,7 +10,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { HOTKEYS, initialValue } from '../constants';
 import { Element, Leaf } from '../render';
 import HoveringToolbar from './HoveringToolbar';
-import Toolbar from './Toolbar';
+import Toolbar from './InlineToolbar';
 import { toggleMark } from '../utils';
 
 const SlateEditor = ({ selected, value, onChange }) => {
@@ -33,6 +33,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
         <HoveringToolbar
           onToggle={handleOnToggle}
           mainToolbarShown={showToolbar}
+          showMasterToggleButton={true}
         />
 
         <div

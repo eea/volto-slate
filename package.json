@@ -14,6 +14,7 @@
     "slate-hyperscript": "^0.58.0",
     "slate-plain-serializer": "0.7.13",
     "slate-react": "^0.58.0",
-    "emotion": "10.0.27"
+    "emotion": "10.0.27",
+    "react-portal": "4.2.1"
   }
 }

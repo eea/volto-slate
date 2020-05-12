@@ -1,4 +1,5 @@
 import React from 'react';
+
 import toggleIcon from '@plone/volto/icons/freedom.svg';
 import { Button } from './Button';
 

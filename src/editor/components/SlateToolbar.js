@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Toolbar } from '../components';
+import { Toolbar } from './Toolbar';
 import { toolbarButtons, availableButtons } from '../config';
 
 export const SlateToolbar = props => (

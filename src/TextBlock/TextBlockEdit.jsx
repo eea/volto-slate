@@ -5,6 +5,7 @@ import { serialize } from './../editor/render';
 
 const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
   const { value } = data;
+
   return (
     <SlateEditor
       value={value}
@@ -19,4 +20,5 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
     />
   );
 };
+
 export default TextBlockEdit;

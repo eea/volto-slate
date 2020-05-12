@@ -1,10 +1,13 @@
 import React, { Fragment, useRef, useEffect } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
-import { availableButtons, hoveringToolbarButtons } from '../config';
 
+// TODO: remove this dependency:
 import { css } from 'emotion';
-import { Toolbar, Portal, MasterToggleButton } from '../components';
+
+import { availableButtons, hoveringToolbarButtons } from '../config';
+import { MasterToggleButton, Toolbar } from '../components';
+import { Portal } from 'react-portal';
 
 export const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
   const ref = useRef();

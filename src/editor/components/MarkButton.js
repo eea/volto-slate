@@ -1,17 +1,16 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { isBlockActive, toggleBlock } from '../utils';
+import { isMarkActive, toggleMark } from '../utils';
 import { Button } from './Button';
 
-export const BlockButton = ({ format, icon }) => {
+export const MarkButton = ({ format, icon }) => {
   const editor = useSlate();
-
   return (
     <Button
-      active={isBlockActive(editor, format)}
+      active={isMarkActive(editor, format)}
       onMouseDown={event => {
         event.preventDefault();
-        toggleBlock(editor, format);
+        toggleMark(editor, format);
       }}
       icon={icon}
     />

@@ -1,6 +1,6 @@
 import { TextBlockView, TextBlockEdit } from './TextBlock';
 import codeSVG from '@plone/volto/icons/code.svg';
-import uglyIcon from '@plone/volto/icons/frustrated.svg';
+//import uglyIcon from '@plone/volto/icons/frustrated.svg';
 
 function exampleConfig(config) {
   return config;

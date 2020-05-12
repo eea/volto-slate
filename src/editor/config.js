@@ -1,6 +1,6 @@
 import React from 'react';
 import { settings } from '@plone/volto/config';
-import { MarkButton, BlockButton } from './components';
+import { BlockButton, MarkButton } from './components';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -11,6 +11,13 @@ import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import quoteIcon from '@plone/volto/icons/quote.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
+
+export const initialValue = [
+  {
+    type: 'paragraph',
+    children: [{ text: '' }],
+  },
+];
 
 export const HOTKEYS = {
   'mod+b': 'bold',

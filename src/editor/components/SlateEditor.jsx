@@ -10,7 +10,7 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { HOTKEYS, initialValue } from '../constants';
 import { Element, Leaf } from '../render';
 import HoveringToolbar from './HoveringToolbar';
-import Toolbar from './InlineToolbar';
+import InlineToolbar from './InlineToolbar';
 import { toggleMark } from '../utils';
 
 const SlateEditor = ({ selected, value, onChange }) => {
@@ -25,21 +25,30 @@ const SlateEditor = ({ selected, value, onChange }) => {
     setShowToolbar(!showToolbar);
   }
 
+  const shouldShowMasterToggleButton = true;
+
   return (
     <div
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        <HoveringToolbar
-          onToggle={handleOnToggle}
-          mainToolbarShown={showToolbar}
-          showMasterToggleButton={true}
-        />
-
+        {!showToolbar && (
+          <HoveringToolbar
+            onToggle={handleOnToggle}
+            mainToolbarShown={showToolbar}
+            showMasterToggleButton={shouldShowMasterToggleButton}
+          />
+        )}
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
-          {selected && showToolbar && <Toolbar />}
+          {selected && showToolbar && (
+            <InlineToolbar
+              showMasterToggleButton={shouldShowMasterToggleButton}
+              onToggle={handleOnToggle}
+              mainToolbarShown={showToolbar}
+            />
+          )}
         </div>
         <Editable
           renderElement={renderElement}

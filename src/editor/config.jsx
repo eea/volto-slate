@@ -2,6 +2,7 @@ import React from 'react';
 import { settings } from '@plone/volto/config';
 import MarkButton from './components/MarkButton';
 import BlockButton from './components/BlockButton';
+import LinkButton from './components/LinkButton';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -27,6 +28,7 @@ export const availableButtons = {
     <BlockButton format="numbered-list" icon={listNumberedIcon} />
   ),
   'bulleted-list': <BlockButton format="bulleted-list" icon={listBulletIcon} />,
+  link: <LinkButton format="link" icon="linkIcon" />,
 
   // 'mark-red': <BlockButton format="mark-red" icon={quoteIcon} />,
 
@@ -34,6 +36,7 @@ export const availableButtons = {
 };
 
 export const defaultToolbarButtons = [
+  'link',
   'bold',
   'italic',
   'underline',

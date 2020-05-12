@@ -10,8 +10,13 @@ const Placeholder = props => {
 };
 
 export const Element = ({ attributes, children, element }) => {
-  // console.log('element', element);
   switch (element.type) {
+    case 'link':
+      return (
+        <a {...attributes} href={element.url}>
+          {children}
+        </a>
+      );
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':

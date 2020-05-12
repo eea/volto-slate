@@ -13,19 +13,33 @@ import HoveringToolbar from './HoveringToolbar';
 import InlineToolbar from './InlineToolbar';
 import { toggleMark } from '../utils';
 
+const withLinks = editor => {
+  const { isInline } = editor;
+
+  editor.isInline = element => {
+    return element.type === 'link' ? true : isInline(element);
+  };
+  return editor;
+};
+
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
 
-  const editor = useMemo(() => withHistory(withReact(createEditor())), []);
+  const editor = useMemo(
+    () => withLinks(withHistory(withReact(createEditor()))),
+    [],
+  );
 
   function handleOnToggle() {
     setShowToolbar(!showToolbar);
   }
 
   const shouldShowMasterToggleButton = true;
+
+  console.log('editor value', value);
 
   return (
     <div

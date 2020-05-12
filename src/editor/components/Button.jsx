@@ -19,7 +19,7 @@ const Button = React.forwardRef(
     };
     return (
       <span {...props} ref={ref} style={style} className={cx(className)}>
-        <Icon name={icon} size="24px" />
+        {icon ? <Icon name={icon} size="24px" /> : 'no-icon'}
       </span>
     );
   },

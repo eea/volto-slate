@@ -7,7 +7,7 @@ import MasterToggleButton from './MasterToggleButton';
 import Toolbar from './SlateToolbar';
 import { Portal } from 'react-portal';
 
-const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
+const HoveringToolbar = ({ mainToolbarShown, onToggle }) => {
   const ref = useRef();
 
   const editor = useSlate();
@@ -68,4 +68,4 @@ const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
   );
 };
 
-export default HoveringSlateToolbar;
+export default HoveringToolbar;

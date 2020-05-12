@@ -53,7 +53,6 @@ const HoveringToolbar = ({ mainToolbarShown, onToggle }) => {
   return (
     <div>
       <Portal>
-        {/* z-index to be above the admin panes */}
         <Toolbar className="slate-inline-toolbar" ref={ref}>
           {hoveringToolbarButtons.map(name => (
             <Fragment key={name}>{availableButtons[name]}</Fragment>

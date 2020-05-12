@@ -4,7 +4,7 @@ import { Editor, Range } from 'slate';
 
 import { availableButtons, hoveringToolbarButtons } from '../config';
 import MasterToggleButton from './MasterToggleButton';
-import Toolbar from './SlateToolbar';
+import Toolbar from './Toolbar';
 import { Portal } from 'react-portal';
 
 const HoveringToolbar = ({ mainToolbarShown, onToggle }) => {

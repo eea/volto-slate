@@ -1,11 +1,13 @@
-import cx from 'classnames';
-import React from 'react';
-import Menu from './Menu';
+import React, { Fragment } from 'react';
+import BasicToolbar from './BasicToolbar';
+import { toolbarButtons, availableButtons } from '../config';
 
-const Toolbar = React.forwardRef(({ className, ...props }, ref) => {
-  return (
-    <Menu {...props} ref={ref} className={cx(className, 'slate-toolbar')} />
-  );
-});
+const Toolbar = ({ className }) => (
+  <BasicToolbar className={className}>
+    {toolbarButtons.map(name => (
+      <Fragment key={name}>{availableButtons[name]}</Fragment>
+    ))}
+  </BasicToolbar>
+);
 
 export default Toolbar;

@@ -9,8 +9,8 @@ import React, { useMemo, useCallback, useState } from 'react';
 
 import { HOTKEYS, initialValue } from '../constants';
 import { Element, Leaf } from '../render';
-import HoveringSlateToolbar from './HoveringToolbar';
-import SlateToolbar from './SlateToolbar';
+import HoveringToolbar from './HoveringToolbar';
+import Toolbar from './Toolbar';
 import { toggleMark } from '../utils';
 
 const SlateEditor = ({ selected, value, onChange }) => {
@@ -30,7 +30,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        <HoveringSlateToolbar
+        <HoveringToolbar
           onToggle={handleOnToggle}
           mainToolbarShown={showToolbar}
         />
@@ -38,7 +38,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
-          {selected && <>{showToolbar ? <SlateToolbar /> : ''}</>}
+          {selected && <>{showToolbar ? <Toolbar /> : ''}</>}
         </div>
         <Editable
           renderElement={renderElement}

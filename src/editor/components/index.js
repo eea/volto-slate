@@ -1,9 +1,9 @@
-export { HoveringSlateToolbar } from './HoveringToolbar';
-export { SlateToolbar } from './SlateToolbar';
-export { BlockButton } from './BlockButton';
-export { MasterToggleButton } from './MasterToggleButton';
-export { MarkButton } from './MarkButton';
-export { Button } from './Button';
-export { Menu } from './Menu';
-export { Toolbar } from './Toolbar';
-export { SlateEditor } from './SlateEditor';
+export BlockButton from './BlockButton';
+export Button from './Button';
+export HoveringSlateToolbar from './HoveringToolbar';
+export MarkButton from './MarkButton';
+export MasterToggleButton from './MasterToggleButton';
+export Menu from './Menu';
+export SlateEditor from './SlateEditor';
+export SlateToolbar from './SlateToolbar';
+export Toolbar from './Toolbar';

@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import { Toolbar } from './Toolbar';
+import Toolbar from './Toolbar';
 import { toolbarButtons, availableButtons } from '../config';
 
-export const SlateToolbar = props => (
+const SlateToolbar = props => (
   <Toolbar>
     {toolbarButtons.map(name => (
       <Fragment key={name}>{availableButtons[name]}</Fragment>

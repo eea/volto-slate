@@ -10,7 +10,7 @@ const Placeholder = props => {
 };
 
 export const Element = ({ attributes, children, element }) => {
-  console.log('element', element);
+  // console.log('element', element);
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;

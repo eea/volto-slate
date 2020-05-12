@@ -1,5 +1,5 @@
 import { Transforms, Editor } from 'slate';
-import { LIST_TYPES } from './config';
+import { LIST_TYPES } from './constants';
 
 export const toggleBlock = (editor, format) => {
   const isActive = isBlockActive(editor, format);

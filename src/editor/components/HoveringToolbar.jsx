@@ -6,10 +6,11 @@ import { Editor, Range } from 'slate';
 import { css } from 'emotion';
 
 import { availableButtons, hoveringToolbarButtons } from '../config';
-import { MasterToggleButton, Toolbar } from '../components';
+import MasterToggleButton from './MasterToggleButton';
+import Toolbar from './SlateToolbar';
 import { Portal } from 'react-portal';
 
-export const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
+const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
   const ref = useRef();
   const editor = useSlate();
 
@@ -46,33 +47,41 @@ export const HoveringSlateToolbar = ({ mainToolbarShown, onToggle }) => {
       rect.width / 2}px`;
   });
 
+  console.log('rendering toolbar');
+
   return (
-    <Portal>
-      {/* z-index to be above the admin panes */}
-      <Toolbar
-        ref={ref}
-        className={css`
-          padding: 8px 7px 6px;
-          position: absolute;
-          z-index: 102;
-          top: -10000px;
-          left: -10000px;
-          margin-top: -6px;
-          opacity: 0;
-          background-color: #fff;
-          border-radius: 0.1rem;
-          border: 0.1rem solid gray;
-          transition: opacity 0.5s;
-        `}
-      >
-        {hoveringToolbarButtons.map(name => (
-          <Fragment key={name}>{availableButtons[name]}</Fragment>
-        ))}
-        <MasterToggleButton
-          active={mainToolbarShown}
-          onToggle={handleOnToggle}
-        />
-      </Toolbar>
-    </Portal>
+    <div>
+      <span>hovering toolbar</span>
+      <Portal>
+        {/* z-index to be above the admin panes */}
+        <Toolbar
+          ref={ref}
+          className={css`
+            padding: 8px 7px 6px;
+            position: absolute;
+            z-index: 102;
+            top: -10000px;
+            left: -10000px;
+            margin-top: -6px;
+            opacity: 0;
+            background-color: #fff;
+            border-radius: 0.1rem;
+            border: 0.1rem solid gray;
+            transition: opacity 0.5s;
+          `}
+        >
+          {hoveringToolbarButtons.map(name => (
+            <Fragment key={name}>{availableButtons[name]}</Fragment>
+          ))}
+          <MasterToggleButton
+            active={mainToolbarShown}
+            onToggle={handleOnToggle}
+          />
+        </Toolbar>
+        <span>hovering toolbar end</span>
+      </Portal>
+    </div>
   );
 };
+
+export default HoveringSlateToolbar;

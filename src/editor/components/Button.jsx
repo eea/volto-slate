@@ -4,7 +4,7 @@ import { Icon } from '@plone/volto/components';
 
 // import { Button as UIButton } from 'semantic-ui-react';
 
-export const Button = React.forwardRef(
+const Button = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {
     style = {
       ...style,
@@ -24,3 +24,5 @@ export const Button = React.forwardRef(
     );
   },
 );
+
+export default Button;

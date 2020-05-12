@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { isMarkActive, toggleMark } from '../utils';
-import { Button } from './Button';
+import Button from './Button';
 
-export const MarkButton = ({ format, icon }) => {
+const MarkButton = ({ format, icon }) => {
   const editor = useSlate();
   return (
     <Button
@@ -16,3 +16,5 @@ export const MarkButton = ({ format, icon }) => {
     />
   );
 };
+
+export default MarkButton;

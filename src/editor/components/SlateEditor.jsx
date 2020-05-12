@@ -7,12 +7,13 @@ import { withHistory } from 'slate-history';
 
 import React, { useMemo, useCallback, useState } from 'react';
 
-import { HOTKEYS, initialValue } from '../config';
+import { HOTKEYS, initialValue } from '../constants';
 import { Element, Leaf } from '../render';
-import { HoveringSlateToolbar, SlateToolbar } from '.';
+import HoveringSlateToolbar from './HoveringToolbar';
+import SlateToolbar from './SlateToolbar';
 import { toggleMark } from '../utils';
 
-export const SlateEditor = ({ selected, value, onChange }) => {
+const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const renderElement = useCallback(props => <Element {...props} />, []);
@@ -29,15 +30,16 @@ export const SlateEditor = ({ selected, value, onChange }) => {
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+        <HoveringSlateToolbar
+          onToggle={handleOnToggle}
+          mainToolbarShown={showToolbar}
+        />
+
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
           {selected && <>{showToolbar ? <SlateToolbar /> : ''}</>}
         </div>
-        <HoveringSlateToolbar
-          onToggle={handleOnToggle}
-          mainToolbarShown={showToolbar}
-        />
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
@@ -57,3 +59,5 @@ export const SlateEditor = ({ selected, value, onChange }) => {
     </div>
   );
 };
+
+export default SlateEditor;

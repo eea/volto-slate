@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { isBlockActive, toggleBlock } from '../utils';
-import { Button } from './Button';
+import Button from './Button';
 
-export const BlockButton = ({ format, icon }) => {
+const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
 
   return (
@@ -17,3 +17,5 @@ export const BlockButton = ({ format, icon }) => {
     />
   );
 };
+
+export default BlockButton;

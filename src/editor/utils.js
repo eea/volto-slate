@@ -1,12 +1,12 @@
 import { Transforms, Editor } from 'slate';
-import { LIST_TYPES } from './constants';
+import { settings } from '~/config';
 
 export const toggleBlock = (editor, format) => {
   const isActive = isBlockActive(editor, format);
-  const isList = LIST_TYPES.includes(format);
+  const isList = settings.slate.listTypes.includes(format);
 
   Transforms.unwrapNodes(editor, {
-    match: n => LIST_TYPES.includes(n.type),
+    match: n => settings.slate.listTypes.includes(n.type),
     split: true,
   });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Separator = () => {
-  return <div>|</div>;
+  return <span className="separator"></span>;
 };
 
 export default Separator;

@@ -1,5 +1,4 @@
 import React from 'react';
-// import { settings } from '~/config';
 import MarkButton from './components/MarkButton';
 import BlockButton from './components/BlockButton';
 import Separator from './components/Separator';
@@ -48,3 +47,13 @@ export const toolbarButtons = [...defaultToolbarButtons];
 export const expandedToolbarButtons = [...defaultToolbarButtons];
 
 export const decorators = [];
+
+export const hotkeys = {
+  'mod+b': 'bold',
+  'mod+i': 'italic',
+  'mod+u': 'underline',
+  'mod+`': 'code',
+  //'mod+&': 'mark-red',
+};
+
+export const listTypes = ['numbered-list', 'bulleted-list'];

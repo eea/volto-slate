@@ -7,7 +7,7 @@ import { withHistory } from 'slate-history';
 
 import React, { useMemo, useCallback, useState } from 'react';
 
-import { HOTKEYS, initialValue } from '../constants';
+import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
@@ -79,10 +79,10 @@ const SlateEditor = ({ selected, value, onChange }) => {
           placeholder="Enter some rich text…"
           spellCheck
           onKeyDown={event => {
-            for (const hotkey in HOTKEYS) {
+            for (const hotkey in slate.hotkeys) {
               if (isHotkey(hotkey, event)) {
                 event.preventDefault();
-                const mark = HOTKEYS[hotkey];
+                const mark = slate.hotkeys[hotkey];
                 toggleMark(editor, mark);
               }
             }

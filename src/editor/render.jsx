@@ -1,7 +1,13 @@
 import React from 'react';
 import { Node } from 'slate';
+import { settings } from '~/config';
 
-export const Element = ({ attributes, children, element }) => {
+export const Element = props => {
+  const { attributes, children, element } = props;
+  const addonEl = settings.slate.elements[element.type];
+
+  if (addonEl) return addonEl(props);
+
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
@@ -20,7 +26,13 @@ export const Element = ({ attributes, children, element }) => {
   }
 };
 
-export const Leaf = ({ attributes, children, leaf }) => {
+export const Leaf = ({ attributes, leaf, children }) => {
+  const leafTypes = settings.slate.leafs;
+
+  children = Object.keys(leafTypes || {}).reduce((acc, name) => {
+    return leaf[name] ? leafTypes[name]({ children: acc }) : children;
+  }, children);
+
   if (leaf.bold) {
     children = <strong>{children}</strong>;
   }

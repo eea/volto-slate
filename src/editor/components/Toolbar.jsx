@@ -56,8 +56,8 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
     <div>
       <Portal>
         <BasicToolbar className="slate-inline-toolbar" ref={ref}>
-          {expandedToolbarButtons.map(name => (
-            <Fragment key={name}>{availableButtons[name]}</Fragment>
+          {expandedToolbarButtons.map((name, i) => (
+            <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
           ))}
           <ToolbarToggleButton
             className={cx({ hidden: !showMasterToggleButton })}

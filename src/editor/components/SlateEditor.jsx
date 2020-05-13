@@ -14,7 +14,7 @@ import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
 
-// import '../less/editor.less';
+import '../less/editor.less';
 
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);

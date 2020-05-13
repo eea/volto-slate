@@ -3,7 +3,7 @@ import cx from 'classnames';
 import ToolbarToggleButton from './ToolbarToggleButton';
 
 import BasicToolbar from './BasicToolbar';
-import { expandedToolbarButtons, availableButtons } from '../config';
+import { settings } from '~/config';
 
 const ExpandedToolbar = React.forwardRef(
   (
@@ -17,6 +17,8 @@ const ExpandedToolbar = React.forwardRef(
     function handleOnToggle() {
       onToggle();
     }
+
+    const { expandedToolbarButtons, availableButtons } = settings.slate;
 
     console.log(
       'ExpandedToolbar uses expandedToolbarButtons which is',

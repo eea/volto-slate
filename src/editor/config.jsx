@@ -60,10 +60,11 @@ export const listTypes = ['numbered-list', 'bulleted-list'];
 
 export const availableLeafs = {
   bold: ({ children }) => {
-    console.log('bold', children);
     return <strong>{children}</strong>;
   },
-  code: ({ children }) => <code>{children}</code>,
+  code: ({ children }) => {
+    return <code>{children}</code>;
+  },
   italic: ({ children }) => <em>{children}</em>,
   underline: ({ children }) => <u>{children}</u>,
 };

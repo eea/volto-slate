@@ -30,7 +30,7 @@ export const Leaf = ({ attributes, leaf, children }) => {
   const { leafs, availableLeafs } = settings.slate;
 
   children = leafs.reduce((acc, name) => {
-    return leaf[name] ? availableLeafs[name]({ children: acc }) : children;
+    return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
   }, children);
 
   return <span {...attributes}>{children}</span>;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
+
 import { isBlockActive, toggleBlock } from '../utils';
 import Button from './Button';
 

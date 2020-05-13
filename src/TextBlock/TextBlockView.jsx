@@ -3,7 +3,7 @@ import { createEditor } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
 import { Element, Leaf } from './../editor/render';
 
-const TextBlockView = ({ data }) => {
+const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
   const editor = useMemo(() => withReact(createEditor()), []);
   const renderElement = useCallback(props => <Element {...props} />, []);

@@ -1,4 +1,4 @@
-import { settings } from '@plone/volto/config';
+import { settings } from '~/config';
 
 export const initialValue = [
   {
@@ -14,11 +14,11 @@ export const HOTKEYS = {
   'mod+`': 'code',
   //'mod+&': 'mark-red',
 
-  ...settings.slate?.SLATE_HOTKEYS,
+  // ...settings.slate?.SLATE_HOTKEYS,
 };
 
 export const LIST_TYPES = [
   'numbered-list',
   'bulleted-list',
-  ...(settings.slate?.LIST_TYPES || []),
+  // ...(settings.slate?.LIST_TYPES || []),
 ];

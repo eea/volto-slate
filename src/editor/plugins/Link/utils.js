@@ -1,20 +1,16 @@
-import React from 'react';
-import { useSlate } from 'slate-react';
 import { Editor, Transforms, Range } from 'slate';
-import Button from './Button';
+import { LINK } from './constants';
 
-const LINK = 'link';
-
-const isLinkActive = editor => {
+export const isLinkActive = editor => {
   const [link] = Editor.nodes(editor, { match: n => n.type === LINK });
   return !!link;
 };
 
-const unwrapLink = editor => {
+export const unwrapLink = editor => {
   Transforms.unwrapNodes(editor, { match: n => n.type === LINK });
 };
 
-const wrapLink = (editor, url) => {
+export const wrapLink = (editor, url) => {
   if (isLinkActive(editor)) {
     unwrapLink(editor);
   }
@@ -35,26 +31,8 @@ const wrapLink = (editor, url) => {
   }
 };
 
-const insertLink = (editor, url) => {
+export const insertLink = (editor, url) => {
   if (editor.selection) {
     wrapLink(editor, url);
   }
 };
-
-const LinkButton = () => {
-  const editor = useSlate();
-  return (
-    <Button
-      active={isLinkActive(editor)}
-      onMouseDown={event => {
-        event.preventDefault();
-        const url = window.prompt('Enter the URL of the link:');
-        if (!url) return;
-        insertLink(editor, url);
-      }}
-    >
-      Link
-    </Button>
-  );
-};
-export default LinkButton;

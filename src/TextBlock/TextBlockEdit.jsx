@@ -1,7 +1,7 @@
 import React from 'react';
 
 import SlateEditor from './../editor';
-import { serialize } from './../editor/render';
+import { plaintext_serialize } from './../editor/render';
 
 const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
   const { value } = data;
@@ -13,7 +13,7 @@ const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
         onChangeBlock(block, {
           ...data,
           value,
-          plaintext: serialize(value || []),
+          plaintext: plaintext_serialize(value || []),
         });
       }}
       selected={selected}

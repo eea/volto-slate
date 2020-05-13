@@ -1,22 +1,8 @@
 import React from 'react';
 import { Node } from 'slate';
 
-const Placeholder = props => {
-  return (
-    <span style={{ backgroundColor: 'red' }} {...props.attributes}>
-      {props.children}
-    </span>
-  );
-};
-
 export const Element = ({ attributes, children, element }) => {
   switch (element.type) {
-    case 'link':
-      return (
-        <a {...attributes} href={element.url}>
-          {children}
-        </a>
-      );
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':
@@ -29,8 +15,6 @@ export const Element = ({ attributes, children, element }) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
-    case 'mark-red':
-      return <Placeholder {...attributes}>{children}</Placeholder>;
     default:
       return <p {...attributes}>{children}</p>;
   }
@@ -53,13 +37,9 @@ export const Leaf = ({ attributes, children, leaf }) => {
     children = <u>{children}</u>;
   }
 
-  if (leaf['mark-red']) {
-    children = <Placeholder children={children} />;
-  }
-
   return <span {...attributes}>{children}</span>;
 };
 
-export const serialize = nodes => {
+export const plaintext_serialize = nodes => {
   return nodes.map(n => Node.string(n)).join('\n');
 };

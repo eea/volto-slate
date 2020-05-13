@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import cx from 'classnames';
-import MasterToggleButton from './MasterToggleButton';
+import ToolbarToggleButton from './ToolbarToggleButton';
 
 import BasicToolbar from './BasicToolbar';
 import { toolbarButtons, availableButtons } from '../config';
 
-const InlineToolbar = React.forwardRef(
+const ExpandedToolbar = React.forwardRef(
   (
     { className, showMasterToggleButton, onToggle, mainToolbarShown, ...props },
     ref,
@@ -23,7 +23,7 @@ const InlineToolbar = React.forwardRef(
         {toolbarButtons.map(name => (
           <Fragment key={name}>{availableButtons[name]}</Fragment>
         ))}
-        <MasterToggleButton
+        <ToolbarToggleButton
           className={cx({ hidden: !showMasterToggleButton })}
           active={mainToolbarShown}
           onToggle={handleOnToggle}
@@ -33,4 +33,4 @@ const InlineToolbar = React.forwardRef(
   },
 );
 
-export default InlineToolbar;
+export default ExpandedToolbar;

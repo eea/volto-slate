@@ -9,18 +9,12 @@ import React, { useMemo, useCallback, useState } from 'react';
 
 import { HOTKEYS, initialValue } from '../constants';
 import { Element, Leaf } from '../render';
-import HoveringToolbar from './HoveringToolbar';
-import InlineToolbar from './InlineToolbar';
+import Toolbar from './Toolbar';
+import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
+import { settings } from '~/config';
 
-const withLinks = editor => {
-  const { isInline } = editor;
-
-  editor.isInline = element => {
-    return element.type === 'link' ? true : isInline(element);
-  };
-  return editor;
-};
+import '../less/editor.less';
 
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
@@ -28,9 +22,24 @@ const SlateEditor = ({ selected, value, onChange }) => {
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
 
+  const { slate } = settings;
+
+  // wrap editor with new functionality. While Slate calls them plugins, we
+  // use decorator to avoid confusion. A Volto Slate editor plugins adds more
+  // functionality: buttons, new elements, etc.
+  //
+  // Each decorator is a simple
+  // mutator function with signature: editor => editor
+  // See https://docs.slatejs.org/concepts/07-plugins and
+  // https://docs.slatejs.org/concepts/06-editor
+  //
   const editor = useMemo(
-    () => withLinks(withHistory(withReact(createEditor()))),
-    [],
+    () =>
+      (slate.decorators || []).reduce(
+        (acc, apply) => apply(acc),
+        withHistory(withReact(createEditor())),
+      ),
+    [slate.decorators],
   );
 
   function handleOnToggle() {
@@ -47,7 +56,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         {!showToolbar && (
-          <HoveringToolbar
+          <Toolbar
             onToggle={handleOnToggle}
             mainToolbarShown={showToolbar}
             showMasterToggleButton={shouldShowMasterToggleButton}
@@ -57,7 +66,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
         >
           {selected && showToolbar && (
-            <InlineToolbar
+            <ExpandedToolbar
               showMasterToggleButton={shouldShowMasterToggleButton}
               onToggle={handleOnToggle}
               mainToolbarShown={showToolbar}

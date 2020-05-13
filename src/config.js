@@ -1,10 +1,8 @@
 import { TextBlockView, TextBlockEdit } from './TextBlock';
 import codeSVG from '@plone/volto/icons/code.svg';
+import * as slateConfig from './editor/config';
+// import installLinkPlugin from './editor/plugins/Link';
 //import uglyIcon from '@plone/volto/icons/frustrated.svg';
-
-function exampleConfig(config) {
-  return config;
-}
 
 export function applyConfig(config) {
   config.blocks.blocksConfig.slate = {
@@ -22,5 +20,10 @@ export function applyConfig(config) {
       view: [],
     },
   };
-  return exampleConfig(config);
+
+  config.settings.slate = {
+    ...slateConfig,
+  };
+
+  return config;
 }

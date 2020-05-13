@@ -29,7 +29,6 @@ export const availableButtons = {
 };
 
 export const defaultToolbarButtons = [
-  'link',
   'bold',
   'italic',
   'underline',

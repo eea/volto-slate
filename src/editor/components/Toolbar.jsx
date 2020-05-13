@@ -3,7 +3,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import cx from 'classnames';
 
-import { availableButtons, expandedToolbarButtons } from '../config';
+import { settings } from '~/config';
 import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
 import { Portal } from 'react-portal';
@@ -12,6 +12,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
   const ref = useRef();
 
   const editor = useSlate();
+  const { expandedToolbarButtons, availableButtons } = settings.slate;
 
   if (typeof showMasterToggleButton !== 'boolean') {
     showMasterToggleButton = true;

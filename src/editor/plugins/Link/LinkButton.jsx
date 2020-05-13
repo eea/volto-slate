@@ -7,6 +7,7 @@ import unlinkSVG from '@plone/volto/icons/unlink.svg';
 
 const LinkButton = () => {
   const editor = useSlate();
+
   return (
     <Button
       active={isLinkActive(editor)}

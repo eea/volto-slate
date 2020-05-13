@@ -2,6 +2,8 @@ import { TextBlockView, TextBlockEdit } from './TextBlock';
 import codeSVG from '@plone/volto/icons/code.svg';
 import * as slateConfig from './editor/config';
 
+import installLinkPlugin from './editor/plugins/Link';
+
 export function applyConfig(config) {
   config.blocks.blocksConfig.slate = {
     id: 'slate',
@@ -23,6 +25,8 @@ export function applyConfig(config) {
   config.settings.slate = {
     ...slateConfig,
   };
+
+  installLinkPlugin(config);
 
   return config;
 }

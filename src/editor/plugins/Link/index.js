@@ -2,10 +2,7 @@ import LinkButton from './LinkButton';
 import React from 'react';
 import { withLinks } from './decorators';
 
-// TODO: remove this import:
-import linkIcon from '@plone/volto/icons/link.svg';
-
-const LinkElement = ({ attributes, children, element }) => {
+export const LinkElement = ({ attributes, children, element }) => {
   return (
     <a {...attributes} href={element.url}>
       {children}
@@ -17,8 +14,7 @@ export default function install(config) {
   const slate = config.settings.slate || {};
   config.settings.slate = slate;
 
-  // TODO: remove the format and icon props below
-  slate.availableButtons.link = <LinkButton format="link" icon={linkIcon} />;
+  slate.availableButtons.link = <LinkButton />;
 
   slate.decorators = [...(slate.decorators || []), withLinks];
 

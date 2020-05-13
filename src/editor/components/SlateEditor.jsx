@@ -19,7 +19,15 @@ import '../less/editor.less';
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
-  const renderElement = useCallback(props => <Element {...props} />, []);
+  const renderElement = useCallback(props => {
+    console.log('renderElement called', { props });
+
+    let el = <Element {...props} />;
+
+    console.log('renderElement after Element creation', el);
+
+    return el;
+  }, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
 
   const { slate } = settings;

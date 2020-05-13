@@ -3,16 +3,12 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import cx from 'classnames';
 
-import { availableButtons, hoveringToolbarButtons } from '../config';
-import MasterToggleButton from './MasterToggleButton';
+import { availableButtons, expandedToolbarButtons } from '../config';
+import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
 import { Portal } from 'react-portal';
 
-const HoveringToolbar = ({
-  mainToolbarShown,
-  onToggle,
-  showMasterToggleButton,
-}) => {
+const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
   const ref = useRef();
 
   const editor = useSlate();
@@ -48,9 +44,6 @@ const HoveringToolbar = ({
     const domRange = domSelection.getRangeAt(0);
     const rect = domRange.getBoundingClientRect();
 
-    console.log('el', el);
-    console.log('rect', rect);
-
     el.style.opacity = 1;
     el.style.top = `${rect.top + window.pageYOffset - el.offsetHeight}px`;
     el.style.left = `${rect.left +
@@ -63,10 +56,10 @@ const HoveringToolbar = ({
     <div>
       <Portal>
         <BasicToolbar className="slate-inline-toolbar" ref={ref}>
-          {hoveringToolbarButtons.map(name => (
-            <Fragment key={name}>{availableButtons[name]}</Fragment>
+          {expandedToolbarButtons.map((name, i) => (
+            <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
           ))}
-          <MasterToggleButton
+          <ToolbarToggleButton
             className={cx({ hidden: !showMasterToggleButton })}
             active={mainToolbarShown}
             onToggle={handleOnToggle}
@@ -77,4 +70,4 @@ const HoveringToolbar = ({
   );
 };
 
-export default HoveringToolbar;
+export default Toolbar;

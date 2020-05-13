@@ -1,16 +1,13 @@
 import React from 'react';
 import { Node } from 'slate';
+import { settings } from '~/config';
 
-const Placeholder = props => {
-  return (
-    <span style={{ backgroundColor: 'red' }} {...props.attributes}>
-      {props.children}
-    </span>
-  );
-};
+export const Element = props => {
+  const { attributes, children, element } = props;
+  const addonEl = settings.slate.elements[element.type];
 
-export const Element = ({ attributes, children, element }) => {
-  // console.log('element', element);
+  if (addonEl) return addonEl(props);
+
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;
@@ -24,37 +21,21 @@ export const Element = ({ attributes, children, element }) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
-    case 'mark-red':
-      return <Placeholder {...attributes}>{children}</Placeholder>;
     default:
       return <p {...attributes}>{children}</p>;
   }
 };
 
-export const Leaf = ({ attributes, children, leaf }) => {
-  if (leaf.bold) {
-    children = <strong>{children}</strong>;
-  }
+export const Leaf = ({ attributes, leaf, children }) => {
+  const { leafs, availableLeafs } = settings.slate;
 
-  if (leaf.code) {
-    children = <code>{children}</code>;
-  }
-
-  if (leaf.italic) {
-    children = <em>{children}</em>;
-  }
-
-  if (leaf.underline) {
-    children = <u>{children}</u>;
-  }
-
-  if (leaf['mark-red']) {
-    children = <Placeholder children={children} />;
-  }
+  children = leafs.reduce((acc, name) => {
+    return leaf[name] ? availableLeafs[name]({ children: acc }) : children;
+  }, children);
 
   return <span {...attributes}>{children}</span>;
 };
 
-export const serialize = nodes => {
+export const plaintext_serialize = nodes => {
   return nodes.map(n => Node.string(n)).join('\n');
 };

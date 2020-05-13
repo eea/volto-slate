@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button renders a button 1`] = `
+<span
+  className=""
+  pathname="/test"
+  style={
+    Object {
+      "color": "#888",
+      "cursor": "pointer",
+    }
+  }
+>
+  no-icon
+</span>
+`;

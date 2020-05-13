@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Node } from 'slate';
 import { settings } from '~/config';
 
@@ -33,7 +33,7 @@ export const Leaf = ({ attributes, leaf, children }) => {
     return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
   }, children);
 
-  return <span {...attributes}>{children}</span>;
+  return <Fragment {...attributes}>{children}</Fragment>;
 };
 
 export const plaintext_serialize = nodes => {

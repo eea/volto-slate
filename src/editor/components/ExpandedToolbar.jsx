@@ -3,7 +3,7 @@ import cx from 'classnames';
 import ToolbarToggleButton from './ToolbarToggleButton';
 
 import BasicToolbar from './BasicToolbar';
-import { toolbarButtons, availableButtons } from '../config';
+import { expandedToolbarButtons, availableButtons } from '../config';
 
 const ExpandedToolbar = React.forwardRef(
   (
@@ -18,9 +18,14 @@ const ExpandedToolbar = React.forwardRef(
       onToggle();
     }
 
+    console.log(
+      'ExpandedToolbar uses expandedToolbarButtons which is',
+      expandedToolbarButtons,
+    );
+
     return (
       <BasicToolbar {...props} className={className} ref={ref}>
-        {toolbarButtons.map((name, i) => (
+        {expandedToolbarButtons.map((name, i) => (
           <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
         ))}
         <ToolbarToggleButton

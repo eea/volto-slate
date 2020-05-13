@@ -29,5 +29,8 @@ export default function install(config) {
     'link',
   ];
 
+  console.log('slate.toolbarButtons', slate.toolbarButtons);
+  console.log('slate.expandedToolbarButtons', slate.expandedToolbarButtons);
+
   return config;
 }

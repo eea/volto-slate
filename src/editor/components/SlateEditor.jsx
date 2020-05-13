@@ -20,11 +20,11 @@ const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const renderElement = useCallback(props => {
-    console.log('renderElement called', { props });
+    //console.log('renderElement called', { props });
 
     let el = <Element {...props} />;
 
-    console.log('renderElement after Element creation', el);
+    //console.log('renderElement after Element creation', el);
 
     return el;
   }, []);
@@ -56,7 +56,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
 
   const shouldShowMasterToggleButton = true;
 
-  console.log('editor value', value);
+  //console.log('editor value', value);
 
   return (
     <div

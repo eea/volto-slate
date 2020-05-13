@@ -41,9 +41,14 @@ export const defaultToolbarButtons = [
   'blockquote',
 ];
 
-export const toolbarButtons = [...defaultToolbarButtons];
+export let toolbarButtons = [...defaultToolbarButtons];
 
-export const expandedToolbarButtons = [...defaultToolbarButtons];
+export let expandedToolbarButtons = [...defaultToolbarButtons];
+
+// console.log(
+//   'Reevaluating config file with expandedToolbarButtons:',
+//   expandedToolbarButtons,
+// );
 
 export const decorators = [];
 

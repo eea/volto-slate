@@ -1,19 +1,16 @@
 import React, { Fragment } from 'react';
 import { Node } from 'slate';
 import { settings } from '~/config';
-import { LinkElement } from './plugins/Link';
 
 export const Element = props => {
   const { attributes, children, element } = props;
   const AddonEl = settings.slate.elements[element.type];
 
   if (AddonEl) {
-    console.log('<AddonEl {...attributes}>', AddonEl);
-    console.log('props', props);
     return <AddonEl {...props} />;
   }
 
-  console.log('element.type', element.type);
+  //console.log('element.type', element.type);
 
   switch (element.type) {
     case 'block-quote':

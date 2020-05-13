@@ -12,7 +12,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
   const ref = useRef();
 
   const editor = useSlate();
-  const { expandedToolbarButtons, availableButtons } = settings.slate;
+  const { toolbarButtons, availableButtons } = settings.slate;
 
   if (typeof showMasterToggleButton !== 'boolean') {
     showMasterToggleButton = true;
@@ -53,10 +53,12 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
       rect.width / 2}px`;
   });
 
+  console.log('Toolbar uses toolbarButtons which is', toolbarButtons);
+
   return (
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
-        {expandedToolbarButtons.map((name, i) => (
+        {toolbarButtons.map((name, i) => (
           <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
         ))}
         <ToolbarToggleButton

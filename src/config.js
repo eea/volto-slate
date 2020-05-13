@@ -26,7 +26,11 @@ export function applyConfig(config) {
     ...slateConfig,
   };
 
+  console.log('BEFORE Link: config.settings.slate', config.settings.slate);
+
   installLinkPlugin(config);
+
+  console.log('AFTER Link: config.settings.slate', config.settings.slate);
 
   return config;
 }

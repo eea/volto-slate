@@ -22,4 +22,5 @@ const TextBlockView = ({ id, properties, data }) => {
     </>
   );
 };
+
 export default TextBlockView;

@@ -7,16 +7,19 @@ import unlinkSVG from '@plone/volto/icons/unlink.svg';
 
 const LinkButton = () => {
   const editor = useSlate();
+
+  const ila = isLinkActive(editor);
+
   return (
     <Button
-      active={isLinkActive(editor)}
+      active={ila}
       onMouseDown={event => {
         event.preventDefault();
         const url = window.prompt('Enter the URL of the link:');
         if (!url) return;
         insertLink(editor, url);
       }}
-      icon={linkSVG}
+      icon={ila ? unlinkSVG : linkSVG}
     ></Button>
   );
 };

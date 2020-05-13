@@ -29,10 +29,5 @@ export default function install(config) {
     'link',
   ];
 
-  // slate.leafs = {
-  //   ...slate.leafs,
-  // }
-  //
-
   return config;
 }

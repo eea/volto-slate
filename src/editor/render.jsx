@@ -27,27 +27,11 @@ export const Element = props => {
 };
 
 export const Leaf = ({ attributes, leaf, children }) => {
-  const leafTypes = settings.slate.leafs;
+  const { leafs, availableLeafs } = settings.slate;
 
-  children = Object.keys(leafTypes || {}).reduce((acc, name) => {
-    return leaf[name] ? leafTypes[name]({ children: acc }) : children;
+  children = leafs.reduce((acc, name) => {
+    return leaf[name] ? availableLeafs[name]({ children: acc }) : children;
   }, children);
-
-  if (leaf.bold) {
-    children = <strong>{children}</strong>;
-  }
-
-  if (leaf.code) {
-    children = <code>{children}</code>;
-  }
-
-  if (leaf.italic) {
-    children = <em>{children}</em>;
-  }
-
-  if (leaf.underline) {
-    children = <u>{children}</u>;
-  }
 
   return <span {...attributes}>{children}</span>;
 };

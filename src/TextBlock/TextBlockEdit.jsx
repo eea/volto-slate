@@ -3,7 +3,19 @@ import React from 'react';
 import SlateEditor from './../editor';
 import { plaintext_serialize } from './../editor/render';
 
-const TextBlockEdit = ({ block, data, onChangeBlock, selected, ...props }) => {
+// See https://docs.voltocms.com/blocks/anatomy/
+
+const TextBlockEdit = ({
+  type,
+  id,
+  data,
+  selected,
+  index,
+  pathname,
+  block,
+  onChangeBlock,
+  ...props
+}) => {
   const { value } = data;
 
   return (

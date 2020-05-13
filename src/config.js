@@ -11,7 +11,8 @@ export function applyConfig(config) {
     view: TextBlockView,
     edit: TextBlockEdit,
     restricted: false,
-    mostUsed: false,
+    mostUsed: true,
+    blockHasOwnFocusManagement: false,
     sidebarTab: 1,
     security: {
       addPermission: [],

@@ -4,7 +4,7 @@ import { settings } from '~/config';
 
 export const Element = props => {
   const { attributes, children, element } = props;
-  const addonEl = settings.slate.elements[element.type];
+  const addonEl = settings.slate.availableButtons[element.type];
 
   if (addonEl) return addonEl(props);
 
@@ -33,7 +33,9 @@ export const Leaf = ({ attributes, leaf, children }) => {
     return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
   }, children);
 
-  return <Fragment {...attributes}>{children}</Fragment>;
+  let modifiedAttrs = { ...attributes };
+  delete modifiedAttrs['data-slate-leaf'];
+  return <Fragment {...modifiedAttrs}>{children}</Fragment>;
 };
 
 export const plaintext_serialize = nodes => {

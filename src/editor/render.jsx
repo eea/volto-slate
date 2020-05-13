@@ -4,7 +4,7 @@ import { settings } from '~/config';
 
 export const Element = props => {
   const { attributes, children, element } = props;
-  const addonEl = settings.slate.elements[element.type];
+  const addonEl = settings.slate.availableButtons[element.type];
 
   if (addonEl) return addonEl(props);
 

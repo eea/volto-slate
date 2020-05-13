@@ -33,7 +33,9 @@ export const Leaf = ({ attributes, leaf, children }) => {
     return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
   }, children);
 
-  return <Fragment {...attributes}>{children}</Fragment>;
+  let modifiedAttrs = { ...attributes };
+  delete modifiedAttrs['data-slate-leaf'];
+  return <Fragment {...modifiedAttrs}>{children}</Fragment>;
 };
 
 export const plaintext_serialize = nodes => {

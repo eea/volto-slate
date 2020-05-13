@@ -4,9 +4,11 @@ import { settings } from '~/config';
 
 export const Element = props => {
   const { attributes, children, element } = props;
-  const addonEl = settings.slate.availableButtons[element.type];
+  const AddonEl = settings.slate.availableButtons[element.type];
 
-  if (addonEl) return addonEl(props);
+  if (AddonEl) {
+    return <AddonEl {...props} />;
+  }
 
   switch (element.type) {
     case 'block-quote':

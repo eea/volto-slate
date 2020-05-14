@@ -14,12 +14,10 @@ import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
 
-import '../less/editor.less';
-
 const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
-  const renderElement = useCallback(props => {
+  const renderElement = useCallback((props) => {
     //console.log('renderElement called', { props });
 
     let el = <Element {...props} />;
@@ -28,7 +26,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
 
     return el;
   }, []);
-  const renderLeaf = useCallback(props => <Leaf {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
 
   const { slate } = settings;
 
@@ -86,7 +84,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
           renderLeaf={renderLeaf}
           placeholder="Enter some rich text…"
           spellCheck
-          onKeyDown={event => {
+          onKeyDown={(event) => {
             for (const hotkey in slate.hotkeys) {
               if (isHotkey(hotkey, event)) {
                 event.preventDefault();

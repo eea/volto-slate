@@ -10,8 +10,6 @@ export const Element = (props) => {
     return <AddonEl {...props} />;
   }
 
-  //console.log('element.type', element.type);
-
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>;

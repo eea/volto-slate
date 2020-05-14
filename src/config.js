@@ -3,6 +3,7 @@ import codeSVG from '@plone/volto/icons/code.svg';
 import * as slateConfig from './editor/config';
 
 import installLinkPlugin from './editor/plugins/Link';
+import installCalloutPlugin from './editor/plugins/Callout';
 
 export function applyConfig(config) {
   config.blocks.blocksConfig.slate = {
@@ -27,6 +28,7 @@ export function applyConfig(config) {
   };
 
   installLinkPlugin(config);
+  installCalloutPlugin(config);
 
   return config;
 }

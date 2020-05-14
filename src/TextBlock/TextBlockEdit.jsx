@@ -16,6 +16,8 @@ const TextBlockEdit = ({
   onChangeBlock,
   onDeleteBlock,
   onFocusPreviousBlock,
+  detached,
+  onMutateBlock,
   ...props
 }) => {
   const { value } = data;
@@ -23,6 +25,10 @@ const TextBlockEdit = ({
   return (
     <SlateEditor
       value={value}
+      data={data}
+      block={block}
+      detached={detached}
+      onMutateBlock={onMutateBlock}
       onChange={(value) => {
         onChangeBlock(block, {
           ...data,

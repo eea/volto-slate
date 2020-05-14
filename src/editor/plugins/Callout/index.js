@@ -3,6 +3,7 @@ import React from 'react';
 import calloutSVG from '@plone/volto/icons/megaphone.svg';
 
 export const CalloutElement = ({ attributes, children, element }) => {
+  // the 'callout' class is defined in file 'blocks.less'
   return (
     <p {...attributes} className="callout">
       {children}

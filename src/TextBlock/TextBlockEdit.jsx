@@ -21,7 +21,7 @@ const TextBlockEdit = ({
   return (
     <SlateEditor
       value={value}
-      onChange={value => {
+      onChange={(value) => {
         onChangeBlock(block, {
           ...data,
           value,

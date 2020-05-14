@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { Node } from 'slate';
 import { settings } from '~/config';
 
-export const Element = props => {
+export const Element = (props) => {
   const { attributes, children, element } = props;
   const AddonEl = settings.slate.elements[element.type];
 
@@ -40,6 +40,6 @@ export const Leaf = ({ attributes, leaf, children }) => {
   return <span {...attributes}>{children}</span>;
 };
 
-export const plaintext_serialize = nodes => {
-  return nodes.map(n => Node.string(n)).join('\n');
+export const plaintext_serialize = (nodes) => {
+  return nodes.map((n) => Node.string(n)).join('\n');
 };

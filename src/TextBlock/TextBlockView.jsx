@@ -6,8 +6,8 @@ import { Element, Leaf } from './../editor/render';
 const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
   const editor = useMemo(() => withReact(createEditor()), []);
-  const renderElement = useCallback(props => <Element {...props} />, []);
-  const renderLeaf = useCallback(props => <Leaf {...props} />, []);
+  const renderElement = useCallback((props) => <Element {...props} />, []);
+  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
 
   return (
     <>

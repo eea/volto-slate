@@ -18,8 +18,8 @@ export const availableButtons = {
   italic: <MarkButton format="italic" icon={italicIcon} />,
   underline: <MarkButton format="underline" icon={underlineIcon} />,
   code: <MarkButton format="code" icon={codeIcon} />,
-  'heading-one': <BlockButton format="heading-one" icon={headingIcon} />,
-  'heading-two': <BlockButton format="heading-two" icon={subheadingIcon} />,
+  'heading-two': <BlockButton format="heading-two" icon={headingIcon} />,
+  'heading-three': <BlockButton format="heading-three" icon={subheadingIcon} />,
   blockquote: <BlockButton format="block-quote" icon={quoteIcon} />,
   'numbered-list': (
     <BlockButton format="numbered-list" icon={listNumberedIcon} />
@@ -33,8 +33,8 @@ export const defaultToolbarButtons = [
   'italic',
   'underline',
   'separator',
-  'heading-one',
   'heading-two',
+  'heading-three',
   'separator',
   'numbered-list',
   'bulleted-list',

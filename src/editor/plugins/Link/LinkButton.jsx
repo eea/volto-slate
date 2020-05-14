@@ -14,7 +14,7 @@ const LinkButton = () => {
   return (
     <Button
       active={ila}
-      onMouseDown={event => {
+      onMouseDown={(event) => {
         event.preventDefault();
 
         if (

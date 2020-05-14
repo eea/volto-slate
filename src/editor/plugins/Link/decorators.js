@@ -1,14 +1,14 @@
 import isUrl from 'is-url';
 import { wrapLink } from './utils';
 
-export const withLinks = editor => {
+export const withLinks = (editor) => {
   const { insertData, insertText, isInline } = editor;
 
-  editor.isInline = element => {
+  editor.isInline = (element) => {
     return element.type === 'link' ? true : isInline(element);
   };
 
-  editor.insertText = text => {
+  editor.insertText = (text) => {
     if (text && isUrl(text)) {
       wrapLink(editor, text);
     } else {
@@ -16,7 +16,7 @@ export const withLinks = editor => {
     }
   };
 
-  editor.insertData = data => {
+  editor.insertData = (data) => {
     const text = data.getData('text/plain');
 
     if (text && isUrl(text)) {

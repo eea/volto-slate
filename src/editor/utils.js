@@ -6,7 +6,7 @@ export const toggleBlock = (editor, format) => {
   const isList = settings.slate.listTypes.includes(format);
 
   Transforms.unwrapNodes(editor, {
-    match: n => settings.slate.listTypes.includes(n.type),
+    match: (n) => settings.slate.listTypes.includes(n.type),
     split: true,
   });
 
@@ -32,7 +32,7 @@ export const toggleMark = (editor, format) => {
 
 export const isBlockActive = (editor, format) => {
   const [match] = Editor.nodes(editor, {
-    match: n => n.type === format,
+    match: (n) => n.type === format,
   });
 
   return !!match;

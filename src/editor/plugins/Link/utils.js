@@ -1,13 +1,13 @@
 import { Editor, Transforms, Range } from 'slate';
 import { LINK } from './constants';
 
-export const isLinkActive = editor => {
-  const [link] = Editor.nodes(editor, { match: n => n.type === LINK });
+export const isLinkActive = (editor) => {
+  const [link] = Editor.nodes(editor, { match: (n) => n.type === LINK });
   return !!link;
 };
 
-export const unwrapLink = editor => {
-  Transforms.unwrapNodes(editor, { match: n => n.type === LINK });
+export const unwrapLink = (editor) => {
+  Transforms.unwrapNodes(editor, { match: (n) => n.type === LINK });
 };
 
 export const wrapLink = (editor, url) => {

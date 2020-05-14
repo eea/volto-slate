@@ -2,10 +2,10 @@ import isHotkey from 'is-hotkey';
 import cx from 'classnames';
 
 import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 
 import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
@@ -18,13 +18,7 @@ const SlateEditor = ({ selected, value, onChange }) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const renderElement = useCallback((props) => {
-    //console.log('renderElement called', { props });
-
-    let el = <Element {...props} />;
-
-    //console.log('renderElement after Element creation', el);
-
-    return el;
+    return <Element {...props} />;
   }, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
 
@@ -48,13 +42,15 @@ const SlateEditor = ({ selected, value, onChange }) => {
     [slate.decorators],
   );
 
+  useEffect(() => {
+    ReactEditor.focus(editor);
+  }, []);
+
   function handleOnToggle() {
     setShowToolbar(!showToolbar);
   }
 
   const shouldShowMasterToggleButton = true;
-
-  //console.log('editor value', value);
 
   return (
     <div

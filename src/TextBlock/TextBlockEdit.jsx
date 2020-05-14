@@ -14,6 +14,8 @@ const TextBlockEdit = ({
   pathname,
   block,
   onChangeBlock,
+  onDeleteBlock,
+  onFocusPreviousBlock,
   ...props
 }) => {
   const { value } = data;
@@ -29,6 +31,11 @@ const TextBlockEdit = ({
         });
       }}
       selected={selected}
+      onFirstPositionBackspace={() => {
+        if (plaintext_serialize(value || []).length === 0) {
+          onDeleteBlock(id, true);
+        }
+      }}
     />
   );
 };

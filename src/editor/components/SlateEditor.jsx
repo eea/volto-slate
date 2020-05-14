@@ -14,7 +14,12 @@ import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
 
-const SlateEditor = ({ selected, value, onChange }) => {
+const SlateEditor = ({
+  selected,
+  value,
+  onChange,
+  onFirstPositionBackspace,
+}) => {
   const [showToolbar, setShowToolbar] = useState(false);
 
   const renderElement = useCallback((props) => {
@@ -81,11 +86,26 @@ const SlateEditor = ({ selected, value, onChange }) => {
           placeholder="Enter some rich text…"
           spellCheck
           onKeyDown={(event) => {
+            let wasHotkey = false;
+
             for (const hotkey in slate.hotkeys) {
               if (isHotkey(hotkey, event)) {
                 event.preventDefault();
                 const mark = slate.hotkeys[hotkey];
                 toggleMark(editor, mark);
+                wasHotkey = true;
+              }
+            }
+
+            if (!wasHotkey && typeof onFirstPositionBackspace === 'function') {
+              const domSelection = window.getSelection();
+              const domRange = domSelection.getRangeAt(0);
+              const start = domRange.startOffset;
+              const end = domRange.endOffset;
+
+              if (event.key === 'Backspace' && start === end && start === 0) {
+                event.preventDefault();
+                onFirstPositionBackspace();
               }
             }
           }}

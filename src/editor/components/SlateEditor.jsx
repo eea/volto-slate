@@ -70,25 +70,26 @@ const SlateEditor = ({
 
   const toggleAddNewBlock = () => setAddNewBlockOpened(!addNewBlockOpened);
 
-  const handleClickOutside = (e) => {
-    if (outerDivRef.current && doesNodeContainClick(outerDivRef.current, e))
-      return;
-    setAddNewBlockOpened(false);
-  };
-
+  // const handleClickOutside = (e) => {
+  //   if (outerDivRef.current && doesNodeContainClick(outerDivRef.current, e))
+  //     return;
+  //   setAddNewBlockOpened(false);
+  // };
+  //
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside, false);
+    // document.addEventListener('mousedown', handleClickOutside, false);
+    if (selected) {
+      ReactEditor.focus(editor);
+    } else {
+      ReactEditor.blur(editor);
+    }
 
     // TODO: replace: UNSAFE_componentWillReceiveProps(nextProps)
 
-    return function () {
-      document.removeEventListener('mousedown', handleClickOutside, false);
-    };
-  });
-
-  useEffect(() => {
-    ReactEditor.focus(editor);
-  }, []);
+    // return function () {
+    //   document.removeEventListener('mousedown', handleClickOutside, false);
+    // };
+  }, [editor, selected]);
 
   function handleOnToggle() {
     setShowToolbar(!showToolbar);

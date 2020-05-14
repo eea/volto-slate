@@ -52,7 +52,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
     }px`;
   });
 
-  console.log('Toolbar uses toolbarButtons which is', toolbarButtons);
+  // console.log('Toolbar uses toolbarButtons which is', toolbarButtons);
 
   return (
     <Portal>

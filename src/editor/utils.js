@@ -42,3 +42,18 @@ export const isMarkActive = (editor, format) => {
   const marks = Editor.marks(editor);
   return marks ? marks[format] === true : false;
 };
+
+export function getDOMSelectionInfo() {
+  const domSelection = window.getSelection();
+  const domRange = domSelection.getRangeAt(0);
+  const start = domRange.startOffset;
+  const end = domRange.endOffset;
+  const currentCursorPosition = start;
+  return {
+    domSelection,
+    domRange,
+    start,
+    end,
+    currentCursorPosition,
+  };
+}

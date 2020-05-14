@@ -19,27 +19,18 @@ import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
-import { Icon, BlockChooser } from '@plone/volto/components';
-import { plaintext_serialize } from '../../editor/render';
-
-import { Button } from 'semantic-ui-react';
-import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
-
-import addSVG from '@plone/volto/icons/circle-plus.svg';
 
 const SlateEditor = ({
   selected,
   value,
   onChange,
-  onFirstPositionBackspace,
   data,
-  detached,
-  onMutateBlock,
-  onFocusPreviousBlock,
   block,
+  useExpandToolbar,
+  placeholder,
+  onKeyDown,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
-  const [addNewBlockOpened, setAddNewBlockOpened] = useState(false);
 
   const outerDivRef = useRef(null);
 
@@ -68,34 +59,13 @@ const SlateEditor = ({
     [slate.decorators],
   );
 
-  const toggleAddNewBlock = () => setAddNewBlockOpened(!addNewBlockOpened);
-
-  // const handleClickOutside = (e) => {
-  //   if (outerDivRef.current && doesNodeContainClick(outerDivRef.current, e))
-  //     return;
-  //   setAddNewBlockOpened(false);
-  // };
-  //
   useEffect(() => {
-    // document.addEventListener('mousedown', handleClickOutside, false);
     if (selected) {
       ReactEditor.focus(editor);
     } else {
       ReactEditor.blur(editor);
     }
-
-    // TODO: replace: UNSAFE_componentWillReceiveProps(nextProps)
-
-    // return function () {
-    //   document.removeEventListener('mousedown', handleClickOutside, false);
-    // };
   }, [editor, selected]);
-
-  function handleOnToggle() {
-    setShowToolbar(!showToolbar);
-  }
-
-  const shouldShowMasterToggleButton = true;
 
   return (
     <div
@@ -105,9 +75,9 @@ const SlateEditor = ({
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         {!showToolbar && (
           <Toolbar
-            onToggle={handleOnToggle}
+            onToggle={() => setShowToolbar(!showToolbar)}
             mainToolbarShown={showToolbar}
-            showMasterToggleButton={shouldShowMasterToggleButton}
+            showMasterToggleButton={useExpandToolbar}
           />
         )}
         <div
@@ -115,8 +85,8 @@ const SlateEditor = ({
         >
           {selected && showToolbar && (
             <ExpandedToolbar
-              showMasterToggleButton={shouldShowMasterToggleButton}
-              onToggle={handleOnToggle}
+              showMasterToggleButton={useExpandToolbar}
+              onToggle={() => setShowToolbar(!showToolbar())}
               mainToolbarShown={showToolbar}
             />
           )}
@@ -124,7 +94,7 @@ const SlateEditor = ({
         <Editable
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          placeholder="Enter some rich text…"
+          placeholder={placeholder}
           spellCheck
           onKeyDown={(event) => {
             let wasHotkey = false;
@@ -142,67 +112,9 @@ const SlateEditor = ({
               return;
             }
 
-            const domSelection = window.getSelection();
-            const domRange = domSelection.getRangeAt(0);
-            const start = domRange.startOffset;
-            const end = domRange.endOffset;
-
-            if (typeof onFirstPositionBackspace === 'function') {
-              if (event.key === 'Backspace' && start === end && start === 0) {
-                event.preventDefault();
-                onFirstPositionBackspace();
-                return;
-              }
-            }
-
-            if (event.key === 'Up') {
-              // TODO: what if the cursor is on the first line, not on the first char?
-              // const selectionState = this.state.editorState.getSelection();
-              // const currentCursorPosition = selectionState.getStartOffset();
-
-              const currentCursorPosition = start;
-
-              if (currentCursorPosition === 0) {
-                // TODO: where do I get the `node` from?
-                //onFocusPreviousBlock(block, node);
-
-                event.preventDefault();
-                return;
-              }
-            }
-
-            if (event.key === 'Down') {
-              // TODO: translate this Draft.js code to Slate.js code:
-              // const selectionState = this.state.editorState.getSelection();
-              // const { editorState } = this.state;
-              // const currentCursorPosition = selectionState.getStartOffset();
-              // const blockLength = editorState
-              //   .getCurrentContent()
-              //   .getFirstBlock()
-              //   .getLength();
-
-              // if (currentCursorPosition === blockLength) {
-              //   this.props.onFocusNextBlock(this.props.block, this.node);
-              // }
-
-              event.preventDefault();
-              return;
-            }
+            return onKeyDown(editor, event);
           }}
         />
-        {!detached && plaintext_serialize(value || initialValue).length === 0 && (
-          <Button
-            basic
-            icon
-            onClick={toggleAddNewBlock}
-            className="block-add-button"
-          >
-            <Icon name={addSVG} className="block-add-button" size="24px" />
-          </Button>
-        )}
-        {addNewBlockOpened && (
-          <BlockChooser onMutateBlock={onMutateBlock} currentBlock={block} />
-        )}
       </Slate>
     </div>
   );

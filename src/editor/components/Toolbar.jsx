@@ -26,11 +26,6 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
     const el = ref.current;
     const { selection } = editor;
 
-    if (!el) {
-      console.log('no el');
-      return;
-    }
-
     if (
       !selection ||
       !ReactEditor.isFocused(editor) ||

@@ -75,7 +75,7 @@ const SlateEditor = ({
           {selected && showToolbar && (
             <ExpandedToolbar
               showMasterToggleButton={useExpandToolbar}
-              onToggle={() => setShowToolbar(!showToolbar())}
+              onToggle={() => setShowToolbar(!showToolbar)}
               mainToolbarShown={showToolbar}
             />
           )}

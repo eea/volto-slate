@@ -92,10 +92,6 @@ export default TextBlockEdit;
 // import addSVG from '@plone/volto/icons/circle-plus.svg';
 // See https://docs.voltocms.com/blocks/anatomy/
 //
-//{
-//
-//
-// }
 
 //
 // if (typeof onFirstPositionBackspace === 'function') {

@@ -6,16 +6,33 @@ import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 
 const TextBlockEdit = (props) => {
-  const { data, selected, block, onChangeBlock } = props;
+  const {
+    data,
+    selected,
+    block,
+    onChangeBlock,
+    onFocusNextBlock,
+    blockNode,
+  } = props;
   const { value } = data;
 
   const keyDownHandlers = useMemo(() => {
     return {
-      Up: ({ editor, event, selection }) => {},
+      ArrowUp: ({ editor, event, selection }) => {},
 
-      Down: ({ editor, event }) => {},
+      ArrowDown: ({ editor, event, selection }) => {
+        event.preventDefault();
+
+        // TODO: do this only if the cursor is on the last displayed line
+        // (it can be one big paragraph with many displayed lines):
+
+        console.log('ArrowDown props', props);
+        onFocusNextBlock(block, blockNode.current);
+      },
 
       Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
+        event.preventDefault();
+
         const { start, end } = selection;
         const { value } = data;
 

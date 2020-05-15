@@ -45,10 +45,18 @@ export const isMarkActive = (editor, format) => {
 
 export function getDOMSelectionInfo() {
   const domSelection = window.getSelection();
-  const domRange = domSelection.getRangeAt(0);
-  const start = domRange.startOffset;
-  const end = domRange.endOffset;
+
+  let domRange;
+  if (domSelection.rangeCount > 0) {
+    domRange = domSelection.getRangeAt(0);
+  } else {
+    domRange = null;
+  }
+
+  const start = domRange?.startOffset;
+  const end = domRange?.endOffset;
   const currentCursorPosition = start;
+
   return {
     domSelection,
     domRange,

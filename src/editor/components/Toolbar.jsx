@@ -2,11 +2,11 @@ import React, { Fragment, useRef, useEffect } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import cx from 'classnames';
+import { Portal } from 'react-portal';
 
 import { settings } from '~/config';
 import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
-import { Portal } from 'react-portal';
 
 const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
   const ref = useRef();
@@ -46,8 +46,6 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
       rect.left + window.pageXOffset - el.offsetWidth / 2 + rect.width / 2
     }px`;
   });
-
-  // console.log('Toolbar uses toolbarButtons which is', toolbarButtons);
 
   return (
     <Portal>

@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import cx from 'classnames';
-import ToolbarToggleButton from './ToolbarToggleButton';
 
+import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
 import { settings } from '~/config';
 
@@ -19,11 +19,6 @@ const ExpandedToolbar = React.forwardRef(
     }
 
     const { expandedToolbarButtons, availableButtons } = settings.slate;
-
-    // console.log(
-    //   'ExpandedToolbar uses expandedToolbarButtons which is',
-    //   expandedToolbarButtons,
-    // );
 
     return (
       <BasicToolbar {...props} className={className} ref={ref}>

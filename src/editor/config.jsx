@@ -45,11 +45,6 @@ export let toolbarButtons = [...defaultToolbarButtons];
 
 export let expandedToolbarButtons = [...defaultToolbarButtons];
 
-// console.log(
-//   'Reevaluating config file with expandedToolbarButtons:',
-//   expandedToolbarButtons,
-// );
-
 export const decorators = [];
 
 export const hotkeys = {
@@ -57,7 +52,7 @@ export const hotkeys = {
   'mod+i': 'italic',
   'mod+u': 'underline',
   'mod+`': 'code',
-  //'mod+&': 'mark-red',
+  // TODO: more hotkeys, including from plugins!
 };
 
 export const listTypes = ['numbered-list', 'bulleted-list'];

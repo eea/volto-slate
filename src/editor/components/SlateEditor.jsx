@@ -1,17 +1,9 @@
 import isHotkey from 'is-hotkey';
 import cx from 'classnames';
-
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-
-import React, {
-  useMemo,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 
 import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
@@ -31,8 +23,6 @@ const SlateEditor = ({
   onKeyDown,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
-
-  const outerDivRef = useRef(null);
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
@@ -69,7 +59,6 @@ const SlateEditor = ({
 
   return (
     <div
-      ref={outerDivRef}
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>

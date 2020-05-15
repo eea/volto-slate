@@ -1,5 +1,7 @@
-import BlockButton from '../../components/BlockButton';
 import React from 'react';
+
+import BlockButton from '../../components/BlockButton';
+
 import calloutSVG from '@plone/volto/icons/megaphone.svg';
 
 export const CalloutElement = ({ attributes, children, element }) => {

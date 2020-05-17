@@ -11,7 +11,6 @@
   "dependencies": {
     "classnames": "2.2.6",
     "is-url": "1.2.4",
-    "react-portal": "4.2.1",
     "slate": "^0.58.0",
     "slate-history": "^0.58.0",
     "slate-hyperscript": "^0.58.0",

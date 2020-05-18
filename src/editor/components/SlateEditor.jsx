@@ -5,7 +5,7 @@ import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useMemo, useCallback, useState, useEffect } from 'react';
 
-import { initialValue } from '../constants';
+// import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
@@ -46,16 +46,23 @@ const SlateEditor = ({
         (acc, apply) => apply(acc),
         withHistory(withReact(createEditor())),
       ),
-    [slate.decorators],
+    [slate.decorators, block],
   );
 
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
     } else {
-      ReactEditor.blur(editor);
+      // ReactEditor.blur(editor);
     }
-  }, [editor, selected]);
+  }, [editor, selected, block]);
+
+  const initialValue = [
+    {
+      type: 'paragraph',
+      children: [{ text: '' }],
+    },
+  ];
 
   return (
     <div
@@ -85,6 +92,7 @@ const SlateEditor = ({
           renderLeaf={renderLeaf}
           placeholder={placeholder}
           spellCheck
+          readOnly={!selected}
           onKeyDown={(event) => {
             let wasHotkey = false;
 

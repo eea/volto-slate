@@ -6,41 +6,26 @@ import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 
 const TextBlockEdit = (props) => {
-  const {
-    data,
-    selected,
-    block,
-    onChangeBlock,
-    onFocusNextBlock,
-    blockNode,
-  } = props;
+  const { data, selected, block, onChangeBlock } = props;
   const { value } = data;
 
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {},
 
-      ArrowDown: ({ editor, event, selection }) => {
-        event.preventDefault();
-
-        // TODO: do this only if the cursor is on the last displayed line
-        // (it can be one big paragraph with many displayed lines):
-
-        console.log('ArrowDown props', props);
-        onFocusNextBlock(block, blockNode.current);
-      },
+      ArrowDown: ({ editor, event, selection }) => {},
 
       Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
-        event.preventDefault();
-
         const { start, end } = selection;
         const { value } = data;
 
         if (start === end && start === 0) {
           if (plaintext_serialize(value || []).length === 0) {
-            onDeleteBlock(id, true);
+            event.preventDefault();
+            return onDeleteBlock(id, true);
           }
         }
+        return false;
       },
 
       ...settings.slate?.keyDownHandlers,
@@ -148,3 +133,48 @@ export default TextBlockEdit;
 //   document.removeEventListener('mousedown', handleClickOutside, false);
 // };
 //
+//
+// console.log('editor', editor);
+// console.log('arrowup');
+//
+// // editor.deselect();
+//
+// if (window.getSelection) {
+//   if (window.getSelection().empty) {
+//     // Chrome
+//     window.getSelection().empty();
+//   } else if (window.getSelection().removeAllRanges) {
+//     // Firefox
+//     window.getSelection().removeAllRanges();
+//   }
+// } else if (document.selection) {
+//   // IE?
+//   document.selection.empty();
+// }
+// onFocusPreviousBlock(block, blockNode.current);
+// editor.deselect();
+// if (window.getSelection) {
+//   if (window.getSelection().empty) {
+//     // Chrome
+//     window.getSelection().empty();
+//   } else if (window.getSelection().removeAllRanges) {
+//     // Firefox
+//     window.getSelection().removeAllRanges();
+//   }
+// } else if (document.selection) {
+//   // IE?
+//   document.selection.empty();
+// }
+//
+// console.log('arrowdown', editor, event, selection);
+// const { currentCursorPosition, start, end } = selection;
+// if (currentCursorPosition === start && start === end) {
+//   onFocusNextBlock(block, blockNode.current);
+// }
+// event.preventDefault();
+//
+// // TODO: do this only if the cursor is on the last displayed line
+// // (it can be one big paragraph with many displayed lines):
+//
+// console.log('ArrowDown props', props);
+// onFocusNextBlock(block, blockNode.current);

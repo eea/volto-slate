@@ -25,7 +25,7 @@ const TextBlockEdit = (props) => {
             return onDeleteBlock(id, true);
           }
         }
-        return false;
+        return true;
       },
 
       ...settings.slate?.keyDownHandlers,

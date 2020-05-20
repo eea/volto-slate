@@ -4,6 +4,7 @@ import * as slateConfig from './editor/config';
 
 import installLinkPlugin from './editor/plugins/Link';
 import installCalloutPlugin from './editor/plugins/Callout';
+import installVoltoProposals from './futurevolto/config';
 
 export function applyConfig(config) {
   config.blocks.blocksConfig.slate = {
@@ -16,7 +17,7 @@ export function applyConfig(config) {
     restricted: false,
     mostUsed: true,
     blockHasOwnFocusManagement: false,
-    sidebarTab: 1,
+    sidebarTab: 0,
     security: {
       addPermission: [],
       view: [],
@@ -29,6 +30,7 @@ export function applyConfig(config) {
 
   installLinkPlugin(config);
   installCalloutPlugin(config);
+  installVoltoProposals(config);
 
   return config;
 }

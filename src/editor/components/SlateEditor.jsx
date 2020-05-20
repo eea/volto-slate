@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useMemo, useCallback, useState, useEffect } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 
 // import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
@@ -46,7 +46,7 @@ const SlateEditor = ({
         (acc, apply) => apply(acc),
         withHistory(withReact(createEditor())),
       ),
-    [slate.decorators, block],
+    [slate.decorators],
   );
 
   React.useLayoutEffect(() => {

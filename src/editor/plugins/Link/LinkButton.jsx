@@ -5,34 +5,65 @@ import { isLinkActive, insertLink, unwrapLink } from './utils';
 
 import linkSVG from '@plone/volto/icons/link.svg';
 import unlinkSVG from '@plone/volto/icons/unlink.svg';
+import { ModalForm } from '@plone/volto/components';
+import LinkEditSchema from './schema';
 
 const LinkButton = () => {
   const editor = useSlate();
+  const [showForm, setShowForm] = React.useState(false);
+  const [data, setData] = React.useState({});
 
   const ila = isLinkActive(editor);
 
   return (
-    <Button
-      active={ila}
-      onMouseDown={(event) => {
-        event.preventDefault();
-
-        if (
-          ila &&
-          window.confirm('Are you sure that you want to remove the link?')
-        ) {
-          unwrapLink(editor);
-          return;
-        }
-
-        const url = window.prompt('Enter the URL of the link:');
-        if (!url) {
-          return;
-        }
-        insertLink(editor, url);
-      }}
-      icon={ila ? unlinkSVG : linkSVG}
-    ></Button>
+    <>
+      <ModalForm
+        open={showForm}
+        schema={LinkEditSchema}
+        title="Insert link"
+        formData={data}
+        submitLabel="Insert"
+        loading={false}
+        onSubmit={(formData) => {
+          const url = formData?.link?.external_link;
+          console.log(editor);
+          console.log('url', url);
+          if (url) insertLink(editor, url);
+          setShowForm(false);
+        }}
+        onCancel={() => setShowForm(false)}
+      />
+      <Button
+        active={ila}
+        onMouseDown={(event) => {
+          event.preventDefault();
+          // insertLink(editor, 'http://google.com');
+          if (!showForm) {
+            setShowForm(true);
+          }
+        }}
+        icon={ila ? unlinkSVG : linkSVG}
+      />
+    </>
   );
 };
+
 export default LinkButton;
+
+//onMouseDown={(event) => {
+//  event.preventDefault();
+
+//  if (
+//    ila &&
+//    window.confirm('Are you sure that you want to remove the link?')
+//  ) {
+//    unwrapLink(editor);
+//    return;
+//  }
+
+//  const url = window.prompt('Enter the URL of the link:');
+//  if (!url) {
+//    return;
+//  }
+//  insertLink(editor, url);
+//}}

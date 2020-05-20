@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Range } from 'slate';
 import SlateEditor from './../editor';
 import { getDOMSelectionInfo } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
@@ -7,12 +8,32 @@ import { SidebarPortal } from '@plone/volto/components';
 import ShortcutListing from './ShortcutListing';
 
 const TextBlockEdit = (props) => {
-  const { data, selected, block, onChangeBlock } = props;
+  const {
+    data,
+    selected,
+    block,
+    onChangeBlock,
+    onFocusPreviousBlock,
+    blockNode,
+  } = props;
+
   const { value } = data;
 
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
+        // works with both list and normal blocks
+        if (Range.isCollapsed(editor.selection)) {
+          if (
+            !editor.selection.anchor.path ||
+            editor.selection.anchor.path[0] === 0
+          ) {
+            if (editor.selection.anchor.offset === 0) {
+              onFocusPreviousBlock(block, blockNode.current);
+            }
+          }
+        }
+
         event.stopPropagation();
       },
 

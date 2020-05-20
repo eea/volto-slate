@@ -12,9 +12,13 @@ const TextBlockEdit = (props) => {
 
   const keyDownHandlers = useMemo(() => {
     return {
-      ArrowUp: ({ editor, event, selection }) => {},
+      ArrowUp: ({ editor, event, selection }) => {
+        event.stopPropagation();
+      },
 
-      ArrowDown: ({ editor, event, selection }) => {},
+      ArrowDown: ({ editor, event, selection }) => {
+        event.stopPropagation();
+      },
 
       Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
         const { start, end } = selection;

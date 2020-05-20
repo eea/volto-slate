@@ -69,7 +69,7 @@ const SlateEditor = ({
     },
   ];
 
-  // console.log('value', value);
+  console.log('value', value);
 
   return (
     <div

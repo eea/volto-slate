@@ -56,6 +56,7 @@ const Toolbar = ({
         {children}
         <ToolbarToggleButton
           className={cx({ hidden: !showMasterToggleButton })}
+          reversed={true}
           active={mainToolbarShown}
           onToggle={handleOnToggle}
         />

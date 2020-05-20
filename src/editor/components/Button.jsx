@@ -9,6 +9,10 @@ const Button = React.forwardRef(
     style = {
       ...style,
       cursor: 'pointer',
+      padding: '4px !important',
+      width: '32px',
+      height: '32px',
+      display: 'inline-block',
       color: reversed
         ? active
           ? 'white'

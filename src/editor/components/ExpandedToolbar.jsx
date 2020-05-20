@@ -29,6 +29,7 @@ const ExpandedToolbar = React.forwardRef(
         {children}
         <ToolbarToggleButton
           className={cx({ hidden: !showMasterToggleButton })}
+          reversed={false}
           active={mainToolbarShown}
           onToggle={handleOnToggle}
         />

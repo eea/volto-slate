@@ -11,6 +11,7 @@ import LinkEditSchema from './schema';
 const LinkButton = () => {
   const editor = useSlate();
   const [showForm, setShowForm] = React.useState(false);
+  const [selection, setSelection] = React.useState(null);
   const [data, setData] = React.useState({});
 
   const ila = isLinkActive(editor);
@@ -26,8 +27,7 @@ const LinkButton = () => {
         loading={false}
         onSubmit={(formData) => {
           const url = formData?.link?.external_link;
-          console.log(editor);
-          console.log('url', url);
+          editor.selection = selection;
           if (url) insertLink(editor, url);
           setShowForm(false);
         }}
@@ -36,6 +36,7 @@ const LinkButton = () => {
       <Button
         active={ila}
         onMouseDown={(event) => {
+          setSelection(editor.selection);
           event.preventDefault();
           // insertLink(editor, 'http://google.com');
           if (!showForm) {

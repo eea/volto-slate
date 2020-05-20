@@ -1,25 +1,10 @@
 import React, { useMemo } from 'react';
-
 import SlateEditor from './../editor';
 import { getDOMSelectionInfo } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
-import { Segment, List } from 'semantic-ui-react';
-
-const ShortcutListing = (props) => {
-  const { hotkeys } = settings.slate;
-  return (
-    <Segment>
-      <h3>Text editor shortcuts</h3>
-      <List>
-        {Object.entries(hotkeys).map(([shortcut, format]) => (
-          <List.Item key={shortcut}>{`${shortcut}: ${format}`}</List.Item>
-        ))}
-      </List>
-    </Segment>
-  );
-};
+import ShortcutListing from './ShortcutListing';
 
 const TextBlockEdit = (props) => {
   const { data, selected, block, onChangeBlock } = props;

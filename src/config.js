@@ -4,6 +4,7 @@ import * as slateConfig from './editor/config';
 
 import installLinkPlugin from './editor/plugins/Link';
 import installCalloutPlugin from './editor/plugins/Callout';
+import installMarkdown from './editor/plugins/Markdown';
 import installVoltoProposals from './futurevolto/config';
 
 export function applyConfig(config) {
@@ -29,6 +30,7 @@ export function applyConfig(config) {
   };
 
   installLinkPlugin(config);
+  installMarkdown(config);
   installCalloutPlugin(config);
   installVoltoProposals(config);
 

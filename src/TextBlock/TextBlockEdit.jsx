@@ -44,6 +44,12 @@ const TextBlockEdit = (props) => {
         return true;
       },
 
+      Enter: ({ event }) => {
+        // event.preventDefault();
+        event.stopPropagation();
+        return true;
+      },
+
       ...settings.slate?.keyDownHandlers,
     };
   }, []);

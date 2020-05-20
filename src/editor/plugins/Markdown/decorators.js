@@ -1,9 +1,9 @@
 import { SHORTCUTS } from './constants';
 
-import { Editor, Transforms, Range, Point } from 'slate';
+import { Editor, Transforms, Range } from 'slate';
 
 export const withShortcuts = (editor) => {
-  const { deleteBackward, insertText } = editor;
+  const { insertText } = editor;
 
   editor.insertText = (text) => {
     const { selection } = editor;
@@ -40,39 +40,6 @@ export const withShortcuts = (editor) => {
     }
 
     insertText(text);
-  };
-
-  editor.deleteBackward = (...args) => {
-    const { selection } = editor;
-
-    if (selection && Range.isCollapsed(selection)) {
-      const match = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
-
-      if (match) {
-        const [block, path] = match;
-        const start = Editor.start(editor, path);
-
-        if (
-          block.type !== 'paragraph' &&
-          Point.equals(selection.anchor, start)
-        ) {
-          Transforms.setNodes(editor, { type: 'paragraph' });
-
-          if (block.type === 'list-item') {
-            Transforms.unwrapNodes(editor, {
-              match: (n) => n.type === 'bulleted-list',
-              split: true,
-            });
-          }
-
-          return;
-        }
-      }
-
-      deleteBackward(...args);
-    }
   };
 
   return editor;

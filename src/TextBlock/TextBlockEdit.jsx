@@ -42,6 +42,7 @@ const TextBlockEdit = (props) => {
       },
 
       Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
+        console.log('backspace event');
         const { start, end } = selection;
         const { value } = data;
 

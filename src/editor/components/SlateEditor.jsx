@@ -10,7 +10,49 @@ import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
-// import { initialValue } from '../constants';
+import { Editor, Transforms, Range, Point } from 'slate';
+
+const withDelete = (editor) => {
+  const { deleteBackward } = editor;
+
+  editor.deleteBackward = (...args) => {
+    const { selection } = editor;
+
+    if (selection && Range.isCollapsed(selection)) {
+      console.log('second case');
+      const match = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      if (match) {
+        const [block, path] = match;
+        const start = Editor.start(editor, path);
+
+        if (
+          block.type !== 'paragraph' &&
+          Point.equals(selection.anchor, start)
+        ) {
+          Transforms.setNodes(editor, { type: 'paragraph' });
+
+          if (block.type === 'list-item') {
+            Transforms.unwrapNodes(editor, {
+              match: (n) => n.type === 'bulleted-list',
+              split: true,
+            });
+          }
+
+          return;
+        }
+      }
+      deleteBackward(...args);
+    } else {
+      console.log('delete', args);
+      deleteBackward(1);
+    }
+  };
+
+  return editor;
+};
 
 const SlateEditor = ({
   selected,
@@ -49,7 +91,7 @@ const SlateEditor = ({
     () =>
       (slate.decorators || []).reduce(
         (acc, apply) => apply(acc),
-        withHistory(withReact(createEditor())),
+        withDelete(withHistory(withReact(createEditor()))),
       ),
     [slate.decorators],
   );

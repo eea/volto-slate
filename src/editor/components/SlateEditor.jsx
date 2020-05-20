@@ -3,14 +3,14 @@ import cx from 'classnames';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, Fragment } from 'react';
 
-// import { initialValue } from '../constants';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
+// import { initialValue } from '../constants';
 
 const SlateEditor = ({
   selected,
@@ -23,6 +23,11 @@ const SlateEditor = ({
   onKeyDown,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
+  const {
+    expandedToolbarButtons,
+    toolbarButtons,
+    availableButtons,
+  } = settings.slate;
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
@@ -64,6 +69,8 @@ const SlateEditor = ({
     },
   ];
 
+  console.log('value', value);
+
   return (
     <div
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
@@ -74,7 +81,13 @@ const SlateEditor = ({
             onToggle={() => setShowToolbar(!showToolbar)}
             mainToolbarShown={showToolbar}
             showMasterToggleButton={useExpandToolbar}
-          />
+          >
+            {toolbarButtons.map((name, i) => (
+              <Fragment key={`${name}-${i}`}>
+                {availableButtons[name]()}
+              </Fragment>
+            ))}
+          </Toolbar>
         )}
         <div
           className={cx('toolbar-wrapper', { active: showToolbar && selected })}
@@ -84,7 +97,13 @@ const SlateEditor = ({
               showMasterToggleButton={useExpandToolbar}
               onToggle={() => setShowToolbar(!showToolbar)}
               mainToolbarShown={showToolbar}
-            />
+            >
+              {expandedToolbarButtons.map((name, i) => (
+                <Fragment key={`${name}-${i}`}>
+                  {availableButtons[name]()}
+                </Fragment>
+              ))}
+            </ExpandedToolbar>
           )}
         </div>
         <Editable

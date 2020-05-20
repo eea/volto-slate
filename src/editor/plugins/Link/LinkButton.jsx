@@ -26,9 +26,11 @@ const LinkButton = () => {
         submitLabel="Insert"
         loading={false}
         onSubmit={(formData) => {
+          console.log('formdata', formData);
           const url = formData?.link?.external_link;
+          const data = { title: formData.title };
           editor.selection = selection;
-          if (url) insertLink(editor, url);
+          if (url) insertLink(editor, url, data);
           setShowForm(false);
         }}
         onCancel={() => setShowForm(false)}
@@ -37,8 +39,6 @@ const LinkButton = () => {
         active={ila}
         onMouseDown={(event) => {
           setSelection(editor.selection);
-          event.preventDefault();
-          // insertLink(editor, 'http://google.com');
           if (!showForm) {
             setShowForm(true);
           }

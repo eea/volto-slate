@@ -14,18 +14,30 @@ import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 
 export const availableButtons = {
-  bold: <MarkButton format="bold" icon={boldIcon} />,
-  italic: <MarkButton format="italic" icon={italicIcon} />,
-  underline: <MarkButton format="underline" icon={underlineIcon} />,
-  code: <MarkButton format="code" icon={codeIcon} />,
-  'heading-two': <BlockButton format="heading-two" icon={headingIcon} />,
-  'heading-three': <BlockButton format="heading-three" icon={subheadingIcon} />,
-  blockquote: <BlockButton format="block-quote" icon={quoteIcon} />,
-  'numbered-list': (
-    <BlockButton format="numbered-list" icon={listNumberedIcon} />
+  bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
+  italic: (props) => (
+    <MarkButton format="italic" icon={italicIcon} {...props} />
   ),
-  'bulleted-list': <BlockButton format="bulleted-list" icon={listBulletIcon} />,
-  separator: <Separator />,
+  underline: (props) => (
+    <MarkButton format="underline" icon={underlineIcon} {...props} />
+  ),
+  code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
+  'heading-two': (props) => (
+    <BlockButton format="heading-two" icon={headingIcon} {...props} />
+  ),
+  'heading-three': (props) => (
+    <BlockButton format="heading-three" icon={subheadingIcon} {...props} />
+  ),
+  blockquote: (props) => (
+    <BlockButton format="block-quote" icon={quoteIcon} {...props} />
+  ),
+  'numbered-list': (props) => (
+    <BlockButton format="numbered-list" icon={listNumberedIcon} {...props} />
+  ),
+  'bulleted-list': (props) => (
+    <BlockButton format="bulleted-list" icon={listBulletIcon} />
+  ),
+  separator: (props) => <Separator />,
 };
 
 export const defaultToolbarButtons = [

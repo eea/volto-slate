@@ -1,13 +1,19 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import cx from 'classnames';
 
 import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
-import { settings } from '~/config';
 
 const ExpandedToolbar = React.forwardRef(
   (
-    { className, showMasterToggleButton, onToggle, mainToolbarShown, ...props },
+    {
+      className,
+      showMasterToggleButton,
+      onToggle,
+      mainToolbarShown,
+      children,
+      ...props
+    },
     ref,
   ) => {
     if (typeof showMasterToggleButton !== 'boolean') {
@@ -18,13 +24,9 @@ const ExpandedToolbar = React.forwardRef(
       onToggle();
     }
 
-    const { expandedToolbarButtons, availableButtons } = settings.slate;
-
     return (
       <BasicToolbar {...props} className={className} ref={ref}>
-        {expandedToolbarButtons.map((name, i) => (
-          <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
-        ))}
+        {children}
         <ToolbarToggleButton
           className={cx({ hidden: !showMasterToggleButton })}
           active={mainToolbarShown}

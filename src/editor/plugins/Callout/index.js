@@ -17,7 +17,7 @@ export default function install(config) {
   const slate = config.settings.slate || {};
   config.settings.slate = slate;
 
-  slate.availableButtons.callout = (
+  slate.availableButtons.callout = (props) => (
     <BlockButton icon={calloutSVG} format="callout" />
   );
 

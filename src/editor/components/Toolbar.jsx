@@ -1,18 +1,21 @@
-import React, { Fragment, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import cx from 'classnames';
 import { Portal } from 'react-portal';
 
-import { settings } from '~/config';
 import ToolbarToggleButton from './ToolbarToggleButton';
 import BasicToolbar from './BasicToolbar';
 
-const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
+const Toolbar = ({
+  mainToolbarShown,
+  onToggle,
+  showMasterToggleButton,
+  children,
+}) => {
   const ref = useRef();
 
   const editor = useSlate();
-  const { toolbarButtons, availableButtons } = settings.slate;
 
   if (typeof showMasterToggleButton !== 'boolean') {
     showMasterToggleButton = true;
@@ -50,9 +53,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, showMasterToggleButton }) => {
   return (
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
-        {toolbarButtons.map((name, i) => (
-          <Fragment key={`${name}-${i}`}>{availableButtons[name]}</Fragment>
-        ))}
+        {children}
         <ToolbarToggleButton
           className={cx({ hidden: !showMasterToggleButton })}
           active={mainToolbarShown}

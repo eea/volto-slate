@@ -56,7 +56,13 @@ const withDelete = (editor) => {
  * On insert break at the start of an empty block in types,
  * replace it with a new paragraph.
  */
-const withBreakEmptyReset = ({ types, typeP }) => (editor) => {
+const withBreakEmptyReset = ({
+  onAddBlock,
+  onSelectBlock,
+  newBlockIndex,
+  types,
+  typeP,
+}) => (editor) => {
   const { insertBreak } = editor;
 
   editor.insertBreak = () => {
@@ -79,6 +85,12 @@ const withBreakEmptyReset = ({ types, typeP }) => (editor) => {
           Transforms.setNodes(editor, { type: typeP });
           Transforms.unwrapNodes(editor, {}); // TODO: Slate bug here, I must pass an empty object; fill issue
 
+          console.log('AAA', newBlockIndex);
+          // onSelectBlock(
+          //   //this.props.onAddBlock('text', this.props.index + 1),
+          //   onAddBlock('slate', newBlockIndex),
+          // );
+
           return;
         }
       }
@@ -99,10 +111,14 @@ const SlateEditor = ({
   useExpandToolbar,
   placeholder,
   onKeyDown,
+  properties,
+  onAddBlock,
+  onSelectBlock,
+  ...props
 }) => {
-  if (selected) {
-    console.log('value changed', value);
-  }
+  // if (selected) {
+  //   console.log('value changed', value);
+  // }
 
   const [showToolbar, setShowToolbar] = useState(false);
   const {
@@ -129,17 +145,36 @@ const SlateEditor = ({
   //
   //
 
-  const editor = useMemo(
-    () =>
-      (slate.decorators || []).reduce(
-        (acc, apply) => apply(acc),
-        withBreakEmptyReset({
-          types: ['bulleted-list', 'numbered-list'],
-          typeP: 'paragraph',
-        })(withDelete(withHistory(withReact(createEditor())))),
-      ),
-    [slate.decorators],
-  );
+  const editor = useMemo(() => {
+    console.log(props.index);
+
+    return (slate.decorators || []).reduce(
+      (acc, apply) => apply(acc),
+      withBreakEmptyReset({
+        types: ['bulleted-list', 'numbered-list'],
+        typeP: 'paragraph',
+        newBlockIndex: props.index, // properties.blocks.indexOf(properties['@id']) + 1,
+        onAddBlock: onAddBlock,
+        onSelectBlock: onSelectBlock,
+      })(withDelete(withHistory(withReact(createEditor())))),
+    );
+  }, [slate.decorators]);
+
+  // const editor = useMemo(() => {
+  //   //console.log('index is', props.index, props);
+
+  //   return (slate.decorators || []).reduce(
+  //     (acc, apply) => apply(acc),
+  //     withBreakEmptyReset({
+  //       types: ['bulleted-list', 'numbered-list'],
+  //       typeP: 'paragraph',
+  //       newBlockIndex: props.index, // properties.blocks.indexOf(properties['@id']) + 1,
+  //       onAddBlock: onAddBlock,
+  //       onSelectBlock: onSelectBlock,
+  //     })(withDelete(withHistory(withReact(createEditor())))),
+  //   );
+  // }, [slate.decorators]);
+
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);

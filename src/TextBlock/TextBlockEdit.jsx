@@ -15,7 +15,10 @@ const TextBlockEdit = (props) => {
     onChangeBlock,
     onFocusPreviousBlock,
     onFocusNextBlock,
+    onAddBlock,
+    onSelectBlock,
     blockNode,
+    properties,
   } = props;
 
   const { value } = data;
@@ -67,6 +70,17 @@ const TextBlockEdit = (props) => {
         const { value } = data;
 
         if (start === end && start === 0) {
+          // dc selectia e colapsata
+          // - pune blocul curent la sf blcului anterior (concat arrays)
+          //    - verifica daca bocul anterior este compatibil (properties?)
+          //    - get the previous block as a variable (properties)
+          //    - find the method that sets that block's value (onChangeBlock)
+          //    - find the method that gets that block's value (properties)
+          //    - this block's value is `value`/`data`
+          // - sterge blocul curent (facut mai jos)
+
+          // - bugul rezolva fals: onAddBlock prop
+
           if (plaintext_serialize(value || []).length === 0) {
             event.preventDefault();
             return onDeleteBlock(id, true);
@@ -92,6 +106,9 @@ const TextBlockEdit = (props) => {
         <ShortcutListing />
       </SidebarPortal>
       <SlateEditor
+        properties={properties}
+        onAddBlock={onAddBlock}
+        onSelectBlock={onSelectBlock}
         value={value}
         data={data}
         block={block}

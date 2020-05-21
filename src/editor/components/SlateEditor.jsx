@@ -10,7 +10,7 @@ import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
 import { settings } from '~/config';
-import { Editor, Transforms, Range, Point } from 'slate';
+import { Editor, Transforms, Range, Point, Node } from 'slate';
 
 const withDelete = (editor) => {
   const { deleteBackward } = editor;
@@ -55,6 +55,44 @@ const withDelete = (editor) => {
   return editor;
 };
 
+/**
+ * On insert break at the start of an empty block in types,
+ * replace it with a new paragraph.
+ */
+const withBreakEmptyReset = ({ types, typeP }) => (editor) => {
+  const { insertBreak } = editor;
+
+  editor.insertBreak = () => {
+    const currentNodeEntry = Editor.above(editor, {
+      match: (n) => Editor.isBlock(editor, n),
+    });
+
+    if (currentNodeEntry) {
+      const [currentNode] = currentNodeEntry;
+
+      if (Node.string(currentNode).length === 0) {
+        const parent = Editor.above(editor, {
+          match: (n) =>
+            types.includes(
+              typeof n.type === 'undefined' ? n.type : n.type.toString(),
+            ),
+        });
+
+        if (parent) {
+          Transforms.unwrapNodes(editor); // Slate bug here (?)
+          Transforms.setNodes(editor, { type: typeP });
+
+          return;
+        }
+      }
+    }
+
+    insertBreak();
+  };
+
+  return editor;
+};
+
 const SlateEditor = ({
   selected,
   value,
@@ -65,6 +103,8 @@ const SlateEditor = ({
   placeholder,
   onKeyDown,
 }) => {
+  console.log('value changed', value);
+
   const [showToolbar, setShowToolbar] = useState(false);
   const {
     expandedToolbarButtons,
@@ -89,11 +129,15 @@ const SlateEditor = ({
   // https://docs.slatejs.org/concepts/06-editor
   //
   //
+
   const editor = useMemo(
     () =>
       (slate.decorators || []).reduce(
         (acc, apply) => apply(acc),
-        withDelete(withHistory(withReact(createEditor()))),
+        withBreakEmptyReset({
+          types: ['bulleted-list', 'numbered-list'],
+          typeP: 'paragraph',
+        })(withDelete(withHistory(withReact(createEditor())))),
       ),
     [slate.decorators],
   );

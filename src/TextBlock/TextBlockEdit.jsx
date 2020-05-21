@@ -38,7 +38,12 @@ const TextBlockEdit = (props) => {
       Tab: ({ editor, event, selection }) => {
         event.preventDefault();
         event.stopPropagation();
-        onFocusNextBlock(block, blockNode.current);
+
+        if (event.shiftKey) {
+          onFocusPreviousBlock(block, blockNode.current);
+        } else {
+          onFocusNextBlock(block, blockNode.current);
+        }
       },
 
       ArrowDown: ({ editor, event, selection }) => {

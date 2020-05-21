@@ -18,6 +18,8 @@ const TextBlockEdit = (props) => {
     blockNode,
   } = props;
 
+  console.log('props', props);
+
   const { value } = data;
 
   const keyDownHandlers = useMemo(() => {

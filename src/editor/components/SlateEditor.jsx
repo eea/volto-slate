@@ -76,7 +76,7 @@ const withBreakEmptyReset = ({ types, typeP }) => (editor) => {
         });
 
         if (parent) {
-          Transforms.unwrapNodes(editor); // Slate bug here (?)
+          Transforms.unwrapNodes(editor, {}); // Slate bug here, I must pass an empty object
           Transforms.setNodes(editor, { type: typeP });
 
           return;

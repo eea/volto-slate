@@ -35,6 +35,12 @@ const TextBlockEdit = (props) => {
         }
       },
 
+      Tab: ({ editor, event, selection }) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onFocusNextBlock(block, blockNode.current);
+      },
+
       ArrowDown: ({ editor, event, selection }) => {
         if (Range.isCollapsed(editor.selection)) {
           const anchor = editor.selection?.anchor || {};

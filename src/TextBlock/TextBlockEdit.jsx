@@ -22,15 +22,6 @@ const TextBlockEdit = (props) => {
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
-        // works with both list and normal blocks
-
-        console.log('event', event);
-        // event.stopImmediatePropagation();
-        // event.preventDefault();
-        console.log('up', selection, editor);
-        // if (!selection) {
-        //   return onFocusPreviousBlock(block, blockNode.current);
-        // }
         if (Range.isCollapsed(editor.selection)) {
           if (
             !editor.selection.anchor.path ||

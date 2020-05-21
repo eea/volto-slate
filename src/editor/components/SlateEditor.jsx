@@ -97,11 +97,10 @@ const SlateEditor = ({
       ),
     [slate.decorators],
   );
-  // React.useLayoutEffect(() => {
   React.useLayoutEffect(() => {
-    console.log('selected', selected);
     if (selected) {
       ReactEditor.focus(editor);
+
       const sel = window.getSelection();
       sel.collapse(
         sel.focusNode,
@@ -111,9 +110,9 @@ const SlateEditor = ({
         sel.focusNode,
         sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
       );
-    } else {
-      // ReactEditor.blur(editor);
+      // }, 100);
     }
+    return () => ReactEditor.blur(editor);
   }, [editor, selected, block]);
 
   const initialValue = [
@@ -158,6 +157,7 @@ const SlateEditor = ({
             </ExpandedToolbar>
           )}
         </div>
+        {/* block */}
         <Editable
           readOnly={!selected}
           renderElement={renderElement}

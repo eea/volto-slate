@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Range, Editor } from 'slate';
+import { Range, Node, Editor } from 'slate';
 import SlateEditor from './../editor';
 import { getDOMSelectionInfo } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
@@ -36,21 +36,22 @@ const TextBlockEdit = (props) => {
       },
 
       ArrowDown: ({ editor, event, selection }) => {
-        const end = Editor.end(editor, editor.children);
-        console.log('end', end);
+        //const end = Editor.end(editor, editor.children);
 
         // daca suntem pe ultimul block
         // daca suntem pe ultimul copil din block
         // daca suntem la capatul selectiei din acel block
         if (Range.isCollapsed(editor.selection)) {
           const anchor = editor.selection?.anchor || {};
-          const { path } = anchor;
-          console.log('path', anchor);
 
-          if (!path || path[0] === 0) {
-            if (anchor.offset === 0) {
-              onFocusNextBlock(block, blockNode.current);
-            }
+          // the last node in the editor
+          let n = Node.last(editor, []);
+
+          if (
+            Node.get(editor, anchor.path) === n[0] &&
+            anchor.offset === n[0].text.length
+          ) {
+            onFocusNextBlock(block, blockNode.current);
           }
         }
       },

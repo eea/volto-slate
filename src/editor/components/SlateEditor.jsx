@@ -17,10 +17,8 @@ const withDelete = (editor) => {
 
   editor.deleteBackward = (...args) => {
     const { selection } = editor;
-    // console.log('selection', selection);
 
     if (selection && Range.isCollapsed(selection)) {
-      // console.log('second case');
       const match = Editor.above(editor, {
         match: (n) => Editor.isBlock(editor, n),
       });
@@ -47,7 +45,6 @@ const withDelete = (editor) => {
       }
       deleteBackward(...args);
     } else {
-      console.log('delete', args);
       deleteBackward(1);
     }
   };

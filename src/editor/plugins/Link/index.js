@@ -1,16 +1,7 @@
 import LinkButton from './LinkButton';
 import React from 'react';
 import { withLinks } from './decorators';
-
-export const LinkElement = ({ attributes, children, element }) => {
-  // TODO: use the element.data to decide how to compose the link
-  const { title } = element?.data || {};
-  return (
-    <a {...attributes} href={element.url} title={title}>
-      {children}
-    </a>
-  );
-};
+import { LinkElement } from './render';
 
 export default function install(config) {
   const slate = config.settings.slate || {};

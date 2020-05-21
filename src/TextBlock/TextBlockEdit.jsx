@@ -23,6 +23,14 @@ const TextBlockEdit = (props) => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
         // works with both list and normal blocks
+
+        console.log('event', event);
+        // event.stopImmediatePropagation();
+        // event.preventDefault();
+        console.log('up', selection, editor);
+        // if (!selection) {
+        //   return onFocusPreviousBlock(block, blockNode.current);
+        // }
         if (Range.isCollapsed(editor.selection)) {
           if (
             !editor.selection.anchor.path ||
@@ -33,8 +41,6 @@ const TextBlockEdit = (props) => {
             }
           }
         }
-
-        event.stopPropagation();
       },
 
       ArrowDown: ({ editor, event, selection }) => {
@@ -63,7 +69,7 @@ const TextBlockEdit = (props) => {
 
       ...settings.slate?.keyDownHandlers,
     };
-  }, []);
+  }, [block, blockNode, onFocusPreviousBlock]);
 
   return (
     <>
@@ -82,15 +88,14 @@ const TextBlockEdit = (props) => {
             plaintext: plaintext_serialize(value || []),
           });
         }}
-        onKeyDown={(editor, event) => {
-          return keyDownHandlers[event.key]
-            ? keyDownHandlers[event.key]({
-                ...props,
-                editor,
-                event,
-                selection: getDOMSelectionInfo(),
-              })
-            : null;
+        onKeyDown={({ editor, event }) => {
+          keyDownHandlers[event.key] &&
+            keyDownHandlers[event.key]({
+              ...props,
+              editor,
+              event,
+              selection: getDOMSelectionInfo(),
+            });
         }}
         selected={selected}
         placeholder="Enter some rich text…"

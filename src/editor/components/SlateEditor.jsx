@@ -17,9 +17,10 @@ const withDelete = (editor) => {
 
   editor.deleteBackward = (...args) => {
     const { selection } = editor;
+    // console.log('selection', selection);
 
     if (selection && Range.isCollapsed(selection)) {
-      console.log('second case');
+      // console.log('second case');
       const match = Editor.above(editor, {
         match: (n) => Editor.isBlock(editor, n),
       });
@@ -87,6 +88,7 @@ const SlateEditor = ({
   // See https://docs.slatejs.org/concepts/07-plugins and
   // https://docs.slatejs.org/concepts/06-editor
   //
+  //
   const editor = useMemo(
     () =>
       (slate.decorators || []).reduce(
@@ -95,10 +97,20 @@ const SlateEditor = ({
       ),
     [slate.decorators],
   );
-
+  // React.useLayoutEffect(() => {
   React.useLayoutEffect(() => {
+    console.log('selected', selected);
     if (selected) {
       ReactEditor.focus(editor);
+      const sel = window.getSelection();
+      sel.collapse(
+        sel.focusNode,
+        sel.anchorOffset > 0 ? sel.anchorOffset - 1 : 0,
+      );
+      sel.collapse(
+        sel.focusNode,
+        sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
+      );
     } else {
       // ReactEditor.blur(editor);
     }
@@ -110,8 +122,6 @@ const SlateEditor = ({
       children: [{ text: '' }],
     },
   ];
-
-  console.log('value', value);
 
   return (
     <div
@@ -149,11 +159,10 @@ const SlateEditor = ({
           )}
         </div>
         <Editable
+          readOnly={!selected}
           renderElement={renderElement}
           renderLeaf={renderLeaf}
           placeholder={placeholder}
-          spellCheck
-          readOnly={!selected}
           onKeyDown={(event) => {
             let wasHotkey = false;
 
@@ -170,7 +179,7 @@ const SlateEditor = ({
               return;
             }
 
-            return onKeyDown(editor, event);
+            onKeyDown && onKeyDown({ editor, event });
           }}
         />
       </Slate>

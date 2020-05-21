@@ -17,7 +17,7 @@ export function applyConfig(config) {
     edit: TextBlockEdit,
     restricted: false,
     mostUsed: true,
-    blockHasOwnFocusManagement: false,
+    blockHasOwnFocusManagement: true,
     sidebarTab: 0,
     security: {
       addPermission: [],

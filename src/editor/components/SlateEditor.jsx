@@ -76,8 +76,8 @@ const withBreakEmptyReset = ({ types, typeP }) => (editor) => {
         });
 
         if (parent) {
-          Transforms.unwrapNodes(editor, {}); // Slate bug here, I must pass an empty object
           Transforms.setNodes(editor, { type: typeP });
+          Transforms.unwrapNodes(editor, {}); // TODO: Slate bug here, I must pass an empty object; fill issue
 
           return;
         }
@@ -100,7 +100,9 @@ const SlateEditor = ({
   placeholder,
   onKeyDown,
 }) => {
-  console.log('value changed', value);
+  if (selected) {
+    console.log('value changed', value);
+  }
 
   const [showToolbar, setShowToolbar] = useState(false);
   const {

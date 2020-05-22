@@ -78,8 +78,6 @@ export const breakEmptyReset = ({ types, typeP }) => (editor) => {
       match: (n) => Editor.isBlock(editor, n),
     });
 
-    console.log('currentNodeEntry', currentNodeEntry);
-
     if (currentNodeEntry) {
       const [currentNode] = currentNodeEntry;
 

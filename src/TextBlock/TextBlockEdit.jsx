@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Range, Node } from 'slate';
+import { Editor, Transforms, Range, Node } from 'slate';
 import SlateEditor from './../editor';
 import { getDOMSelectionInfo } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
@@ -22,7 +22,7 @@ const TextBlockEdit = (props) => {
     properties,
   } = props;
 
-  console.log('props', props);
+  // console.log('props', props);
 
   const { value } = data;
 
@@ -104,6 +104,44 @@ const TextBlockEdit = (props) => {
 
   //const { slate } = settings;
   const deco = React.useCallback((editor) => {
+    const { insertBreak } = editor;
+
+    editor.insertBreak = () => {
+      const types = ['bulleted-list', 'numbered-list'];
+      const typeP = 'paragraph';
+
+      const currentNodeEntry = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      if (currentNodeEntry) {
+        const [currentNode] = currentNodeEntry;
+
+        if (Node.string(currentNode).length === 0) {
+          const parent = Editor.above(editor, {
+            match: (n) =>
+              types.includes(
+                typeof n.type === 'undefined' ? n.type : n.type.toString(),
+              ),
+          });
+
+          if (parent) {
+            // do: split la selection point
+            // care este calea unde avem splitul
+            //
+            //
+            // Transforms.setNodes(editor, { type: typeP });
+            // Transforms.splitNodes(editor);
+            // Transforms.liftNodes(editor);
+
+            return;
+          }
+        }
+      }
+
+      insertBreak();
+    };
+
     return editor;
   }, []);
 

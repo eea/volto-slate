@@ -103,7 +103,14 @@ const TextBlockEdit = (props) => {
   }, [block, blockNode, onFocusPreviousBlock, onFocusNextBlock]);
 
   //const { slate } = settings;
-  const deco = (editor) => editor;
+  const deco = React.useCallback((editor) => {
+    return editor;
+  }, []);
+
+  // (editor) => editor;
+  //setTimeout(() => {
+  // onSelectBlock(onAddBlock('slate', newBlockIndex));
+  //}, 1000);
 
   return (
     <>

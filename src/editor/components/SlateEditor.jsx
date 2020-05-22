@@ -49,27 +49,22 @@ const SlateEditor = ({
   // editor. See https://docs.slatejs.org/concepts/07-plugins and
   // https://docs.slatejs.org/concepts/06-editor
 
-  const localdecos = React.useRef(decorators || []);
+  const paramdecos = React.useRef(decorators || []);
 
   const editor = React.useMemo(() => {
-    console.log('index: ', index);
-
     const raw = withHistory(withReact(createEditor()));
     const withBreakEmptyReset = breakEmptyReset({
       types: ['bulleted-list', 'numbered-list'],
       typeP: 'paragraph',
-      newBlockIndex: index + 1,
-      onAddBlock,
-      onSelectBlock,
     });
     const decos = [
       withDelete,
       withBreakEmptyReset,
       ...(slate.decorators || []),
-      ...localdecos.current,
+      ...paramdecos.current,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
-  }, [index, onAddBlock, onSelectBlock, slate.decorators]);
+  }, [slate.decorators]);
 
   React.useLayoutEffect(() => {
     if (selected) {

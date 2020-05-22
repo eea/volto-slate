@@ -21,6 +21,8 @@ const TextBlockEdit = (props) => {
     properties,
   } = props;
 
+  console.log('props', props);
+
   const { value } = data;
 
   const keyDownHandlers = useMemo(() => {

@@ -57,11 +57,11 @@ const TextBlockEdit = (props) => {
           const anchor = editor.selection?.anchor || {};
 
           // the last node in the editor
-          const n = Node.last(editor, []);
+          const [n, p] = Node.last(editor, []);
 
           if (
-            Node.get(editor, anchor.path) === n[0] &&
-            anchor.offset === n[0].text.length
+            Node.get(editor, anchor.path) === n &&
+            anchor.offset === n.text.length
           ) {
             onFocusNextBlock(block, blockNode.current);
           }
@@ -128,11 +128,9 @@ const TextBlockEdit = (props) => {
           if (parent) {
             // do: split la selection point
             // care este calea unde avem splitul
-            //
-            //
-            // Transforms.setNodes(editor, { type: typeP });
-            // Transforms.splitNodes(editor);
-            // Transforms.liftNodes(editor);
+            Transforms.setNodes(editor, { type: typeP });
+            Transforms.splitNodes(editor);
+            Transforms.liftNodes(editor);
 
             return;
           }

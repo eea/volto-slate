@@ -8,6 +8,10 @@ exports[`Button renders a button 1`] = `
     Object {
       "color": "#888",
       "cursor": "pointer",
+      "display": "inline-block",
+      "height": "32px",
+      "padding": "4px !important",
+      "width": "32px",
     }
   }
 >

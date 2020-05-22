@@ -3,104 +3,13 @@ import cx from 'classnames';
 import { createEditor } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useMemo, useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState, Fragment } from 'react';
 
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
-import { toggleMark } from '../utils';
+import { toggleMark, breakEmptyReset, withDelete } from '../utils';
 import { settings } from '~/config';
-import { Editor, Transforms, Range, Point, Node } from 'slate';
-
-const withDelete = (editor) => {
-  const { deleteBackward } = editor;
-
-  editor.deleteBackward = (...args) => {
-    const { selection } = editor;
-
-    if (selection && Range.isCollapsed(selection)) {
-      const match = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
-
-      if (match) {
-        const [block, path] = match;
-        const start = Editor.start(editor, path);
-
-        if (
-          block.type !== 'paragraph' &&
-          Point.equals(selection.anchor, start)
-        ) {
-          Transforms.setNodes(editor, { type: 'paragraph' });
-
-          if (block.type === 'list-item') {
-            Transforms.unwrapNodes(editor, {
-              match: (n) => n.type === 'bulleted-list',
-              split: true,
-            });
-          }
-
-          return;
-        }
-      }
-      deleteBackward(...args);
-    } else {
-      deleteBackward(1);
-    }
-  };
-
-  return editor;
-};
-
-/**
- * On insert break at the start of an empty block in types,
- * replace it with a new paragraph.
- */
-const withBreakEmptyReset = ({
-  onAddBlock,
-  onSelectBlock,
-  newBlockIndex,
-  types,
-  typeP,
-}) => (editor) => {
-  const { insertBreak } = editor;
-
-  editor.insertBreak = () => {
-    const currentNodeEntry = Editor.above(editor, {
-      match: (n) => Editor.isBlock(editor, n),
-    });
-
-    if (currentNodeEntry) {
-      const [currentNode] = currentNodeEntry;
-
-      if (Node.string(currentNode).length === 0) {
-        const parent = Editor.above(editor, {
-          match: (n) =>
-            types.includes(
-              typeof n.type === 'undefined' ? n.type : n.type.toString(),
-            ),
-        });
-
-        if (parent) {
-          Transforms.setNodes(editor, { type: typeP });
-          Transforms.unwrapNodes(editor, {}); // TODO: Slate bug here, I must pass an empty object; fill issue
-
-          console.log('AAA', newBlockIndex);
-          // onSelectBlock(
-          //   //this.props.onAddBlock('text', this.props.index + 1),
-          //   onAddBlock('slate', newBlockIndex),
-          // );
-
-          return;
-        }
-      }
-    }
-
-    insertBreak();
-  };
-
-  return editor;
-};
 
 const SlateEditor = ({
   selected,
@@ -114,12 +23,8 @@ const SlateEditor = ({
   properties,
   onAddBlock,
   onSelectBlock,
-  ...props
+  decorators,
 }) => {
-  // if (selected) {
-  //   console.log('value changed', value);
-  // }
-
   const [showToolbar, setShowToolbar] = useState(false);
   const {
     expandedToolbarButtons,
@@ -138,42 +43,26 @@ const SlateEditor = ({
   // use decorator to avoid confusion. A Volto Slate editor plugins adds more
   // functionality: buttons, new elements, etc.
   //
-  // Each decorator is a simple
-  // mutator function with signature: editor => editor
-  // See https://docs.slatejs.org/concepts/07-plugins and
+  // Each decorator is a simple mutator function with signature: editor =>
+  // editor. See https://docs.slatejs.org/concepts/07-plugins and
   // https://docs.slatejs.org/concepts/06-editor
-  //
-  //
 
-  const editor = useMemo(() => {
-    console.log(props.index);
+  const localdecos = React.useRef(decorators || []);
 
-    return (slate.decorators || []).reduce(
-      (acc, apply) => apply(acc),
-      withBreakEmptyReset({
-        types: ['bulleted-list', 'numbered-list'],
-        typeP: 'paragraph',
-        newBlockIndex: props.index, // properties.blocks.indexOf(properties['@id']) + 1,
-        onAddBlock: onAddBlock,
-        onSelectBlock: onSelectBlock,
-      })(withDelete(withHistory(withReact(createEditor())))),
-    );
+  const editor = React.useMemo(() => {
+    const raw = withHistory(withReact(createEditor()));
+    const withBreakEmptyReset = breakEmptyReset({
+      types: ['bulleted-list', 'numbered-list'],
+      typeP: 'paragraph',
+    });
+    const decos = [
+      withDelete,
+      withBreakEmptyReset,
+      ...(slate.decorators || []),
+      ...localdecos.current,
+    ];
+    return decos.reduce((acc, apply) => apply(acc), raw);
   }, [slate.decorators]);
-
-  // const editor = useMemo(() => {
-  //   //console.log('index is', props.index, props);
-
-  //   return (slate.decorators || []).reduce(
-  //     (acc, apply) => apply(acc),
-  //     withBreakEmptyReset({
-  //       types: ['bulleted-list', 'numbered-list'],
-  //       typeP: 'paragraph',
-  //       newBlockIndex: props.index, // properties.blocks.indexOf(properties['@id']) + 1,
-  //       onAddBlock: onAddBlock,
-  //       onSelectBlock: onSelectBlock,
-  //     })(withDelete(withHistory(withReact(createEditor())))),
-  //   );
-  // }, [slate.decorators]);
 
   React.useLayoutEffect(() => {
     if (selected) {
@@ -188,7 +77,6 @@ const SlateEditor = ({
         sel.focusNode,
         sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
       );
-      // }, 100);
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected, block]);
@@ -235,12 +123,11 @@ const SlateEditor = ({
             </ExpandedToolbar>
           )}
         </div>
-        {/* block */}
         <Editable
           readOnly={!selected}
+          placeholder={placeholder}
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          placeholder={placeholder}
           onKeyDown={(event) => {
             let wasHotkey = false;
 

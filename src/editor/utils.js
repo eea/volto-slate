@@ -1,4 +1,4 @@
-import { Transforms, Editor } from 'slate';
+import { Editor, Transforms, Range, Point, Node } from 'slate';
 import { settings } from '~/config';
 
 export const toggleBlock = (editor, format) => {
@@ -65,3 +65,81 @@ export function getDOMSelectionInfo() {
     currentCursorPosition,
   };
 }
+
+/**
+ * On insert break at the start of an empty block in types,
+ * replace it with a new paragraph.
+ */
+export const breakEmptyReset = ({ types, typeP }) => (editor) => {
+  const { insertBreak } = editor;
+
+  editor.insertBreak = () => {
+    const currentNodeEntry = Editor.above(editor, {
+      match: (n) => Editor.isBlock(editor, n),
+    });
+
+    if (currentNodeEntry) {
+      const [currentNode] = currentNodeEntry;
+
+      if (Node.string(currentNode).length === 0) {
+        const parent = Editor.above(editor, {
+          match: (n) =>
+            types.includes(
+              typeof n.type === 'undefined' ? n.type : n.type.toString(),
+            ),
+        });
+
+        if (parent) {
+          Transforms.setNodes(editor, { type: typeP });
+          Transforms.unwrapNodes(editor, {}); // TODO: Slate bug here, I must pass an empty object; fill issue
+
+          return;
+        }
+      }
+    }
+
+    insertBreak();
+  };
+
+  return editor;
+};
+
+export const withDelete = (editor) => {
+  const { deleteBackward } = editor;
+
+  editor.deleteBackward = (...args) => {
+    const { selection } = editor;
+
+    if (selection && Range.isCollapsed(selection)) {
+      const match = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      if (match) {
+        const [block, path] = match;
+        const start = Editor.start(editor, path);
+
+        if (
+          block.type !== 'paragraph' &&
+          Point.equals(selection.anchor, start)
+        ) {
+          Transforms.setNodes(editor, { type: 'paragraph' });
+
+          if (block.type === 'list-item') {
+            Transforms.unwrapNodes(editor, {
+              match: (n) => n.type === 'bulleted-list',
+              split: true,
+            });
+          }
+
+          return;
+        }
+      }
+      deleteBackward(...args);
+    } else {
+      deleteBackward(1);
+    }
+  };
+
+  return editor;
+};

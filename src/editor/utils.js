@@ -70,7 +70,13 @@ export function getDOMSelectionInfo() {
  * On insert break at the start of an empty block in types,
  * replace it with a new paragraph.
  */
-export const breakEmptyReset = ({ types, typeP }) => (editor) => {
+export const breakEmptyReset = ({
+  types,
+  typeP,
+  newBlockIndex,
+  onAddBlock,
+  onSelectBlock,
+}) => (editor) => {
   const { insertBreak } = editor;
 
   editor.insertBreak = () => {
@@ -92,6 +98,10 @@ export const breakEmptyReset = ({ types, typeP }) => (editor) => {
         if (parent) {
           Transforms.setNodes(editor, { type: typeP });
           Transforms.unwrapNodes(editor, {}); // TODO: Slate bug here, I must pass an empty object; fill issue
+
+          //setTimeout(() => {
+          onSelectBlock(onAddBlock('slate', newBlockIndex));
+          //}, 1000);
 
           return;
         }

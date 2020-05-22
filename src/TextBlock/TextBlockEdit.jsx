@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Range, Node } from 'slate';
 import SlateEditor from './../editor';
-import { getDOMSelectionInfo, breakEmptyReset } from './../editor/utils';
+import { getDOMSelectionInfo } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
@@ -18,6 +18,7 @@ const TextBlockEdit = (props) => {
     onAddBlock,
     onSelectBlock,
     blockNode,
+    index,
     properties,
   } = props;
 
@@ -101,14 +102,7 @@ const TextBlockEdit = (props) => {
     };
   }, [block, blockNode, onFocusPreviousBlock, onFocusNextBlock]);
 
-  const withBreakBlock = breakEmptyReset({
-    types: ['bulleted-list', 'numbered-list'],
-    typeP: 'paragraph',
-    newBlockIndex: props.index, // properties.blocks.indexOf(properties['@id']) + 1,
-    onAddBlock: onAddBlock,
-    onSelectBlock: onSelectBlock,
-  });
-  const { slate } = settings;
+  //const { slate } = settings;
   const deco = (editor) => editor;
 
   return (
@@ -118,6 +112,8 @@ const TextBlockEdit = (props) => {
         <ShortcutListing />
       </SidebarPortal>
       <SlateEditor
+        index={index}
+        properties={properties}
         onAddBlock={onAddBlock}
         decorators={[deco]}
         onSelectBlock={onSelectBlock}

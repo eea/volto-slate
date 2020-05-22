@@ -24,6 +24,7 @@ const SlateEditor = ({
   onAddBlock,
   onSelectBlock,
   decorators,
+  index,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
   const {
@@ -50,10 +51,15 @@ const SlateEditor = ({
   const localdecos = React.useRef(decorators || []);
 
   const editor = React.useMemo(() => {
+    console.log('index: ', index);
+
     const raw = withHistory(withReact(createEditor()));
     const withBreakEmptyReset = breakEmptyReset({
       types: ['bulleted-list', 'numbered-list'],
       typeP: 'paragraph',
+      newBlockIndex: index + 1,
+      onAddBlock,
+      onSelectBlock,
     });
     const decos = [
       withDelete,
@@ -62,7 +68,7 @@ const SlateEditor = ({
       ...localdecos.current,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
-  }, [slate.decorators]);
+  }, [index, onAddBlock, onSelectBlock, slate.decorators]);
 
   React.useLayoutEffect(() => {
     if (selected) {
@@ -78,7 +84,7 @@ const SlateEditor = ({
         sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
       );
     }
-    return () => ReactEditor.blur(editor);
+    //return () => ReactEditor.blur(editor);
   }, [editor, selected, block]);
 
   const initialValue = [

@@ -57,7 +57,7 @@ const TextBlockEdit = (props) => {
           const anchor = editor.selection?.anchor || {};
 
           // the last node in the editor
-          const [n, p] = Node.last(editor, []);
+          const [n] = Node.last(editor, []);
 
           if (
             Node.get(editor, anchor.path) === n &&

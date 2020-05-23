@@ -8,7 +8,7 @@ import React, { useCallback, useState, Fragment } from 'react';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
-import { toggleMark, withDelete } from '../utils';
+import { toggleMark, withDelete, breakEmptyReset } from '../utils';
 import { settings } from '~/config';
 
 const SlateEditor = ({
@@ -16,15 +16,11 @@ const SlateEditor = ({
   value,
   onChange,
   data,
-  block,
-  useExpandToolbar,
+  useExpandToolbar, // TODO: don't need this
   placeholder,
   onKeyDown,
   properties,
-  onAddBlock,
-  onSelectBlock,
   decorators,
-  index,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
   const {
@@ -53,8 +49,13 @@ const SlateEditor = ({
 
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
+    const withBreakEmptyReset = breakEmptyReset({
+      types: ['bulleted-list', 'numbered-list'],
+      typeP: 'paragraph',
+    });
     const decos = [
       withDelete,
+      withBreakEmptyReset,
       ...(slate.decorators || []),
       ...paramdecos.current,
     ];
@@ -75,8 +76,8 @@ const SlateEditor = ({
         sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
       );
     }
-    //return () => ReactEditor.blur(editor);
-  }, [editor, selected, block]);
+    // return () => ReactEditor.blur(editor);
+  }, [editor, selected]);
 
   const initialValue = [
     {

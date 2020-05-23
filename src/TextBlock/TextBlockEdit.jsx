@@ -103,45 +103,45 @@ const TextBlockEdit = (props) => {
   }, [block, blockNode, onFocusPreviousBlock, onFocusNextBlock]);
 
   //const { slate } = settings;
-  const deco = React.useCallback((editor) => {
-    const { insertBreak } = editor;
+  const deco = React.useCallback(
+    (editor) => {
+      const { insertBreak } = editor;
+      const empty = {
+        type: 'paragraph',
+        children: [{ text: '' }],
+      };
 
-    editor.insertBreak = () => {
-      const types = ['bulleted-list', 'numbered-list'];
-      const typeP = 'paragraph';
+      editor.insertBreak = () => {
+        console.log('insertbreak');
+        // const types = ['bulleted-list', 'numbered-list'];
 
-      const currentNodeEntry = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
+        const currentNodeEntry = Editor.above(editor, {
+          match: (n) => Editor.isBlock(editor, n),
+        });
 
-      if (currentNodeEntry) {
-        const [currentNode] = currentNodeEntry;
+        if (currentNodeEntry) {
+          const [currentNode, path] = currentNodeEntry;
 
-        if (Node.string(currentNode).length === 0) {
-          const parent = Editor.above(editor, {
-            match: (n) =>
-              types.includes(
-                typeof n.type === 'undefined' ? n.type : n.type.toString(),
-              ),
-          });
-
-          if (parent) {
-            // do: split la selection point
-            // care este calea unde avem splitul
-            Transforms.setNodes(editor, { type: typeP });
-            Transforms.splitNodes(editor);
-            Transforms.liftNodes(editor);
-
-            return;
-          }
+          console.log('currentnodeentry', currentNodeEntry, path);
+          Transforms.splitNodes(editor);
+          const [head, tail] = editor.children.slice(path);
+          const id = onAddBlock('slate', index + 1);
+          onChangeBlock(id, {
+            '@type': 'slate',
+            value: [JSON.parse(JSON.stringify(tail || empty))],
+          }); // TODO: set plaintext field value in block value
+          if (tail) Transforms.removeNodes(editor);
+          onSelectBlock(id);
+          return;
         }
-      }
 
-      insertBreak();
-    };
+        insertBreak();
+      };
 
-    return editor;
-  }, []);
+      return editor;
+    },
+    [block, data, index, onAddBlock, onChangeBlock],
+  );
 
   // (editor) => editor;
   //setTimeout(() => {

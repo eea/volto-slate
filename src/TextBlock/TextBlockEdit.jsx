@@ -1,3 +1,7 @@
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
 import React, { useMemo } from 'react';
 import { Editor, Transforms, Range, Node } from 'slate';
 import SlateEditor from './../editor';
@@ -22,10 +26,9 @@ const TextBlockEdit = (props) => {
     properties,
   } = props;
 
-  // console.log('props', props);
-
   const { value } = data;
 
+  // TODO: convert these handlers to editor decorations
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
@@ -38,17 +41,6 @@ const TextBlockEdit = (props) => {
               onFocusPreviousBlock(block, blockNode.current);
             }
           }
-        }
-      },
-
-      Tab: ({ editor, event, selection }) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (event.shiftKey) {
-          onFocusPreviousBlock(block, blockNode.current);
-        } else {
-          onFocusNextBlock(block, blockNode.current);
         }
       },
 
@@ -68,41 +60,99 @@ const TextBlockEdit = (props) => {
         }
       },
 
+      Tab: ({ editor, event, selection }) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (event.shiftKey) {
+          onFocusPreviousBlock(block, blockNode.current);
+        } else {
+          onFocusNextBlock(block, blockNode.current);
+        }
+      },
+
       Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
         const { start, end } = selection;
         const { value } = data;
 
         if (start === end && start === 0) {
-          // dc selectia e colapsata
-          // - pune blocul curent la sf blcului anterior (concat arrays)
-          //    - verifica daca bocul anterior este compatibil (properties?)
-          //    - get the previous block as a variable (properties)
-          //    - find the method that sets that block's value (onChangeBlock)
-          //    - find the method that gets that block's value (properties)
-          //    - this block's value is `value`/`data`
-          // - sterge blocul curent (facut mai jos)
-
-          // - bugul rezolva fals: onAddBlock prop
-
           if (plaintext_serialize(value || []).length === 0) {
             event.preventDefault();
             return onDeleteBlock(id, true);
+          } else {
+            // join this block with previous block, if previous block is slate
+            const blocksFieldname = getBlocksFieldname(properties);
+            const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+            const blocks_layout = properties[blocksLayoutFieldname];
+            const prevBlockId = blocks_layout.items[index - 1];
+            const prevBlock = properties[blocksFieldname][prevBlockId];
+
+            if (prevBlock['@type'] !== 'slate') {
+              return;
+            }
+
+            // To work around current architecture limitations, read the value
+            // from previous block. Replace it in the current editor (over
+            // which we have control), join with current block value, then use
+            // this result for previous block, delete current block
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            const prev = prevBlock.value;
+
+            Transforms.collapse(editor, { edge: start });
+            editor.apply({
+              type: 'insert_text',
+              path: [0, 0],
+              offset: 0,
+              text: ' ',
+            });
+            Transforms.collapse(editor, { edge: start });
+            Transforms.insertNodes(editor, prev, { at: [0] });
+            Transforms.mergeNodes(editor);
+
+            const selection = JSON.parse(JSON.stringify(editor.selection));
+            const combined = JSON.parse(JSON.stringify(editor.children));
+
+            // TODO: don't remove undo history, etc
+
+            // setTimeout is needed to ensure setState has been successfully
+            // executed in Form.jsx. See
+            // https://github.com/plone/volto/issues/1519
+            setTimeout(() => {
+              onChangeBlock(prevBlockId, {
+                '@type': 'slate',
+                value: combined,
+                selection,
+                // TODO: set plaintext field value in block value
+              });
+              setTimeout(() => onDeleteBlock(block, true), 0);
+            }, 0);
           }
         }
         return true;
       },
 
-      Enter: ({ event }) => {
-        // event.preventDefault();
-        event.stopPropagation();
-        return true;
-      },
+      // Enter: ({ event }) => {
+      //   // event.preventDefault();
+      //   event.stopPropagation();
+      //   return true;
+      // },
 
       ...settings.slate?.keyDownHandlers,
     };
-  }, [block, blockNode, onFocusPreviousBlock, onFocusNextBlock]);
+  }, [
+    block,
+    blockNode,
+    onFocusPreviousBlock,
+    onChangeBlock,
+    onFocusNextBlock,
+    index,
+    properties,
+  ]);
 
-  //const { slate } = settings;
   const deco = React.useCallback(
     (editor) => {
       const { insertBreak } = editor;
@@ -112,7 +162,6 @@ const TextBlockEdit = (props) => {
       };
 
       editor.insertBreak = () => {
-        console.log('insertbreak');
         // const types = ['bulleted-list', 'numbered-list'];
 
         const currentNodeEntry = Editor.above(editor, {
@@ -120,6 +169,7 @@ const TextBlockEdit = (props) => {
         });
 
         if (currentNodeEntry) {
+          // TODO: check if node is list type, need to handle differently
           const [currentNode, path] = currentNodeEntry;
 
           console.log('currentnodeentry', currentNodeEntry, path);
@@ -130,8 +180,10 @@ const TextBlockEdit = (props) => {
             '@type': 'slate',
             value: [JSON.parse(JSON.stringify(tail || empty))],
           }); // TODO: set plaintext field value in block value
+
           if (tail) Transforms.removeNodes(editor);
           onSelectBlock(id);
+
           return;
         }
 
@@ -140,13 +192,8 @@ const TextBlockEdit = (props) => {
 
       return editor;
     },
-    [block, data, index, onAddBlock, onChangeBlock, onSelectBlock],
+    [index, onAddBlock, onChangeBlock, onSelectBlock],
   );
-
-  // (editor) => editor;
-  //setTimeout(() => {
-  // onSelectBlock(onAddBlock('slate', newBlockIndex));
-  //}, 1000);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import cx from 'classnames';
-import { createEditor } from 'slate';
+import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useCallback, useState, Fragment } from 'react';
@@ -55,17 +55,29 @@ const SlateEditor = ({
     });
     const decos = [
       withDelete,
-      withBreakEmptyReset,
+      withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...(slate.decorators || []),
       ...paramdecos.current,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
   }, [slate.decorators]);
 
+  const initial_selection = React.useRef();
+  const { selection } = data;
+  // console.log('data, selection', data);
+
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
 
+      if (selection) {
+        if (initial_selection.current !== selection) {
+          initial_selection.current = selection;
+          Transforms.select(editor, selection);
+          return () => ReactEditor.blur(editor);
+        }
+      }
+      // TODO: rewrite this with Slate api
       const sel = window.getSelection();
       sel.collapse(
         sel.focusNode,
@@ -77,7 +89,7 @@ const SlateEditor = ({
       );
     }
     return () => ReactEditor.blur(editor);
-  }, [editor, selected, block]);
+  }, [editor, selected, block, selection]);
 
   React.useEffect(() => {
     const sel = window.getSelection();
@@ -99,8 +111,8 @@ const SlateEditor = ({
     <div
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
+      {/* {block} - {selected ? 'sel' : 'notsel'} */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {block}
         {!showToolbar && (
           <Toolbar
             onToggle={() => setShowToolbar(!showToolbar)}

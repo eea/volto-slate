@@ -11,6 +11,8 @@ import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
 import ShortcutListing from './ShortcutListing';
 
+const LISTTYPES = ['bulleted-list', 'numbered-list'];
+
 const TextBlockEdit = (props) => {
   const {
     data,
@@ -64,10 +66,34 @@ const TextBlockEdit = (props) => {
         event.preventDefault();
         event.stopPropagation();
 
-        if (event.shiftKey) {
-          onFocusPreviousBlock(block, blockNode.current);
+        Transforms.collapse(editor, { edge: 0 });
+
+        const query = Editor.above(editor, {
+          match: (n) =>
+            LISTTYPES.includes(
+              typeof n.type === 'undefined' ? n.type : n.type.toString(),
+            ),
+        });
+
+        if (!query) {
+          if (event.shiftKey) {
+            onFocusPreviousBlock(block, blockNode.current);
+          } else {
+            onFocusNextBlock(block, blockNode.current);
+          }
+          return;
+        }
+        const [parent] = query;
+
+        if (!event.shiftKey) {
+          Transforms.wrapNodes(editor, { type: parent.type, children: [] });
         } else {
-          onFocusNextBlock(block, blockNode.current);
+          Transforms.unwrapNodes(editor, {
+            match: (n) =>
+              LISTTYPES.includes(
+                typeof n.type === 'undefined' ? n.type : n.type.toString(),
+              ),
+          });
         }
       },
 
@@ -147,7 +173,7 @@ const TextBlockEdit = (props) => {
     properties,
   ]);
 
-  const deco = React.useCallback(
+  const withHandleBreak = React.useCallback(
     (editor) => {
       const { insertBreak } = editor;
       const empty = {
@@ -156,8 +182,6 @@ const TextBlockEdit = (props) => {
       };
 
       editor.insertBreak = () => {
-        const listTypes = ['bulleted-list', 'numbered-list'];
-
         const currentNodeEntry = Editor.above(editor, {
           match: (n) => Editor.isBlock(editor, n),
         });
@@ -168,7 +192,7 @@ const TextBlockEdit = (props) => {
 
           const parent = Editor.above(editor, {
             match: (n) =>
-              listTypes.includes(
+              LISTTYPES.includes(
                 typeof n.type === 'undefined' ? n.type : n.type.toString(),
               ),
           });
@@ -214,7 +238,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        decorators={[deco]}
+        decorators={[withHandleBreak]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

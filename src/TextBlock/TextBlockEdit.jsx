@@ -140,7 +140,7 @@ const TextBlockEdit = (props) => {
 
       return editor;
     },
-    [block, data, index, onAddBlock, onChangeBlock],
+    [block, data, index, onAddBlock, onChangeBlock, onSelectBlock],
   );
 
   // (editor) => editor;

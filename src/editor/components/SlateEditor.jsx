@@ -21,6 +21,7 @@ const SlateEditor = ({
   onKeyDown,
   properties,
   decorators,
+  block,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
   const {
@@ -42,8 +43,7 @@ const SlateEditor = ({
   // (editor) => editor
   //
   // Each decorator is a simple mutator function with signature: editor =>
-  // editor. See https://docs.slatejs.org/concepts/07-plugins and
-  // https://docs.slatejs.org/concepts/06-editor
+  // editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
 
   const paramdecos = React.useRef(decorators || []);
 
@@ -76,8 +76,17 @@ const SlateEditor = ({
         sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
       );
     }
-    // return () => ReactEditor.blur(editor);
-  }, [editor, selected]);
+    return () => ReactEditor.blur(editor);
+  }, [editor, selected, block]);
+
+  React.useEffect(() => {
+    const sel = window.getSelection();
+    if (selected && sel.type === 'None') {
+      // in case this block was programatically created (by enter/backspace key)
+      const el = ReactEditor.toDOMNode(editor, editor);
+      sel.collapse(el, 0);
+    }
+  });
 
   const initialValue = [
     {
@@ -91,6 +100,7 @@ const SlateEditor = ({
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+        {block}
         {!showToolbar && (
           <Toolbar
             onToggle={() => setShowToolbar(!showToolbar)}

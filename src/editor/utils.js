@@ -1,4 +1,5 @@
 import { Editor, Transforms, Range, Point, Node } from 'slate';
+import { ReactEditor } from 'slate-react';
 import { settings } from '~/config';
 
 export const toggleBlock = (editor, format) => {
@@ -43,6 +44,7 @@ export const isMarkActive = (editor, format) => {
   return marks ? marks[format] === true : false;
 };
 
+// TODO: where do we use this?
 export function getDOMSelectionInfo() {
   const domSelection = window.getSelection();
 
@@ -143,4 +145,21 @@ export const breakEmptyReset = ({ types, typeP }) => (editor) => {
   };
 
   return editor;
+};
+
+export const fixSelection = (editor) => {
+  if (!editor.selection) {
+    const sel = window.getSelection();
+    editor.selection = ReactEditor.toSlateRange(editor, sel);
+    // See also dicussions in https://github.com/ianstormtaylor/slate/pull/3652
+    // console.log('fixing selection', JSON.stringify(sel), editor.selection);
+    // sel.collapse(
+    //   sel.focusNode,
+    //   sel.anchorOffset > 0 ? sel.anchorOffset - 1 : 0,
+    // );
+    // sel.collapse(
+    //   sel.focusNode,
+    //   sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
+    // );
+  }
 };

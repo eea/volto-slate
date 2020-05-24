@@ -8,7 +8,12 @@ import React, { useCallback, useState, Fragment } from 'react';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
-import { toggleMark, withDelete, breakEmptyReset } from '../utils';
+import {
+  fixSelection,
+  toggleMark,
+  withDelete,
+  breakEmptyReset,
+} from '../utils';
 import { settings } from '~/config';
 
 const SlateEditor = ({
@@ -79,15 +84,7 @@ const SlateEditor = ({
         }
       }
       // TODO: rewrite this with Slate api
-      const sel = window.getSelection();
-      sel.collapse(
-        sel.focusNode,
-        sel.anchorOffset > 0 ? sel.anchorOffset - 1 : 0,
-      );
-      sel.collapse(
-        sel.focusNode,
-        sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
-      );
+      fixSelection(editor);
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected, block, selection]);

@@ -5,7 +5,7 @@ import {
 import React, { useMemo } from 'react';
 import { Editor, Transforms, Range, Node } from 'slate';
 import SlateEditor from './../editor';
-import { getDOMSelectionInfo } from './../editor/utils';
+import { getDOMSelectionInfo, fixSelection } from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
@@ -18,10 +18,11 @@ const TextBlockEdit = (props) => {
     data,
     selected,
     block,
-    onChangeBlock,
-    onFocusPreviousBlock,
-    onFocusNextBlock,
     onAddBlock,
+    onChangeBlock,
+    onDeleteBlock,
+    onFocusNextBlock,
+    onFocusPreviousBlock,
     onSelectBlock,
     blockNode,
     index,
@@ -34,6 +35,7 @@ const TextBlockEdit = (props) => {
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
+        if (!editor.selection) return; // TODO: examine why
         if (Range.isCollapsed(editor.selection)) {
           if (
             !editor.selection.anchor.path ||
@@ -47,6 +49,7 @@ const TextBlockEdit = (props) => {
       },
 
       ArrowDown: ({ editor, event, selection }) => {
+        if (!editor.selection) return; // TODO: examine why
         if (Range.isCollapsed(editor.selection)) {
           const anchor = editor.selection?.anchor || {};
 
@@ -66,6 +69,7 @@ const TextBlockEdit = (props) => {
         event.preventDefault();
         event.stopPropagation();
 
+        // TODO: shouldn't collapse
         Transforms.collapse(editor, { edge: 0 });
 
         const query = Editor.above(editor, {
@@ -89,6 +93,7 @@ const TextBlockEdit = (props) => {
           Transforms.wrapNodes(editor, { type: parent.type, children: [] });
         } else {
           Transforms.unwrapNodes(editor, {
+            // TODO: is this only for first node encountered?
             match: (n) =>
               LISTTYPES.includes(
                 typeof n.type === 'undefined' ? n.type : n.type.toString(),
@@ -97,66 +102,93 @@ const TextBlockEdit = (props) => {
         }
       },
 
-      Backspace: ({ editor, event, selection, onDeleteBlock, id, data }) => {
+      Backspace: ({ editor, event, selection }) => {
         const { start, end } = selection;
         const { value } = data;
 
         if (start === end && start === 0) {
+          // TODO: this is very optimistic, we might have void nodes that are
+          // meaningful. We should test if only one child, with empty text
+
           if (plaintext_serialize(value || []).length === 0) {
             event.preventDefault();
-            return onDeleteBlock(id, true);
-          } else {
-            // join this block with previous block, if previous block is slate
-            const blocksFieldname = getBlocksFieldname(properties);
-            const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
-
-            const blocks_layout = properties[blocksLayoutFieldname];
-            const prevBlockId = blocks_layout.items[index - 1];
-            const prevBlock = properties[blocksFieldname][prevBlockId];
-
-            if (prevBlock['@type'] !== 'slate') {
-              return;
-            }
-
-            // To work around current architecture limitations, read the value
-            // from previous block. Replace it in the current editor (over
-            // which we have control), join with current block value, then use
-            // this result for previous block, delete current block
-
-            event.stopPropagation();
-            event.preventDefault();
-
-            const prev = prevBlock.value;
-
-            Transforms.collapse(editor, { edge: start });
-            editor.apply({
-              type: 'insert_text',
-              path: [0, 0],
-              offset: 0,
-              text: ' ',
-            });
-            Transforms.collapse(editor, { edge: start });
-            Transforms.insertNodes(editor, prev, { at: [0] });
-            Transforms.mergeNodes(editor);
-
-            const selection = JSON.parse(JSON.stringify(editor.selection));
-            const combined = JSON.parse(JSON.stringify(editor.children));
-
-            // TODO: don't remove undo history, etc
-
-            // setTimeout is needed to ensure setState has been successfully
-            // executed in Form.jsx. See
-            // https://github.com/plone/volto/issues/1519
-            setTimeout(() => {
-              onChangeBlock(prevBlockId, {
-                '@type': 'slate',
-                value: combined,
-                selection,
-                // TODO: set plaintext field value in block value
-              });
-              setTimeout(() => onDeleteBlock(block, true), 0);
-            }, 0);
+            return onDeleteBlock(block, true);
           }
+
+          // Are we in a listing block? Handle by deleting empty list item
+          const query = Editor.above(editor, {
+            match: (n) =>
+              LISTTYPES.includes(
+                typeof n.type === 'undefined' ? n.type : n.type.toString(),
+              ),
+          });
+
+          const match = Editor.above(editor, {
+            match: (n) => Editor.isBlock(editor, n),
+          });
+          if (match && Node.string(match[0])) return; // TODO: join with previous <li> element, if exists
+
+          // if (query) {
+          //   Editor.deleteBackward(editor, { unit: 'line' });
+          //   console.log(editor.children);
+          //   return;
+          // }
+
+          event.stopPropagation();
+          event.preventDefault();
+
+          // join this block with previous block, if previous block is slate
+          const blocksFieldname = getBlocksFieldname(properties);
+          const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+          const blocks_layout = properties[blocksLayoutFieldname];
+          const prevBlockId = blocks_layout.items[index - 1];
+          const prevBlock = properties[blocksFieldname][prevBlockId];
+
+          if (prevBlock['@type'] !== 'slate') {
+            return;
+          }
+
+          // To work around current architecture limitations, read the value
+          // from previous block. Replace it in the current editor (over
+          // which we have control), join with current block value, then use
+          // this result for previous block, delete current block
+
+          event.stopPropagation();
+          event.preventDefault();
+
+          const prev = prevBlock.value;
+
+          Transforms.collapse(editor, { edge: start });
+
+          // TODO: do we really want to insert this text here?
+          editor.apply({
+            type: 'insert_text',
+            path: [0, 0],
+            offset: 0,
+            text: ' ',
+          });
+          Transforms.collapse(editor, { edge: start });
+          Transforms.insertNodes(editor, prev, { at: [0] });
+          Transforms.mergeNodes(editor);
+
+          const selection = JSON.parse(JSON.stringify(editor.selection));
+          const combined = JSON.parse(JSON.stringify(editor.children));
+
+          // TODO: don't remove undo history, etc
+
+          // setTimeout is needed to ensure setState has been successfully
+          // executed in Form.jsx. See
+          // https://github.com/plone/volto/issues/1519
+          setTimeout(() => {
+            onChangeBlock(prevBlockId, {
+              '@type': 'slate',
+              value: combined,
+              selection,
+              // TODO: set plaintext field value in block value
+            });
+            setTimeout(() => onDeleteBlock(block, true));
+          });
         }
         return true;
       },
@@ -166,10 +198,12 @@ const TextBlockEdit = (props) => {
   }, [
     block,
     blockNode,
-    onFocusPreviousBlock,
-    onChangeBlock,
-    onFocusNextBlock,
+    data,
     index,
+    onChangeBlock,
+    onDeleteBlock,
+    onFocusNextBlock,
+    onFocusPreviousBlock,
     properties,
   ]);
 

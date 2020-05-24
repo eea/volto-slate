@@ -64,13 +64,14 @@ const SlateEditor = ({
 
   const initial_selection = React.useRef();
   const { selection } = data;
-  // console.log('data, selection', data);
 
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
 
       if (selection) {
+        // Handles the case when block was just joined with backspace, in that
+        // case we want to restore the cursor close to the initial position
         if (initial_selection.current !== selection) {
           initial_selection.current = selection;
           Transforms.select(editor, selection);

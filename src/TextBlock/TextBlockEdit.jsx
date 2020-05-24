@@ -135,12 +135,6 @@ const TextBlockEdit = (props) => {
         return true;
       },
 
-      // Enter: ({ event }) => {
-      //   // event.preventDefault();
-      //   event.stopPropagation();
-      //   return true;
-      // },
-
       ...settings.slate?.keyDownHandlers,
     };
   }, [
@@ -162,7 +156,7 @@ const TextBlockEdit = (props) => {
       };
 
       editor.insertBreak = () => {
-        // const types = ['bulleted-list', 'numbered-list'];
+        const listTypes = ['bulleted-list', 'numbered-list'];
 
         const currentNodeEntry = Editor.above(editor, {
           match: (n) => Editor.isBlock(editor, n),
@@ -172,7 +166,22 @@ const TextBlockEdit = (props) => {
           // TODO: check if node is list type, need to handle differently
           const [currentNode, path] = currentNodeEntry;
 
-          console.log('currentnodeentry', currentNodeEntry, path);
+          const parent = Editor.above(editor, {
+            match: (n) =>
+              listTypes.includes(
+                typeof n.type === 'undefined' ? n.type : n.type.toString(),
+              ),
+          });
+
+          if (parent) {
+            Transforms.insertNodes(editor, {
+              type: 'list-item',
+              children: [{ text: '' }],
+            });
+
+            return;
+          }
+
           Transforms.splitNodes(editor);
           const [head, tail] = editor.children.slice(path);
           const id = onAddBlock('slate', index + 1);

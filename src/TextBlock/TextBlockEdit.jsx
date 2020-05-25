@@ -6,7 +6,6 @@ import React, { useMemo } from 'react';
 import { Editor, Transforms, Range, Node, Point } from 'slate';
 import SlateEditor from './../editor';
 import {
-  getDOMSelectionInfo,
   fixSelection,
   isCursorAtBlockEnd,
   isCursorAtBlockStart,

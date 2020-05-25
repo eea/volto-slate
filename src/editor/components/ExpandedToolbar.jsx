@@ -1,21 +1,13 @@
 import React from 'react';
 import cx from 'classnames';
 
-import ToolbarToggleButton from './ToolbarToggleButton';
+import Button from './Button';
 import BasicToolbar from './BasicToolbar';
 
+import toggleIcon from '@plone/volto/icons/freedom.svg';
+
 const ExpandedToolbar = React.forwardRef(
-  (
-    {
-      className,
-      showMasterToggleButton = true,
-      onToggle,
-      mainToolbarShown,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, onToggle, mainToolbarShown, children, ...props }, ref) => {
     function handleOnToggle() {
       onToggle();
     }
@@ -23,11 +15,13 @@ const ExpandedToolbar = React.forwardRef(
     return (
       <BasicToolbar {...props} className={className} ref={ref}>
         {children}
-        <ToolbarToggleButton
-          className={cx({ hidden: !showMasterToggleButton })}
-          reversed={false}
+        <Button
+          onMouseDown={(event) => {
+            handleOnToggle();
+            event.preventDefault();
+          }}
+          icon={toggleIcon}
           active={mainToolbarShown}
-          onToggle={handleOnToggle}
         />
       </BasicToolbar>
     );

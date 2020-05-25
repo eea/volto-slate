@@ -4,15 +4,12 @@ import { Editor, Range } from 'slate';
 import cx from 'classnames';
 import { Portal } from 'react-portal';
 
-import ToolbarToggleButton from './ToolbarToggleButton';
+import Button from './Button';
 import BasicToolbar from './BasicToolbar';
 
-const Toolbar = ({
-  mainToolbarShown,
-  onToggle,
-  showMasterToggleButton = true,
-  children,
-}) => {
+import toggleIcon from '@plone/volto/icons/freedom.svg';
+
+const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
   const ref = useRef();
   const editor = useSlate();
 
@@ -49,11 +46,13 @@ const Toolbar = ({
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
-        <ToolbarToggleButton
-          className={cx({ hidden: !showMasterToggleButton })}
-          reversed={true}
+        <Button
+          onMouseDown={(event) => {
+            onToggle();
+            event.preventDefault();
+          }}
+          icon={toggleIcon}
           active={mainToolbarShown}
-          onToggle={handleOnToggle}
         />
       </BasicToolbar>
     </Portal>

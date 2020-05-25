@@ -140,6 +140,10 @@ export const fixSelection = (editor) => {
   }
 };
 
+// In the isCursorAtBlockStart/End functions maybe use a part of these pieces of code:
+// Range.isCollapsed(editor.selection) &&
+// Point.equals(editor.selection.anchor, Editor.start(editor, []))
+
 export function isCursorAtBlockEnd(editor) {
   fixSelection(editor);
   if (Range.isCollapsed(editor.selection)) {

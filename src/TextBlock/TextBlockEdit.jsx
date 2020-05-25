@@ -105,11 +105,19 @@ const TextBlockEdit = (props) => {
       Backspace: ({ editor, event }) => {
         const { value } = data;
 
-        // if the selection is collapsed and at node and offset 0
-        if (
+        const firstListItemInSelection = Editor.nodes(editor, {
+          match: (n) => n.type === 'list-item',
+        }).next().value[0];
+
+        console.log('firstListItemInSelection', firstListItemInSelection);
+
+        const listItemCase =
           Range.isCollapsed(editor.selection) &&
-          Point.equals(editor.selection.anchor, Editor.start(editor, []))
-        ) {
+          firstListItemInSelection &&
+          firstListItemInSelection.text === '';
+
+        // if the selection is collapsed and at node and offset 0
+        if (isCursorAtBlockStart(editor) || listItemCase) {
           // TODO: this is very optimistic, we might have void nodes that are
           // meaningful. We should test if only one child, with empty text
           if (plaintext_serialize(value || []).length === 0) {
@@ -117,33 +125,43 @@ const TextBlockEdit = (props) => {
             return onDeleteBlock(block, true);
           }
 
-          // BEGIN about listings (not tested)
-          // Are we in a listing block? Handle by deleting empty list item
-          const inListingBlock = Editor.above(editor, {
-            match: (n) =>
-              LISTTYPES.includes(
+          // Are we in a listing block?
+          // TODO: this returns a falsy value, use something else
+          const isInListingBlock = Editor.above(editor, {
+            match: (n) => {
+              return LISTTYPES.includes(
                 typeof n.type === 'undefined' ? n.type : n.type.toString(),
-              ),
+              );
+            },
           });
 
-          const blockWithSelection = Editor.above(editor, {
-            match: (n) => Editor.isBlock(editor, n),
-          });
+          if (isInListingBlock) {
+            // Handle by deleting empty list item
 
-          if (blockWithSelection && Node.string(blockWithSelection[0])) {
-            // We're in a list item. Is it the first list item?
-            //return; // TODO: join with previous <li> element, if exists
+            // get the block with the selection
+            const [blockWithSelection] = Editor.above(editor, {
+              match: (n) => Editor.isBlock(editor, n),
+            });
+
+            // if there is a block with contents inside the listing that
+            // is intersecting with the selection
+            if (blockWithSelection && Node.string(blockWithSelection)) {
+              // We're in a list item. Is it the first list item?
+              //return; // TODO: join with previous <li> element, if exists
+            }
+
+            Editor.deleteBackward(editor, { unit: 'block' });
+            Transforms.liftNodes(editor);
+            if (listItemCase) {
+              Transforms.liftNodes(editor);
+            }
+            console.log('editor.children', editor.children);
+
+            event.stopPropagation();
+            event.preventDefault();
+
+            return;
           }
-
-          if (inListingBlock) {
-            Editor.deleteBackward(editor, { unit: 'line' });
-            console.log(editor.children);
-            //return;
-          }
-
-          event.stopPropagation();
-          event.preventDefault();
-          // END about listings
 
           // join this block with previous block, if previous block is slate
           const blocksFieldname = getBlocksFieldname(properties);

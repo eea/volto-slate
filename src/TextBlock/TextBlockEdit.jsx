@@ -40,15 +40,18 @@ const TextBlockEdit = (props) => {
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
-        onFocusPreviousBlock(block, blockNode.current);
+        if (isCursorAtBlockStart(editor))
+          onFocusPreviousBlock(block, blockNode.current);
       },
 
       ArrowDown: ({ editor, event, selection }) => {
-        if (isCursorAtBlockEnd()) onFocusNextBlock(block, blockNode.current);
+        if (isCursorAtBlockEnd(editor))
+          onFocusNextBlock(block, blockNode.current);
       },
 
       Tab: ({ editor, event, selection }) => {
         /* Intended behavior:
+         *
          * <tab> at beginning of block, go to next block
          * <tab> at end of block, go to next block
          * <tab> at beginning of block in a list, go to next block
@@ -62,6 +65,7 @@ const TextBlockEdit = (props) => {
          * level?
          * <s-tab> at beginning of line in a list, not at beginning of block:
          * If in a sublist, unwrap from the list (decrease indent level)
+         *
          */
         event.preventDefault();
         event.stopPropagation();

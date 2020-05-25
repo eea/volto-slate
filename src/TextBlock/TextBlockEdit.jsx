@@ -5,7 +5,12 @@ import {
 import React, { useMemo } from 'react';
 import { Editor, Transforms, Range, Node } from 'slate';
 import SlateEditor from './../editor';
-import { getDOMSelectionInfo, fixSelection } from './../editor/utils';
+import {
+  getDOMSelectionInfo,
+  fixSelection,
+  isCursorAtBlockEnd,
+  isCursorAtBlockStart,
+} from './../editor/utils';
 import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
@@ -35,37 +40,29 @@ const TextBlockEdit = (props) => {
   const keyDownHandlers = useMemo(() => {
     return {
       ArrowUp: ({ editor, event, selection }) => {
-        if (!editor.selection) return; // TODO: examine why
-        if (Range.isCollapsed(editor.selection)) {
-          if (
-            !editor.selection.anchor.path ||
-            editor.selection.anchor.path[0] === 0
-          ) {
-            if (editor.selection.anchor.offset === 0) {
-              onFocusPreviousBlock(block, blockNode.current);
-            }
-          }
-        }
+        onFocusPreviousBlock(block, blockNode.current);
       },
 
       ArrowDown: ({ editor, event, selection }) => {
-        if (!editor.selection) return; // TODO: examine why
-        if (Range.isCollapsed(editor.selection)) {
-          const anchor = editor.selection?.anchor || {};
-
-          // the last node in the editor
-          const [n] = Node.last(editor, []);
-
-          if (
-            Node.get(editor, anchor.path) === n &&
-            anchor.offset === n.text.length
-          ) {
-            onFocusNextBlock(block, blockNode.current);
-          }
-        }
+        if (isCursorAtBlockEnd()) onFocusNextBlock(block, blockNode.current);
       },
 
       Tab: ({ editor, event, selection }) => {
+        /* Intended behavior:
+         * <tab> at beginning of block, go to next block
+         * <tab> at end of block, go to next block
+         * <tab> at beginning of block in a list, go to next block
+         *
+         * <s-tab> at beginning of block, go to prev block
+         * <s-tab> at end of block, go to prev block
+         * <s-tab> at beginning of block in a list, go to prev block
+         *
+         * <tab> at beginning of line in a list, not at beginning of block:
+         * wrap in a new list (make a sublist). Compare with previous indent
+         * level?
+         * <s-tab> at beginning of line in a list, not at beginning of block:
+         * If in a sublist, unwrap from the list (decrease indent level)
+         */
         event.preventDefault();
         event.stopPropagation();
 
@@ -126,7 +123,10 @@ const TextBlockEdit = (props) => {
           const match = Editor.above(editor, {
             match: (n) => Editor.isBlock(editor, n),
           });
-          if (match && Node.string(match[0])) return; // TODO: join with previous <li> element, if exists
+          if (match && Node.string(match[0])) {
+            // We're in a list item. Is it the first list item?
+            return; // TODO: join with previous <li> element, if exists
+          }
 
           // if (query) {
           //   Editor.deleteBackward(editor, { unit: 'line' });

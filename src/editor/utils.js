@@ -163,3 +163,34 @@ export const fixSelection = (editor) => {
     // );
   }
 };
+
+export function isCursorAtBlockEnd(editor) {
+  fixSelection(editor);
+  if (Range.isCollapsed(editor.selection)) {
+    if (
+      !editor.selection.anchor.path ||
+      editor.selection.anchor.path[0] === 0
+    ) {
+      if (editor.selection.anchor.offset === 0) {
+        return true;
+      }
+    }
+  }
+}
+
+export function isCursorAtBlockStart(editor) {
+  fixSelection(editor);
+  if (Range.isCollapsed(editor.selection)) {
+    const anchor = editor.selection?.anchor || {};
+
+    // the last node in the editor
+    const [n] = Node.last(editor, []);
+
+    if (
+      Node.get(editor, anchor.path) === n &&
+      anchor.offset === n.text.length
+    ) {
+      return true;
+    }
+  }
+}

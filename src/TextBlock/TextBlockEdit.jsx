@@ -204,15 +204,13 @@ const TextBlockEdit = (props) => {
           // setTimeout is needed to ensure setState has been successfully
           // executed in Form.jsx. See
           // https://github.com/plone/volto/issues/1519
+          onDeleteBlock(block, true);
           setTimeout(() => {
-            onDeleteBlock(block, true);
-            setTimeout(() => {
-              onChangeBlock(prevBlockId, {
-                '@type': 'slate',
-                value: combined,
-                selection,
-                plaintext: plaintext_serialize(combined || []),
-              });
+            onChangeBlock(prevBlockId, {
+              '@type': 'slate',
+              value: combined,
+              selection,
+              plaintext: plaintext_serialize(combined || []),
             });
           });
         }

@@ -21,7 +21,6 @@ const SlateEditor = ({
   value,
   onChange,
   data,
-  useExpandToolbar, // TODO: don't need this
   placeholder,
   onKeyDown,
   properties,
@@ -115,7 +114,6 @@ const SlateEditor = ({
           <Toolbar
             onToggle={() => setShowToolbar(!showToolbar)}
             mainToolbarShown={showToolbar}
-            showMasterToggleButton={useExpandToolbar}
           >
             {toolbarButtons.map((name, i) => (
               <Fragment key={`${name}-${i}`}>
@@ -129,7 +127,6 @@ const SlateEditor = ({
         >
           {selected && showToolbar && (
             <ExpandedToolbar
-              showMasterToggleButton={useExpandToolbar}
               onToggle={() => setShowToolbar(!showToolbar)}
               mainToolbarShown={showToolbar}
             >

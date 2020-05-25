@@ -10,16 +10,11 @@ import BasicToolbar from './BasicToolbar';
 const Toolbar = ({
   mainToolbarShown,
   onToggle,
-  showMasterToggleButton,
+  showMasterToggleButton = true,
   children,
 }) => {
   const ref = useRef();
-
   const editor = useSlate();
-
-  if (typeof showMasterToggleButton !== 'boolean') {
-    showMasterToggleButton = true;
-  }
 
   function handleOnToggle() {
     onToggle();

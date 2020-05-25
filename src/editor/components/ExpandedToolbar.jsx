@@ -8,7 +8,7 @@ const ExpandedToolbar = React.forwardRef(
   (
     {
       className,
-      showMasterToggleButton,
+      showMasterToggleButton = true,
       onToggle,
       mainToolbarShown,
       children,
@@ -16,10 +16,6 @@ const ExpandedToolbar = React.forwardRef(
     },
     ref,
   ) => {
-    if (typeof showMasterToggleButton !== 'boolean') {
-      showMasterToggleButton = true;
-    }
-
     function handleOnToggle() {
       onToggle();
     }

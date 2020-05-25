@@ -3,7 +3,7 @@ import {
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 import React, { useMemo } from 'react';
-import { Editor, Transforms, Range, Node } from 'slate';
+import { Editor, Transforms, Range, Node, Point } from 'slate';
 import SlateEditor from './../editor';
 import {
   getDOMSelectionInfo,
@@ -39,17 +39,17 @@ const TextBlockEdit = (props) => {
   // TODO: convert these handlers to editor decorations
   const keyDownHandlers = useMemo(() => {
     return {
-      ArrowUp: ({ editor, event, selection }) => {
+      ArrowUp: ({ editor, even }) => {
         if (isCursorAtBlockStart(editor))
           onFocusPreviousBlock(block, blockNode.current);
       },
 
-      ArrowDown: ({ editor, event, selection }) => {
+      ArrowDown: ({ editor, event }) => {
         if (isCursorAtBlockEnd(editor))
           onFocusNextBlock(block, blockNode.current);
       },
 
-      Tab: ({ editor, event, selection }) => {
+      Tab: ({ editor, event }) => {
         /* Intended behavior:
          *
          * <tab> at beginning of block, go to next block
@@ -103,11 +103,14 @@ const TextBlockEdit = (props) => {
         }
       },
 
-      Backspace: ({ editor, event, selection }) => {
-        const { start, end } = selection;
+      Backspace: ({ editor, event }) => {
         const { value } = data;
 
-        if (start === end && start === 0) {
+        // if the selection is collapsed and at node and offset 0
+        if (
+          Range.isCollapsed(editor.selection) &&
+          Point.equals(editor.selection.anchor, Editor.start(editor, []))
+        ) {
           // TODO: this is very optimistic, we might have void nodes that are
           // meaningful. We should test if only one child, with empty text
 
@@ -163,7 +166,7 @@ const TextBlockEdit = (props) => {
 
           const prev = prevBlock.value;
 
-          Transforms.collapse(editor, { edge: start });
+          Transforms.collapse(editor, { edge: 'start' });
 
           // TODO: do we really want to insert this text here?
           editor.apply({
@@ -172,7 +175,7 @@ const TextBlockEdit = (props) => {
             offset: 0,
             text: ' ',
           });
-          Transforms.collapse(editor, { edge: start });
+          Transforms.collapse(editor, { edge: 'start' });
           Transforms.insertNodes(editor, prev, { at: [0] });
           Transforms.mergeNodes(editor);
 
@@ -294,7 +297,6 @@ const TextBlockEdit = (props) => {
               ...props,
               editor,
               event,
-              selection: getDOMSelectionInfo(),
             });
         }}
         selected={selected}

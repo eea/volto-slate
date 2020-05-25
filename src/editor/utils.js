@@ -44,30 +44,6 @@ export const isMarkActive = (editor, format) => {
   return marks ? marks[format] === true : false;
 };
 
-// TODO: where do we use this?
-export function getDOMSelectionInfo() {
-  const domSelection = window.getSelection();
-
-  let domRange;
-  if (domSelection.rangeCount > 0) {
-    domRange = domSelection.getRangeAt(0);
-  } else {
-    domRange = null;
-  }
-
-  const start = domRange?.startOffset;
-  const end = domRange?.endOffset;
-  const currentCursorPosition = start;
-
-  return {
-    domSelection,
-    domRange,
-    start,
-    end,
-    currentCursorPosition,
-  };
-}
-
 export const withDelete = (editor) => {
   const { deleteBackward } = editor;
 

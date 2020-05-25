@@ -188,8 +188,8 @@ const TextBlockEdit = (props) => {
             at: Editor.start(editor, []),
           });
 
-          // delete the useless space inserted above
-          Editor.deleteBackward(editor, { unit: 'character' });
+          // not needed currently: delete the useless space inserted above
+          //Editor.deleteBackward(editor, { unit: 'character' });
 
           // merge the contents separated by the collapsed selection
           Transforms.mergeNodes(editor);

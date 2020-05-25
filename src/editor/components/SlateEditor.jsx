@@ -79,8 +79,8 @@ const SlateEditor = ({
         if (initial_selection.current !== selection) {
           initial_selection.current = selection;
           Transforms.select(editor, selection);
-          return () => ReactEditor.blur(editor);
         }
+        return () => ReactEditor.blur(editor);
       }
       // TODO: rewrite this with Slate api
       fixSelection(editor);

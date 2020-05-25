@@ -112,36 +112,38 @@ const TextBlockEdit = (props) => {
         ) {
           // TODO: this is very optimistic, we might have void nodes that are
           // meaningful. We should test if only one child, with empty text
-
           if (plaintext_serialize(value || []).length === 0) {
             event.preventDefault();
             return onDeleteBlock(block, true);
           }
 
+          // BEGIN about listings (not tested)
           // Are we in a listing block? Handle by deleting empty list item
-          const query = Editor.above(editor, {
+          const inListingBlock = Editor.above(editor, {
             match: (n) =>
               LISTTYPES.includes(
                 typeof n.type === 'undefined' ? n.type : n.type.toString(),
               ),
           });
 
-          const match = Editor.above(editor, {
+          const blockWithSelection = Editor.above(editor, {
             match: (n) => Editor.isBlock(editor, n),
           });
-          if (match && Node.string(match[0])) {
+
+          if (blockWithSelection && Node.string(blockWithSelection[0])) {
             // We're in a list item. Is it the first list item?
-            return; // TODO: join with previous <li> element, if exists
+            //return; // TODO: join with previous <li> element, if exists
           }
 
-          // if (query) {
-          //   Editor.deleteBackward(editor, { unit: 'line' });
-          //   console.log(editor.children);
-          //   return;
-          // }
+          if (inListingBlock) {
+            Editor.deleteBackward(editor, { unit: 'line' });
+            console.log(editor.children);
+            //return;
+          }
 
           event.stopPropagation();
           event.preventDefault();
+          // END about listings
 
           // join this block with previous block, if previous block is slate
           const blocksFieldname = getBlocksFieldname(properties);
@@ -165,35 +167,53 @@ const TextBlockEdit = (props) => {
 
           const prev = prevBlock.value;
 
+          // collapse the selection to its start point
           Transforms.collapse(editor, { edge: 'start' });
 
           // TODO: do we really want to insert this text here?
+
+          // insert a space before the left edge of the selection
           editor.apply({
             type: 'insert_text',
             path: [0, 0],
             offset: 0,
             text: ' ',
           });
+
+          // collapse the selection to its start point
           Transforms.collapse(editor, { edge: 'start' });
-          Transforms.insertNodes(editor, prev, { at: [0] });
+
+          // insert the contents of the previous editor into the current editor
+          Transforms.insertNodes(editor, prev, {
+            at: Editor.start(editor, []),
+          });
+
+          // delete the useless space inserted above
+          Editor.deleteBackward(editor, { unit: 'character' });
+
+          // merge the contents separated by the collapsed selection
           Transforms.mergeNodes(editor);
 
           const selection = JSON.parse(JSON.stringify(editor.selection));
           const combined = JSON.parse(JSON.stringify(editor.children));
 
           // TODO: don't remove undo history, etc
+          // TODO: after Enter, the current filled-with-previous-block
+          // block is visible for a fraction of second
 
           // setTimeout is needed to ensure setState has been successfully
           // executed in Form.jsx. See
           // https://github.com/plone/volto/issues/1519
           setTimeout(() => {
-            onChangeBlock(prevBlockId, {
-              '@type': 'slate',
-              value: combined,
-              selection,
-              // TODO: set plaintext field value in block value
+            onDeleteBlock(block, true);
+            setTimeout(() => {
+              onChangeBlock(prevBlockId, {
+                '@type': 'slate',
+                value: combined,
+                selection,
+                plaintext: plaintext_serialize(combined || []),
+              });
             });
-            setTimeout(() => onDeleteBlock(block, true));
           });
         }
         return true;

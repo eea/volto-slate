@@ -105,18 +105,20 @@ const TextBlockEdit = (props) => {
       Backspace: ({ editor, event }) => {
         const { value } = data;
 
-        const firstListItemInSelection = Editor.nodes(editor, {
-          match: (n) => n.type === 'list-item',
-        }).next().value[0];
+        // can be undefined
+        const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
+          editor,
+          {
+            match: (n) => n.type === 'list-item',
+          },
+        );
 
-        console.log('firstListItemInSelection', firstListItemInSelection);
-
+        // whether the selection is inside a list item
         const listItemCase =
-          Range.isCollapsed(editor.selection) &&
-          firstListItemInSelection &&
-          firstListItemInSelection.text === '';
+          Range.isCollapsed(editor.selection) && listItemWithSelection;
 
         // if the selection is collapsed and at node and offset 0
+        // or collapsed inside a list item
         if (isCursorAtBlockStart(editor) || listItemCase) {
           // TODO: this is very optimistic, we might have void nodes that are
           // meaningful. We should test if only one child, with empty text
@@ -125,37 +127,23 @@ const TextBlockEdit = (props) => {
             return onDeleteBlock(block, true);
           }
 
-          // Are we in a listing block?
-          // TODO: this returns a falsy value, use something else
-          const isInListingBlock = Editor.above(editor, {
-            match: (n) => {
-              return LISTTYPES.includes(
-                typeof n.type === 'undefined' ? n.type : n.type.toString(),
-              );
-            },
-          });
-
-          if (isInListingBlock) {
-            // Handle by deleting empty list item
-
-            // get the block with the selection
-            const [blockWithSelection] = Editor.above(editor, {
-              match: (n) => Editor.isBlock(editor, n),
-            });
-
-            // if there is a block with contents inside the listing that
-            // is intersecting with the selection
-            if (blockWithSelection && Node.string(blockWithSelection)) {
-              // We're in a list item. Is it the first list item?
-              //return; // TODO: join with previous <li> element, if exists
+          // are we in a list-item and is cursor at the beginning of the list item?
+          if (listItemCase && editor.selection.anchor.offset === 0) {
+            if (
+              Node.parent(editor, listItemWithSelectionPath).children.indexOf(
+                listItemWithSelection,
+              ) === 0
+            ) {
+              // the cursor is inside the first list-item
+              event.stopPropagation();
+              event.preventDefault();
+              return false; // TODO: join with previous <li> element, if exists
             }
-
-            Editor.deleteBackward(editor, { unit: 'block' });
+            // else handle by deleting the list-item
             Transforms.liftNodes(editor);
-            if (listItemCase) {
-              Transforms.liftNodes(editor);
-            }
-            console.log('editor.children', editor.children);
+            Transforms.mergeNodes(editor);
+            Transforms.mergeNodes(editor, { at: [1] });
+            //console.log('editor.children', editor.children);
 
             event.stopPropagation();
             event.preventDefault();

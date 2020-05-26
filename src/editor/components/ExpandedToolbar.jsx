@@ -8,16 +8,12 @@ import toggleIcon from '@plone/volto/icons/freedom.svg';
 
 const ExpandedToolbar = React.forwardRef(
   ({ className, onToggle, mainToolbarShown, children, ...props }, ref) => {
-    function handleOnToggle() {
-      onToggle();
-    }
-
     return (
       <BasicToolbar {...props} className={className} ref={ref}>
         {children}
         <Button
           onMouseDown={(event) => {
-            handleOnToggle();
+            onToggle();
             event.preventDefault();
           }}
           icon={toggleIcon}

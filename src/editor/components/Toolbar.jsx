@@ -13,10 +13,6 @@ const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
   const ref = useRef();
   const editor = useSlate();
 
-  function handleOnToggle() {
-    onToggle();
-  }
-
   useEffect(() => {
     const el = ref.current;
     const { selection } = editor;

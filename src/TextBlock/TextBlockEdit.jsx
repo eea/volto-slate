@@ -15,7 +15,8 @@ import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
 import ShortcutListing from './ShortcutListing';
 
-const LISTTYPES = ['bulleted-list', 'numbered-list'];
+import { LISTTYPES } from './constants';
+import { withHandleBreak } from './decorators';
 
 const TextBlockEdit = (props) => {
   const {
@@ -237,60 +238,9 @@ const TextBlockEdit = (props) => {
     properties,
   ]);
 
-  const withHandleBreak = React.useCallback(
-    (editor) => {
-      const { insertBreak } = editor;
-      const empty = {
-        type: 'paragraph',
-        children: [{ text: '' }],
-      };
-
-      editor.insertBreak = () => {
-        const currentNodeEntry = Editor.above(editor, {
-          match: (n) => Editor.isBlock(editor, n),
-        });
-
-        if (currentNodeEntry) {
-          // TODO: check if node is list type, need to handle differently
-          const [currentNode, path] = currentNodeEntry;
-
-          const parent = Editor.above(editor, {
-            match: (n) =>
-              LISTTYPES.includes(
-                typeof n.type === 'undefined' ? n.type : n.type.toString(),
-              ),
-          });
-
-          if (parent) {
-            Transforms.insertNodes(editor, {
-              type: 'list-item',
-              children: [{ text: '' }],
-            });
-
-            return;
-          }
-
-          Transforms.splitNodes(editor);
-          const [head, tail] = editor.children.slice(path);
-          const id = onAddBlock('slate', index + 1);
-          onChangeBlock(id, {
-            '@type': 'slate',
-            value: [JSON.parse(JSON.stringify(tail || empty))],
-          }); // TODO: set plaintext field value in block value
-
-          if (tail) Transforms.removeNodes(editor);
-          onSelectBlock(id);
-
-          return;
-        }
-
-        insertBreak();
-      };
-
-      return editor;
-    },
-    [index, onAddBlock, onChangeBlock, onSelectBlock],
-  );
+  const configuredWithHandleBreak = useMemo(() => {
+    return withHandleBreak(index, onAddBlock, onChangeBlock, onSelectBlock);
+  }, [index, onAddBlock, onChangeBlock, onSelectBlock]);
 
   return (
     <>
@@ -302,7 +252,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        decorators={[withHandleBreak]}
+        decorators={[configuredWithHandleBreak]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

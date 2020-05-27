@@ -144,7 +144,7 @@ export const fixSelection = (editor) => {
 // Range.isCollapsed(editor.selection) &&
 // Point.equals(editor.selection.anchor, Editor.start(editor, []))
 
-export function isCursorAtBlockEnd(editor) {
+export function isCursorAtBlockStart(editor) {
   fixSelection(editor);
   if (Range.isCollapsed(editor.selection)) {
     if (
@@ -158,7 +158,7 @@ export function isCursorAtBlockEnd(editor) {
   }
 }
 
-export function isCursorAtBlockStart(editor) {
+export function isCursorAtBlockEnd(editor) {
   fixSelection(editor);
   if (Range.isCollapsed(editor.selection)) {
     const anchor = editor.selection?.anchor || {};

@@ -154,7 +154,7 @@ const TextBlockEdit = (props) => {
   // TODO: convert these handlers to editor decorations
   const keyDownHandlers = useMemo(() => {
     return {
-      ArrowUp: ({ editor, even }) => {
+      ArrowUp: ({ editor, event }) => {
         if (isCursorAtBlockStart(editor))
           onFocusPreviousBlock(block, blockNode.current);
       },

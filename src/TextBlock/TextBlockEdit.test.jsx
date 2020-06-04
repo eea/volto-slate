@@ -47,13 +47,6 @@ describe('TextBlockEdit', () => {
   // });
 
   it('withHandleBreak decorator', async () => {
-    // const editor = withHandleBreak(
-    //   5,
-    //   () => {},
-    //   () => {},
-    //   () => {},
-    // )(withReact(input));
-
     const input = (
       <editor>
         <block>
@@ -71,9 +64,14 @@ describe('TextBlockEdit', () => {
       </editor>
     );
 
-    console.log('etc', [output]);
+    // console.log('etc', [output]);
 
-    const editor = withReact(input);
+    const editor = withHandleBreak(
+      0,
+      () => {},
+      () => {},
+      () => {},
+    )(withReact(input));
     editor.insertText(text);
 
     // TODO: debug, get into the source, to understand where is __source added and why

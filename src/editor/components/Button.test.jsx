@@ -1,8 +1,7 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { wait } from '@testing-library/react';
+import { wait, render } from '@testing-library/react';
 
 import Button from './Button';
 
@@ -16,13 +15,13 @@ describe('Button', () => {
         messages: {},
       },
     });
-    const component = renderer.create(
+    const { asFragment } = render(
       <Provider store={store}>
-        <Button pathname="/test" />
+        <Button />
       </Provider>,
     );
     await wait(() => {
-      expect(component.toJSON()).toMatchSnapshot();
+      expect(asFragment()).toMatchSnapshot();
     });
   });
 });

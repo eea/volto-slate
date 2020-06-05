@@ -28,7 +28,7 @@ function getPreviousBlock(index, properties) {
   const blocks_layout = properties[blocksLayoutFieldname];
   const prevBlockId = blocks_layout.items[index - 1];
   const prevBlock = properties[blocksFieldname][prevBlockId];
-  return prevBlock;
+  return [prevBlock, prevBlockId];
 }
 
 function isCursorInList(editor) {
@@ -46,7 +46,7 @@ function isCursorInList(editor) {
   return [listItemCase, listItemWithSelectionPath, listItemCase];
 }
 
-function handleBackspaceInList(editor, prevBlock) {
+function handleBackspaceInList(editor, prevBlock, event) {
   const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
     editor,
     {
@@ -88,7 +88,7 @@ function handleBackspaceInList(editor, prevBlock) {
   return true;
 }
 
-function handleBackspaceInText(editor, prevBlock) {
+function handleBackspaceInText(editor, prevBlock, event) {
   // To work around current architecture limitations, read the value
   // from previous block. Replace it in the current editor (over
   // which we have control), join with current block value, then use
@@ -239,9 +239,9 @@ const TextBlockEdit = (props) => {
         event.preventDefault();
 
         if (isCursorInList(editor)) {
-          handleBackspaceInList(editor);
+          handleBackspaceInList(editor, prevBlock, event);
         } else {
-          handleBackspaceInText(editor);
+          handleBackspaceInText(editor, prevBlock);
         }
 
         const selection = JSON.parse(JSON.stringify(editor.selection));

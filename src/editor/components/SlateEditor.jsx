@@ -57,9 +57,9 @@ const SlateEditor = ({
       types: ['bulleted-list', 'numbered-list'],
       typeP: 'paragraph',
     });
-    const decos = [
-      withDelete,
-      withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
+    const decos = [ // commented out for testing reasons:
+      // withDelete,
+      // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...(slate.decorators || []),
       ...paramdecos.current,
     ];

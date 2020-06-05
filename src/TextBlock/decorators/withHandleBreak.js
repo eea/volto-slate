@@ -61,6 +61,8 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
         insertBreak();
 
         const nodes = Editor.fragment(editor, []);
+        // console.log('nodes', JSON.stringify(nodes, null, 3));
+        // return;
         const id = onAddBlock('slate', index + 1);
 
         onChangeBlock(id, {

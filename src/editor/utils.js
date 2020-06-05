@@ -40,10 +40,12 @@ export const isBlockActive = (editor, format) => {
 };
 
 export const isMarkActive = (editor, format) => {
+  // console.log('editor in isMarkActive', JSON.stringify(editor, null, 2));
   const marks = Editor.marks(editor);
   return marks ? marks[format] === true : false;
 };
 
+// TODO: this should be in a separate file (maybe in a plugin?)
 export const withDelete = (editor) => {
   const { deleteBackward } = editor;
 
@@ -87,6 +89,7 @@ export const withDelete = (editor) => {
 /**
  * On insert break at the start of an empty block in types,
  * replace it with a new paragraph.
+ * TODO: this should be in a separate file (maybe in a plugin?)
  */
 export const breakEmptyReset = ({ types, typeP }) => (editor) => {
   const { insertBreak } = editor;
@@ -123,6 +126,7 @@ export const breakEmptyReset = ({ types, typeP }) => (editor) => {
   return editor;
 };
 
+// TODO: remake this to be pure Slate code, no DOM, if possible
 export const fixSelection = (editor) => {
   if (!editor.selection) {
     const sel = window.getSelection();

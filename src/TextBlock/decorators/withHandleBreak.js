@@ -3,13 +3,6 @@ import { Editor, Transforms, Range } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import { LISTTYPES } from '../constants';
 
-/**
- * Comments standard
- * =================
- *
- * The root of the tree is up.
- */
-
 const blockEntryAboveSelection = (editor) => {
   // the first node entry above the selection (towards the root) that is a block
   return Editor.above(editor, {
@@ -54,8 +47,10 @@ const createNewSlateBlock = (
 ) => {
   // add a new block
   const id = onAddBlock('slate', index + 1);
-  onSelectBlock(id);
   const valueObj2 = JSON.parse(JSON.stringify(value));
+
+  // console.log('valueObj of new block', JSON.stringify(valueObj2, null, 3));
+
   // change the new block
   const options = {
     '@type': 'slate',
@@ -64,6 +59,7 @@ const createNewSlateBlock = (
     selection: selection,
   };
   onChangeBlock(id, options);
+  onSelectBlock(id);
   return id;
 };
 
@@ -82,69 +78,65 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
 
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
-      if (listEntryAboveSelection(editor)) {
-        insertEmptyListItem(editor);
-        // insertBreak();
-      } else {
-        // insertBreak();
+      // if (listEntryAboveSelection(editor)) {
+      //   insertEmptyListItem(editor);
+      //   // insertBreak();
+      // } else {
+      // insertBreak();
 
-        // initial value
-        // const { value, nodes } = getValueFromEditor(editor);
-        // initial selection
-        // const selectionObj = JSON.parse(JSON.stringify(editor.selection));
+      // initial value
+      // const { value, nodes } = getValueFromEditor(editor);
+      // initial selection
+      // const selectionObj = JSON.parse(JSON.stringify(editor.selection));
 
-        // value to put in the up block
-        const upBlock = Editor.fragment(
+      // value to put in the up block
+      const upBlock = Editor.fragment(
+        editor,
+        Editor.range(
           editor,
-          Editor.range(
-            editor,
-            [],
-            Range.isBackward(editor.selection)
-              ? editor.selection.focus
-              : editor.selection.anchor,
-          ),
-        );
-        // selection to set in the up block
-        const upSelection = {
-          anchor: Editor.end(editor, editor.selection),
-          focus: Editor.end(editor, editor.selection),
-        };
+          [],
+          Range.isBackward(editor.selection)
+            ? editor.selection.focus
+            : editor.selection.anchor,
+        ),
+      );
+      // selection to set in the up block
+      const upSelection = {
+        anchor: Editor.end(editor, editor.selection),
+        focus: Editor.end(editor, editor.selection),
+      };
 
-        // value to put in the bottom block
-        const bottomBlock = Editor.fragment(
+      // value to put in the bottom block
+      const bottomBlock = Editor.fragment(
+        editor,
+        Editor.range(
           editor,
-          Editor.range(
-            editor,
-            Range.isBackward(editor.selection)
-              ? editor.selection.focus
-              : editor.selection.anchor,
-            Editor.end(editor, []),
-          ),
-        );
-        // selection to set in the bottom block
-        const bottomSelection = {
-          anchor: Editor.start(editor, []),
-          focus: Editor.start(editor, []),
-        };
+          Range.isBackward(editor.selection)
+            ? editor.selection.focus
+            : editor.selection.anchor,
+          Editor.end(editor, []),
+        ),
+      );
+      // selection to set in the bottom block
+      const bottomSelection = {
+        anchor: Editor.start(editor, []),
+        focus: Editor.start(editor, []),
+      };
 
-        // replace everything in the up block with upBlock
-        Transforms.removeNodes(editor, {
-          at: Editor.start(editor, []),
-        });
-        Transforms.insertNodes(editor, upBlock, {
-          at: Editor.start(editor, []),
-        });
+      // replace everything in the up block with upBlock
+      Transforms.removeNodes(editor);
+      Transforms.insertNodes(editor, upBlock);
 
-        // const emptyValue = [createEmptyParagraph()];
-        // const emptySelection = undefined;
+      // const emptyValue = [createEmptyParagraph()];
+      // const emptySelection = undefined;
 
-        // create the bottom block with the bottomBlock and bottomSelection
-        createNewSlateBlock(bottomBlock, index, bottomSelection, {
-          onChangeBlock,
-          onAddBlock,
-          onSelectBlock,
-        });
-      }
+      // create the bottom block with the bottomBlock and bottomSelection
+      createNewSlateBlock(bottomBlock, index, bottomSelection, {
+        onChangeBlock,
+        onAddBlock,
+        onSelectBlock,
+      });
+      //   }
     }
   };
 

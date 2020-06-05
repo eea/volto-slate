@@ -58,7 +58,7 @@ const SlateEditor = ({
       typeP: 'paragraph',
     });
     const decos = [
-      // commented out for testing reasons:
+      // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...(slate.decorators || []),

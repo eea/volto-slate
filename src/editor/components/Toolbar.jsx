@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
-import cx from 'classnames';
 import { Portal } from 'react-portal';
 
 import Button from './Button';

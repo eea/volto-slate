@@ -26,7 +26,7 @@ const LinkButton = () => {
         submitLabel="Insert"
         loading={false}
         onSubmit={(formData) => {
-          // have an algorithm that decides which one is used
+          // TODO: have an algorithm that decides which one is used
           const url = formData?.link?.external_link;
           const data = { ...formData };
           editor.selection = selection;

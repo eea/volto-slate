@@ -2,6 +2,9 @@ import React from 'react';
 import { Field } from '@plone/volto/components';
 import { Tab } from 'semantic-ui-react';
 
+// TODO: use the latest version of ObjectWidget here (or in future maybe import it from Volto):
+// https://github.com/plone/volto/pull/1566
+
 const Object = ({ schema, value, onChange, errors = {}, id, ...props }) => {
   const renderFieldSet = React.useCallback(
     (fieldset) => {

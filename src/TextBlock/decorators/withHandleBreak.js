@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms, Range } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import { LISTTYPES } from '../constants';
 
@@ -46,11 +46,39 @@ const insertEmptyListItem = (editor) => {
   Transforms.insertNodes(editor, createEmptyListItem());
 };
 
+const createNewSlateBlock = (
+  value,
+  index,
+  selection,
+  { onChangeBlock, onAddBlock, onSelectBlock },
+) => {
+  // add a new block
+  const id = onAddBlock('slate', index + 1);
+  onSelectBlock(id);
+  const valueObj2 = JSON.parse(JSON.stringify(value));
+  // change the new block
+  const options = {
+    '@type': 'slate',
+    value: valueObj2,
+    plaintext: plaintext_serialize(value),
+    selection: selection,
+  };
+  onChangeBlock(id, options);
+  return id;
+};
+
+const getValueFromEditor = (editor) => {
+  const nodes = Editor.fragment(editor, []);
+
+  const value = JSON.parse(JSON.stringify(nodes || [createEmptyParagraph()]));
+
+  return { value, nodes };
+};
+
 const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
   editor,
 ) => {
-  const { insertBreak } = editor;
-  const empty = createEmptyParagraph();
+  // const { insertBreak } = editor;
 
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
@@ -58,24 +86,64 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
         insertEmptyListItem(editor);
         // insertBreak();
       } else {
-        insertBreak();
+        // insertBreak();
 
-        const nodes = Editor.fragment(editor, []);
-        // console.log('nodes', JSON.stringify(nodes, null, 3));
-        // return;
-        const id = onAddBlock('slate', index + 1);
+        // initial value
+        // const { value, nodes } = getValueFromEditor(editor);
+        // initial selection
+        // const selectionObj = JSON.parse(JSON.stringify(editor.selection));
 
-        onChangeBlock(id, {
-          '@type': 'slate',
-          value: [JSON.parse(JSON.stringify(nodes || empty))],
-          plaintext: plaintext_serialize(nodes || empty),
+        // value to put in the up block
+        const upBlock = Editor.fragment(
+          editor,
+          Editor.range(
+            editor,
+            [],
+            Range.isBackward(editor.selection)
+              ? editor.selection.focus
+              : editor.selection.anchor,
+          ),
+        );
+        // selection to set in the up block
+        const upSelection = {
+          anchor: Editor.end(editor, editor.selection),
+          focus: Editor.end(editor, editor.selection),
+        };
+
+        // value to put in the bottom block
+        const bottomBlock = Editor.fragment(
+          editor,
+          Editor.range(
+            editor,
+            Range.isBackward(editor.selection)
+              ? editor.selection.focus
+              : editor.selection.anchor,
+            Editor.end(editor, []),
+          ),
+        );
+        // selection to set in the bottom block
+        const bottomSelection = {
+          anchor: Editor.start(editor, []),
+          focus: Editor.start(editor, []),
+        };
+
+        // replace everything in the up block with upBlock
+        Transforms.removeNodes(editor, {
+          at: Editor.start(editor, []),
+        });
+        Transforms.insertNodes(editor, upBlock, {
+          at: Editor.start(editor, []),
         });
 
-        if (nodes) {
-          Transforms.removeNodes(editor);
-        }
+        // const emptyValue = [createEmptyParagraph()];
+        // const emptySelection = undefined;
 
-        onSelectBlock(id);
+        // create the bottom block with the bottomBlock and bottomSelection
+        createNewSlateBlock(bottomBlock, index, bottomSelection, {
+          onChangeBlock,
+          onAddBlock,
+          onSelectBlock,
+        });
       }
     }
   };

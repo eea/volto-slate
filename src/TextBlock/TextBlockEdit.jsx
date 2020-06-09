@@ -14,6 +14,8 @@ import { plaintext_serialize } from './../editor/render';
 import { settings } from '~/config';
 import { SidebarPortal } from '@plone/volto/components';
 import ShortcutListing from './ShortcutListing';
+import { setSlateBlockSelection } from './../actions';
+import { connect } from 'react-redux';
 
 import { LISTTYPES } from './constants';
 import { withHandleBreak } from './decorators';
@@ -150,6 +152,7 @@ const TextBlockEdit = (props) => {
     blockNode,
     index,
     properties,
+    setSlateBlockSelection,
   } = props;
 
   const { value } = data;
@@ -257,11 +260,13 @@ const TextBlockEdit = (props) => {
         // setTimeout ensures setState has been successfully
         // executed in Form.jsx. See
         // https://github.com/plone/volto/issues/1519
+
+        setSlateBlockSelection(prevBlockId, selection);
+
         setTimeout(() => {
           onChangeBlock(prevBlockId, {
             '@type': 'slate',
             value: combined,
-            selection,
             plaintext: plaintext_serialize(combined || []),
           });
           setTimeout(() => onDeleteBlock(block, true));
@@ -281,6 +286,7 @@ const TextBlockEdit = (props) => {
     onDeleteBlock,
     onChangeBlock,
     properties,
+    setSlateBlockSelection,
   ]);
 
   const configuredWithHandleBreak = useMemo(() => {
@@ -324,4 +330,6 @@ const TextBlockEdit = (props) => {
   );
 };
 
-export default TextBlockEdit;
+export default connect(null, {
+  setSlateBlockSelection,
+})(TextBlockEdit);

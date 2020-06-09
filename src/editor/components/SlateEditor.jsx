@@ -4,6 +4,7 @@ import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useCallback, useState, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
@@ -25,7 +26,8 @@ const SlateEditor = ({
   onKeyDown,
   properties,
   decorators,
-  block,
+  // block,
+  defaultSelection,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
   const {
@@ -68,18 +70,19 @@ const SlateEditor = ({
   }, [slate.decorators]);
 
   const initial_selection = React.useRef();
-  const { selection } = data;
+  // const { selection } = data;
+  console.log('defaultSelection', defaultSelection);
 
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
 
-      if (selection) {
+      if (defaultSelection) {
         // Handles the case when block was just joined with backspace, in that
         // case we want to restore the cursor close to the initial position
-        if (initial_selection.current !== selection) {
-          initial_selection.current = selection;
-          Transforms.select(editor, selection);
+        if (initial_selection.current !== defaultSelection) {
+          initial_selection.current = defaultSelection;
+          Transforms.select(editor, defaultSelection);
         }
         return () => ReactEditor.blur(editor);
       }
@@ -87,7 +90,7 @@ const SlateEditor = ({
       fixSelection(editor);
     }
     return () => ReactEditor.blur(editor);
-  }, [editor, selected, block, selection]);
+  }, [editor, selected, defaultSelection]);
 
   React.useEffect(() => {
     const sel = window.getSelection();
@@ -170,4 +173,9 @@ const SlateEditor = ({
   );
 };
 
-export default SlateEditor;
+export default connect((state, props) => {
+  const blockId = props.block;
+  return {
+    defaultSelection: state.slate_block_selections?.[blockId],
+  };
+})(SlateEditor);

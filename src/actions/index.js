@@ -1,0 +1,1 @@
+export setSlateBlockSelection from './selection';

@@ -45,7 +45,7 @@ const insertEmptyListItem = (editor) => {
 const createNewSlateBlock = (
   value,
   index,
-  selection,
+  // selection,
   { onChangeBlock, onAddBlock, onSelectBlock },
 ) => {
   // add a new block
@@ -59,7 +59,7 @@ const createNewSlateBlock = (
     '@type': 'slate',
     value: valueObj2,
     plaintext: plaintext_serialize(value),
-    selection: selection,
+    // selection: selection,
   };
   onChangeBlock(id, options);
   onSelectBlock(id);

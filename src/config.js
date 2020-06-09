@@ -6,6 +6,7 @@ import installLinkPlugin from './editor/plugins/Link';
 import installCalloutPlugin from './editor/plugins/Callout';
 import installVoltoProposals from './futurevolto/config';
 import installMarkdown from './editor/plugins/Markdown';
+import { slate_block_selections } from './reducers';
 
 export function applyConfig(config) {
   config.blocks.blocksConfig.slate = {
@@ -33,6 +34,8 @@ export function applyConfig(config) {
   installMarkdown(config);
   installCalloutPlugin(config);
   installVoltoProposals(config);
+
+  config.addonReducers.slate_block_selections = slate_block_selections;
 
   return config;
 }

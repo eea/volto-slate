@@ -133,7 +133,9 @@ export const fixSelection = (editor) => {
 
     // in unit tests (jsdom) sel is null
     if (sel) {
-      editor.selection = ReactEditor.toSlateRange(editor, sel);
+      const s = ReactEditor.toSlateRange(editor, sel);
+      // console.log('selection range', s);
+      editor.selection = s;
     }
     // See also dicussions in https://github.com/ianstormtaylor/slate/pull/3652
     // console.log('fixing selection', JSON.stringify(sel), editor.selection);

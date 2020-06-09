@@ -3,10 +3,13 @@ import { Editor, Transforms, Range } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import { LISTTYPES } from '../constants';
 
-const blockEntryAboveSelection = (editor) => {
+export const blockEntryAboveSelection = (editor) => {
   // the first node entry above the selection (towards the root) that is a block
   return Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
+    match: (n) => {
+      console.log(n);
+      return Editor.isBlock(editor, n);
+    },
   });
 };
 

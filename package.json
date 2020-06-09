@@ -9,6 +9,7 @@
   "author": "Tiberiu Ichim",
   "license": "ISC",
   "dependencies": {
+    "@types/jest": "^25.2.3",
     "classnames": "2.2.6",
     "is-url": "1.2.4",
     "slate": "^0.58.3",

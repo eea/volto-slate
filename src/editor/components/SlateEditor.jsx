@@ -91,7 +91,9 @@ const SlateEditor = ({
 
   React.useEffect(() => {
     const sel = window.getSelection();
-    if (selected && sel.type === 'None') {
+
+    // check for sel to be defined for the case of unit tests
+    if (sel && selected && sel.type === 'None') {
       // in case this block was programatically created (by enter/backspace key)
       const el = ReactEditor.toDOMNode(editor, editor);
       sel.collapse(el, 0);

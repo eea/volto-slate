@@ -130,7 +130,11 @@ export const breakEmptyReset = ({ types, typeP }) => (editor) => {
 export const fixSelection = (editor) => {
   if (!editor.selection) {
     const sel = window.getSelection();
-    editor.selection = ReactEditor.toSlateRange(editor, sel);
+
+    // in unit tests (jsdom) sel is null
+    if (sel) {
+      editor.selection = ReactEditor.toSlateRange(editor, sel);
+    }
     // See also dicussions in https://github.com/ianstormtaylor/slate/pull/3652
     // console.log('fixing selection', JSON.stringify(sel), editor.selection);
     // sel.collapse(

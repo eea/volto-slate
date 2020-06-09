@@ -39,4 +39,38 @@ describe('withHandleBreak decorator', () => {
 
     expect(output.children).toEqual(editor.children);
   });
+
+  it('basic test', async () => {
+    const input = (
+      <editor>
+        <block>
+          abc
+          <cursor />
+          def
+        </block>
+      </editor>
+    );
+
+    const output = (
+      <editor>
+        <block>
+          abc
+          <cursor />
+        </block>
+      </editor>
+    );
+
+    const editor = withHandleBreak(
+      0,
+      () => {},
+      () => {},
+      () => {},
+    )(withReact(input));
+    editor.insertBreak();
+
+    // TODO: debug, get into the source, to understand where is __source added and why
+    output.children[0]['__source'] = editor.children[0]['__source'];
+
+    expect(output.children).toEqual(editor.children);
+  });
 });

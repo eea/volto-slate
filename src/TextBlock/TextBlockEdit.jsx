@@ -32,18 +32,21 @@ function getPreviousBlock(index, properties) {
 }
 
 function isCursorInList(editor) {
-  const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
-    editor,
-    {
-      match: (n) => n.type === 'list-item',
-    },
-  );
+  const result = Editor.above(editor, {
+    match: (n) => n.type === 'list-item',
+  });
+
+  if (!result) {
+    return false;
+  }
+
+  const [listItemWithSelection, listItemWithSelectionPath] = result;
 
   // whether the selection is inside a list item
   const listItemCase =
     Range.isCollapsed(editor.selection) && listItemWithSelection;
 
-  return [listItemCase, listItemWithSelectionPath, listItemCase];
+  return listItemCase;
 }
 
 function handleBackspaceInList(editor, prevBlock, event) {

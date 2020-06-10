@@ -289,9 +289,12 @@ const TextBlockEdit = (props) => {
     setSlateBlockSelection,
   ]);
 
-  const configuredWithHandleBreak = useMemo(() => {
-    return withHandleBreak(index, onAddBlock, onChangeBlock, onSelectBlock);
-  }, [index, onAddBlock, onChangeBlock, onSelectBlock]);
+  const configuredWithHandleBreak = withHandleBreak(
+    index,
+    onAddBlock,
+    onChangeBlock,
+    onSelectBlock,
+  );
 
   return (
     <>

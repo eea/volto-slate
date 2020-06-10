@@ -49,12 +49,11 @@ const createNewSlateBlock = (
 ) => {
   // add a new block
   const id = onAddBlock('slate', index + 1);
-  const valueObj2 = JSON.parse(JSON.stringify(value));
 
   // change the new block
   const options = {
     '@type': 'slate',
-    value: valueObj2,
+    value: JSON.parse(JSON.stringify(value)),
     plaintext: plaintext_serialize(value),
   };
   onChangeBlock(id, options);

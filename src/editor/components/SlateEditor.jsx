@@ -112,6 +112,7 @@ const SlateEditor = ({
 
   return (
     <div
+      data-slate-value={window?.Cypress ? JSON.stringify(value, null, 2) : null}
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       {/* {block} - {selected ? 'sel' : 'notsel'} */}

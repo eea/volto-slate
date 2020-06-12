@@ -45,21 +45,16 @@ const insertEmptyListItem = (editor) => {
 const createNewSlateBlock = (
   value,
   index,
-  // selection,
   { onChangeBlock, onAddBlock, onSelectBlock },
 ) => {
   // add a new block
   const id = onAddBlock('slate', index + 1);
-  const valueObj2 = JSON.parse(JSON.stringify(value));
-
-  // console.log('valueObj of new block', JSON.stringify(valueObj2, null, 3));
 
   // change the new block
   const options = {
     '@type': 'slate',
-    value: valueObj2,
+    value: JSON.parse(JSON.stringify(value)),
     plaintext: plaintext_serialize(value),
-    // selection: selection,
   };
   onChangeBlock(id, options);
   onSelectBlock(id);
@@ -110,7 +105,7 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
       };
 
       // value to put in the bottom block
-      const bottomBlock = Editor.fragment(
+      const bottomBlockValue = Editor.fragment(
         editor,
         Editor.range(
           editor,
@@ -133,13 +128,12 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
       // const emptyValue = [createEmptyParagraph()];
       // const emptySelection = undefined;
 
-      // create the bottom block with the bottomBlock and bottomSelection
-      createNewSlateBlock(bottomBlock, index, bottomSelection, {
+      // create the bottom block with the bottomBlockValue and bottomSelection
+      createNewSlateBlock(bottomBlockValue, index, {
         onChangeBlock,
         onAddBlock,
         onSelectBlock,
       });
-      //   }
     }
   };
 

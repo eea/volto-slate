@@ -12,7 +12,7 @@ import ExpandedToolbar from './ExpandedToolbar';
 import {
   fixSelection,
   toggleMark,
-  withDelete,
+  // withDelete,
   breakEmptyReset,
 } from '../utils';
 import { settings } from '~/config';
@@ -71,7 +71,7 @@ const SlateEditor = ({
 
   const initial_selection = React.useRef();
   // const { selection } = data;
-  console.log('defaultSelection', defaultSelection);
+  // console.log('defaultSelection', defaultSelection);
 
   React.useLayoutEffect(() => {
     if (selected) {

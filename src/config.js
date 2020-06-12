@@ -35,8 +35,10 @@ export function applyConfig(config) {
   installCalloutPlugin(config);
   installVoltoProposals(config);
 
-  config.addonReducers = config.addonReducers || {};
-  config.addonReducers.slate_block_selections = slate_block_selections;
+  config.addonReducers = {
+    ...config.addonReducers,
+    slate_block_selections,
+  };
 
   return config;
 }

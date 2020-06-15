@@ -41,7 +41,20 @@ export const isBlockActive = (editor, format) => {
 
 export const isMarkActive = (editor, format) => {
   // console.log('editor in isMarkActive', JSON.stringify(editor, null, 2));
-  const marks = Editor.marks(editor);
+  let marks;
+  try {
+    marks = Editor.marks(editor);
+  } catch (ex) {
+    // bug in Slate, recently appears only in Cypress context, more exactly when I press Enter inside a numbered list first item to produce a split (resulting two list items) (not sure if manually inside the Cypress browser but automatically it surely appears)
+    if (
+      ex.message ===
+      'Cannot get the leaf node at path [0,0] because it refers to a non-leaf node: [object Object]'
+    ) {
+      marks = null;
+    } else {
+      throw ex;
+    }
+  }
   return marks ? marks[format] === true : false;
 };
 

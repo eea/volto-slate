@@ -6,7 +6,7 @@ export withHandleBreak from './withHandleBreak';
  *
  * The root of the tree is up.
  *
- * TODO: add more unit tests
+ * TODO: add more tests
  * TODO: move small functions in file decoracors/withHandleBreak.js to src/editor/utils.js (and write unit tests for them)
  * TODO: an entire directory called 'list' in slate-plugins, of course interconnected to other parts (i.e. queries) from the rest of slate-plugins repo, to study and apply inspiration
  * TODO: add more comments

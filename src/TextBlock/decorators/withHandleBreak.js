@@ -78,6 +78,71 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
     if (blockEntryAboveSelection(editor)) {
       // if in a list, the default behavior is enough
       if (listEntryAboveSelection(editor)) {
+        if (
+          Editor.above(editor, {
+            at: editor.selection,
+            match: (x) => x.type === 'list-item',
+          })[0].children[0].text === ''
+        ) {
+          const upBlock = Editor.fragment(
+            editor,
+            Editor.range(
+              editor,
+              [],
+              Range.isBackward(editor.selection)
+                ? editor.selection.focus
+                : editor.selection.anchor,
+            ),
+          );
+
+          // selection to set in the up block
+          const upSelection = {
+            anchor: Editor.end(editor, editor.selection),
+            focus: Editor.end(editor, editor.selection),
+          };
+
+          // value to put in the bottom block
+          const bottomBlockValue = [
+            {
+              type: 'paragraph',
+              children: [{ text: '' }],
+            },
+          ];
+
+          // selection to set in the bottom block
+          const bottomSelection = {
+            anchor: { path: [], offset: 0 },
+            focus: { path: [], offset: 0 },
+          };
+
+          // replace everything in the up block with upBlock
+          Transforms.delete(editor, {
+            at: Editor.end(editor, []),
+            distance: 1,
+            unit: 'character',
+            hanging: true,
+            reverse: true,
+          });
+          // Transforms.delete(editor, {
+          //   at: [0],
+          //   distance: 1,
+          //   unit: 'character',
+          //   hanging: true,
+          //   reverse: true,
+          // });
+          // Transforms.insertNodes(editor, upBlock);
+
+          // const emptyValue = [createEmptyParagraph()];
+          // const emptySelection = undefined;
+
+          // create the bottom block with the bottomBlockValue and bottomSelection
+          createNewSlateBlock(bottomBlockValue, index, {
+            onChangeBlock,
+            onAddBlock,
+            onSelectBlock,
+          });
+          return;
+        }
         insertBreak();
         return;
       }

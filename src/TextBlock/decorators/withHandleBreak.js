@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editor, Transforms, Range } from 'slate';
+import { Editor, Transforms, Range, Node } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import { LISTTYPES } from '../constants';
 
@@ -72,10 +72,16 @@ const getValueFromEditor = (editor) => {
 const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
   editor,
 ) => {
-  // const { insertBreak } = editor;
+  const { insertBreak } = editor;
 
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
+      // if in a list, the default behavior is enough
+      if (listEntryAboveSelection(editor)) {
+        insertBreak();
+        return;
+      }
+
       // if (listEntryAboveSelection(editor)) {
       //   insertEmptyListItem(editor);
       //   // insertBreak();
@@ -122,7 +128,7 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
       };
 
       // replace everything in the up block with upBlock
-      Transforms.removeNodes(editor);
+      Transforms.delete(editor, { at: [0], distance: 1, unit: 'block' });
       Transforms.insertNodes(editor, upBlock);
 
       // const emptyValue = [createEmptyParagraph()];

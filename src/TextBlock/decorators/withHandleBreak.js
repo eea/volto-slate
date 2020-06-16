@@ -69,137 +69,105 @@ const getValueFromEditor = (editor) => {
   return { value, nodes };
 };
 
+const getCollapsedRangeAtBeginningOfEditor = (editor) => {
+  return {
+    anchor: { path: [], offset: 0 },
+    focus: { path: [], offset: 0 },
+  };
+};
+
+const getCollapsedRangeAtEndOfSelection = (editor) => {
+  return {
+    anchor: Editor.end(editor, editor.selection),
+    focus: Editor.end(editor, editor.selection),
+  };
+};
+
+const replaceAllContentInEditorWith = (editor, block) => {
+  Transforms.delete(editor, { at: [0], distance: 1, unit: 'block' });
+  Transforms.insertNodes(editor, block);
+};
+
+const getFragmentFromStartOfSelectionToEndOfEditor = (editor) => {
+  return Editor.fragment(
+    editor,
+    Editor.range(
+      editor,
+      Range.isBackward(editor.selection)
+        ? editor.selection.focus
+        : editor.selection.anchor,
+      Editor.end(editor, []),
+    ),
+  );
+};
+
+const getFragmentFromBeginningOfEditorToStartOfSelection = (editor) => {
+  return Editor.fragment(
+    editor,
+    Editor.range(
+      editor,
+      [],
+      Range.isBackward(editor.selection)
+        ? editor.selection.focus
+        : editor.selection.anchor,
+    ),
+  );
+};
+
+const simulateBackspaceAtEndOfEditor = (editor) => {
+  Transforms.delete(editor, {
+    at: Editor.end(editor, []),
+    distance: 1,
+    unit: 'character',
+    hanging: true,
+    reverse: true,
+  });
+};
+
+const emptyListEntryAboveSelection = (editor) => {
+  return (
+    Editor.above(editor, {
+      at: editor.selection,
+      match: (x) => x.type === 'list-item',
+    })[0].children[0].text === ''
+  );
+};
+
+const createDefaultFragment = () => {
+  return [createEmptyParagraph()];
+};
+
 const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
   editor,
 ) => {
-  const { insertBreak } = editor;
+  const { insertBreak: defaultInsertBreak } = editor;
 
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
-      // if in a list, the default behavior is enough
       if (listEntryAboveSelection(editor)) {
-        if (
-          Editor.above(editor, {
-            at: editor.selection,
-            match: (x) => x.type === 'list-item',
-          })[0].children[0].text === ''
-        ) {
-          const upBlock = Editor.fragment(
-            editor,
-            Editor.range(
-              editor,
-              [],
-              Range.isBackward(editor.selection)
-                ? editor.selection.focus
-                : editor.selection.anchor,
-            ),
-          );
+        if (emptyListEntryAboveSelection(editor)) {
+          const bottomBlockValue = createDefaultFragment();
 
-          // selection to set in the up block
-          const upSelection = {
-            anchor: Editor.end(editor, editor.selection),
-            focus: Editor.end(editor, editor.selection),
-          };
+          simulateBackspaceAtEndOfEditor(editor);
 
-          // value to put in the bottom block
-          const bottomBlockValue = [
-            {
-              type: 'paragraph',
-              children: [{ text: '' }],
-            },
-          ];
-
-          // selection to set in the bottom block
-          const bottomSelection = {
-            anchor: { path: [], offset: 0 },
-            focus: { path: [], offset: 0 },
-          };
-
-          // replace everything in the up block with upBlock
-          Transforms.delete(editor, {
-            at: Editor.end(editor, []),
-            distance: 1,
-            unit: 'character',
-            hanging: true,
-            reverse: true,
-          });
-          // Transforms.delete(editor, {
-          //   at: [0],
-          //   distance: 1,
-          //   unit: 'character',
-          //   hanging: true,
-          //   reverse: true,
-          // });
-          // Transforms.insertNodes(editor, upBlock);
-
-          // const emptyValue = [createEmptyParagraph()];
-          // const emptySelection = undefined;
-
-          // create the bottom block with the bottomBlockValue and bottomSelection
           createNewSlateBlock(bottomBlockValue, index, {
             onChangeBlock,
             onAddBlock,
             onSelectBlock,
           });
-          return;
+        } else {
+          defaultInsertBreak();
         }
-        insertBreak();
         return;
       }
 
-      // if (listEntryAboveSelection(editor)) {
-      //   insertEmptyListItem(editor);
-      //   // insertBreak();
-      // } else {
-      // insertBreak();
-
-      // initial value
-      // const { value, nodes } = getValueFromEditor(editor);
-      // initial selection
-      // const selectionObj = JSON.parse(JSON.stringify(editor.selection));
-
-      // value to put in the up block
-      const upBlock = Editor.fragment(
+      const upBlock = getFragmentFromBeginningOfEditorToStartOfSelection(
         editor,
-        Editor.range(
-          editor,
-          [],
-          Range.isBackward(editor.selection)
-            ? editor.selection.focus
-            : editor.selection.anchor,
-        ),
       );
-      // selection to set in the up block
-      const upSelection = {
-        anchor: Editor.end(editor, editor.selection),
-        focus: Editor.end(editor, editor.selection),
-      };
-
-      // value to put in the bottom block
-      const bottomBlockValue = Editor.fragment(
+      const bottomBlockValue = getFragmentFromStartOfSelectionToEndOfEditor(
         editor,
-        Editor.range(
-          editor,
-          Range.isBackward(editor.selection)
-            ? editor.selection.focus
-            : editor.selection.anchor,
-          Editor.end(editor, []),
-        ),
       );
-      // selection to set in the bottom block
-      const bottomSelection = {
-        anchor: Editor.start(editor, []),
-        focus: Editor.start(editor, []),
-      };
-
-      // replace everything in the up block with upBlock
-      Transforms.delete(editor, { at: [0], distance: 1, unit: 'block' });
-      Transforms.insertNodes(editor, upBlock);
-
-      // const emptyValue = [createEmptyParagraph()];
-      // const emptySelection = undefined;
-
-      // create the bottom block with the bottomBlockValue and bottomSelection
+      replaceAllContentInEditorWith(editor, upBlock);
       createNewSlateBlock(bottomBlockValue, index, {
         onChangeBlock,
         onAddBlock,

@@ -42,7 +42,7 @@ const insertEmptyListItem = (editor) => {
   Transforms.insertNodes(editor, createEmptyListItem());
 };
 
-const createNewSlateBlock = (
+const createAndSelectNewSlateBlock = (
   value,
   index,
   { onChangeBlock, onAddBlock, onSelectBlock },
@@ -137,42 +137,40 @@ const createDefaultFragment = () => {
   return [createEmptyParagraph()];
 };
 
+const splitEditorInTwoFragments = (editor) => {
+  const upBlock = getFragmentFromBeginningOfEditorToStartOfSelection(editor);
+  const bottomBlock = getFragmentFromStartOfSelectionToEndOfEditor(editor);
+  return [upBlock, bottomBlock];
+};
+
 const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
   editor,
 ) => {
   const { insertBreak: defaultInsertBreak } = editor;
 
+  const createAndSelectNewBlockAfter = (blockValue) => {
+    return createAndSelectNewSlateBlock(blockValue, index, {
+      onChangeBlock,
+      onAddBlock,
+      onSelectBlock,
+    });
+  };
+
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
       if (listEntryAboveSelection(editor)) {
         if (emptyListEntryAboveSelection(editor)) {
-          const bottomBlockValue = createDefaultFragment();
-
           simulateBackspaceAtEndOfEditor(editor);
-
-          createNewSlateBlock(bottomBlockValue, index, {
-            onChangeBlock,
-            onAddBlock,
-            onSelectBlock,
-          });
+          const bottomBlockValue = createDefaultFragment();
+          createAndSelectNewBlockAfter(bottomBlockValue);
         } else {
           defaultInsertBreak();
         }
-        return;
+      } else {
+        const [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
+        replaceAllContentInEditorWith(editor, upBlock);
+        createAndSelectNewBlockAfter(bottomBlock);
       }
-
-      const upBlock = getFragmentFromBeginningOfEditorToStartOfSelection(
-        editor,
-      );
-      const bottomBlockValue = getFragmentFromStartOfSelectionToEndOfEditor(
-        editor,
-      );
-      replaceAllContentInEditorWith(editor, upBlock);
-      createNewSlateBlock(bottomBlockValue, index, {
-        onChangeBlock,
-        onAddBlock,
-        onSelectBlock,
-      });
     }
   };
 

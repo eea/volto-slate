@@ -30,6 +30,8 @@ const SlateEditor = ({
   defaultSelection,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);
+  const [currentSelection, setCurrentSelection] = useState(null);
+
   const {
     expandedToolbarButtons,
     toolbarButtons,
@@ -87,7 +89,9 @@ const SlateEditor = ({
         return () => ReactEditor.blur(editor);
       }
       // TODO: rewrite this with Slate api
-      fixSelection(editor);
+      // BUG: this causes the selection of the other block to become null when clicking on the second block, simply commenting this out makes the test pass, but with what price?
+      // TODO: step into: it is clear it is a bad hack (manual change to editor.selection is bad):
+      // fixSelection(editor);
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected, defaultSelection]);
@@ -145,13 +149,26 @@ const SlateEditor = ({
     };
   });
 
+  // remove after solving the issue with null selection
+  const handleChange = (...args) => {
+    setCurrentSelection(editor.selection);
+    return onChange(...args);
+  };
+
   return (
     <div
       data-slate-value={window?.Cypress ? JSON.stringify(value, null, 2) : null}
+      data-slate-selection={
+        window?.Cypress ? JSON.stringify(currentSelection, null, 2) : null
+      }
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       {/* {block} - {selected ? 'sel' : 'notsel'} */}
-      <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+      <Slate
+        editor={editor}
+        value={value || initialValue}
+        onChange={handleChange}
+      >
         {!showToolbar && (
           <Toolbar
             onToggle={() => setShowToolbar(!showToolbar)}

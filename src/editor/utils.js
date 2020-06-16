@@ -168,32 +168,42 @@ export const fixSelection = (editor) => {
 // Point.equals(editor.selection.anchor, Editor.start(editor, []))
 
 export function isCursorAtBlockStart(editor) {
-  fixSelection(editor);
+  // fixSelection(editor);
+
+  // if the selection is collapsed
   if (Range.isCollapsed(editor.selection)) {
+    // if the selection is at root block or in the first block
     if (
       !editor.selection.anchor.path ||
       editor.selection.anchor.path[0] === 0
     ) {
+      // if the selection is on the first character of that block
       if (editor.selection.anchor.offset === 0) {
         return true;
       }
     }
   }
+  return false;
 }
 
 export function isCursorAtBlockEnd(editor) {
-  fixSelection(editor);
+  // fixSelection(editor);
+
+  // if the selection is collapsed
   if (Range.isCollapsed(editor.selection)) {
     const anchor = editor.selection?.anchor || {};
 
-    // the last node in the editor
+    // the last block node in the editor
     const [n] = Node.last(editor, []);
 
     if (
+      // if the node with the selection is the last block node
       Node.get(editor, anchor.path) === n &&
+      // if the collapsed selection is at the end of the last block node
       anchor.offset === n.text.length
     ) {
       return true;
     }
   }
+  return false;
 }

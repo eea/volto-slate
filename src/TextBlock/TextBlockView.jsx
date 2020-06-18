@@ -1,5 +1,5 @@
 import React from 'react';
-import { serializeHTMLFromNodes } from './serializeHTMLFromNodes';
+import serializeHTMLFromNodes from './serializeHTMLFromNodes';
 
 const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
@@ -26,6 +26,15 @@ const TextBlockView = ({ id, properties, data }) => {
 
     case 'bulleted-list':
       return handleType('ul', html);
+
+    case 'block-quote':
+      return handleType('blockquote', html);
+
+    case 'heading-two':
+      return handleType('h2', html);
+
+    case 'heading-three':
+      return handleType('h3', html);
 
     default:
       console.log('serializing to HTML a block with unknown type:', blockType);

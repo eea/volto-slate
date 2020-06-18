@@ -32,7 +32,7 @@ const getLeaf = (leafProps, plugins) => {
  *
  * @param plugins
  */
-export const serializeHTMLFromNodes = (plugins) => (nodes) => {
+const serializeHTMLFromNodes = (plugins) => (nodes) => {
   const result = nodes
     .map((node) => {
       if (SlateText.isText(node)) {
@@ -60,3 +60,5 @@ export const serializeHTMLFromNodes = (plugins) => (nodes) => {
     .join('');
   return stripSlateDataAttributes(trimWhitespace(decodeURIComponent(result)));
 };
+
+export default serializeHTMLFromNodes;

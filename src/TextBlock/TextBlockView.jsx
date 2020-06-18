@@ -1,17 +1,36 @@
-import React, { useMemo, useCallback } from 'react';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
-import { Element, Leaf } from '../editor/render';
+import React from 'react';
 import { serializeHTMLFromNodes } from './serializeHTMLFromNodes';
-
-// TODO: include plugins/decorators that alter static HTML rendering
 
 const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
   const serializer = serializeHTMLFromNodes([]);
   let html = serializer(value);
-  // console.log('html', html);
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+
+  const handleType = (tagName, html) => {
+    html = html.replace(new RegExp('^<' + tagName + '>'), '');
+    html = html.replace(new RegExp('<\\' + tagName + '>$'), '');
+    return React.createElement(tagName, {
+      dangerouslySetInnerHTML: { __html: html },
+    });
+  };
+
+  const blockType = value[0].type;
+
+  // TODO: handle flexibly all other block types that a Slate block can contain
+  switch (blockType) {
+    case 'paragraph':
+      return handleType('p', html);
+
+    case 'numbered-list':
+      return handleType('ol', html);
+
+    case 'bulleted-list':
+      return handleType('ul', html);
+
+    default:
+      console.log('serializing to HTML a block with unknown type:', blockType);
+      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  }
 };
 
 export default TextBlockView;

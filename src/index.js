@@ -8,7 +8,8 @@ import installVoltoProposals from './futurevolto/config';
 import installMarkdown from './editor/plugins/Markdown';
 import { slate_block_selections } from './reducers';
 
-export function applyConfig(config) {
+const applyConfig = (config) => {
+  console.log('vs config', config);
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',
@@ -39,8 +40,14 @@ export function applyConfig(config) {
     ...config.addonReducers,
     slate_block_selections,
   };
+  //
+  // config.addonReducers.slate_block_selections = slate_block_selections;
+
+  config.views = {
+    ...config.views,
+  };
 
   return config;
-}
+};
 
 export default applyConfig;

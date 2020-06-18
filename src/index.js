@@ -42,3 +42,5 @@ export function applyConfig(config) {
 
   return config;
 }
+
+export default applyConfig;

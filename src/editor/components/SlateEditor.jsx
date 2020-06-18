@@ -152,7 +152,7 @@ const SlateEditor = ({
   // remove after solving the issue with null selection
   const handleChange = (...args) => {
     setCurrentSelection(editor.selection);
-    return onChange(...args);
+    return onChange(...args, editor.selection);
   };
 
   return (

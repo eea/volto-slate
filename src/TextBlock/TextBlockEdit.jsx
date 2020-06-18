@@ -311,7 +311,8 @@ const TextBlockEdit = (props) => {
         value={value}
         data={data}
         block={block}
-        onChange={(value) => {
+        onChange={(value, selection) => {
+          setSlateBlockSelection(block, selection);
           onChangeBlock(block, {
             ...data,
             value,

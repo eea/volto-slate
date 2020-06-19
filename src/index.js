@@ -40,8 +40,6 @@ const applyConfig = (config) => {
     ...config.addonReducers,
     slate_block_selections,
   };
-  //
-  // config.addonReducers.slate_block_selections = slate_block_selections;
 
   config.views = {
     ...config.views,

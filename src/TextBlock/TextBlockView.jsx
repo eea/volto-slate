@@ -1,18 +1,18 @@
 import React from 'react';
 import serializeHTMLFromNodes from './serializeHTMLFromNodes';
 
+const handleType = (tagName, html) => {
+  html = html.replace(new RegExp('^<' + tagName + '>'), '');
+  html = html.replace(new RegExp('<\\' + tagName + '>$'), '');
+  return React.createElement(tagName, {
+    dangerouslySetInnerHTML: { __html: html },
+  });
+};
+
 const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
   const serializer = serializeHTMLFromNodes([]);
   let html = serializer(value);
-
-  const handleType = (tagName, html) => {
-    html = html.replace(new RegExp('^<' + tagName + '>'), '');
-    html = html.replace(new RegExp('<\\' + tagName + '>$'), '');
-    return React.createElement(tagName, {
-      dangerouslySetInnerHTML: { __html: html },
-    });
-  };
 
   const blockType = value[0].type;
 
@@ -37,7 +37,10 @@ const TextBlockView = ({ id, properties, data }) => {
       return handleType('h3', html);
 
     default:
-      console.log('serializing to HTML a block with unknown type:', blockType);
+      console.warn(
+        'Serializing a Slate block to HTML with unknown type:',
+        blockType,
+      );
       return <div dangerouslySetInnerHTML={{ __html: html }} />;
   }
 };

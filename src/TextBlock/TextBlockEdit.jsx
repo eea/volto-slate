@@ -296,6 +296,15 @@ const TextBlockEdit = (props) => {
     onSelectBlock,
   );
 
+  let timeoutTillRerender = null;
+  React.useEffect(() => {
+    return () => {
+      if (timeoutTillRerender) {
+        clearTimeout(timeoutTillRerender);
+      }
+    };
+  });
+
   return (
     <>
       <SidebarPortal selected={selected}>
@@ -312,7 +321,11 @@ const TextBlockEdit = (props) => {
         data={data}
         block={block}
         onChange={(value, selection) => {
-          setSlateBlockSelection(block, selection);
+          // without using setTimeout, the user types characters on the right side of the text cursor
+          timeoutTillRerender = setTimeout(() => {
+            setSlateBlockSelection(block, selection);
+          });
+
           onChangeBlock(block, {
             ...data,
             value,

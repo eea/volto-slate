@@ -2,7 +2,7 @@
  * A wrapper over ObjectBrowser because of API constraints
  */
 
-import { TextWidget } from '@plone/volto/components'; //CheckboxWidget, Icon,
+import { TextWidget } from '@plone/volto/components';
 import { Link } from 'react-router-dom';
 import clearSVG from '@plone/volto/icons/clear.svg';
 import navTreeSVG from '@plone/volto/icons/nav.svg';

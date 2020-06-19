@@ -40,7 +40,6 @@ export const isBlockActive = (editor, format) => {
 };
 
 export const isMarkActive = (editor, format) => {
-  // console.log('editor in isMarkActive', JSON.stringify(editor, null, 2));
   let marks;
   try {
     marks = Editor.marks(editor);

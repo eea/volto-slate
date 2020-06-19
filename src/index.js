@@ -9,7 +9,6 @@ import installMarkdown from './editor/plugins/Markdown';
 import { slate_block_selections } from './reducers';
 
 const applyConfig = (config) => {
-  console.log('vs config', config);
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',

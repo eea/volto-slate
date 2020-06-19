@@ -160,70 +160,6 @@ const TextBlockEdit = (props) => {
   // TODO: convert these handlers to editor decorations
   const keyDownHandlers = useMemo(() => {
     return {
-      ArrowUp: ({ editor, event }) => {
-        if (isCursorAtBlockStart(editor))
-          onFocusPreviousBlock(block, blockNode.current);
-      },
-
-      ArrowDown: ({ editor, event }) => {
-        if (isCursorAtBlockEnd(editor))
-          onFocusNextBlock(block, blockNode.current);
-      },
-
-      Tab: ({ editor, event }) => {
-        /* Intended behavior:
-         *
-         * <tab> at beginning of block, go to next block
-         * <tab> at end of block, go to next block
-         * <tab> at beginning of block in a list, go to next block
-         *
-         * <s-tab> at beginning of block, go to prev block
-         * <s-tab> at end of block, go to prev block
-         * <s-tab> at beginning of block in a list, go to prev block
-         *
-         * <tab> at beginning of line in a list, not at beginning of block:
-         * wrap in a new list (make a sublist). Compare with previous indent
-         * level?
-         * <s-tab> at beginning of line in a list, not at beginning of block:
-         * If in a sublist, unwrap from the list (decrease indent level)
-         *
-         */
-        event.preventDefault();
-        event.stopPropagation();
-
-        // TODO: shouldn't collapse
-        Transforms.collapse(editor, { edge: 0 });
-
-        const query = Editor.above(editor, {
-          match: (n) =>
-            LISTTYPES.includes(
-              typeof n.type === 'undefined' ? n.type : n.type.toString(),
-            ),
-        });
-
-        if (!query) {
-          if (event.shiftKey) {
-            onFocusPreviousBlock(block, blockNode.current);
-          } else {
-            onFocusNextBlock(block, blockNode.current);
-          }
-          return;
-        }
-        const [parent] = query;
-
-        if (!event.shiftKey) {
-          Transforms.wrapNodes(editor, { type: parent.type, children: [] });
-        } else {
-          Transforms.unwrapNodes(editor, {
-            // TODO: is this only for first node encountered?
-            match: (n) =>
-              LISTTYPES.includes(
-                typeof n.type === 'undefined' ? n.type : n.type.toString(),
-              ),
-          });
-        }
-      },
-
       Backspace: ({ editor, event }) => {
         if (blockIsEmpty(editor)) {
           event.preventDefault();
@@ -275,7 +211,12 @@ const TextBlockEdit = (props) => {
         return;
       },
 
-      ...settings.slate?.keyDownHandlers,
+      ...settings.slate?.getKeyDownHandlers({
+        block,
+        blockNode,
+        onFocusNextBlock,
+        onFocusPreviousBlock,
+      }),
     };
   }, [
     block,

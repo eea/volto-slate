@@ -184,6 +184,12 @@ export const getBackspaceKeyDownHandlers = ({
   };
 };
 
+const isNodeAList = (n) => {
+  return LISTTYPES.includes(
+    typeof n.type === 'undefined' ? n.type : n.type.toString(),
+  );
+};
+
 export const getFocusRelatedKeyDownHandlers = ({
   block,
   blockNode,
@@ -223,15 +229,14 @@ export const getFocusRelatedKeyDownHandlers = ({
       event.stopPropagation();
 
       // TODO: shouldn't collapse
-      Transforms.collapse(editor, { edge: 0 });
+      // Transforms.collapse(editor, { edge: 0 });
 
+      // whether the cursor is inside a list-item
       const query = Editor.above(editor, {
-        match: (n) =>
-          LISTTYPES.includes(
-            typeof n.type === 'undefined' ? n.type : n.type.toString(),
-          ),
+        match: isNodeAList,
       });
 
+      // if not inside a list-item, normal blur/focus behavior
       if (!query) {
         if (event.shiftKey) {
           onFocusPreviousBlock(block, blockNode.current);
@@ -243,14 +248,18 @@ export const getFocusRelatedKeyDownHandlers = ({
       const [parent] = query;
 
       if (!event.shiftKey) {
-        Transforms.wrapNodes(editor, { type: parent.type, children: [] });
+        Transforms.wrapNodes(editor, {
+          type: parent.type,
+          children: [
+            {
+              type: 'list-item',
+              children: [...Editor.fragment(editor, editor.selection)],
+            },
+          ],
+        });
       } else {
-        Transforms.unwrapNodes(editor, {
-          // TODO: is this only for first node encountered?
-          match: (n) =>
-            LISTTYPES.includes(
-              typeof n.type === 'undefined' ? n.type : n.type.toString(),
-            ),
+        Transforms.liftNodes(editor, {
+          match: isNodeAList,
         });
       }
     },

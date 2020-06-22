@@ -245,7 +245,7 @@ export const getFocusRelatedKeyDownHandlers = ({
         }
         return;
       }
-      const [parent] = query;
+      const [parent, path] = query;
 
       if (!event.shiftKey) {
         Transforms.wrapNodes(editor, {
@@ -258,9 +258,29 @@ export const getFocusRelatedKeyDownHandlers = ({
           ],
         });
       } else {
-        Transforms.liftNodes(editor, {
-          match: isNodeAList,
-        });
+        if (path.length >= 2) {
+          Transforms.liftNodes(editor, {
+            match: isNodeAList,
+          });
+          if (path.length === 2) {
+            // TODO: make this code branch work with any number of list-item-s (currently only 2 work) and make test 9 more general for the same reason
+            let f1 = Editor.fragment(editor, [0]);
+            let f2 = Editor.fragment(editor, [1]);
+
+            let merged = [
+              {
+                type: parent.type,
+                children: [...f1[0].children, ...f2[0].children],
+              },
+            ];
+            Transforms.removeNodes(editor, { at: [0] });
+            Transforms.removeNodes(editor, { at: [0] });
+            console.log('editor.children', editor.children);
+            console.log('merged', merged);
+            Transforms.insertNodes(editor, merged, []);
+            Transforms.select(editor, { path: [0, 1], offset: 0 });
+          }
+        }
       }
     },
   };

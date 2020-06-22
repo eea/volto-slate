@@ -25,7 +25,7 @@ const applyConfig = (config) => {
       view: [],
     },
     blockHasValue: (data) => {
-      return data.plaintext !== '';
+      return !!data.plaintext;
     },
   };
 

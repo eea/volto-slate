@@ -170,7 +170,7 @@ export function isCursorAtBlockStart(editor) {
   // fixSelection(editor);
 
   // if the selection is collapsed
-  if (Range.isCollapsed(editor.selection)) {
+  if (editor.selection && Range.isCollapsed(editor.selection)) {
     // if the selection is at root block or in the first block
     if (
       !editor.selection.anchor.path ||
@@ -189,7 +189,7 @@ export function isCursorAtBlockEnd(editor) {
   // fixSelection(editor);
 
   // if the selection is collapsed
-  if (Range.isCollapsed(editor.selection)) {
+  if (editor.selection && Range.isCollapsed(editor.selection)) {
     const anchor = editor.selection?.anchor || {};
 
     // the last block node in the editor

@@ -1,11 +1,19 @@
 /** @jsx jsx */
-
-import { jsx } from '../../__test-utils__/jsx';
+/* custom pragma, see
+ * https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#customizing-with-the-classic-runtime
+ */
 
 import { withReact } from 'slate-react';
 import { withHandleBreak } from '.';
 import { blockEntryAboveSelection } from './withHandleBreak';
-import jest from 'jest';
+import { createHyperscript } from 'slate-hyperscript';
+
+export const jsx = createHyperscript({
+  elements: {
+    block: {},
+    inline: { inline: true },
+  },
+});
 
 describe('withHandleBreak decorator', () => {
   it('example test', async () => {
@@ -99,12 +107,9 @@ describe('withHandleBreak decorator', () => {
     //   </editor>
     // );
 
-    const editor = withHandleBreak(
-      0,
-      () => {},
-      () => {},
-      () => {},
-    )(withReact(input));
+    const nop = () => {};
+
+    const editor = withHandleBreak(0, nop, nop, nop)(withReact(input));
     // editor.insertBreak();
 
     expect(blockEntryAboveSelection(editor)).not.toBeUndefined();

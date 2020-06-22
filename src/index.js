@@ -24,8 +24,12 @@ const applyConfig = (config) => {
       addPermission: [],
       view: [],
     },
+    blockHasValue: (data) => {
+      return data.plaintext !== '';
+    },
   };
 
+  config.settings.defaultBlockType = 'slate';
   config.settings.slate = {
     ...slateConfig,
   };

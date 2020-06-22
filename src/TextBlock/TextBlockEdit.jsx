@@ -1,12 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { connect } from 'react-redux';
+import { Button } from 'semantic-ui-react';
+
+import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
+import addSVG from '@plone/volto/icons/circle-plus.svg';
+import { settings } from '~/config';
+
+import { setSlateBlockSelection } from './../actions';
 import SlateEditor from './../editor';
 import { plaintext_serialize } from './../editor/render';
-import { settings } from '~/config';
-import { SidebarPortal } from '@plone/volto/components';
 import ShortcutListing from './ShortcutListing';
-import { setSlateBlockSelection } from './../actions';
-import { connect } from 'react-redux';
-
 import { withHandleBreak } from './decorators';
 import {
   getBackspaceKeyDownHandlers,
@@ -15,22 +18,25 @@ import {
 
 const TextBlockEdit = (props) => {
   const {
-    data,
-    selected,
     block,
+    blockNode,
+    data,
+    detached,
+    index,
     onAddBlock,
     onChangeBlock,
     onDeleteBlock,
     onFocusNextBlock,
     onFocusPreviousBlock,
+    onMutateBlock,
     onSelectBlock,
-    blockNode,
-    index,
     properties,
+    selected,
     setSlateBlockSelection,
   } = props;
 
   const { value } = data;
+  const [addNewBlockOpened, setAddNewBlockOpened] = useState();
 
   const keyDownHandlers = useMemo(() => {
     return {
@@ -116,6 +122,19 @@ const TextBlockEdit = (props) => {
         selected={selected}
         placeholder="Enter some rich text…"
       />
+      {!detached && !data.plaintext && (
+        <Button
+          basic
+          icon
+          onClick={() => setAddNewBlockOpened(!addNewBlockOpened)}
+          className="block-add-button"
+        >
+          <Icon name={addSVG} className="block-add-button" size="24px" />
+        </Button>
+      )}
+      {addNewBlockOpened && (
+        <BlockChooser onMutateBlock={onMutateBlock} currentBlock={block} />
+      )}
     </>
   );
 };

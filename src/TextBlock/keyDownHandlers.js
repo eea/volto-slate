@@ -1,6 +1,6 @@
 import { LISTTYPES } from './constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../editor/utils';
-import { Editor, Transforms, Range, Node } from 'slate';
+import { Editor, Transforms, Range, Node, RangeRef } from 'slate';
 import { plaintext_serialize } from '../editor/render';
 import {
   getBlocksFieldname,
@@ -259,12 +259,17 @@ export const getFocusRelatedKeyDownHandlers = ({
         });
       } else {
         if (path.length >= 2) {
+          // let [selStart, selEnd] = Range.edges(editor.selection);
+          let selPath = [...Range.start(editor.selection).path];
+          selPath.pop();
+
+          let selOffset = Range.start(editor.selection).offset;
+
+          // let rref = Editor.rangeRef(editor, editor.selection);
           Transforms.liftNodes(editor, {
             match: isNodeAList,
           });
           if (path.length === 2) {
-            let [selStart, selEnd] = Range.edges(editor.selection);
-
             // TODO: make this code branch work with any number of list-item-s (currently only 2 work) and make test 9 more general for the same reason
             // let f1 = Editor.fragment(editor, [0]);
             // let f2 = Editor.fragment(editor, [1]);
@@ -282,9 +287,7 @@ export const getFocusRelatedKeyDownHandlers = ({
             let merged = [
               {
                 type: parent.type,
-                children: [
-                  /* ...f1[0].children, ...f2[0].children */
-                ],
+                children: [],
               },
             ];
 
@@ -302,7 +305,7 @@ export const getFocusRelatedKeyDownHandlers = ({
             // console.log('editor.children', editor.children);
             console.log('merged', merged);
             Transforms.insertNodes(editor, merged, []);
-            Transforms.select(editor, selStart);
+            Transforms.select(editor, { path: selPath, offset: selOffset });
           }
         }
       }

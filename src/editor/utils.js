@@ -376,28 +376,47 @@ function nodes(editor) {
 }
 
 export const isBlockActive = (editor, format) => {
-  const result = nodes(editor, {
+  const result = Editor.nodes(editor, {
     match: (n) => n.type === format,
   });
 
-  // if (!result) {
-  //   return false;
-  // }
-
-  let count = 0;
-  let first = null;
-  for (let [x, path] of result) {
-    if (count === 0) {
-      first = x;
-    }
-    ++count;
-  }
-
-  if (count === 0) {
+  if (!result || !result[Symbol.iterator]) {
     return false;
   }
 
-  return !!first;
+  try {
+    let count = 0;
+    let first = null;
+    for (let r of result) {
+      let x = r[0];
+      if (!x) {
+        continue;
+      }
+      if (count === 0) {
+        first = x;
+      }
+      ++count;
+    }
+
+    if (count === 0) {
+      return false;
+    }
+
+    return !!first;
+  } catch (ex) {
+    return false;
+    console.log('EXCEPTION', ex);
+    console.log('editor.children', editor.children);
+  }
+
+  // const match = Editor.above(editor, {
+  //   match: (n) => n.type === format,
+  // });
+
+  // if (!match) return false;
+
+  // const [node] = match;
+  // return !!node;
 };
 
 export const isMarkActive = (editor, format) => {

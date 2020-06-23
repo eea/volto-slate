@@ -137,7 +137,7 @@ export const createDefaultFragment = () => {
 };
 
 export const splitEditorInTwoFragments = (editor) => {
-  const upBlock = getFragmentFromBeginningOfEditorToStartOfSelection(editor);
-  const bottomBlock = getFragmentFromStartOfSelectionToEndOfEditor(editor);
+  let upBlock = getFragmentFromBeginningOfEditorToStartOfSelection(editor);
+  let bottomBlock = getFragmentFromStartOfSelectionToEndOfEditor(editor);
   return [upBlock, bottomBlock];
 };

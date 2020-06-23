@@ -1,6 +1,6 @@
 import { LISTTYPES } from './constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../editor/utils';
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms, Range, Node } from 'slate';
 import { plaintext_serialize } from '../editor/render';
 import {
   getBlocksFieldname,
@@ -263,22 +263,46 @@ export const getFocusRelatedKeyDownHandlers = ({
             match: isNodeAList,
           });
           if (path.length === 2) {
+            let [selStart, selEnd] = Range.edges(editor.selection);
+
             // TODO: make this code branch work with any number of list-item-s (currently only 2 work) and make test 9 more general for the same reason
-            let f1 = Editor.fragment(editor, [0]);
-            let f2 = Editor.fragment(editor, [1]);
+            // let f1 = Editor.fragment(editor, [0]);
+            // let f2 = Editor.fragment(editor, [1]);
+
+            let fragments = [];
+            let iterable = Node.children(editor, []);
+            let count = 0;
+            for (let _ of iterable) {
+              fragments.push(Editor.fragment(editor, [count]));
+              ++count;
+            }
+
+            console.log('fragments', fragments);
 
             let merged = [
               {
                 type: parent.type,
-                children: [...f1[0].children, ...f2[0].children],
+                children: [
+                  /* ...f1[0].children, ...f2[0].children */
+                ],
               },
             ];
-            Transforms.removeNodes(editor, { at: [0] });
-            Transforms.removeNodes(editor, { at: [0] });
-            console.log('editor.children', editor.children);
+
+            for (let i = 0; i < count; ++i) {
+              let children = [...fragments[i][0].children];
+              console.log('children', children);
+              merged[0].children.push(...children);
+            }
+
+            console.log('merged before removal', merged);
+            for (let i = 0; i < count; ++i) {
+              Transforms.removeNodes(editor, { at: [0] });
+            }
+
+            // console.log('editor.children', editor.children);
             console.log('merged', merged);
             Transforms.insertNodes(editor, merged, []);
-            Transforms.select(editor, { path: [0, 1], offset: 0 });
+            Transforms.select(editor, selStart);
           }
         }
       }

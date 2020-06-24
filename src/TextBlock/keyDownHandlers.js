@@ -38,7 +38,15 @@ function isCursorInList(editor) {
   return listItemCase;
 }
 
-function handleBackspaceInList(editor, prevBlock, event) {
+function handleBackspaceInList({
+  editor,
+  prevBlock,
+  event,
+  onFocusPreviousBlock,
+  block,
+  onDeleteBlock,
+  blockNode,
+}) {
   const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
     editor,
     {
@@ -63,7 +71,29 @@ function handleBackspaceInList(editor, prevBlock, event) {
         // the cursor is inside the first list-item
         event.stopPropagation();
         event.preventDefault();
-        return false; // TODO: join with previous <li> element, if exists
+
+        // TODO: missing method:
+        //appendCurrentBlockToPreviousBlock();
+        onDeleteBlock(block, true);
+        onFocusPreviousBlock(block, blockNode.current);
+
+        // A part from the backspace-in-text handling code for inspiration:
+        // // setTimeout ensures setState has been successfully
+        // // executed in Form.jsx. See
+        // // https://github.com/plone/volto/issues/1519
+
+        // setSlateBlockSelection(prevBlockId, selection);
+
+        // setTimeout(() => {
+        //   onChangeBlock(prevBlockId, {
+        //     '@type': 'slate',
+        //     value: combined,
+        //     plaintext: plaintext_serialize(combined || []),
+        //   });
+        //   setTimeout(() => onDeleteBlock(block, true));
+        // });
+
+        return true; // TODO: join with previous <li> element, if exists
       }
       // else handle by deleting the list-item
       Transforms.liftNodes(editor);
@@ -74,7 +104,7 @@ function handleBackspaceInList(editor, prevBlock, event) {
       event.stopPropagation();
       event.preventDefault();
 
-      return;
+      return true;
     }
   }
   return true;
@@ -132,6 +162,8 @@ export const getBackspaceKeyDownHandlers = ({
   properties,
   setSlateBlockSelection,
   onChangeBlock,
+  onFocusPreviousBlock,
+  blockNode,
 }) => {
   return {
     Backspace: ({ editor, event }) => {
@@ -152,34 +184,40 @@ export const getBackspaceKeyDownHandlers = ({
       event.preventDefault();
 
       if (isCursorInList(editor)) {
-        handleBackspaceInList(editor, prevBlock, event);
+        handleBackspaceInList({
+          editor,
+          prevBlock,
+          event,
+          onFocusPreviousBlock,
+          onDeleteBlock,
+          block,
+          blockNode,
+        });
       } else {
         handleBackspaceInText(editor, prevBlock);
-      }
 
-      const selection = JSON.parse(JSON.stringify(editor.selection));
-      const combined = JSON.parse(JSON.stringify(editor.children));
+        const selection = JSON.parse(JSON.stringify(editor.selection));
+        const combined = JSON.parse(JSON.stringify(editor.children));
 
-      // TODO: don't remove undo history, etc
-      // TODO: after Enter, the current filled-with-previous-block
-      // block is visible for a fraction of second
+        // TODO: don't remove undo history, etc
+        // TODO: after Enter, the current filled-with-previous-block
+        // block is visible for a fraction of second
 
-      // setTimeout ensures setState has been successfully
-      // executed in Form.jsx. See
-      // https://github.com/plone/volto/issues/1519
+        // setTimeout ensures setState has been successfully
+        // executed in Form.jsx. See
+        // https://github.com/plone/volto/issues/1519
 
-      setSlateBlockSelection(prevBlockId, selection);
+        setSlateBlockSelection(prevBlockId, selection);
 
-      setTimeout(() => {
-        onChangeBlock(prevBlockId, {
-          '@type': 'slate',
-          value: combined,
-          plaintext: plaintext_serialize(combined || []),
+        setTimeout(() => {
+          onChangeBlock(prevBlockId, {
+            '@type': 'slate',
+            value: combined,
+            plaintext: plaintext_serialize(combined || []),
+          });
+          setTimeout(() => onDeleteBlock(block, true));
         });
-        setTimeout(() => onDeleteBlock(block, true));
-      });
-
-      return;
+      }
     },
   };
 };

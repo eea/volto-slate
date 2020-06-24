@@ -47,6 +47,8 @@ const TextBlockEdit = (props) => {
         properties,
         setSlateBlockSelection,
         onChangeBlock,
+        onFocusPreviousBlock,
+        blockNode,
       }),
       ...getFocusRelatedKeyDownHandlers({
         block,

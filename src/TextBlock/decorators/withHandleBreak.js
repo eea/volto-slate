@@ -60,6 +60,7 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
             // (find out the parent list type: numbered or bulleted)
             let newUpBlock = [
               {
+                type: 'numbered-list',
                 children: upBlock[0].children.slice(
                   0,
                   upBlock[0].children.length - 1,
@@ -69,6 +70,7 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
 
             let newBottomBlock = [
               {
+                type: 'numbered-list',
                 children: bottomBlock[0].children.slice(
                   1,
                   bottomBlock[0].children.length,

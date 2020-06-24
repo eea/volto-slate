@@ -1,4 +1,5 @@
 export withHandleBreak from './withHandleBreak';
+export withList from './withList';
 
 /**
  * Comments standard
@@ -8,7 +9,6 @@ export withHandleBreak from './withHandleBreak';
  *
  * TODO: add more tests
  * TODO: move functions in file TextBlock/utils.js to src/editor/utils.js
- * TODO: an entire directory called 'list' in slate-plugins, of course interconnected to other parts (i.e. queries) from the rest of slate-plugins repo, to study and apply inspiration
  * TODO: add more comments
  * TODO: a lot of inspiration from slate and slate-plugins source code
  * FIXME: having a block with a Slate editor with a list item inside (e.g. numbered), and the text cursor in the middle of the list item, the Enter key press crashes the page, with errors shown in Chrome console and in the actual page

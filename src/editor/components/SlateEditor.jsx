@@ -10,7 +10,6 @@ import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import {
-  fixSelection,
   toggleMark,
   // withDelete,
   breakEmptyReset,

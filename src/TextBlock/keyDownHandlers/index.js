@@ -1,11 +1,13 @@
-import { LISTTYPES } from './constants';
-import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../editor/utils';
+import { LISTTYPES } from '../constants';
+import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../../editor/utils';
 import { Editor, Transforms, Range, Node, RangeRef } from 'slate';
-import { plaintext_serialize } from '../editor/render';
+import { plaintext_serialize } from '../../editor/render';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
+
+export { onKeyDownList } from './listsKeyDownHandlers';
 
 function getPreviousBlock(index, properties) {
   if (index === 0) return;

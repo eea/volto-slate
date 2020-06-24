@@ -1,3 +1,8 @@
+/**
+ * A lot of inspiration from the great https://github.com/udecode/slate-plugins/,
+ * especially the list element.
+ */
+
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'semantic-ui-react';
@@ -10,10 +15,11 @@ import { setSlateBlockSelection } from './../actions';
 import SlateEditor from './../editor';
 import { plaintext_serialize } from './../editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withHandleBreak } from './decorators';
+import { withHandleBreak, withList } from './decorators';
 import {
   getBackspaceKeyDownHandlers,
   getFocusRelatedKeyDownHandlers,
+  onKeyDownList,
 } from './keyDownHandlers';
 
 const TextBlockEdit = (props) => {
@@ -40,22 +46,24 @@ const TextBlockEdit = (props) => {
 
   const keyDownHandlers = useMemo(() => {
     return {
-      ...getBackspaceKeyDownHandlers({
-        block,
-        onDeleteBlock,
-        index,
-        properties,
-        setSlateBlockSelection,
-        onChangeBlock,
-        onFocusPreviousBlock,
-        blockNode,
-      }),
-      ...getFocusRelatedKeyDownHandlers({
-        block,
-        blockNode,
-        onFocusNextBlock,
-        onFocusPreviousBlock,
-      }),
+      // TODO: uncomment these lines (they were commented just
+      // for testing purposes):
+      // ...getBackspaceKeyDownHandlers({
+      //   block,
+      //   onDeleteBlock,
+      //   index,
+      //   properties,
+      //   setSlateBlockSelection,
+      //   onChangeBlock,
+      //   onFocusPreviousBlock,
+      //   blockNode,
+      // }),
+      // ...getFocusRelatedKeyDownHandlers({
+      //   block,
+      //   blockNode,
+      //   onFocusNextBlock,
+      //   onFocusPreviousBlock,
+      // }),
       ...settings.slate?.keyDownHandlers,
     };
   }, [
@@ -70,12 +78,13 @@ const TextBlockEdit = (props) => {
     setSlateBlockSelection,
   ]);
 
-  const configuredWithHandleBreak = withHandleBreak(
-    index,
-    onAddBlock,
-    onChangeBlock,
-    onSelectBlock,
-  );
+  const configuredWithHandleBreak = useMemo(() => {
+    return withHandleBreak(index, onAddBlock, onChangeBlock, onSelectBlock);
+  }, [index, onAddBlock, onChangeBlock, onSelectBlock]);
+
+  const configureWithList = useMemo(() => withList(), []);
+
+  const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
 
   let timeoutTillRerender = null;
   React.useEffect(() => {
@@ -96,7 +105,8 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        decorators={[configuredWithHandleBreak]}
+        // TODO: uncomment this piece of code (it was commented just for testing purposes):
+        decorators={[configureWithList/* , configuredWithHandleBreak */]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}
@@ -114,6 +124,8 @@ const TextBlockEdit = (props) => {
           });
         }}
         onKeyDown={({ editor, event }) => {
+          configuredOnKeyDownList(event, editor);
+
           keyDownHandlers[event.key] &&
             keyDownHandlers[event.key]({
               ...props,

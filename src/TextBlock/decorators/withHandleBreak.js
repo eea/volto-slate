@@ -47,7 +47,11 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
 
   editor.insertBreak = () => {
     if (blockEntryAboveSelection(editor)) {
-      if (listEntryAboveSelection(editor)) {
+      const listEntry = listEntryAboveSelection(editor);
+
+      if (listEntry) {
+        const [listNode, listNodePath] = listEntry;
+
         if (emptyListEntryAboveSelection(editor)) {
           if (thereIsNoListItemBelowSelection(editor)) {
             simulateBackspaceAtEndOfEditor(editor);
@@ -56,11 +60,9 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
           } else {
             let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
 
-            // TODO: set `type` property values for each of the new blocks data below
-            // (find out the parent list type: numbered or bulleted)
             let newUpBlock = [
               {
-                type: 'numbered-list',
+                type: listNode.type,
                 children: upBlock[0].children.slice(
                   0,
                   upBlock[0].children.length - 1,
@@ -70,7 +72,7 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
 
             let newBottomBlock = [
               {
-                type: 'numbered-list',
+                type: listNode.type,
                 children: bottomBlock[0].children.slice(
                   1,
                   bottomBlock[0].children.length,
@@ -78,8 +80,8 @@ const withHandleBreak = (index, onAddBlock, onChangeBlock, onSelectBlock) => (
               },
             ];
 
-            console.log('newUpBlock', newUpBlock);
-            console.log('newBottomBlock', newBottomBlock);
+            // console.log('newUpBlock', newUpBlock);
+            // console.log('newBottomBlock', newBottomBlock);
 
             replaceAllContentInEditorWith(editor, newUpBlock);
             createAndSelectNewBlockAfter(newBottomBlock);

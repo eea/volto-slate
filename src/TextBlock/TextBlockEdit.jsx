@@ -15,7 +15,7 @@ import { setSlateBlockSelection } from './../actions';
 import SlateEditor from './../editor';
 import { plaintext_serialize } from './../editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withHandleBreak, withList } from './decorators';
+import { withList } from './decorators';
 import {
   getBackspaceKeyDownHandlers,
   getFocusRelatedKeyDownHandlers,
@@ -77,10 +77,6 @@ const TextBlockEdit = (props) => {
     properties,
     setSlateBlockSelection,
   ]);
-
-  const configuredWithHandleBreak = useMemo(() => {
-    return withHandleBreak(index, onAddBlock, onChangeBlock, onSelectBlock);
-  }, [index, onAddBlock, onChangeBlock, onSelectBlock]);
 
   const configureWithList = useMemo(
     () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),

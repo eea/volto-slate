@@ -1,4 +1,3 @@
-export withHandleBreak from './withHandleBreak';
 export withList from './withList';
 
 /**

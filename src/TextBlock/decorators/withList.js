@@ -206,9 +206,6 @@ const withList = ({
           const isStart = Point.equals(editor.selection.anchor, start);
           const isEnd = Point.equals(editor.selection.anchor, end);
 
-          const nextParagraphPath = Path.next(paragraphPath);
-          const nextListItemPath = Path.next(listItemPath);
-
           // console.log('isStart', isStart);
 
           /**
@@ -217,45 +214,11 @@ const withList = ({
            */
           if (isStart) {
             if (isBlockTextEmpty(paragraphNode)) {
-              console.log('remove list item and split here');
-            } else {
-              console.log('inserting new list item');
-              Transforms.insertNodes(
-                editor,
-                {
-                  type: typeLi,
-                  children: [{ type: typeP, children: [{ text: '' }] }],
-                },
-                { at: listItemPath },
-              );
-            }
-          }
-
-          console.log('isEnd', isEnd);
-
-          /**
-           * If not end, split nodes, wrap a list item on the new paragraph and move it to the next list item
-           */
-          if (!isEnd) {
-            Transforms.splitNodes(editor, { at: editor.selection });
-            Transforms.wrapNodes(
-              editor,
-              {
-                type: typeLi,
-                children: [],
-              },
-              { at: nextParagraphPath },
-            );
-            Transforms.moveNodes(editor, {
-              at: nextParagraphPath,
-              to: nextListItemPath,
-            });
-          } else {
-            if (isBlockTextEmpty(paragraphNode)) {
               if (thereIsNoListItemBelowSelection(editor)) {
                 simulateBackspaceAtEndOfEditor(editor);
                 const bottomBlockValue = createDefaultFragment();
                 createAndSelectNewBlockAfter(bottomBlockValue);
+                return;
               } else {
                 console.log('should split the list in two Volto blocks!');
                 let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
@@ -289,7 +252,48 @@ const withList = ({
 
                 replaceAllContentInEditorWith(editor, newUpBlock);
                 createAndSelectNewBlockAfter(newBottomBlock);
+
+                return;
               }
+            } else {
+              console.log('inserting new list item');
+              Transforms.insertNodes(
+                editor,
+                {
+                  type: typeLi,
+                  children: [{ type: typeP, children: [{ text: '' }] }],
+                },
+                { at: listItemPath },
+              );
+            }
+          }
+
+          console.log('isEnd', isEnd);
+          const nextParagraphPath = Path.next(paragraphPath);
+          const nextListItemPath = Path.next(listItemPath);
+          /**
+           * If not end, split nodes, wrap a list item on the new paragraph and move it to the next list item
+           */
+          if (!isEnd) {
+            Transforms.splitNodes(editor, { at: editor.selection });
+
+            // this condition is necessary to avoid a not understood bug
+            if (Node.has(editor, nextParagraphPath)) {
+              Transforms.wrapNodes(
+                editor,
+                {
+                  type: typeLi,
+                  children: [{ text: '' }],
+                },
+                { at: nextParagraphPath },
+              );
+              Transforms.moveNodes(editor, {
+                at: nextParagraphPath,
+                to: nextListItemPath,
+              });
+            }
+          } else {
+            if (isBlockTextEmpty(paragraphNode)) {
             } else {
               /**
                * If end, insert a list item after and select it

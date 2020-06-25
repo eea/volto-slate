@@ -48,16 +48,16 @@ const TextBlockEdit = (props) => {
     return {
       // TODO: uncomment these lines (they were commented just
       // for testing purposes):
-      // ...getBackspaceKeyDownHandlers({
-      //   block,
-      //   onDeleteBlock,
-      //   index,
-      //   properties,
-      //   setSlateBlockSelection,
-      //   onChangeBlock,
-      //   onFocusPreviousBlock,
-      //   blockNode,
-      // }),
+      ...getBackspaceKeyDownHandlers({
+        block,
+        onDeleteBlock,
+        index,
+        properties,
+        setSlateBlockSelection,
+        onChangeBlock,
+        onFocusPreviousBlock,
+        blockNode,
+      }),
       // ...getFocusRelatedKeyDownHandlers({
       //   block,
       //   blockNode,
@@ -104,8 +104,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        // TODO: uncomment this piece of code (it was commented just for testing purposes):
-        decorators={[configureWithList /* , configuredWithHandleBreak */]}
+        decorators={[configureWithList]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

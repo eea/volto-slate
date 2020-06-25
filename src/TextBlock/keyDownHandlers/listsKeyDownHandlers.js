@@ -192,7 +192,7 @@ export const onKeyDownList = ({
         [ListHotkey.ENTER, ListHotkey.DELETE_BACKWARD].includes(e.key) &&
         isBlockTextEmpty(paragraphNode);
 
-      if (!isFirstChild(listItemPath) && (shiftTab || deleteOnEmptyBlock)) {
+      if (shiftTab || deleteOnEmptyBlock) {
         const moved = moveUp(editor, listNode, listPath, listItemPath, options);
         if (moved) e.preventDefault();
       }

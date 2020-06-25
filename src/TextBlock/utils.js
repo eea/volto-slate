@@ -83,7 +83,7 @@ export const getCollapsedRangeAtEndOfSelection = (editor) => {
 };
 
 export const replaceAllContentInEditorWith = (editor, block) => {
-  Transforms.delete(editor, { at: [0], distance: 1, unit: 'block' });
+  Transforms.removeNodes(editor, { at: [0] });
   Transforms.insertNodes(editor, block);
 };
 

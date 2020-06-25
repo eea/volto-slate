@@ -1,5 +1,5 @@
 import { SHORTCUTS } from './constants';
-
+import { toggleList } from '../../../editor/components/BlockButton.jsx';
 import { Editor, Transforms, Range } from 'slate';
 
 export const withShortcuts = (editor) => {
@@ -19,7 +19,16 @@ export const withShortcuts = (editor) => {
       const beforeText = Editor.string(editor, range);
       const type = SHORTCUTS[beforeText];
 
-      if (type) {
+      if (/^[0-9]\./.test(beforeText)) {
+        Transforms.select(editor, range);
+        Transforms.delete(editor);
+        toggleList(editor, { typeList: 'numbered-list' });
+        return;
+      } else if (type === 'list-item') {
+        Editor.deleteBackward(editor, { unit: 'character', distance: 2 });
+        toggleList(editor, { typeList: 'bulleted-list' });
+        return;
+      } else if (type) {
         Transforms.select(editor, range);
         Transforms.delete(editor);
         Transforms.setNodes(
@@ -27,14 +36,6 @@ export const withShortcuts = (editor) => {
           { type },
           { match: (n) => Editor.isBlock(editor, n) },
         );
-
-        if (type === 'list-item') {
-          const list = { type: 'bulleted-list', children: [] };
-          Transforms.wrapNodes(editor, list, {
-            match: (n) => n.type === 'list-item',
-          });
-        }
-
         return;
       }
     }

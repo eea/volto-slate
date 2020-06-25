@@ -248,7 +248,7 @@ const withList = ({
                 ];
 
                 console.log('newUpBlock', newUpBlock);
-                console.log('newBottomBlock', newBottomBlock);
+                // console.log('newBottomBlock', newBottomBlock);
 
                 replaceAllContentInEditorWith(editor, newUpBlock);
                 createAndSelectNewBlockAfter(newBottomBlock);

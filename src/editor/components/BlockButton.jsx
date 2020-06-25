@@ -18,7 +18,7 @@ const unwrapNodesByType = (editor, types, options = {}) => {
   });
 };
 
-const unwrapList = (
+export const unwrapList = (
   editor,
   willWrapAgain,
   {
@@ -91,7 +91,7 @@ const getSelectionNodesByType = (editor, types, options = {}) => {
 const getSelectionNodesArrayByType = (editor, types, options = {}) =>
   Array.from(getSelectionNodesByType(editor, types, options));
 
-const toggleList = (
+export const toggleList = (
   editor,
   {
     typeList,

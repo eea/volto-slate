@@ -1,12 +1,12 @@
 import { LISTTYPES } from '../constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../../editor/utils';
-import { Editor, Transforms, Range, Node, RangeRef } from 'slate';
+import { Editor, Transforms, Range, Node, RangeRef, Path } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-
+import { unwrapList } from '../../editor/components/BlockButton.jsx';
 export { onKeyDownList } from './listsKeyDownHandlers';
 
 function getPreviousBlock(index, properties) {
@@ -49,6 +49,28 @@ function handleBackspaceInList({
   onDeleteBlock,
   blockNode,
 }) {
+  const [listNode, listNodePath] = Editor.above(editor, {
+    match: (n) => n.type === 'bulleted-list' || n.type === 'numbered-list',
+  });
+
+  console.log('listNode.children.length', listNode.children.length);
+  if (listNode && listNode.children.length === 1) {
+    if (editor.selection.anchor.offset === 0) {
+      unwrapList(editor, false);
+      Transforms.select(editor, Editor.start(editor, []));
+
+      event.stopPropagation();
+      event.preventDefault();
+
+      return true;
+    }
+  }
+
+  Editor.deleteFragment(editor);
+  Editor.deleteBackward(editor);
+  return true;
+
+
   const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
     editor,
     {
@@ -65,19 +87,43 @@ function handleBackspaceInList({
   if (isCursorAtBlockStart(editor) || listItemCase) {
     // are we in a list-item and is cursor at the beginning of the list item?
     if (listItemCase && editor.selection.anchor.offset === 0) {
-      if (
-        Node.parent(editor, listItemWithSelectionPath).children.indexOf(
-          listItemWithSelection,
-        ) === 0
-      ) {
-        // the cursor is inside the first list-item
+      let [listNode, listNodePath] = Editor.parent(
+        editor,
+        listItemWithSelectionPath,
+      );
+
+      // the cursor is inside the first list-item
+      if (listNode.children.indexOf(listItemWithSelection) === 0) {
+        console.log('in the first list-item');
         event.stopPropagation();
         event.preventDefault();
 
-        // TODO: missing method:
-        //appendCurrentBlockToPreviousBlock();
-        onDeleteBlock(block, true);
-        onFocusPreviousBlock(block, blockNode.current);
+        // let children = Node.children(editor, listNodePath);
+
+        // let count = 0;
+        // for (let [n, p] of children) {
+        //   ++count;
+        // }
+
+        const count = listNode.children.length;
+
+        if (count === 1) {
+          Transforms.delete(editor);
+          Editor.deleteBackward(editor, { unit: 'block' });
+        }
+
+        if (Node.string(listItemWithSelection) === '') {
+          console.log('it is empty');
+          // TODO: missing method:
+          //appendCurrentBlockToPreviousBlock();
+          onDeleteBlock(block, true);
+          onFocusPreviousBlock(block, blockNode.current);
+        } else if (editor.selection.anchor.offset !== 0) {
+          console.log('not empty but the cursor at beginning');
+          // Transforms.delete(editor, { unit: 'character', distance: 1 });
+          Editor.deleteFragment(editor);
+          Editor.deleteBackward(editor);
+        }
 
         // A part from the backspace-in-text handling code for inspiration:
         // // setTimeout ensures setState has been successfully
@@ -97,16 +143,19 @@ function handleBackspaceInList({
 
         return true; // TODO: join with previous <li> element, if exists
       }
+
+      console.log('inside NOT in the first list item');
       // else handle by deleting the list-item
-      Transforms.liftNodes(editor);
-      Transforms.mergeNodes(editor);
-      Transforms.mergeNodes(editor, { at: [1] });
+      // Transforms.delete(editor, { unit: 'block', distance: 1 });
+      // Transforms.liftNodes(editor);
+      // Transforms.mergeNodes(editor);
+      // Transforms.mergeNodes(editor, { at: [1] });
       //console.log('editor.children', editor.children);
 
-      event.stopPropagation();
-      event.preventDefault();
+      // event.stopPropagation();
+      // event.preventDefault();
 
-      return true;
+      return false;
     }
   }
   return true;
@@ -176,8 +225,6 @@ export const getBackspaceKeyDownHandlers = ({
 
       const [prevBlock = {}, prevBlockId] = getPreviousBlock(index, properties);
 
-      if (prevBlock['@type'] !== 'slate') return;
-
       const isAtBlockStart = isCursorAtBlockStart(editor);
 
       if (!isAtBlockStart) return;
@@ -186,7 +233,7 @@ export const getBackspaceKeyDownHandlers = ({
       event.preventDefault();
 
       if (isCursorInList(editor)) {
-        handleBackspaceInList({
+        return handleBackspaceInList({
           editor,
           prevBlock,
           event,
@@ -196,6 +243,8 @@ export const getBackspaceKeyDownHandlers = ({
           blockNode,
         });
       } else {
+        if (prevBlock['@type'] !== 'slate') return;
+
         handleBackspaceInText(editor, prevBlock);
 
         const selection = JSON.parse(JSON.stringify(editor.selection));

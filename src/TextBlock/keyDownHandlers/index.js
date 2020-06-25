@@ -225,8 +225,6 @@ export const getFocusRelatedKeyDownHandlers = ({
        *
        */
 
-      //  if (it is in a list item that is not the first (for tab, shift-tab))
-
       // TODO: shouldn't collapse
       // Transforms.collapse(editor, { edge: 0 });
 

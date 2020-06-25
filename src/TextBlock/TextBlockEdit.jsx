@@ -46,8 +46,6 @@ const TextBlockEdit = (props) => {
 
   const keyDownHandlers = useMemo(() => {
     return {
-      // TODO: uncomment these lines (they were commented just
-      // for testing purposes):
       ...getBackspaceKeyDownHandlers({
         block,
         onDeleteBlock,
@@ -58,12 +56,12 @@ const TextBlockEdit = (props) => {
         onFocusPreviousBlock,
         blockNode,
       }),
-      // ...getFocusRelatedKeyDownHandlers({
-      //   block,
-      //   blockNode,
-      //   onFocusNextBlock,
-      //   onFocusPreviousBlock,
-      // }),
+      ...getFocusRelatedKeyDownHandlers({
+        block,
+        blockNode,
+        onFocusNextBlock,
+        onFocusPreviousBlock,
+      }),
       ...settings.slate?.keyDownHandlers,
     };
   }, [

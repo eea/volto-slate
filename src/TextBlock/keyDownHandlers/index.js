@@ -70,7 +70,6 @@ function handleBackspaceInList({
   Editor.deleteBackward(editor);
   return true;
 
-
   const [listItemWithSelection, listItemWithSelectionPath] = Editor.above(
     editor,
     {
@@ -314,8 +313,8 @@ export const getFocusRelatedKeyDownHandlers = ({
        * If in a sublist, unwrap from the list (decrease indent level)
        *
        */
-      event.preventDefault();
-      event.stopPropagation();
+
+      //  if (it is in a list item that is not the first (for tab, shift-tab))
 
       // TODO: shouldn't collapse
       // Transforms.collapse(editor, { edge: 0 });
@@ -327,6 +326,9 @@ export const getFocusRelatedKeyDownHandlers = ({
 
       // if not inside a list-item, normal blur/focus behavior
       if (!query) {
+        event.preventDefault();
+        event.stopPropagation();
+
         if (event.shiftKey) {
           onFocusPreviousBlock(block, blockNode.current);
         } else {
@@ -334,70 +336,83 @@ export const getFocusRelatedKeyDownHandlers = ({
         }
         return;
       }
-      const [parent, path] = query;
 
-      if (!event.shiftKey) {
-        Transforms.wrapNodes(editor, {
-          type: parent.type,
-          children: [
-            {
-              type: 'list-item',
-              children: [...Editor.fragment(editor, editor.selection)],
-            },
-          ],
-        });
-      } else {
-        if (path.length >= 2) {
-          // let [selStart, selEnd] = Range.edges(editor.selection);
-          let selPath = [...Range.start(editor.selection).path];
-          selPath.pop();
+      const [itemNode, itemPath] = Editor.above(editor, {
+        match: (n) => n.type === 'list-item',
+      });
 
-          let selOffset = Range.start(editor.selection).offset;
-
-          // let rref = Editor.rangeRef(editor, editor.selection);
-          Transforms.liftNodes(editor, {
-            match: isNodeAList,
-          });
-          if (path.length === 2) {
-            // TODO: make this code branch work with any number of list-item-s (currently only 2 work) and make test 9 more general for the same reason
-            // let f1 = Editor.fragment(editor, [0]);
-            // let f2 = Editor.fragment(editor, [1]);
-
-            let fragments = [];
-            let iterable = Node.children(editor, []);
-            let count = 0;
-            for (let _ of iterable) {
-              fragments.push(Editor.fragment(editor, [count]));
-              ++count;
-            }
-
-            console.log('fragments', fragments);
-
-            let merged = [
-              {
-                type: parent.type,
-                children: [],
-              },
-            ];
-
-            for (let i = 0; i < count; ++i) {
-              let children = [...fragments[i][0].children];
-              console.log('children', children);
-              merged[0].children.push(...children);
-            }
-
-            console.log('merged before removal', merged);
-            for (let i = 0; i < count; ++i) {
-              Transforms.removeNodes(editor, { at: [0] });
-            }
-
-            // console.log('editor.children', editor.children);
-            console.log('merged', merged);
-            Transforms.insertNodes(editor, merged, []);
-            Transforms.select(editor, { path: selPath, offset: selOffset });
-          }
-        }
+      // TODO: also treat nested lists
+      if (itemNode && itemPath[itemPath.length - 1] !== 0) {
+        event.preventDefault();
+        event.stopPropagation();
+        // other code does what is needed (to change indent level of selection)
+        return;
       }
+
+      // const [parent, path] = query;
+
+      // if (!event.shiftKey) {
+      //   Transforms.wrapNodes(editor, {
+      //     type: parent.type,
+      //     children: [
+      //       {
+      //         type: 'list-item',
+      //         children: [...Editor.fragment(editor, editor.selection)],
+      //       },
+      //     ],
+      //   });
+      // } else {
+      // if (path.length >= 2) {
+      //   // let [selStart, selEnd] = Range.edges(editor.selection);
+      //   let selPath = [...Range.start(editor.selection).path];
+      //   selPath.pop();
+
+      //   let selOffset = Range.start(editor.selection).offset;
+
+      //   // let rref = Editor.rangeRef(editor, editor.selection);
+      //   Transforms.liftNodes(editor, {
+      //     match: isNodeAList,
+      //   });
+      //   if (path.length === 2) {
+      //     // TODO: make this code branch work with any number of list-item-s (currently only 2 work) and make test 9 more general for the same reason
+      //     // let f1 = Editor.fragment(editor, [0]);
+      //     // let f2 = Editor.fragment(editor, [1]);
+
+      //     let fragments = [];
+      //     let iterable = Node.children(editor, []);
+      //     let count = 0;
+      //     for (let _ of iterable) {
+      //       fragments.push(Editor.fragment(editor, [count]));
+      //       ++count;
+      //     }
+
+      //     console.log('fragments', fragments);
+
+      //     let merged = [
+      //       {
+      //         type: parent.type,
+      //         children: [],
+      //       },
+      //     ];
+
+      //     for (let i = 0; i < count; ++i) {
+      //       let children = [...fragments[i][0].children];
+      //       console.log('children', children);
+      //       merged[0].children.push(...children);
+      //     }
+
+      //     console.log('merged before removal', merged);
+      //     for (let i = 0; i < count; ++i) {
+      //       Transforms.removeNodes(editor, { at: [0] });
+      //     }
+
+      //     // console.log('editor.children', editor.children);
+      //     console.log('merged', merged);
+      //     Transforms.insertNodes(editor, merged, []);
+      //     Transforms.select(editor, { path: selPath, offset: selOffset });
+      //   }
+      // }
+      // }
     },
   };
 };

@@ -82,7 +82,10 @@ const TextBlockEdit = (props) => {
     return withHandleBreak(index, onAddBlock, onChangeBlock, onSelectBlock);
   }, [index, onAddBlock, onChangeBlock, onSelectBlock]);
 
-  const configureWithList = useMemo(() => withList(), []);
+  const configureWithList = useMemo(
+    () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
+    [index, onAddBlock, onChangeBlock, onSelectBlock],
+  );
 
   const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
 
@@ -106,7 +109,7 @@ const TextBlockEdit = (props) => {
         properties={properties}
         onAddBlock={onAddBlock}
         // TODO: uncomment this piece of code (it was commented just for testing purposes):
-        decorators={[configureWithList/* , configuredWithHandleBreak */]}
+        decorators={[configureWithList /* , configuredWithHandleBreak */]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

@@ -1,5 +1,14 @@
 import { Editor, Path, Point, Range, Transforms, Text, Node } from 'slate';
 import { castArray } from 'lodash';
+import {
+  simulateBackspaceAtEndOfEditor,
+  createDefaultFragment,
+  createAndSelectNewSlateBlock,
+  splitEditorInTwoFragments,
+  replaceAllContentInEditorWith,
+} from '../utils';
+
+// TODO: 2 x Enter in the middle of a list should split the list in 2 parts, and just that or also insert a new empty block in the middle?
 
 /**
  * See {@link Range.isCollapsed}.
@@ -126,13 +135,48 @@ const withResetBlockType = (options) => (editor) => {
   return editor;
 };
 
+const thereIsNoListItemBelowSelection = (editor) => {
+  let sel = editor.selection;
+  if (Range.isExpanded(sel)) {
+    Transforms.collapse(editor, { edge: 'start' });
+  }
+  // path of paragraph (TODO: what if there is no paragraph, but a nested list?)
+  let pg = Path.parent(sel.anchor.path);
+  // Path of list-item
+  let p = Path.parent(pg);
+  // Path of numbered/bulleted list
+  let pp = Path.parent(p);
+
+  let listItems = Node.children(editor, pp);
+
+  for (let [node, path] of listItems) {
+    if (Path.isAfter(path, p)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 const withList = ({
   typeUl = 'bulleted-list',
   typeOl = 'numbered-list',
   typeLi = 'list-item',
   typeP = 'paragraph',
+  onChangeBlock,
+  onAddBlock,
+  onSelectBlock,
+  index,
 } = {}) => (editor) => {
   const { insertBreak } = editor;
+
+  const createAndSelectNewBlockAfter = (blockValue) => {
+    return createAndSelectNewSlateBlock(blockValue, index, {
+      onChangeBlock,
+      onAddBlock,
+      onSelectBlock,
+    });
+  };
 
   /**
    * Add a new list item if selection is in a LIST_ITEM > typeP.
@@ -146,13 +190,11 @@ const withList = ({
       );
       // if the selection is inside a paragraph
       if (paragraphNode.type === typeP) {
-        const [listItemNode, listItemPath] = Editor.parent(
-          editor,
-          paragraphPath,
-        );
+        const listItemEntry = Editor.parent(editor, paragraphPath);
+        const [listItemNode, listItemPath] = listItemEntry;
 
         // if the paragraph is inside a list item
-        if (listItemNode.type === typeLi) {
+        if (listItemEntry && listItemNode.type === typeLi) {
           // if selection is expanded, delete it
           if (!Range.isCollapsed(editor.selection)) {
             Transforms.delete(editor);
@@ -167,6 +209,8 @@ const withList = ({
           const nextParagraphPath = Path.next(paragraphPath);
           const nextListItemPath = Path.next(listItemPath);
 
+          // console.log('isStart', isStart);
+
           /**
            * If cursor on start of paragraph, if the paragraph is empty, remove the paragraph (and the list item), then break the block!
            * if it is not empty, insert a new empty list item.
@@ -175,6 +219,7 @@ const withList = ({
             if (isBlockTextEmpty(paragraphNode)) {
               console.log('remove list item and split here');
             } else {
+              console.log('inserting new list item');
               Transforms.insertNodes(
                 editor,
                 {
@@ -185,6 +230,8 @@ const withList = ({
               );
             }
           }
+
+          console.log('isEnd', isEnd);
 
           /**
            * If not end, split nodes, wrap a list item on the new paragraph and move it to the next list item
@@ -204,18 +251,59 @@ const withList = ({
               to: nextListItemPath,
             });
           } else {
-            /**
-             * If end, insert a list item after and select it
-             */
-            Transforms.insertNodes(
-              editor,
-              {
-                type: typeLi,
-                children: [{ type: typeP, children: [{ text: '' }] }],
-              },
-              { at: nextListItemPath },
-            );
-            Transforms.select(editor, nextListItemPath);
+            if (isBlockTextEmpty(paragraphNode)) {
+              if (thereIsNoListItemBelowSelection(editor)) {
+                simulateBackspaceAtEndOfEditor(editor);
+                const bottomBlockValue = createDefaultFragment();
+                createAndSelectNewBlockAfter(bottomBlockValue);
+              } else {
+                console.log('should split the list in two Volto blocks!');
+                let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
+
+                let [listNode, listPath] = Editor.parent(editor, listItemPath);
+
+                let theType = listNode.type;
+
+                let newUpBlock = [
+                  {
+                    type: theType,
+                    children: upBlock[0].children.slice(
+                      0,
+                      upBlock[0].children.length - 1,
+                    ),
+                  },
+                ];
+
+                let newBottomBlock = [
+                  {
+                    type: theType,
+                    children: bottomBlock[0].children.slice(
+                      1,
+                      bottomBlock[0].children.length,
+                    ),
+                  },
+                ];
+
+                console.log('newUpBlock', newUpBlock);
+                console.log('newBottomBlock', newBottomBlock);
+
+                replaceAllContentInEditorWith(editor, newUpBlock);
+                createAndSelectNewBlockAfter(newBottomBlock);
+              }
+            } else {
+              /**
+               * If end, insert a list item after and select it
+               */
+              Transforms.insertNodes(
+                editor,
+                {
+                  type: typeLi,
+                  children: [{ type: typeP, children: [{ text: '' }] }],
+                },
+                { at: nextListItemPath },
+              );
+              Transforms.select(editor, nextListItemPath);
+            }
           }
 
           /**
@@ -231,21 +319,31 @@ const withList = ({
           return;
         }
       }
+    } else if (editor.selection && isRangeAtRoot(editor.selection)) {
+      const paragraphEntry = Editor.parent(editor, editor.selection);
+
+      if (paragraphEntry) {
+        // const [paragraphNode, paragraphPath] = paragraphEntry;
+        const [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
+        replaceAllContentInEditorWith(editor, upBlock);
+        createAndSelectNewBlockAfter(bottomBlock);
+      }
+      return;
     }
 
     insertBreak();
   };
 
-  const onResetListType = () => {
-    unwrapNodesByType(editor, typeLi, { split: true });
-    unwrapNodesByType(editor, [typeUl, typeOl], { split: true });
-  };
+  // const onResetListType = () => {
+  //   unwrapNodesByType(editor, typeLi, { split: true });
+  //   unwrapNodesByType(editor, [typeUl, typeOl], { split: true });
+  // };
 
-  editor = withResetBlockType({
-    types: [typeLi],
-    defaultType: typeP,
-    onUnwrap: onResetListType,
-  })(editor);
+  // editor = withResetBlockType({
+  //   types: [typeLi],
+  //   defaultType: typeP,
+  //   onUnwrap: onResetListType,
+  // })(editor);
 
   return editor;
 };

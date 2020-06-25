@@ -8,8 +8,6 @@ import {
   replaceAllContentInEditorWith,
 } from '../utils';
 
-// TODO: 2 x Enter in the middle of a list should split the list in 2 parts, and just that or also insert a new empty block in the middle?
-
 /**
  * See {@link Range.isCollapsed}.
  * Return false if `range` is not defined.
@@ -337,6 +335,8 @@ const withList = ({
 
     insertBreak();
   };
+
+  // TODO: I am not sure if these are needed:
 
   // const onResetListType = () => {
   //   unwrapNodesByType(editor, typeLi, { split: true });

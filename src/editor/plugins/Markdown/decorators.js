@@ -19,6 +19,7 @@ export const withShortcuts = (editor) => {
       const beforeText = Editor.string(editor, range);
       const type = SHORTCUTS[beforeText];
 
+      // TODO: do not hardcode this regex here, put it in constants.js
       if (/^[0-9]\./.test(beforeText)) {
         Transforms.select(editor, range);
         Transforms.delete(editor);

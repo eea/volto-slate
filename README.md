@@ -43,9 +43,6 @@ An alternative text editor for Volto, capable of completely replacing the defaul
 #### Two `Enter` key presses break a list in two lists
 ![Imgur](https://i.imgur.com/AqMjwqR.gif)
 
-#### With keys `Tab` and `Shift-Tab` we can make flexible deep lists
-![Imgur](https://i.imgur.com/EwdljLU.gif)
-
 #### Support for markdown bulleted lists with `*`, `-` and `+`
 ![Imgur](https://i.imgur.com/cu9yv4Q.gif)
 

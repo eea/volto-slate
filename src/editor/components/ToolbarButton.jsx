@@ -17,7 +17,7 @@ const ToolbarButton = React.forwardRef(
         toggle={true}
         size="mini"
       >
-        {icon && <Icon name={icon} size="24px" />}
+        {icon && <Icon name={icon} size="17px" />}
       </Button>
     );
   },

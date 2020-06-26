@@ -4,52 +4,131 @@ import { useSlate } from 'slate-react';
 import { isBlockActive, toggleBlock } from '../utils';
 import ToolbarButton from './ToolbarButton';
 
-import { Editor, Transforms, Node, Text, Range } from 'slate';
+import { Editor, Transforms, Node, Text, Range, createEditor } from 'slate';
 import { castArray } from 'lodash';
 
 // TODO: put all these functions into an utils.js file
 
 const unwrapNodesByType = (editor, types, options = {}) => {
-  types = castArray(types);
-
   Transforms.unwrapNodes(editor, {
     match: (n) => types.includes(n.type),
     ...options,
   });
 };
 
-export const selectAll = (editor) => {
+const getMaxRange = (editor) => {
   const maxRange = {
-    anchor: Editor.start(editor, []),
-    focus: Editor.end(editor, []),
+    anchor: Editor.start(editor, [0]),
+    focus: Editor.end(editor, [0]),
   };
-  Transforms.select(editor, maxRange);
+  return maxRange;
+};
+
+export const selectAll = (editor) => {
+  Transforms.select(editor, getMaxRange(editor));
 };
 
 export const convertAllToParagraph = (editor) => {
-  let output = [];
-  let count = 0;
-  let children = Node.children(editor, []);
-  for (let [node, path] of children) {
-    // node is a paragraph
-    if (count === 0) {
-      output = output.concat(...node.children);
-    } else {
-      output = output.concat({ text: ' ' }, ...node.children);
+  let recursive = (myNode) => {
+    if (Text.isText(myNode)) return [{ ...myNode }];
+
+    let output = [];
+    let children = Node.children(myNode, []);
+    // let count = Array.from(children).length;
+
+    for (let [node, path] of children) {
+      if (Text.isText(node)) {
+        output.push({ ...node });
+      } else {
+        let count = Array.from(node.children).length;
+        for (let i = 0; i < count; ++i) {
+          let o = recursive(node.children[i]);
+          for (let j = 0; j < o.length; ++j) {
+            output.push(o[j]);
+          }
+        }
+      }
     }
-    ++count;
+
+    return output;
+  };
+
+  let count = Array.from(Node.children(editor, [])).length;
+  let result = recursive(editor);
+
+  let textsMatch = (a, b) => {
+    for (let x in a) {
+      if (x === 'text') continue;
+      if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+        if (a[x] !== b[x]) {
+          return false;
+        }
+      }
+    }
+
+    for (let x in b) {
+      if (x === 'text') continue;
+      if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+        if (a[x] !== b[x]) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  for (let i = 0; i < result.length - 1; ++i) {
+    let a = result[i];
+    let b = result[i + 1];
+
+    let m = textsMatch(a, b);
+    console.log('matches ' + m.toString(), a, b);
+    if (m) {
+      result[i].text += b.text;
+      console.log('matches SO ', result[i]);
+      result.splice(i + 1, 1);
+    }
   }
-  if (count === 0) {
-    output.push({ text: '' });
+
+  if (result.length === 0) {
+    result.push({ text: '' });
   }
 
   Editor.withoutNormalizing(editor, () => {
+    let count = Array.from(Node.children(editor, [0])).length;
     for (let i = 0; i < count; ++i) {
-      Transforms.removeNodes(editor, [0]);
+      Transforms.removeNodes(editor, { at: [0] });
     }
-    // console.log('output', JSON.stringify(output, null, 2));
-    Transforms.insertNodes(editor, [{ type: 'paragraph', children: output }]);
   });
+  // Transforms.delete(editor, {
+  //   at: Editor.start(editor, [0]),
+  //   distance: 1,
+  //   unit: 'block',
+  // });
+  console.log("root's children list", result);
+  // needs normalizing here because in [] there is no Text otherwise, and that is needed for this to work:
+  // Editor.withoutNormalizing(editor, () => {
+  // console.log('output', JSON.stringify(output, null, 2));
+  // Transforms.select(editor, {
+  //   anchor: Editor.start(editor, []),
+  //   focus: Editor.end(editor, []),
+  // });
+  // Transforms.insertNodes(
+  //   editor,
+  //   { type: 'paragraph', children: [...result] },
+  //   {
+  //     at: {
+  //       anchor: Editor.start(editor, []),
+  //       focus: Editor.end(editor, []),
+  //     },
+  //   },
+  // );
+
+  // TODO: somehow remove the root numbered-list or whatever list type it is (or heading-three two etc.)
+  // selectAll(editor);
+  Editor.insertFragment(editor, [{ type: 'paragraph', children: [...result] }]);
+  console.log('editor.children', editor.children);
 
   // Transforms.mergeNodes(editor, {
   //   at: {
@@ -70,8 +149,17 @@ export const unwrapList = (
     typeLi = 'list-item',
   } = {},
 ) => {
-  unwrapNodesByType(editor, typeLi);
-  unwrapNodesByType(editor, [typeUl, typeOl], { split: true });
+  if (editor.selection && Range.isExpanded(editor.selection)) {
+    unwrapNodesByType(editor, [typeLi]);
+    unwrapNodesByType(editor, [typeUl, typeOl], {
+      split: true,
+    });
+  } else {
+    unwrapNodesByType(editor, [typeLi], { at: getMaxRange(editor) });
+    unwrapNodesByType(editor, [typeUl, typeOl], {
+      at: getMaxRange(editor),
+    });
+  }
 
   if (!willWrapAgain) {
     convertAllToParagraph(editor);
@@ -158,7 +246,9 @@ const BlockButton = ({ format, icon }) => {
             format === 'block-quote'
           ) {
             unwrapList(editor, false);
-            selectAll(editor);
+            // TODO: uncomment this so that toggleBlock below works well
+            // selectAll(editor);
+          } else {
           }
           toggleBlock(editor, format);
         } else {

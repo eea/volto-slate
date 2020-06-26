@@ -1,16 +1,16 @@
 import React from 'react';
 
+// TODO: not showing up well (fitted & vertical, in position:relative parent):
+// import { Divider } from 'semantic-ui-react';
+
 const Separator = () => {
   return (
-    <span
-      className="separator"
+    <div
       style={{
-        margin: '0px 4px 4px 0px !important',
-        width: '0px',
-        height: '32px',
-        display: 'inline-block',
+        borderLeft: '0.1rem solid lightgray',
+        width: '0.3rem',
       }}
-    ></span>
+    />
   );
 };
 

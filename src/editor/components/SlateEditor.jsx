@@ -9,11 +9,7 @@ import { connect } from 'react-redux';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
-import {
-  toggleMark,
-  // withDelete,
-  breakEmptyReset,
-} from '../utils';
+import { toggleMark, breakEmptyReset } from '../utils';
 import { settings } from '~/config';
 
 const SlateEditor = ({

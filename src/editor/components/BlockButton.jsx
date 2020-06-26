@@ -18,6 +18,49 @@ const unwrapNodesByType = (editor, types, options = {}) => {
   });
 };
 
+export const selectAll = (editor) => {
+  const maxRange = {
+    anchor: Editor.start(editor, []),
+    focus: Editor.end(editor, []),
+  };
+  Transforms.select(editor, maxRange);
+};
+
+export const convertAllToParagraph = (editor) => {
+  let output = [];
+  let count = 0;
+  let children = Node.children(editor, []);
+  for (let [node, path] of children) {
+    // node is a paragraph
+    if (count === 0) {
+      output = output.concat(...node.children);
+    } else {
+      output = output.concat({ text: ' ' }, ...node.children);
+    }
+    ++count;
+  }
+  if (count === 0) {
+    output.push({ text: '' });
+  }
+
+  Editor.withoutNormalizing(editor, () => {
+    for (let i = 0; i < count; ++i) {
+      Transforms.removeNodes(editor, [0]);
+    }
+    // console.log('output', JSON.stringify(output, null, 2));
+    Transforms.insertNodes(editor, [{ type: 'paragraph', children: output }]);
+  });
+
+  // Transforms.mergeNodes(editor, {
+  //   at: {
+  //     anchor: Editor.start(editor, []),
+  //     focus: Editor.end(editor, []),
+  //   },
+  // });
+
+  // console.log('editor.children', JSON.stringify(editor.children, null, 2));
+};
+
 export const unwrapList = (
   editor,
   willWrapAgain,
@@ -31,38 +74,7 @@ export const unwrapList = (
   unwrapNodesByType(editor, [typeUl, typeOl], { split: true });
 
   if (!willWrapAgain) {
-    let output = [];
-    let count = 0;
-    let children = Node.children(editor, []);
-    for (let [node, path] of children) {
-      // node is a paragraph
-      if (count === 0) {
-        output = output.concat(...node.children);
-      } else {
-        output = output.concat({ text: ' ' }, ...node.children);
-      }
-      ++count;
-    }
-    if (count === 0) {
-      output.push({ text: '' });
-    }
-
-    Editor.withoutNormalizing(editor, () => {
-      for (let i = 0; i < count; ++i) {
-        Transforms.removeNodes(editor, [0]);
-      }
-      // console.log('output', JSON.stringify(output, null, 2));
-      Transforms.insertNodes(editor, [{ type: 'paragraph', children: output }]);
-    });
-
-    // Transforms.mergeNodes(editor, {
-    //   at: {
-    //     anchor: Editor.start(editor, []),
-    //     focus: Editor.end(editor, []),
-    //   },
-    // });
-
-    // console.log('editor.children', JSON.stringify(editor.children, null, 2));
+    convertAllToParagraph(editor);
   }
 };
 
@@ -101,7 +113,11 @@ export const toggleList = (
     typeP = 'paragraph',
   },
 ) => {
+  // TODO: set previous selection (not this 'select all' command) after toggling list (in all three cases: toggling to numbered, bulleted or none)
+  selectAll(editor);
+
   const isActive = isNodeInSelection(editor, typeList);
+
   const willWrapAgain = !isActive;
 
   unwrapList(editor, willWrapAgain, { typeUl, typeOl, typeLi });
@@ -134,7 +150,16 @@ const BlockButton = ({ format, icon }) => {
       active={isBlockActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();
+
         if (format !== 'bulleted-list' && format !== 'numbered-list') {
+          if (
+            format === 'heading-two' ||
+            format === 'heading-three' ||
+            format === 'block-quote'
+          ) {
+            unwrapList(editor, false);
+            selectAll(editor);
+          }
           toggleBlock(editor, format);
         } else {
           toggleList(editor, {

@@ -7,58 +7,22 @@
 .loadAddonVariables();
 
 & {
-  .slate-editor {
-    // display: flex;
-    // flex-flow: nowrap;
-
-    &.selected {
-      .toolbar-wrapper {
-        position: relative;
-        top: -8px;
-        right: -7px;
-        padding: 3px;
-      }
-    }
-
-    &.show-toolbar {
-      flex-flow: wrap;
-    }
-
-    .slate-menu {
-      & > * {
-        display: inline-block;
-      }
-
-      & > * + * {
-        margin-left: 15px;
-      }
-    }
-
-    .toolbar-wrapper {
-      background-color: #f6f6f6;
-      float: right;
-
-      &.active {
-        width: calc(100% + 14px);
-        height: 32px;
-      }
-    }
-  }
-
   .slate-inline-toolbar {
     position: absolute;
     z-index: 1020000; /* z-index to be above the admin panes */
     top: -10000px;
     left: -10000px;
-    // padding: 8px 7px 6px;
-    // border: 0.1rem solid gray;
-    padding: 2px 0px 0px 0px;
-    margin-top: -6px;
     background-color: #fff;
     border-radius: 0.1rem;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
     opacity: 0;
     transition: opacity 0.5s;
+  }
+
+  .ui.button:not(.icon) > .icon:not(.button):not(.dropdown)
+  {
+    // TODO: is it possible to not use !important here and override button.less?
+    margin: auto auto auto auto !important;
   }
 }
 

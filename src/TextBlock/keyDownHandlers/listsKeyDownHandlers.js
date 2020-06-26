@@ -164,6 +164,10 @@ export const onKeyDownList = ({
   typeLi = 'list-item',
   typeP = 'paragraph',
 } = {}) => (e, editor) => {
+  // if (e.isDefaultPrevented()) {
+  //   return;
+  // }
+
   const options = { typeUl, typeOl, typeLi, typeP };
 
   if (Object.values(ListHotkey).includes(e.key)) {

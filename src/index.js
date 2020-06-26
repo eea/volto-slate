@@ -3,7 +3,7 @@ import codeSVG from '@plone/volto/icons/code.svg';
 import * as slateConfig from './editor/config';
 
 import installLinkPlugin from './editor/plugins/Link';
-import installCalloutPlugin from './editor/plugins/Callout';
+import installBlockQuotePlugin from './editor/plugins/BlockQuote';
 import installVoltoProposals from './futurevolto/config';
 import installMarkdown from './editor/plugins/Markdown';
 import { slate_block_selections } from './reducers';
@@ -36,7 +36,7 @@ const applyConfig = (config) => {
 
   installLinkPlugin(config);
   installMarkdown(config);
-  installCalloutPlugin(config);
+  installBlockQuotePlugin(config);
   installVoltoProposals(config);
 
   config.addonReducers = {

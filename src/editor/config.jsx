@@ -9,7 +9,6 @@ import headingIcon from '@plone/volto/icons/heading.svg';
 import italicIcon from '@plone/volto/icons/italic.svg';
 import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
 import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
-import quoteIcon from '@plone/volto/icons/quote.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 
@@ -27,9 +26,6 @@ export const availableButtons = {
   ),
   'heading-three': (props) => (
     <BlockButton format="heading-three" icon={subheadingIcon} {...props} />
-  ),
-  blockquote: (props) => (
-    <BlockButton format="block-quote" icon={quoteIcon} {...props} />
   ),
   'numbered-list': (props) => (
     <BlockButton format="numbered-list" icon={listNumberedIcon} {...props} />
@@ -50,7 +46,6 @@ export const defaultToolbarButtons = [
   'separator',
   'numbered-list',
   'bulleted-list',
-  'blockquote',
 ];
 
 export let toolbarButtons = [...defaultToolbarButtons];

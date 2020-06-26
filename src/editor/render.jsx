@@ -11,8 +11,6 @@ export const Element = (props) => {
   }
 
   switch (element.type) {
-    case 'block-quote':
-      return <blockquote {...attributes}>{children}</blockquote>;
     case 'bulleted-list':
       return <ul {...attributes}>{children}</ul>;
     case 'heading-two':

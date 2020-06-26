@@ -2,7 +2,7 @@ import React from 'react';
 import { useSlate } from 'slate-react';
 
 import { isBlockActive, toggleBlock } from '../utils';
-import Button from './Button';
+import ToolbarButton from './ToolbarButton';
 
 import { Editor, Transforms, Node, Text, Range } from 'slate';
 import { castArray } from 'lodash';
@@ -146,7 +146,7 @@ const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
 
   return (
-    <Button
+    <ToolbarButton
       active={isBlockActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();

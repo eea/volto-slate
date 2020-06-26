@@ -3,7 +3,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import { Portal } from 'react-portal';
 
-import Button from './Button';
+import ToolbarButton from './ToolbarButton';
 import BasicToolbar from './BasicToolbar';
 
 import toggleIcon from '@plone/volto/icons/freedom.svg';
@@ -41,7 +41,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
-        <Button
+        <ToolbarButton
           onMouseDown={(event) => {
             onToggle();
             event.preventDefault();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { Transforms } from 'slate';
-import Button from './../../components/Button';
+import ToolbarButton from '../../components/ToolbarButton';
 import { isLinkActive, insertLink, unwrapLink } from './utils';
 
 import linkSVG from '@plone/volto/icons/link.svg';
@@ -47,7 +47,7 @@ const LinkButton = () => {
         onSubmit={submitHandler}
         onCancel={() => setShowForm(false)}
       />
-      <Button
+      <ToolbarButton
         active={ila}
         onMouseDown={() => {
           if (

@@ -2,13 +2,13 @@ import React from 'react';
 import { useSlate } from 'slate-react';
 
 import { isMarkActive, toggleMark } from '../utils';
-import Button from './Button';
+import ToolbarButton from './ToolbarButton';
 
 const MarkButton = ({ format, icon }) => {
   const editor = useSlate();
 
   return (
-    <Button
+    <ToolbarButton
       active={isMarkActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();

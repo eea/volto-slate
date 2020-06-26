@@ -1,12 +1,12 @@
 import cx from 'classnames';
 import React from 'react';
 import { Icon } from '@plone/volto/components';
-import { Button as UIButton } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 
-const Button = React.forwardRef(
+const ToolbarButton = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {
     return (
-      <UIButton
+      <Button
         {...props}
         ref={ref}
         style={style}
@@ -18,9 +18,9 @@ const Button = React.forwardRef(
         size="mini"
       >
         {icon && <Icon name={icon} size="24px" />}
-      </UIButton>
+      </Button>
     );
   },
 );
 
-export default Button;
+export default ToolbarButton;

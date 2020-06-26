@@ -9,7 +9,10 @@
 & {
   .slate-inline-toolbar {
     position: absolute;
-    z-index: 1020000; /* z-index to be above the admin panes */
+
+    /* should be above admin panes (100), and below the Link modal form (1000) */
+    z-index: 500;
+
     top: -10000px;
     left: -10000px;
     background-color: #fff;

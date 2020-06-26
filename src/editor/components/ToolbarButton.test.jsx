@@ -3,12 +3,12 @@ import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
 import { wait, render } from '@testing-library/react';
 
-import Button from './Button';
+import ToolbarButton from './ToolbarButton';
 
 const mockStore = configureStore();
 
-describe('Button', () => {
-  it('renders a button', async () => {
+describe('ToolbarButton', () => {
+  it('renders a toolbar button', async () => {
     const store = mockStore({
       intl: {
         locale: 'en',
@@ -17,7 +17,7 @@ describe('Button', () => {
     });
     const { asFragment } = render(
       <Provider store={store}>
-        <Button />
+        <ToolbarButton />
       </Provider>,
     );
     await wait(() => {

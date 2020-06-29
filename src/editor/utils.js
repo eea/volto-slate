@@ -2,22 +2,91 @@ import { Editor, Transforms, Range, Point, Node, Path, Span } from 'slate';
 import { ReactEditor } from 'slate-react';
 import { settings } from '~/config';
 
-export const toggleBlock = (editor, format) => {
-  const isActive = isBlockActive(editor, format);
-  const isList = settings.slate.listTypes.includes(format);
+export const getMaxRange = (editor) => {
+  const maxRange = {
+    anchor: Editor.start(editor, [0]),
+    focus: Editor.end(editor, [0]),
+  };
+  return maxRange;
+};
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) => settings.slate.listTypes.includes(n.type),
-    split: true,
+/**
+ * Is there a node with a type included in `types` in the selection (from root to leaf).
+ */
+export const isNodeInSelection = (editor, types, options = {}) => {
+  const [match] = getSelectionNodesByType(editor, types, options);
+  return !!match;
+};
+
+/**
+ * Get the nodes with a type included in `types` in the selection (from root to leaf).
+ */
+export const getSelectionNodesByType = (editor, types, options = {}) => {
+  return Editor.nodes(editor, {
+    match: (n) => {
+      return types.includes(n.type);
+    },
+    ...options,
   });
+};
 
-  Transforms.setNodes(editor, {
-    type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-  });
+export const toggleBlock = (editor, format, justSelection) => {
+  const applyOnRange = () => {
+    return justSelection && editor.selection
+      ? editor.selection
+      : getMaxRange(editor);
+  };
 
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
+  const entry = getActiveEntry(editor, format);
+
+  let activeNode, activeNodePath;
+
+  if (entry) {
+    [activeNode, activeNodePath] = entry;
+  }
+  // const isList = settings.slate.listTypes.includes(format);
+
+  const unwrappableBlockTypes = [
+    'block-quote',
+    'heading-two',
+    'heading-three',
+    ...settings.slate.listTypes,
+  ];
+
+  if (unwrappableBlockTypes.includes(format)) {
+    console.log('entry', entry);
+    // TODO: ! code flow enters here, prints 'entry', but...
+    if (entry) {
+      // does not enter here, although entry is a truish value (an array with 2 non-null, defined elements)
+      console.log('is active, entry exists... unwrapping...');
+
+      Transforms.unwrapNodes(editor, {
+        at: activeNodePath,
+        split: true,
+        mode: 'all',
+      });
+    } else {
+      console.log('is not active, wrapping...');
+
+      // if (isList) {
+      const block = { type: format, children: [] };
+      Transforms.wrapNodes(editor, block, {
+        at: applyOnRange(),
+      });
+      // } else {
+      // Transforms.wrapNodes(editor, {
+      // })
+      // }
+    }
+  } else {
+    // inlines and marks
+    Transforms.setNodes(
+      editor,
+      {
+        type: entry ? 'paragraph' : format,
+      },
+      { at: applyOnRange() },
+    );
   }
 };
 
@@ -31,13 +100,15 @@ export const toggleMark = (editor, format) => {
   }
 };
 
-export const isBlockActive = (editor, format) => {
+export const getActiveEntry = (editor, format) => {
   const result = Editor.nodes(editor, {
     match: (n) => n.type === format,
   });
 
+  let returnVal;
+
   if (!result || !result[Symbol.iterator]) {
-    return false;
+    returnVal = false;
   }
 
   try {
@@ -49,18 +120,18 @@ export const isBlockActive = (editor, format) => {
         continue;
       }
       if (count === 0) {
-        first = x;
+        first = r;
       }
       ++count;
     }
 
     if (count === 0) {
-      return false;
+      returnVal = false;
     }
 
-    return !!first;
+    returnVal = first;
   } catch (ex) {
-    return false;
+    returnVal = false;
     console.log('EXCEPTION', ex);
     console.log('editor.children', editor.children);
   }
@@ -70,9 +141,10 @@ export const isBlockActive = (editor, format) => {
   // });
 
   // if (!match) return false;
-
-  // const [node] = match;
-  // return !!node;
+  if (format === 'block-quote') {
+    console.log('returnVal', returnVal);
+  }
+  return returnVal;
 };
 
 export const isMarkActive = (editor, format) => {

@@ -12,6 +12,9 @@ import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 
+// TODO: correct the file name in Volto:
+import strikethroughIcon from '@plone/volto/icons/strickthrough.svg';
+
 export const availableButtons = {
   bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
   italic: (props) => (
@@ -19,6 +22,9 @@ export const availableButtons = {
   ),
   underline: (props) => (
     <MarkButton format="underline" icon={underlineIcon} {...props} />
+  ),
+  strikethrough: (props) => (
+    <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
   ),
   code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
   'heading-two': (props) => (
@@ -40,6 +46,7 @@ export const defaultToolbarButtons = [
   'bold',
   'italic',
   'underline',
+  'strikethrough',
   'separator',
   'heading-two',
   'heading-three',
@@ -73,8 +80,9 @@ export const availableLeafs = {
   },
   italic: ({ children }) => <em>{children}</em>,
   underline: ({ children }) => <u>{children}</u>,
+  strikethrough: ({ children }) => <s>{children}</s>,
 };
 
-export const leafs = ['bold', 'code', 'italic', 'underline'];
+export const leafs = ['bold', 'code', 'italic', 'underline', 'strikethrough'];
 
 export const keyDownHandlers = {};

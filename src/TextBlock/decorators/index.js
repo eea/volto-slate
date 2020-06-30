@@ -1,4 +1,5 @@
 export withList from './withList';
+export withDeserializeHtml from './withDeserializeHtml';
 
 /**
  * Comments standard

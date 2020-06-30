@@ -65,8 +65,6 @@ const SlateEditor = ({
   }, [slate.decorators]);
 
   const initial_selection = React.useRef();
-  // const { selection } = data;
-  // console.log('defaultSelection', defaultSelection);
 
   React.useLayoutEffect(() => {
     if (selected) {

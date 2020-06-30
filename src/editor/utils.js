@@ -38,13 +38,10 @@ export const toggleBlock = (editor, format, justSelection) => {
   };
 
   const entry = getActiveEntry(editor, format);
-
   let activeNode, activeNodePath;
-
   if (entry) {
     [activeNode, activeNodePath] = entry;
   }
-  // const isList = settings.slate.listTypes.includes(format);
 
   const unwrappableBlockTypes = [
     'block-quote',
@@ -68,15 +65,10 @@ export const toggleBlock = (editor, format, justSelection) => {
     } else {
       console.log('is not active, wrapping...');
 
-      // if (isList) {
       const block = { type: format, children: [] };
       Transforms.wrapNodes(editor, block, {
         at: applyOnRange(),
       });
-      // } else {
-      // Transforms.wrapNodes(editor, {
-      // })
-      // }
     }
   } else {
     // inlines and marks
@@ -132,8 +124,8 @@ export const getActiveEntry = (editor, format) => {
     returnVal = first;
   } catch (ex) {
     returnVal = false;
-    console.log('EXCEPTION', ex);
-    console.log('editor.children', editor.children);
+    // console.log('EXCEPTION', ex);
+    // console.log('editor.children', editor.children);
   }
 
   // const match = Editor.above(editor, {
@@ -141,9 +133,9 @@ export const getActiveEntry = (editor, format) => {
   // });
 
   // if (!match) return false;
-  if (format === 'block-quote') {
-    console.log('returnVal', returnVal);
-  }
+  // if (format === 'block-quote') {
+  //   console.log('returnVal', returnVal);
+  // }
   return returnVal;
 };
 
@@ -163,111 +155,6 @@ export const isMarkActive = (editor, format) => {
     // }
   }
   return marks ? marks[format] === true : false;
-};
-
-// TODO: this should be in a separate file (maybe in a plugin?)
-export const withDelete = (editor) => {
-  const { deleteBackward } = editor;
-
-  editor.deleteBackward = (...args) => {
-    const { selection } = editor;
-
-    if (selection && Range.isCollapsed(selection)) {
-      const match = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
-
-      if (match) {
-        const [block, path] = match;
-        const start = Editor.start(editor, path);
-
-        if (
-          block.type !== 'paragraph' &&
-          Point.equals(selection.anchor, start)
-        ) {
-          Transforms.setNodes(editor, { type: 'paragraph' });
-
-          if (block.type === 'list-item') {
-            Transforms.unwrapNodes(editor, {
-              match: (n) => n.type === 'bulleted-list',
-              split: true,
-            });
-          }
-
-          return;
-        }
-      }
-      deleteBackward(...args);
-    } else {
-      deleteBackward(1);
-    }
-  };
-
-  return editor;
-};
-
-/**
- * On insert break at the start of an empty block in types,
- * replace it with a new paragraph.
- * TODO: this should be in a separate file (maybe in a plugin?)
- */
-export const breakEmptyReset = ({ types, typeP }) => (editor) => {
-  const { insertBreak } = editor;
-
-  editor.insertBreak = () => {
-    const currentNodeEntry = Editor.above(editor, {
-      match: (n) => Editor.isBlock(editor, n),
-    });
-
-    if (currentNodeEntry) {
-      const [currentNode] = currentNodeEntry;
-
-      if (Node.string(currentNode).length === 0) {
-        const parent = Editor.above(editor, {
-          match: (n) =>
-            types.includes(
-              typeof n.type === 'undefined' ? n.type : n.type.toString(),
-            ),
-        });
-
-        if (parent) {
-          Transforms.setNodes(editor, { type: typeP });
-          Transforms.splitNodes(editor);
-          Transforms.liftNodes(editor);
-
-          return;
-        }
-      }
-    }
-
-    insertBreak();
-  };
-
-  return editor;
-};
-
-// TODO: remake this to be pure Slate code, no DOM, if possible
-export const fixSelection = (editor) => {
-  if (!editor.selection) {
-    const sel = window.getSelection();
-
-    // in unit tests (jsdom) sel is null
-    if (sel) {
-      const s = ReactEditor.toSlateRange(editor, sel);
-      // console.log('selection range', s);
-      editor.selection = s;
-    }
-    // See also dicussions in https://github.com/ianstormtaylor/slate/pull/3652
-    // console.log('fixing selection', JSON.stringify(sel), editor.selection);
-    // sel.collapse(
-    //   sel.focusNode,
-    //   sel.anchorOffset > 0 ? sel.anchorOffset - 1 : 0,
-    // );
-    // sel.collapse(
-    //   sel.focusNode,
-    //   sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
-    // );
-  }
 };
 
 // In the isCursorAtBlockStart/End functions maybe use a part of these pieces of code:
@@ -314,3 +201,195 @@ export function isCursorAtBlockEnd(editor) {
   }
   return false;
 }
+
+export const unwrapNodesByType = (editor, types, options = {}) => {
+  Transforms.unwrapNodes(editor, {
+    match: (n) => types.includes(n.type),
+    ...options,
+  });
+};
+
+export const selectAll = (editor) => {
+  Transforms.select(editor, getMaxRange(editor));
+};
+
+const recursive = (myNode) => {
+  if (Text.isText(myNode)) return [{ ...myNode }];
+
+  let output = [];
+  let children = Node.children(myNode, []);
+
+  for (const [node] of children) {
+    if (Text.isText(node)) {
+      output.push({ ...node });
+    } else {
+      let count = Array.from(node.children).length;
+      for (let i = 0; i < count; ++i) {
+        let o = recursive(node.children[i]);
+        for (let j = 0; j < o.length; ++j) {
+          output.push(o[j]);
+        }
+      }
+    }
+  }
+
+  return output;
+};
+
+// TODO: optimize this:
+const textsMatch = (a, b) => {
+  for (let x in a) {
+    if (x === 'text') continue;
+    if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+      if (a[x] !== b[x]) {
+        return false;
+      }
+    }
+  }
+
+  for (let x in b) {
+    if (x === 'text') continue;
+    if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+      if (a[x] !== b[x]) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
+// TODO: make this add a space between any two Text instances
+const compactAndNormalize = (result) => {
+  for (let i = 0; i < result.length - 1; ++i) {
+    let a = result[i];
+    let b = result[i + 1];
+
+    let m = textsMatch(a, b);
+    if (m) {
+      result[i].text += b.text;
+      result.splice(i + 1, 1);
+    }
+  }
+
+  if (result.length === 0) {
+    result.push({ text: '' });
+  }
+
+  return;
+};
+
+export const convertAllToParagraph = (editor) => {
+  // let count = Array.from(Node.children(editor, [])).length;
+  let result = recursive(editor);
+  compactAndNormalize(result);
+
+  Editor.withoutNormalizing(editor, () => {
+    Transforms.removeNodes(editor, { at: [0 /* , i */] });
+    Transforms.insertNodes(
+      editor,
+      { type: 'paragraph', children: [{ text: '' }] },
+      { at: [0] },
+    );
+    Transforms.insertFragment(editor, [...result], { at: [0] });
+  });
+};
+
+export const unwrapList = (
+  editor,
+  willWrapAgain,
+  {
+    typeUl = 'bulleted-list',
+    typeOl = 'numbered-list',
+    typeLi = 'list-item',
+    unwrapFromList = false,
+  } = {},
+) => {
+  // TODO: toggling from one list type to another should keep the structure untouched
+  if (
+    editor.selection &&
+    Range.isExpanded(editor.selection) &&
+    unwrapFromList
+  ) {
+    if (unwrapFromList) {
+      // unwrapNodesByType(editor, [typeLi]);
+      // unwrapNodesByType(editor, [typeUl, typeOl], {
+      //   split: true,
+      // });
+    } else {
+    }
+  } else {
+    unwrapNodesByType(editor, [typeLi], { at: getMaxRange(editor) });
+    unwrapNodesByType(editor, [typeUl, typeOl], {
+      at: getMaxRange(editor),
+    });
+  }
+
+  if (!willWrapAgain) {
+    convertAllToParagraph(editor);
+  }
+};
+
+export const getSelectionNodesArrayByType = (editor, types, options = {}) =>
+  Array.from(getSelectionNodesByType(editor, types, options));
+
+// toggle list type
+// preserves structure of list if going from a list type to another
+export const toggleList = (
+  editor,
+  {
+    typeList,
+    typeUl = 'bulleted-list',
+    typeOl = 'numbered-list',
+    typeLi = 'list-item',
+    typeP = 'paragraph',
+    isBulletedActive = false,
+    isNumberedActive = false,
+  },
+) => {
+  // TODO: set previous selection (not this 'select all' command) after toggling list (in all three cases: toggling to numbered, bulleted or none)
+  selectAll(editor);
+
+  // const isActive = isNodeInSelection(editor, [typeList]);
+
+  // if (the list type/s are unset) {
+
+  const B = typeList === 'bulleted-list';
+  const N = typeList === 'numbered-list';
+
+  if (N && !isBulletedActive && !isNumberedActive) {
+    convertAllToParagraph(editor);
+    // go on with const willWrapAgain etc.
+  } else if (N && !isBulletedActive && isNumberedActive) {
+    convertAllToParagraph(editor);
+    return;
+  } else if (N && isBulletedActive && !isNumberedActive) {
+    // go on with const willWrapAgain etc.
+  } else if (B && !isBulletedActive && !isNumberedActive) {
+    convertAllToParagraph(editor);
+    // go on with const willWrapAgain etc.
+  } else if (B && !isBulletedActive && isNumberedActive) {
+    // go on with const willWrapAgain etc.
+  } else if (B && isBulletedActive && !isNumberedActive) {
+    convertAllToParagraph(editor);
+    return;
+  }
+
+  selectAll(editor);
+
+  const willWrapAgain = !isBulletedActive;
+  unwrapList(editor, willWrapAgain, { unwrapFromList: isBulletedActive });
+
+  const list = { type: typeList, children: [] };
+  Transforms.wrapNodes(editor, list);
+
+  const nodes = getSelectionNodesArrayByType(editor, typeP);
+
+  const listItem = { type: typeLi, children: [] };
+
+  for (const [, path] of nodes) {
+    Transforms.wrapNodes(editor, listItem, {
+      at: path,
+    });
+  }
+};

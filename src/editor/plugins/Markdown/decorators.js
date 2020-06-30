@@ -1,5 +1,5 @@
 import { SHORTCUTS } from './constants';
-import { toggleList } from '../../../editor/components/BlockButton.jsx';
+import { toggleList } from '../../../editor/utils.js';
 import { Editor, Transforms, Range } from 'slate';
 
 export const withShortcuts = (editor) => {

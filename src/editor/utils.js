@@ -1,4 +1,13 @@
-import { Editor, Transforms, Range, Point, Node, Path, Span } from 'slate';
+import {
+  Editor,
+  Transforms,
+  Range,
+  Point,
+  Node,
+  Path,
+  Span,
+  Text,
+} from 'slate';
 import { ReactEditor } from 'slate-react';
 import { settings } from '~/config';
 

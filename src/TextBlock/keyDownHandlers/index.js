@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { unwrapList } from '../../editor/components/BlockButton.jsx';
+import { unwrapList } from '../../editor/utils.js';
 export { onKeyDownList } from './listsKeyDownHandlers';
 
 function getPreviousBlock(index, properties) {

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
-import { toggleMark, breakEmptyReset } from '../utils';
+import { toggleMark } from '../utils';
 import { settings } from '~/config';
 
 const SlateEditor = ({
@@ -52,10 +52,7 @@ const SlateEditor = ({
 
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
-    const withBreakEmptyReset = breakEmptyReset({
-      types: ['bulleted-list', 'numbered-list'],
-      typeP: 'paragraph',
-    });
+
     const decos = [
       // FIXME: commented out for testing reasons:
       // withDelete,

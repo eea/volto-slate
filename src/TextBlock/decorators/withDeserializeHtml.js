@@ -11,8 +11,7 @@ const ELEMENT_TAGS = {
   H4: () => ({ type: 'heading-three' }),
   H5: () => ({ type: 'heading-three' }),
   H6: () => ({ type: 'heading-three' }),
-  // TODO:
-  //IMG: (el) => ({ type: 'image', url: el.getAttribute('src') }),
+  IMG: (el) => ({ type: 'image', url: el.getAttribute('src') }),
   LI: () => ({ type: 'list-item' }),
   OL: () => ({ type: 'numbered-list' }),
   P: () => ({ type: 'paragraph' }),
@@ -99,7 +98,7 @@ const withDeserializeHtml = (editor) => {
       if (firstNodeType && !inlineTypes.includes(firstNodeType)) {
         Transforms.setNodes(editor, { type: fragment[0].type });
       }
-      Transforms.insertFragment(editor, fragment);
+      Transforms.insertNodes(editor, fragment);
       return;
     }
 

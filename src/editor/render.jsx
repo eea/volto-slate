@@ -1,10 +1,17 @@
 import React from 'react';
 import { Node } from 'slate';
 import { settings } from '~/config';
+import { useSelected, useFocused } from 'slate-react';
 
 export const Element = (props) => {
   const { attributes, children, element } = props;
   const AddonEl = settings.slate.elements[element.type];
+
+  const selected = useSelected();
+  const focused = useFocused();
+
+  const type = attributes['data-slate-type'];
+  delete attributes['data-slate-type'];
 
   if (AddonEl) {
     return <AddonEl {...props} />;
@@ -21,6 +28,28 @@ export const Element = (props) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
+    case 'image':
+      return (
+        <div {...attributes}>
+          <div contentEditable={false}>
+            <img
+              data-slate-type={type}
+              src={element.url}
+              alt=""
+              selected={selected}
+              focused={focused}
+              style={{
+                display: 'block',
+                maxWidth: '100%',
+                maxHeight: '20em',
+                padding: '10px 0',
+                boxShadow: selected && focused ? '0 0 0 3px #B4D5FF' : 'none',
+              }}
+            />
+          </div>
+          {children}
+        </div>
+      );
     default:
       return <p {...attributes}>{children}</p>;
   }

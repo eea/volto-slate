@@ -49,6 +49,7 @@ const serializeHTMLFromNodes = (plugins) => (nodes) => {
       return getNode(
         {
           element: node,
+          // TODO: not sure for what is this encodeURIComponent call:
           children: encodeURIComponent(
             serializeHTMLFromNodes(plugins)(node.children),
           ),
@@ -58,7 +59,15 @@ const serializeHTMLFromNodes = (plugins) => (nodes) => {
       );
     })
     .join('');
-  return stripSlateDataAttributes(trimWhitespace(decodeURIComponent(result)));
+
+  try {
+    return stripSlateDataAttributes(trimWhitespace(decodeURIComponent(result)));
+  } catch (ex) {
+    console.log('undecoded URI components mixed with other things:', {
+      result,
+    });
+    return stripSlateDataAttributes(trimWhitespace(result));
+  }
 };
 
 export default serializeHTMLFromNodes;

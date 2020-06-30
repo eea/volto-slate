@@ -1,7 +1,7 @@
 import isUrl from 'is-url';
 import { wrapLink } from './utils';
+import { isImageUrl } from '../Image/decorators';
 
-// TODO: is this dead code? see big comment in SlateEditor.jsx
 export const withLinks = (editor) => {
   const { insertData, insertText, isInline } = editor;
 
@@ -20,7 +20,7 @@ export const withLinks = (editor) => {
   editor.insertData = (data) => {
     const text = data.getData('text/plain');
 
-    if (text && isUrl(text)) {
+    if (text && isUrl(text) && !isImageUrl(text)) {
       wrapLink(editor, text);
     } else {
       insertData(data);

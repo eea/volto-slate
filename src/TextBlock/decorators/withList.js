@@ -336,19 +336,6 @@ const withList = ({
     insertBreak();
   };
 
-  // TODO: I am not sure if these are needed:
-
-  // const onResetListType = () => {
-  //   unwrapNodesByType(editor, typeLi, { split: true });
-  //   unwrapNodesByType(editor, [typeUl, typeOl], { split: true });
-  // };
-
-  // editor = withResetBlockType({
-  //   types: [typeLi],
-  //   defaultType: typeP,
-  //   onUnwrap: onResetListType,
-  // })(editor);
-
   return editor;
 };
 

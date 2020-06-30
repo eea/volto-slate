@@ -10,6 +10,7 @@ import { Element, Leaf } from '../render';
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import { toggleMark } from '../utils';
+import { createDefaultFragment } from '../../TextBlock/utils';
 import { settings } from '~/config';
 
 const SlateEditor = ({
@@ -99,12 +100,7 @@ const SlateEditor = ({
     }
   });
 
-  const initialValue = [
-    {
-      type: 'paragraph',
-      children: [{ text: '' }],
-    },
-  ];
+  const initialValue = createDefaultFragment();
 
   // Source: https://stackoverflow.com/a/53623568/258462
   const onTestSelectWord = (val) => {

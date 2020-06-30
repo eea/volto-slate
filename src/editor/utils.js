@@ -1,14 +1,4 @@
-import {
-  Editor,
-  Transforms,
-  Range,
-  Point,
-  Node,
-  Path,
-  Span,
-  Text,
-} from 'slate';
-import { ReactEditor } from 'slate-react';
+import { Editor, Transforms, Range, Point, Node, Path, Text } from 'slate';
 import { settings } from '~/config';
 
 export const getMaxRange = (editor) => {

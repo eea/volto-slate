@@ -1,4 +1,5 @@
 import { Editor, Point, Transforms } from 'slate';
+import { ReactEditor } from 'slate-react';
 
 // TODO: this should be in a separate file (maybe in a plugin?)
 export const withDelete = (editor) => {

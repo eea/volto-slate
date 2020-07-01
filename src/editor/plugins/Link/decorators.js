@@ -20,7 +20,7 @@ export const withLinks = (editor) => {
   editor.insertData = (data) => {
     const text = data.getData('text/plain');
 
-    if (text && isUrl(text) && !isImageUrl(text)) {
+    if (text && isUrl(text) /* && !isImageUrl(text) */) {
       wrapLink(editor, text);
     } else {
       insertData(data);

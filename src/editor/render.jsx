@@ -25,29 +25,29 @@ export const Element = (props) => {
       return <li {...attributes}>{children}</li>;
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>;
-    case 'image':
-      const type = attributes['data-slate-type'];
-      delete attributes['data-slate-type'];
+    // case 'image':
+    //   const type = attributes['data-slate-type'];
+    //   delete attributes['data-slate-type'];
 
-      return (
-        // <div {...attributes}>
-        <div {...attributes} contentEditable={false}>
-          <img
-            data-slate-type={type}
-            src={element.url}
-            alt=""
-            style={{
-              display: 'block',
-              maxWidth: '100%',
-              maxHeight: '20em',
-              padding: '10px 0',
-              boxShadow: selected && focused ? '0 0 0 3px #B4D5FF' : 'none',
-            }}
-          />
-        </div>
-        // {/* {children} */}
-        // </div>
-      );
+    //   return (
+    //     // <div {...attributes}>
+    //     <div {...attributes} contentEditable={false}>
+    //       <img
+    //         data-slate-type={type}
+    //         src={element.url}
+    //         alt=""
+    //         style={{
+    //           display: 'block',
+    //           maxWidth: '100%',
+    //           maxHeight: '20em',
+    //           padding: '10px 0',
+    //           boxShadow: selected && focused ? '0 0 0 3px #B4D5FF' : 'none',
+    //         }}
+    //       />
+    //     </div>
+    //     // {/* {children} */}
+    //     // </div>
+    //   );
     default:
       return <p {...attributes}>{children}</p>;
   }

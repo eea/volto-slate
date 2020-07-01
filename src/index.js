@@ -35,7 +35,7 @@ const applyConfig = (config) => {
     ...slateConfig,
   };
 
-  installImagePlugin(config);
+  // installImagePlugin(config);
   installLinkPlugin(config);
   installMarkdown(config);
   installBlockQuotePlugin(config);

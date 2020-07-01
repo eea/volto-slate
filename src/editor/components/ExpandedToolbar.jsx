@@ -1,7 +1,9 @@
 import React from 'react';
+// import cx from 'classnames';
 
 import ToolbarButton from './ToolbarButton';
 import BasicToolbar from './BasicToolbar';
+import Expando from './Expando';
 
 import toggleIcon from '@plone/volto/icons/freedom.svg';
 
@@ -10,6 +12,7 @@ const ExpandedToolbar = React.forwardRef(
     return (
       <BasicToolbar {...props} className={className} ref={ref}>
         {children}
+        <Expando />
         <ToolbarButton
           onMouseDown={(event) => {
             onToggle();

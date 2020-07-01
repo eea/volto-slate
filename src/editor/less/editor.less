@@ -15,28 +15,52 @@
 
     top: -10000px;
     left: -10000px;
+
+    overflow: auto;
+    max-width: 100vw;
     background-color: #fff;
     border-radius: 0.1rem;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
     opacity: 0;
     transition: opacity 0.5s;
-
-    max-width: 100vw;
-    overflow: auto;
   }
 
-  .ui.button:not(.icon) > .icon:not(.button):not(.dropdown) {
-    // TODO: is it possible to not use !important here and override button.less?
-    margin: auto auto auto auto !important;
+  .toolbar-wrapper.active {
+    margin-bottom: 0.6em;
   }
 
-  .ui.button:last-child {
-    // TODO: is it possible to not use !important here and override button.less?
-    margin-right: 0 !important;
-  }
-
-  .block p {
+  .slate-editor p {
+    /* In editor the <p> are wrapped in weird markup */
     margin-bottom: 0 !important;
+  }
+
+  .ui.menu.slate-toolbar {
+    min-height: 2.4em;
+
+    .expando {
+      flex-grow: 1;
+      background-color: #f9f9f9;
+    }
+
+    .ui.buttons {
+      width: 100%;
+    }
+
+    .ui.button:not(.icon) > .icon:not(.button):not(.dropdown) {
+      // TODO: is it possible to not use !important here and override button.less?
+      margin: auto auto auto auto !important;
+    }
+
+    .ui.button:last-child {
+      // TODO: is it possible to not use !important here and override button.less?
+      margin-right: 0 !important;
+    }
+
+    .ui.compact.icon.button {
+      flex-grow: 0;
+      padding: 0.2em;
+      background-color: #f9f9f9;
+    }
   }
 }
 

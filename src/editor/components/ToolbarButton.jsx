@@ -13,12 +13,11 @@ const ToolbarButton = React.forwardRef(
         className={cx(className)}
         active={active}
         inverted={reversed}
-        compact={true}
-        toggle={true}
-        size="mini"
-      >
-        {icon && <Icon name={icon} size="17px" />}
-      </Button>
+        compact
+        toggle
+        size="tiny"
+        icon={icon && <Icon name={icon} size="24px" />}
+      ></Button>
     );
   },
 );

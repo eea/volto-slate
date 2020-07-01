@@ -3,7 +3,7 @@ import serializeHTMLFromNodes from './serializeHTMLFromNodes';
 
 const handleType = (tagName, html) => {
   html = html.replace(new RegExp('^<' + tagName + '>'), '');
-  html = html.replace(new RegExp('<\\' + tagName + '>$'), '');
+  html = html.replace(new RegExp('</' + tagName + '>$'), '');
   return React.createElement(tagName, {
     dangerouslySetInnerHTML: { __html: html },
   });
@@ -16,33 +16,43 @@ const TextBlockView = ({ id, properties, data }) => {
 
   const blockType = value[0].type;
 
+  let returnVal;
+
   // TODO: handle flexibly all other block types that a Slate block can contain
   switch (blockType) {
     case 'paragraph':
-      return handleType('p', html);
+      returnVal = handleType('p', html);
+      break;
 
     case 'numbered-list':
-      return handleType('ol', html);
+      returnVal = handleType('ol', html);
+      break;
 
     case 'bulleted-list':
-      return handleType('ul', html);
+      returnVal = handleType('ul', html);
+      break;
 
     case 'block-quote':
-      return handleType('blockquote', html);
+      returnVal = handleType('blockquote', html);
+      break;
 
     case 'heading-two':
-      return handleType('h2', html);
+      returnVal = handleType('h2', html);
+      break;
 
     case 'heading-three':
-      return handleType('h3', html);
+      returnVal = handleType('h3', html);
+      break;
 
     default:
       console.warn(
         'Serializing a Slate block to HTML with unknown type:',
         blockType,
       );
-      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+      returnVal = <div dangerouslySetInnerHTML={{ __html: html }} />;
   }
+
+  return returnVal;
 };
 
 export default TextBlockView;

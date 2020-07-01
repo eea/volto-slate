@@ -11,12 +11,13 @@
   "dependencies": {
     "@types/jest": "^25.2.3",
     "classnames": "2.2.6",
+    "image-extensions": "1.1.0",
     "is-url": "1.2.4",
     "slate": "^0.58.3",
     "slate-history": "^0.58.3",
     "slate-hyperscript": "^0.58.3",
     "slate-plain-serializer": "0.7.13",
     "slate-react": "^0.58.3",
-    "image-extensions": "1.1.0"
+    "jsdom": "16.2.2"
   }
 }

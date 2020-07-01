@@ -1,4 +1,3 @@
-import React, { useState, useCallback, useMemo } from 'react';
 import { jsx } from 'slate-hyperscript';
 import { Transforms } from 'slate';
 
@@ -72,7 +71,7 @@ export const deserialize = (el) => {
 };
 
 const withDeserializeHtml = (editor) => {
-  const { insertData, isInline, isVoid } = editor;
+  const { insertData } = editor;
 
   // editor.isInline = (element) => {
   //   return element.type === 'link' ? true : isInline(element);

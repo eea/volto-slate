@@ -1,4 +1,5 @@
-import { Editor, Transforms, Range, Point, Node, Path, Text } from 'slate';
+import { Editor, Transforms, Range, Node, Text } from 'slate';
+// eslint-disable-next-line import/no-unresolved
 import { settings } from '~/config';
 
 export const getMaxRange = (editor) => {
@@ -37,9 +38,9 @@ export const toggleBlock = (editor, format, justSelection) => {
   };
 
   const entry = getActiveEntry(editor, format);
-  let activeNode, activeNodePath;
+  let activeNodePath;
   if (entry) {
-    [activeNode, activeNodePath] = entry;
+    [, activeNodePath] = entry;
   }
 
   const unwrappableBlockTypes = [
@@ -237,9 +238,12 @@ const recursive = (myNode) => {
 
 // TODO: optimize this:
 const textsMatch = (a, b) => {
+  const aKeys = Object.keys(a);
+  const bKeys = Object.keys(b);
+
   for (let x in a) {
     if (x === 'text') continue;
-    if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+    if (aKeys.contains(x) && bKeys.contains(x)) {
       if (a[x] !== b[x]) {
         return false;
       }
@@ -248,7 +252,7 @@ const textsMatch = (a, b) => {
 
   for (let x in b) {
     if (x === 'text') continue;
-    if (a.hasOwnProperty(x) && b.hasOwnProperty(x)) {
+    if (aKeys.contains(x) && bKeys.contains(x)) {
       if (a[x] !== b[x]) {
         return false;
       }
@@ -315,6 +319,7 @@ export const unwrapList = (
       // unwrapNodesByType(editor, [typeUl, typeOl], {
       //   split: true,
       // });
+      // eslint-disable-next-line no-empty
     } else {
     }
   } else {

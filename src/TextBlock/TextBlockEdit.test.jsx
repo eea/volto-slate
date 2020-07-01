@@ -1,11 +1,8 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { wait, render } from '@testing-library/react';
-import ReactDOM from 'react-dom';
+import { render } from '@testing-library/react';
 
-import { Editor } from 'slate';
 import TextBlockEdit from './TextBlockEdit';
 
 const mockStore = configureStore();

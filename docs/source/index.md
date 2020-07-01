@@ -1,17 +1,27 @@
-# Welcome to MkDocs
+# volto-slate: a Volto text editor
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+## Plugin configuration
 
-## Commands
+To configure a new volto-slate plugin, you need to do something like this:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+```
 
-## Project layout
+export default function install(config) {
+  const settings = config.settings;
+  settings.slate.availableButtons = [
+    ...settings.slate.availableButtons,
+    'block-quote': <BlockButton ... />
+  ];
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+  return config;
+}
+
+```
+
+## Available plugin extension points:
+
+- `slate.availableButton` - Object. Define new buttons
+- `slate.toolbarButtons` - List. Add new buttons to the hovering toolbar
+- `slate.expandedToolbarButtons` - List. Add new buttons to the expanded (fixed) toolbar
+- `slate.elements` - Object. define new block elements
+

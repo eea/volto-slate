@@ -7,6 +7,7 @@ const ToolbarButton = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {
     return (
       <Button
+        as="a"
         {...props}
         ref={ref}
         style={style}

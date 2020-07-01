@@ -2,6 +2,7 @@ import React from 'react';
 import MarkButton from './components/MarkButton';
 import BlockButton from './components/BlockButton';
 import Separator from './components/Separator';
+import Expando from './components/Expando';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -40,6 +41,7 @@ export const availableButtons = {
     <BlockButton format="bulleted-list" icon={listBulletIcon} />
   ),
   separator: (props) => <Separator />,
+  expando: (props) => <Expando />,
 };
 
 export const defaultToolbarButtons = [

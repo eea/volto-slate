@@ -4,10 +4,10 @@ import { useSlate } from 'slate-react';
 import {
   getActiveEntry,
   toggleBlock,
-  getMaxRange,
-  isNodeInSelection,
-  getSelectionNodesByType,
-  selectAll,
+  // getMaxRange,
+  // isNodeInSelection,
+  // getSelectionNodesByType,
+  // selectAll,
   toggleList,
   convertAllToParagraph,
 } from '../utils';
@@ -22,9 +22,9 @@ const BlockButton = ({ format, icon }) => {
     (event) => {
       event.preventDefault();
 
-      const isListType = (t) => {
-        return t === 'bulleted-list' || t === 'numbered-list';
-      };
+      // const isListType = (t) => {
+      //   return t === 'bulleted-list' || t === 'numbered-list';
+      // };
 
       switch (format) {
         case 'bulleted-list':

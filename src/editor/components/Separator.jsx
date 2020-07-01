@@ -4,14 +4,7 @@ import React from 'react';
 // import { Divider } from 'semantic-ui-react';
 
 const Separator = () => {
-  return (
-    <div
-      style={{
-        borderLeft: '0.1rem solid lightgray',
-        width: '0.3rem',
-      }}
-    />
-  );
+  return <div className="toolbar-separator" />;
 };
 
 export default Separator;

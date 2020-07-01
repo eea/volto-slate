@@ -1,6 +1,6 @@
 import { LISTTYPES } from '../constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../../editor/utils';
-import { Editor, Transforms, Range, Node, RangeRef, Path } from 'slate';
+import { Editor, Transforms, Range } from 'slate';
 import { plaintext_serialize } from '../../editor/render';
 import {
   getBlocksFieldname,
@@ -31,7 +31,7 @@ function isCursorInList(editor) {
     return false;
   }
 
-  const [listItemWithSelection, listItemWithSelectionPath] = result;
+  const [listItemWithSelection] = result;
 
   // whether the selection is inside a list item
   const listItemCase =
@@ -49,7 +49,7 @@ function handleBackspaceInList({
   onDeleteBlock,
   blockNode,
 }) {
-  const [listNode, listNodePath] = Editor.above(editor, {
+  const [listNode] = Editor.above(editor, {
     match: (n) => n.type === 'bulleted-list' || n.type === 'numbered-list',
   });
 

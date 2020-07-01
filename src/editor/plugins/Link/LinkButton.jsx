@@ -15,7 +15,7 @@ const LinkButton = () => {
   const editor = useSlate();
   const [showForm, setShowForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
-  const [data, setData] = React.useState({});
+  const [data] = React.useState({});
 
   const ila = isLinkActive(editor);
 
@@ -52,6 +52,8 @@ const LinkButton = () => {
         onMouseDown={() => {
           if (
             ila &&
+            // TODO: remove this confirm
+            // eslint-disable-next-line no-alert
             window.confirm('Are you sure that you want to remove the link?')
           ) {
             unwrapLink(editor);

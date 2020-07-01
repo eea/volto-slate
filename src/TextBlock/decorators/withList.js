@@ -1,5 +1,4 @@
 import { Editor, Path, Point, Range, Transforms, Text, Node } from 'slate';
-import { castArray } from 'lodash';
 import {
   simulateBackspaceAtEndOfEditor,
   createDefaultFragment,
@@ -8,73 +7,10 @@ import {
   replaceAllContentInEditorWith,
 } from '../utils';
 
-/**
- * See {@link Range.isCollapsed}.
- * Return false if `range` is not defined.
- */
-const isCollapsed = (range) => !!range && Range.isCollapsed(range);
-
-/**
- * When deleting backward at the start of an empty block, reset the block type to a default type.
- */
-const withDeleteStartReset = ({
-  defaultType = 'paragraph',
-  types,
-  onUnwrap,
-}) => (editor) => {
-  const { deleteBackward } = editor;
-
-  editor.deleteBackward = (...args) => {
-    const { selection } = editor;
-
-    if (isCollapsed(selection)) {
-      const parent = Editor.above(editor, {
-        match: (n) => types.includes(n.type),
-      });
-
-      if (parent) {
-        const [, parentPath] = parent;
-        const parentStart = Editor.start(editor, parentPath);
-
-        if (selection && Point.equals(selection.anchor, parentStart)) {
-          Transforms.setNodes(editor, { type: defaultType });
-
-          if (onUnwrap) {
-            onUnwrap();
-          }
-
-          return;
-        }
-      }
-    }
-
-    deleteBackward(...args);
-  };
-
-  return editor;
-};
-
 const isPointAtRoot = (point) => point.path.length === 2;
 
 const isRangeAtRoot = (range) =>
   isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
-
-const unwrapNodesByType = (editor, types, options = {}) => {
-  types = castArray(types);
-
-  Transforms.unwrapNodes(editor, {
-    match: (n) => types.includes(n.type),
-    ...options,
-  });
-};
-
-/**
- * Get the block above the selection. If not found, return the editor entry.
- */
-const getBlockAboveSelection = (editor) =>
-  Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
-  }) || [editor, []];
 
 /**
  * Has the node an empty text
@@ -84,53 +20,6 @@ const isBlockTextEmpty = (node) => {
   const lastChild = node.children[node.children.length - 1];
 
   return Text.isText(lastChild) && !lastChild.text.length;
-};
-
-/**
- * When inserting break at the start of an empty block, reset the block type to a default type.
- */
-const withBreakEmptyReset = ({
-  types,
-  defaultType = 'paragraph',
-  onUnwrap,
-}) => (editor) => {
-  const { insertBreak } = editor;
-
-  editor.insertBreak = () => {
-    const blockEntry = getBlockAboveSelection(editor);
-
-    const [block] = blockEntry;
-
-    if (isBlockTextEmpty(block)) {
-      const parent = Editor.above(editor, {
-        match: (n) => types.includes(n.type),
-      });
-
-      if (parent) {
-        Transforms.setNodes(editor, { type: defaultType });
-
-        if (onUnwrap) {
-          onUnwrap();
-        }
-
-        return;
-      }
-    }
-
-    insertBreak();
-  };
-
-  return editor;
-};
-
-/**
- * Combine {@link withBreakEmptyReset} and {@link withDeleteStartReset}.
- */
-const withResetBlockType = (options) => (editor) => {
-  editor = withBreakEmptyReset(options)(editor);
-  editor = withDeleteStartReset(options)(editor);
-
-  return editor;
 };
 
 const thereIsNoListItemBelowSelection = (editor) => {
@@ -147,7 +36,7 @@ const thereIsNoListItemBelowSelection = (editor) => {
 
   let listItems = Node.children(editor, pp);
 
-  for (let [node, path] of listItems) {
+  for (let [, path] of listItems) {
     if (Path.isAfter(path, p)) {
       return false;
     }
@@ -221,7 +110,7 @@ const withList = ({
                 console.log('should split the list in two Volto blocks!');
                 let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
 
-                let [listNode, listPath] = Editor.parent(editor, listItemPath);
+                let [listNode] = Editor.parent(editor, listItemPath);
 
                 let theType = listNode.type;
 
@@ -291,8 +180,7 @@ const withList = ({
               });
             }
           } else {
-            if (isBlockTextEmpty(paragraphNode)) {
-            } else {
+            if (!isBlockTextEmpty(paragraphNode)) {
               /**
                * If end, insert a list item after and select it
                */

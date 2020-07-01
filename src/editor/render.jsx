@@ -1,14 +1,14 @@
 import React from 'react';
 import { Node } from 'slate';
 import { settings } from '~/config';
-import { useSelected, useFocused } from 'slate-react';
+// import { useSelected, useFocused } from 'slate-react';
 
 export const Element = (props) => {
   const { attributes, children, element } = props;
   const AddonEl = settings?.slate?.elements?.[element.type];
 
-  const selected = useSelected();
-  const focused = useFocused();
+  // const selected = useSelected();
+  // const focused = useFocused();
 
   if (AddonEl) {
     return <AddonEl {...props} />;

@@ -6,7 +6,7 @@ import installLinkPlugin from './editor/plugins/Link';
 import installBlockQuotePlugin from './editor/plugins/BlockQuote';
 import installVoltoProposals from './futurevolto/config';
 import installMarkdown from './editor/plugins/Markdown';
-import installImagePlugin from './editor/plugins/Image';
+// import installImagePlugin from './editor/plugins/Image';
 import { slate_block_selections } from './reducers';
 
 const applyConfig = (config) => {

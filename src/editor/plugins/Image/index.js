@@ -1,4 +1,3 @@
-import React from 'react';
 import { withImage } from './decorators';
 
 export default function install(config) {

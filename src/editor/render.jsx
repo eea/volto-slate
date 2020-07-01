@@ -54,13 +54,10 @@ export const Element = (props) => {
 };
 
 export const Leaf = ({ attributes, leaf, children }) => {
-  let [leafs, availableLeafs] = [
-    settings?.slate?.leafs,
-    settings?.slate?.availableLeafs,
-  ];
+  let { leafTypes = [], leafRenderers = {} } = settings || {};
 
-  children = leafs?.reduce((acc, name) => {
-    return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
+  children = leafTypes.reduce((acc, name) => {
+    return leaf[name] ? leafRenderers[name]({ children: acc }) : acc;
   }, children);
 
   return <span {...attributes}>{children}</span>;

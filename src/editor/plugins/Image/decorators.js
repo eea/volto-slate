@@ -1,3 +1,20 @@
+/*
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * TODO: needs to implement uploading as a Volto block! We don't want images in
+ * Volto richtext.
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 import isUrl from 'is-url';
 import imageExtensions from 'image-extensions';
 // import { ReactEditor } from 'slate-react';

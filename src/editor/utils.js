@@ -1,5 +1,4 @@
 import { Editor, Transforms, Range, Node, Text } from 'slate';
-// eslint-disable-next-line import/no-unresolved
 import { settings } from '~/config';
 
 export const getMaxRange = (editor) => {
@@ -319,7 +318,6 @@ export const unwrapList = (
       // unwrapNodesByType(editor, [typeUl, typeOl], {
       //   split: true,
       // });
-
       // else ...
     }
   } else {

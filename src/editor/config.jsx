@@ -73,7 +73,7 @@ export const hotkeys = {
 
 export const listTypes = ['numbered-list', 'bulleted-list'];
 
-export const availableLeafs = {
+export const leafRenderers = {
   bold: ({ children }) => {
     return <strong>{children}</strong>;
   },
@@ -85,6 +85,13 @@ export const availableLeafs = {
   strikethrough: ({ children }) => <s>{children}</s>,
 };
 
-export const leafs = ['bold', 'code', 'italic', 'underline', 'strikethrough'];
+// Leaves will be rendered in specific order here
+export const leafTypes = [
+  'bold',
+  'code',
+  'italic',
+  'underline',
+  'strikethrough',
+];
 
 export const keyDownHandlers = {};

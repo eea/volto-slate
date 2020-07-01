@@ -319,8 +319,8 @@ export const unwrapList = (
       // unwrapNodesByType(editor, [typeUl, typeOl], {
       //   split: true,
       // });
-      // eslint-disable-next-line no-empty
-    } else {
+
+      // else ...
     }
   } else {
     unwrapNodesByType(editor, [typeLi], { at: getMaxRange(editor) });

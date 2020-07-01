@@ -11,8 +11,7 @@ const handleType = (tagName, html) => {
 
 const TextBlockView = ({ id, properties, data }) => {
   const { value } = data;
-  const serializer = serializeHTMLFromNodes([]);
-  let html = serializer(value);
+  let html = serializeHTMLFromNodes(value);
 
   const blockType = value[0].type;
 

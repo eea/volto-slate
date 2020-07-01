@@ -45,11 +45,7 @@ const getLeaf = (leafProps) => {
 //   return doc.documentElement.textContent;
 // }
 
-/**
- *
- * @param plugins
- */
-const serializeHTMLFromNodes = (plugins) => (nodes) => {
+const serializeHTMLFromNodes = (nodes) => {
   const result = nodes
     .map((node) => {
       if (SlateText.isText(node)) {
@@ -60,18 +56,16 @@ const serializeHTMLFromNodes = (plugins) => (nodes) => {
             children: node.text,
             attributes: { 'data-slate-leaf': true },
           },
-          plugins,
         );
       }
       return getNode(
         {
           element: node,
           children: encodeURIComponent(
-            serializeHTMLFromNodes(plugins)(node.children),
+            serializeHTMLFromNodes(node.children),
           ),
           attributes: { 'data-slate-node': 'element', ref: null },
         },
-        plugins,
       );
     })
     .join('');

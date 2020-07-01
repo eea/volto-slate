@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import TextBlockEdit from './TextBlockEdit';
 
 // TODO: use this instead of expecting some props to be undefined
-import { settings } from '~/config';
+// import { settings } from '~/config';
 
 const mockStore = configureStore();
 

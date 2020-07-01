@@ -3,6 +3,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { Editor, Range } from 'slate';
 import { Portal } from 'react-portal';
 
+import Separator from './Separator';
 import ToolbarButton from './ToolbarButton';
 import BasicToolbar from './BasicToolbar';
 
@@ -42,6 +43,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
+        <Separator />
         <ToolbarButton
           onMouseDown={(event) => {
             onToggle();

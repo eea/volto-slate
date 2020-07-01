@@ -5,7 +5,7 @@ import { useSelected, useFocused } from 'slate-react';
 
 export const Element = (props) => {
   const { attributes, children, element } = props;
-  const AddonEl = settings.slate.elements[element.type];
+  const AddonEl = settings?.slate?.elements?.[element.type];
 
   const selected = useSelected();
   const focused = useFocused();
@@ -54,9 +54,12 @@ export const Element = (props) => {
 };
 
 export const Leaf = ({ attributes, leaf, children }) => {
-  const { leafs, availableLeafs } = settings.slate;
+  let [leafs, availableLeafs] = [
+    settings?.slate?.leafs,
+    settings?.slate?.availableLeafs,
+  ];
 
-  children = leafs.reduce((acc, name) => {
+  children = leafs?.reduce((acc, name) => {
     return leaf[name] ? availableLeafs[name]({ children: acc }) : acc;
   }, children);
 

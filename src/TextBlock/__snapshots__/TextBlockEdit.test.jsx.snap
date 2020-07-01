@@ -24,16 +24,20 @@ exports[`TextBlockEdit renders w/o errors 1`] = `
         >
           <span
             data-slate-leaf="true"
-          >
-            <span
-              data-slate-string="true"
-            >
-              My first paragraph.
-            </span>
-          </span>
+          />
         </span>
       </p>
     </div>
   </div>
+  <button
+    class="ui basic icon button block-add-button"
+  >
+    <svg
+      class="icon block-add-button"
+      style="height: 24px; width: auto; fill: currentColor;"
+      viewBox=""
+      xmlns=""
+    />
+  </button>
 </DocumentFragment>
 `;

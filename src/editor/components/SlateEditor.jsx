@@ -28,11 +28,9 @@ const SlateEditor = ({
   const [showToolbar, setShowToolbar] = useState(false);
   const [currentSelection, setCurrentSelection] = useState(null);
 
-  const {
-    expandedToolbarButtons,
-    toolbarButtons,
-    availableButtons,
-  } = settings.slate;
+  let expandedToolbarButtons = settings?.slate?.expandedToolbarButtons;
+  let toolbarButtons = settings?.slate?.toolbarButtons;
+  let availableButtons = settings?.slate?.availableButtons;
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
@@ -58,11 +56,11 @@ const SlateEditor = ({
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...(slate.decorators || []),
+      ...(slate?.decorators || []),
       ...paramdecos.current,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
-  }, [slate.decorators]);
+  }, [slate?.decorators]);
 
   const initial_selection = React.useRef();
 
@@ -160,7 +158,7 @@ const SlateEditor = ({
             onToggle={() => setShowToolbar(!showToolbar)}
             mainToolbarShown={showToolbar}
           >
-            {toolbarButtons.map((name, i) => (
+            {toolbarButtons?.map((name, i) => (
               <Fragment key={`${name}-${i}`}>
                 {availableButtons[name]()}
               </Fragment>
@@ -175,7 +173,7 @@ const SlateEditor = ({
               onToggle={() => setShowToolbar(!showToolbar)}
               mainToolbarShown={showToolbar}
             >
-              {expandedToolbarButtons.map((name, i) => (
+              {expandedToolbarButtons?.map((name, i) => (
                 <Fragment key={`${name}-${i}`}>
                   {availableButtons[name]()}
                 </Fragment>

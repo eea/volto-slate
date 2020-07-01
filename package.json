@@ -13,11 +13,14 @@
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
+    "jsdom": "16.2.2",
     "slate": "^0.58.3",
     "slate-history": "^0.58.3",
     "slate-hyperscript": "^0.58.3",
     "slate-plain-serializer": "0.7.13",
-    "slate-react": "^0.58.3",
-    "jsdom": "16.2.2"
+    "slate-react": "^0.58.3"
+  },
+  "devDependencies": {
+    "prettier": "2.0.5"
   }
 }

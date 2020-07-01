@@ -6,11 +6,13 @@
 
 /* Enables customization of addons */
 .loadAddonOverrides() {
-  @import (optional) "@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.overrides";
+  @import (optional)
+    '@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.overrides';
 }
 
 /* Helper to load variables */
 .loadAddonVariables() {
-  @import (optional) "@{addonelement}.variables";
-  @import (optional) "@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.variables";
+  @import (optional) '@{addonelement}.variables';
+  @import (optional)
+    '@{siteFolder}/../addons/@{addon}/@{addontype}s/@{addonelement}.variables';
 }

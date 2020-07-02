@@ -13,7 +13,7 @@ export const Element = (props) => {
 };
 
 export const Leaf = ({ attributes, leaf, children }) => {
-  let { leafs = {} } = settings || {};
+  let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
     return leaf[name] ? leafs[name]({ children: acc }) : acc;

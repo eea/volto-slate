@@ -5,8 +5,8 @@ import React from 'react';
 const ShortcutListing = (props) => {
   const hotkeys = settings?.slate?.hotkeys;
   return (
-    <Segment.Group raised className="form">
-      <header className="header pulled">
+    <div>
+      <header className="header">
         <h2>Text editor shortcuts</h2>
       </header>
 
@@ -18,7 +18,7 @@ const ShortcutListing = (props) => {
             ))}
         </List>
       </Segment>
-    </Segment.Group>
+    </div>
   );
 };
 

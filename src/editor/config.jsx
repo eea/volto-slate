@@ -99,15 +99,15 @@ export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
 };
 
-// Leaves will be rendered in specific order here
+// Order of definition here is important (higher = inner element)
 export const leafs = {
+  italic: ({ children }) => <em>{children}</em>,
   bold: ({ children }) => {
     return <strong>{children}</strong>;
   },
+  underline: ({ children }) => <u>{children}</u>,
+  strikethrough: ({ children }) => <s>{children}</s>,
   code: ({ children }) => {
     return <code>{children}</code>;
   },
-  italic: ({ children }) => <em>{children}</em>,
-  underline: ({ children }) => <u>{children}</u>,
-  strikethrough: ({ children }) => <s>{children}</s>,
 };

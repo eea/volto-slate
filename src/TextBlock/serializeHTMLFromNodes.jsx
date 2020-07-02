@@ -1,3 +1,5 @@
+// TODO: explain while this is needed
+
 /**
  * Original source: https://github.com/udecode/slate-plugins/blob/next/packages/slate-plugins/src/serializers/serialize-html/serializeHTMLFromNodes.ts
  */
@@ -49,24 +51,18 @@ const serializeHTMLFromNodes = (nodes) => {
   const result = nodes
     .map((node) => {
       if (SlateText.isText(node)) {
-        return getLeaf(
-          {
-            leaf: node,
-            text: node,
-            children: node.text,
-            attributes: { 'data-slate-leaf': true },
-          },
-        );
+        return getLeaf({
+          leaf: node,
+          text: node,
+          children: node.text,
+          attributes: { 'data-slate-leaf': true },
+        });
       }
-      return getNode(
-        {
-          element: node,
-          children: encodeURIComponent(
-            serializeHTMLFromNodes(node.children),
-          ),
-          attributes: { 'data-slate-node': 'element', ref: null },
-        },
-      );
+      return getNode({
+        element: node,
+        children: encodeURIComponent(serializeHTMLFromNodes(node.children)),
+        attributes: { 'data-slate-node': 'element', ref: null },
+      });
     })
     .join('');
 

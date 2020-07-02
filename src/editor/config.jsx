@@ -80,19 +80,7 @@ export const keyDownHandlers = {};
 
 export const listTypes = ['numbered-list', 'bulleted-list'];
 
-export const leafRenderers = {
-  bold: ({ children }) => {
-    return <strong>{children}</strong>;
-  },
-  code: ({ children }) => {
-    return <code>{children}</code>;
-  },
-  italic: ({ children }) => <em>{children}</em>,
-  underline: ({ children }) => <u>{children}</u>,
-  strikethrough: ({ children }) => <s>{children}</s>,
-};
-
-export const elementRenderers = {
+export const elements = {
   'bulleted-list': ({ attributes, children }) => (
     <ul {...attributes}>{children}</ul>
   ),
@@ -112,10 +100,14 @@ export const elementRenderers = {
 };
 
 // Leaves will be rendered in specific order here
-export const leafTypes = [
-  'bold',
-  'code',
-  'italic',
-  'underline',
-  'strikethrough',
-];
+export const leafs = {
+  bold: ({ children }) => {
+    return <strong>{children}</strong>;
+  },
+  code: ({ children }) => {
+    return <code>{children}</code>;
+  },
+  italic: ({ children }) => <em>{children}</em>,
+  underline: ({ children }) => <u>{children}</u>,
+  strikethrough: ({ children }) => <s>{children}</s>,
+};

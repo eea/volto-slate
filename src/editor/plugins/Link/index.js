@@ -7,7 +7,7 @@ export default function install(config) {
   const slate = config.settings.slate || {};
   config.settings.slate = slate;
 
-  slate.availableButtons.link = (props) => <LinkButton {...props} />;
+  slate.buttons.link = (props) => <LinkButton {...props} />;
 
   slate.decorators = [...(slate.decorators || []), withLinks];
 

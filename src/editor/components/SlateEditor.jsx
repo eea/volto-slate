@@ -7,8 +7,7 @@ import React, { useCallback, useState, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from '../render';
-import Toolbar from './Toolbar';
-import ExpandedToolbar from './ExpandedToolbar';
+import { Toolbar, ExpandedToolbar } from './ui';
 import { toggleMark } from '../utils';
 import { createDefaultFragment } from '../../TextBlock/utils';
 import { settings } from '~/config';
@@ -28,9 +27,7 @@ const SlateEditor = ({
   const [showToolbar, setShowToolbar] = useState(false);
   const [currentSelection, setCurrentSelection] = useState(null);
 
-  let expandedToolbarButtons = settings?.slate?.expandedToolbarButtons;
-  let toolbarButtons = settings?.slate?.toolbarButtons;
-  let availableButtons = settings?.slate?.availableButtons;
+  let { expandedToolbarButtons, toolbarButtons, buttons } = settings.slate;
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
@@ -159,9 +156,7 @@ const SlateEditor = ({
             mainToolbarShown={showToolbar}
           >
             {toolbarButtons?.map((name, i) => (
-              <Fragment key={`${name}-${i}`}>
-                {availableButtons[name]()}
-              </Fragment>
+              <Fragment key={`${name}-${i}`}>{buttons[name]()}</Fragment>
             ))}
           </Toolbar>
         )}
@@ -174,9 +169,7 @@ const SlateEditor = ({
               mainToolbarShown={showToolbar}
             >
               {expandedToolbarButtons?.map((name, i) => (
-                <Fragment key={`${name}-${i}`}>
-                  {availableButtons[name]()}
-                </Fragment>
+                <Fragment key={`${name}-${i}`}>{buttons[name]()}</Fragment>
               ))}
             </ExpandedToolbar>
           )}

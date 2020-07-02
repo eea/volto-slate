@@ -1,8 +1,10 @@
 import React from 'react';
-import MarkButton from './components/MarkButton';
-import BlockButton from './components/BlockButton';
-import Separator from './components/Separator';
-import Expando from './components/Expando';
+import {
+  MarkButton,
+  BlockButton,
+  Separator,
+  Expando,
+} from 'volto-slate/editor/components/ui';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -18,7 +20,7 @@ import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strickthrough.svg';
 
 // Registry of available buttons
-export const availableButtons = {
+export const buttons = {
   bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
   italic: (props) => (
     <MarkButton format="italic" icon={italicIcon} {...props} />

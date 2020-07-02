@@ -1,5 +1,5 @@
 import React from 'react';
-import BlockButton from '../../components/BlockButton';
+import {BlockButton} from 'volto-slate/editor/components/ui';
 import quoteIcon from '@plone/volto/icons/quote.svg';
 
 export const BlockQuoteElement = ({ attributes, children, element }) => {
@@ -13,10 +13,9 @@ export const BlockQuoteElement = ({ attributes, children, element }) => {
 };
 
 export default function install(config) {
-  const slate = config.settings.slate || {};
-  config.settings.slate = slate;
+  const { slate } = config.settings;
 
-  slate.availableButtons['block-quote'] = (props) => (
+  slate.buttons['block-quote'] = (props) => (
     <BlockButton format="block-quote" icon={quoteIcon} {...props} />
   );
 

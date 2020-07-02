@@ -6,7 +6,7 @@ import {
   toggleBlock,
   toggleList,
   convertAllToParagraph,
-} from '../utils';
+} from 'volto-slate/editor/utils';
 import ToolbarButton from './ToolbarButton';
 
 const BlockButton = ({ format, icon }) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 
-import { isMarkActive, toggleMark } from '../utils';
+import { isMarkActive, toggleMark } from 'volto-slate/editor/utils';
 import ToolbarButton from './ToolbarButton';
 
 const MarkButton = ({ format, icon }) => {

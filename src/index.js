@@ -1,14 +1,13 @@
 import codeSVG from '@plone/volto/icons/code.svg';
 
-import { TextBlockView, TextBlockEdit } from './TextBlock';
-import * as slateConfig from './editor/config';
 import { slate_block_selections } from './reducers';
 
-import installLinkPlugin from './editor/plugins/Link';
-import installBlockQuotePlugin from './editor/plugins/BlockQuote';
 import installVoltoProposals from './futurevolto/config';
-import installMarkdown from './editor/plugins/Markdown';
-// import installImagePlugin from './editor/plugins/Image';
+
+import * as slateConfig from './editor/config';
+import installDefaultPlugins from './editor/plugins';
+
+import { TextBlockView, TextBlockEdit } from './TextBlock';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {
@@ -36,10 +35,7 @@ const applyConfig = (config) => {
     ...slateConfig,
   };
 
-  // installImagePlugin(config);
-  installLinkPlugin(config);
-  installMarkdown(config);
-  installBlockQuotePlugin(config);
+  installDefaultPlugins(config);
   installVoltoProposals(config);
 
   config.addonReducers = {

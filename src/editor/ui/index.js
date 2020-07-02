@@ -5,5 +5,6 @@ export Expando from './Expando';
 export MarkButton from './MarkButton';
 export Menu from './Menu';
 export Separator from './Separator';
+export SlateToolbar from './SlateToolbar';
 export Toolbar from './Toolbar';
 export ToolbarButton from './ToolbarButton';

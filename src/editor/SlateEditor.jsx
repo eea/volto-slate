@@ -3,13 +3,12 @@ import cx from 'classnames';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
-import { Toolbar, ExpandedToolbar } from './ui';
+import { SlateToolbar } from './ui';
 import { toggleMark } from './utils';
-// import { createDefaultFragment } from 'volto-slate/TextBlock/utils';
 import { settings } from '~/config';
 
 import './less/editor.less';
@@ -29,7 +28,6 @@ const SlateEditor = ({
   const [currentSelection, setCurrentSelection] = useState(null);
 
   const { slate } = settings;
-  let { expandedToolbarButtons, toolbarButtons, buttons } = slate;
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
@@ -90,41 +88,45 @@ const SlateEditor = ({
 
   const initialValue = slate.defaultValue();
 
-  // Source: https://stackoverflow.com/a/53623568/258462
-  const onTestSelectWord = (val) => {
-    let slateEditor =
-      val.detail.parentElement.parentElement.parentElement.parentElement;
+  // TODO: explain why this is needed. Obscure code without an explanation
+  // will be removed!
+  //
+  // // Source: https://stackoverflow.com/a/53623568/258462
+  // const onTestSelectWord = (val) => {
+  //   let slateEditor =
+  //     val.detail.parentElement.parentElement.parentElement.parentElement;
+  //
+  //   // Events are special, can't use spread or Object.keys
+  //   let selectEvent = {};
+  //   for (let key in val) {
+  //     if (key === 'currentTarget') {
+  //       selectEvent['currentTarget'] = slateEditor;
+  //     } else if (key === 'type') {
+  //       selectEvent['type'] = 'select';
+  //     } else {
+  //       selectEvent[key] = val[key];
+  //     }
+  //   }
+  //
+  //   // Make selection
+  //   let selection = window.getSelection();
+  //   let range = document.createRange();
+  //   range.selectNodeContents(val.detail);
+  //   selection.removeAllRanges();
+  //   selection.addRange(range);
+  //
+  //   // Slate monitors DOM selection changes automatically
+  // };
+  //
+  // React.useEffect(() => {
+  //   document.addEventListener('Test_SelectWord', onTestSelectWord);
+  //
+  //   return () => {
+  //     document.removeEventListener('Test_SelectWord', onTestSelectWord);
+  //   };
+  // });
 
-    // Events are special, can't use spread or Object.keys
-    let selectEvent = {};
-    for (let key in val) {
-      if (key === 'currentTarget') {
-        selectEvent['currentTarget'] = slateEditor;
-      } else if (key === 'type') {
-        selectEvent['type'] = 'select';
-      } else {
-        selectEvent[key] = val[key];
-      }
-    }
-
-    // Make selection
-    let selection = window.getSelection();
-    let range = document.createRange();
-    range.selectNodeContents(val.detail);
-    selection.removeAllRanges();
-    selection.addRange(range);
-
-    // Slate monitors DOM selection changes automatically
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('Test_SelectWord', onTestSelectWord);
-
-    return () => {
-      document.removeEventListener('Test_SelectWord', onTestSelectWord);
-    };
-  });
-
+  // TODO: make this, data-slate-value, etc, a HOC
   // remove after solving the issue with null selection
   const handleChange = (...args) => {
     setCurrentSelection(editor.selection);
@@ -145,30 +147,11 @@ const SlateEditor = ({
         value={value || initialValue}
         onChange={handleChange}
       >
-        {!showToolbar && (
-          <Toolbar
-            onToggle={() => setShowToolbar(!showToolbar)}
-            mainToolbarShown={showToolbar}
-          >
-            {toolbarButtons?.map((name, i) => (
-              <Fragment key={`${name}-${i}`}>{buttons[name]()}</Fragment>
-            ))}
-          </Toolbar>
-        )}
-        <div
-          className={cx('toolbar-wrapper', { active: showToolbar && selected })}
-        >
-          {selected && showToolbar && (
-            <ExpandedToolbar
-              onToggle={() => setShowToolbar(!showToolbar)}
-              mainToolbarShown={showToolbar}
-            >
-              {expandedToolbarButtons?.map((name, i) => (
-                <Fragment key={`${name}-${i}`}>{buttons[name]()}</Fragment>
-              ))}
-            </ExpandedToolbar>
-          )}
-        </div>
+        <SlateToolbar
+          selected={selected}
+          showToolbar={showToolbar}
+          setShowToolbar={setShowToolbar}
+        />
         <Editable
           readOnly={!selected}
           placeholder={placeholder}

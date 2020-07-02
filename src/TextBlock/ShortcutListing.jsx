@@ -7,15 +7,14 @@ const ShortcutListing = (props) => {
   return (
     <div>
       <header className="header">
-        <h2>Text editor shortcuts</h2>
+        <h2>Editor shortcuts</h2>
       </header>
 
       <Segment secondary attached>
         <List>
-          {hotkeys &&
-            Object.entries(hotkeys).map(([shortcut, format]) => (
-              <List.Item key={shortcut}>{`${shortcut}: ${format}`}</List.Item>
-            ))}
+          {Object.entries(hotkeys || {}).map(([shortcut, format]) => (
+            <List.Item key={shortcut}>{`${shortcut}: ${format}`}</List.Item>
+          ))}
         </List>
       </Segment>
     </div>

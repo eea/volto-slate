@@ -21,7 +21,6 @@ const SlateEditor = ({
   onKeyDown,
   properties,
   decorators,
-  // block,
   defaultSelection,
 }) => {
   const [showToolbar, setShowToolbar] = useState(false);

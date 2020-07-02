@@ -1,4 +1,3 @@
 import './less/editor.less';
 
-import SlateEditor from './components/SlateEditor';
-export default SlateEditor;
+export default from './components/SlateEditor';

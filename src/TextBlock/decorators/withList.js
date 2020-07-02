@@ -1,11 +1,11 @@
 import { Editor, Path, Point, Range, Transforms, Text, Node } from 'slate';
+import { settings } from '~/config';
 import {
   simulateBackspaceAtEndOfEditor,
-  createDefaultFragment,
   createAndSelectNewSlateBlock,
   splitEditorInTwoFragments,
   replaceAllContentInEditorWith,
-} from '../utils';
+} from 'volto-slate/utils';
 
 const isPointAtRoot = (point) => point.path.length === 2;
 
@@ -103,7 +103,7 @@ const withList = ({
             if (isBlockTextEmpty(paragraphNode)) {
               if (thereIsNoListItemBelowSelection(editor)) {
                 simulateBackspaceAtEndOfEditor(editor);
-                const bottomBlockValue = createDefaultFragment();
+                const bottomBlockValue = settings.slate.defaultValue();
                 createAndSelectNewBlockAfter(bottomBlockValue);
                 return;
               } else {

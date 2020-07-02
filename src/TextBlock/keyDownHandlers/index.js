@@ -1,12 +1,12 @@
-import { LISTTYPES } from '../constants';
-import { isCursorAtBlockStart, isCursorAtBlockEnd } from '../../editor/utils';
+import { LISTTYPES } from 'volto-slate/constants';
+import { isCursorAtBlockStart, isCursorAtBlockEnd } from 'volto-slate/utils';
 import { Editor, Transforms, Range } from 'slate';
-import { plaintext_serialize } from '../../editor/render';
+import { plaintext_serialize } from 'volto-slate/editor/render';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { unwrapList } from '../../editor/utils.js';
+import { unwrapList } from 'volto-slate/utils.js';
 export { onKeyDownList } from './listsKeyDownHandlers';
 
 function getPreviousBlock(index, properties) {

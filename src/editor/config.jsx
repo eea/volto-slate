@@ -4,7 +4,8 @@ import {
   BlockButton,
   Separator,
   Expando,
-} from 'volto-slate/editor/components/ui';
+} from 'volto-slate/editor/ui';
+import { createEmptyParagraph } from 'volto-slate/utils';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -66,6 +67,14 @@ export let toolbarButtons = [...defaultToolbarButtons];
 export let expandedToolbarButtons = [...defaultToolbarButtons];
 
 // The slate editor is "decorated" with the capabilities from this list
+
+// wrap editor with new functionality. While Slate calls them plugins, we
+// use decorator to avoid confusion. A Volto Slate editor plugins adds more
+// functionality: buttons, new elements, etc.
+// (editor) => editor
+//
+// Each decorator is a simple mutator function with signature: editor =>
+// editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
 export const decorators = [];
 
 // Default hotkeys and the format they trigger
@@ -112,4 +121,8 @@ export const leafs = {
   code: ({ children }) => {
     return <code>{children}</code>;
   },
+};
+
+export const defaultValue = () => {
+  return [createEmptyParagraph()];
 };

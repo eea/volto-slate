@@ -6,11 +6,13 @@ import { withHistory } from 'slate-history';
 import React, { useCallback, useState, Fragment } from 'react';
 import { connect } from 'react-redux';
 
-import { Element, Leaf } from '../render';
+import { Element, Leaf } from './render';
 import { Toolbar, ExpandedToolbar } from './ui';
-import { toggleMark } from '../utils';
-import { createDefaultFragment } from '../../TextBlock/utils';
+import { toggleMark } from './utils';
+// import { createDefaultFragment } from 'volto-slate/TextBlock/utils';
 import { settings } from '~/config';
+
+import './less/editor.less';
 
 const SlateEditor = ({
   selected,
@@ -26,47 +28,40 @@ const SlateEditor = ({
   const [showToolbar, setShowToolbar] = useState(false);
   const [currentSelection, setCurrentSelection] = useState(null);
 
-  let { expandedToolbarButtons, toolbarButtons, buttons } = settings.slate;
+  const { slate } = settings;
+  let { expandedToolbarButtons, toolbarButtons, buttons } = slate;
 
   const renderElement = useCallback((props) => {
     return <Element {...props} />;
   }, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
 
-  const { slate } = settings;
-
-  // wrap editor with new functionality. While Slate calls them plugins, we
-  // use decorator to avoid confusion. A Volto Slate editor plugins adds more
-  // functionality: buttons, new elements, etc.
-  // (editor) => editor
-  //
-  // Each decorator is a simple mutator function with signature: editor =>
-  // editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
-
   const paramdecos = React.useRef(decorators || []);
 
+  const defaultDecorators = slate.decorators;
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
+    // TODO: this needs cleanup
     const decos = [
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...(slate?.decorators || []),
       ...paramdecos.current,
+      ...defaultDecorators,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
-  }, [slate?.decorators]);
+  }, [defaultDecorators]);
 
   const initial_selection = React.useRef();
 
+  // Handles the case when block was just joined with backspace, in that
+  // case we want to restore the cursor close to the initial position
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
 
       if (defaultSelection) {
-        // Handles the case when block was just joined with backspace, in that
-        // case we want to restore the cursor close to the initial position
         if (initial_selection.current !== defaultSelection) {
           initial_selection.current = defaultSelection;
           Transforms.select(editor, defaultSelection);
@@ -81,6 +76,7 @@ const SlateEditor = ({
     return () => ReactEditor.blur(editor);
   }, [editor, selected, defaultSelection]);
 
+  // Fixes a Slate bug with selection handling when the block has just been selected
   React.useEffect(() => {
     const sel = window.getSelection();
 
@@ -92,7 +88,7 @@ const SlateEditor = ({
     }
   });
 
-  const initialValue = createDefaultFragment();
+  const initialValue = slate.defaultValue();
 
   // Source: https://stackoverflow.com/a/53623568/258462
   const onTestSelectWord = (val) => {

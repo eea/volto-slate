@@ -1,3 +1,9 @@
+/*
+ * TODO: this needs to be moved as a decorator to the editor subfolder
+ * also, rewrite using the settings.slate.elements
+ * also, make it pluggable
+ */
+
 import { jsx } from 'slate-hyperscript';
 import { Transforms } from 'slate';
 

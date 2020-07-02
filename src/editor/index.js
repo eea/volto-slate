@@ -1,3 +1,1 @@
-import './less/editor.less';
-
-export default from './components/SlateEditor';
+export default from './SlateEditor';

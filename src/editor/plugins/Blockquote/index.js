@@ -1,5 +1,5 @@
 import React from 'react';
-import { BlockButton } from 'volto-slate/editor/components/ui';
+import { BlockButton } from 'volto-slate/editor/ui';
 import quoteIcon from '@plone/volto/icons/quote.svg';
 
 export const BlockquoteElement = ({ attributes, children, element }) => {

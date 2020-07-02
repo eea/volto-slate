@@ -8,7 +8,7 @@
  *
  * TODO: needs to implement uploading as a Volto block! We don't want images in
  * Volto richtext.
- *
+ * - there are some useful code snippets to use in the code for that below:
  *
  *
  *

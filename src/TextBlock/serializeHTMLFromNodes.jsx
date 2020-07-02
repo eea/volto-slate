@@ -35,6 +35,8 @@ const getLeaf = (leafProps) => {
   return renderToStaticMarkup(leaf);
 };
 
+// There may be some bug in the serializeHTMLFromNodes function below
+// when we have an URI in the content, so I leave this comment here:
 // function htmlDecode(input) {
 //   // on the server;
 //   if (typeof DOMParser === 'undefined') {
@@ -66,9 +68,7 @@ const serializeHTMLFromNodes = (nodes) => {
     })
     .join('');
 
-  let r = stripSlateDataAttributes(trimWhitespace(decodeURIComponent(result)));
-  // console.log('r', { r });
-  return r;
+  return stripSlateDataAttributes(trimWhitespace(decodeURIComponent(result)));
 };
 
 export default serializeHTMLFromNodes;

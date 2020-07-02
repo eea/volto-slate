@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { Transforms } from 'slate';
-import {ToolbarButton} from 'volto-slate/editor/components/ui';
+import { ToolbarButton } from 'volto-slate/editor/components/ui';
 import { isLinkActive, insertLink, unwrapLink } from './utils';
 
 import linkSVG from '@plone/volto/icons/link.svg';

@@ -1,6 +1,5 @@
 import isUrl from 'is-url';
 import { wrapLink } from './utils';
-// import { isImageUrl } from '../Image/decorators';
 
 export const withLinks = (editor) => {
   const { insertData, insertText, isInline } = editor;
@@ -20,7 +19,7 @@ export const withLinks = (editor) => {
   editor.insertData = (data) => {
     const text = data.getData('text/plain');
 
-    if (text && isUrl(text) /* && !isImageUrl(text) */) {
+    if (text && isUrl(text)) {
       wrapLink(editor, text);
     } else {
       insertData(data);

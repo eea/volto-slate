@@ -1,13 +1,14 @@
-import { TextBlockView, TextBlockEdit } from './TextBlock';
 import codeSVG from '@plone/volto/icons/code.svg';
+
+import { TextBlockView, TextBlockEdit } from './TextBlock';
 import * as slateConfig from './editor/config';
+import { slate_block_selections } from './reducers';
 
 import installLinkPlugin from './editor/plugins/Link';
 import installBlockQuotePlugin from './editor/plugins/BlockQuote';
 import installVoltoProposals from './futurevolto/config';
 import installMarkdown from './editor/plugins/Markdown';
 // import installImagePlugin from './editor/plugins/Image';
-import { slate_block_selections } from './reducers';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {

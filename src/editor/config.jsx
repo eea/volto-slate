@@ -14,8 +14,10 @@ import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 
 // TODO: correct the file name in Volto:
+// https://github.com/plone/volto/pull/1641
 import strikethroughIcon from '@plone/volto/icons/strickthrough.svg';
 
+// Registry of available buttons
 export const availableButtons = {
   bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
   italic: (props) => (
@@ -61,8 +63,10 @@ export let toolbarButtons = [...defaultToolbarButtons];
 
 export let expandedToolbarButtons = [...defaultToolbarButtons];
 
+// The slate editor is "decorated" with the capabilities from this list
 export const decorators = [];
 
+// Default hotkeys and the format they trigger
 export const hotkeys = {
   'mod+b': 'bold',
   'mod+i': 'italic',
@@ -70,6 +74,9 @@ export const hotkeys = {
   'mod+`': 'code',
   // TODO: more hotkeys, including from plugins!
 };
+
+// Raw shortcut/keydown handlers
+export const keyDownHandlers = {};
 
 export const listTypes = ['numbered-list', 'bulleted-list'];
 
@@ -85,6 +92,25 @@ export const leafRenderers = {
   strikethrough: ({ children }) => <s>{children}</s>,
 };
 
+export const elementRenderers = {
+  'bulleted-list': ({ attributes, children }) => (
+    <ul {...attributes}>{children}</ul>
+  ),
+  'heading-two': ({ attributes, children }) => (
+    <h2 {...attributes}>{children}</h2>
+  ),
+  'heading-three': ({ attributes, children }) => (
+    <h3 {...attributes}>{children}</h3>
+  ),
+  'list-item': ({ attributes, children }) => (
+    <li {...attributes}>{children}</li>
+  ),
+  'numbered-list': ({ attributes, children }) => (
+    <ol {...attributes}>{children}</ol>
+  ),
+  default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+};
+
 // Leaves will be rendered in specific order here
 export const leafTypes = [
   'bold',
@@ -93,5 +119,3 @@ export const leafTypes = [
   'underline',
   'strikethrough',
 ];
-
-export const keyDownHandlers = {};

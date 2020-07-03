@@ -15,10 +15,7 @@ import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
 import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
-
-// TODO: correct the file name in Volto:
-// https://github.com/plone/volto/pull/1641
-import strikethroughIcon from '@plone/volto/icons/strickthrough.svg';
+import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 
 // Registry of available buttons
 export const buttons = {

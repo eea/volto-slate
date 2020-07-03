@@ -72,39 +72,50 @@
       display: inline-block;
       height: 32px;
       border-right: 1px solid #ddd;
-      margin: 0 0.5em;
+      margin: 0 0.5rem;
     }
 
-    .ui.tiny.compact.icon.toggle.button {
-      border: 0;
-      color: #888;
-      font-size: 18px;
-      vertical-align: bottom;
-      width: 32px;
-      height: 32px;
-      padding: 4px !important;
-      background: rgba(255, 255, 255, 0.975);
-      border-radius: 1px;
-      color: @brown;
+    .toolbar-separator + .button-wrapper {
+      margin-left: 0px;
+    }
+
+    .button-wrapper {
+      display: inline-block;
       margin-left: 3px;
 
-      & > svg {
-        fill: #888;
-      }
-
-      &:hover, &:focus {
-        background: #f3f3f3;
-        outline: 0; /* reset for :focus */
-      }
-
-      &.active {
-        background: #efefef;
-        border-radius: 3px;
-        box-shadow: inset 0 0 0 1px @blue;
-        color: @blue;
+      .ui.tiny.compact.icon.toggle.button {
+        border: 0;
+        color: #888;
+        font-size: 18px;
+        vertical-align: bottom;
+        width: 32px;
+        height: 32px;
+        padding: 4px !important;
+        background: rgba(255, 255, 255, 0.975);
+        border-radius: 1px;
+        color: @brown;
+        box-sizing: border-box;
+        // margin-left: 3px;
 
         & > svg {
-          fill: #444;
+          fill: #888;
+        }
+
+        &:hover, &:focus {
+          background: #f3f3f3;
+          outline: 0; /* reset for :focus */
+        }
+
+        &.active {
+          // TODO: stop using !important, use smth better
+          background: #efefef !important;
+          border-radius: 3px;
+          box-shadow: inset 0 0 0 1px @blue !important;
+          color: @blue !important;
+
+          & > svg {
+            fill: #444;
+          }
         }
       }
     }
@@ -124,9 +135,9 @@
     }
 
     .ui.compact.icon.button {
-      flex-grow: 0;
-      padding: 0.2em;
-      background-color: #f9f9f9;
+      // flex-grow: 0;
+      // padding: 0.2em;
+      // background-color: #f9f9f9;
     }
   }
 }

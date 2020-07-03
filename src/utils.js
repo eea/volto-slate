@@ -244,7 +244,7 @@ export function textsMatch(a, b) {
 
   for (let x in a) {
     if (x === 'text') continue;
-    if (aKeys.contains(x) && bKeys.contains(x)) {
+    if (aKeys.includes(x) && bKeys.includes(x)) {
       if (a[x] !== b[x]) {
         return false;
       }
@@ -253,7 +253,7 @@ export function textsMatch(a, b) {
 
   for (let x in b) {
     if (x === 'text') continue;
-    if (aKeys.contains(x) && bKeys.contains(x)) {
+    if (aKeys.includes(x) && bKeys.includes(x)) {
       if (a[x] !== b[x]) {
         return false;
       }

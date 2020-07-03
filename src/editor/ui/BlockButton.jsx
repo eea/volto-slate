@@ -9,6 +9,28 @@ import {
 } from 'volto-slate/utils';
 import ToolbarButton from './ToolbarButton';
 
+const newToggleBlock = (editor, format, isActive) => {
+  switch (format) {
+    case 'bulleted-list':
+    case 'numbered-list':
+      toggleList(editor, {
+        typeList: format,
+        isBulletedActive: !!getActiveEntry(editor, 'bulleted-list'),
+        isNumberedActive: !!getActiveEntry(editor, 'numbered-list'),
+      });
+      break;
+    case 'block-quote':
+    case 'heading-two':
+    case 'heading-three':
+    default:
+      convertAllToParagraph(editor);
+      if (!isActive) {
+        toggleBlock(editor, format, false);
+      }
+      break;
+  }
+};
+
 const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
 
@@ -17,26 +39,7 @@ const BlockButton = ({ format, icon }) => {
   const handleMouseDown = React.useCallback(
     (event) => {
       event.preventDefault();
-
-      switch (format) {
-        case 'bulleted-list':
-        case 'numbered-list':
-          toggleList(editor, {
-            typeList: format,
-            isBulletedActive: !!getActiveEntry(editor, 'bulleted-list'),
-            isNumberedActive: !!getActiveEntry(editor, 'numbered-list'),
-          });
-          break;
-        case 'block-quote':
-        case 'heading-two':
-        case 'heading-three':
-        default:
-          convertAllToParagraph(editor);
-          if (!isActive) {
-            toggleBlock(editor, format, false);
-          }
-          break;
-      }
+      newToggleBlock(editor, format, isActive);
     },
     [editor, format, isActive],
   );

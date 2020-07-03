@@ -43,29 +43,35 @@
     // border: 1px solid #ddd;
     background: #fff;
     border-radius: 2px;
-    box-shadow: 0 1px 3px 0 rgba(220, 220, 220, 1);
+    box-shadow: none,
+      0 1px 3px 0 #dcdcdc,
+      0 0 8px rgba(0, 0, 0, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.05),
+      0 1px 3px 0 rgba(220, 220, 220, 1) !important;
     padding: 3px;
     // -webkit-transform: translate(-50%) scale(0);
     // transform: translate(-50%) scale(0);
 
-    &::after {
-      border-width: 4px;
-      border-color: rgba(255, 255, 255, 0);
-      border-top-color: #fff;
-      margin-left: -4px;
-    }
+    // &::after {
+    //   content: '';
+    //   border-width: 4px;
+    //   border-color: rgba(255, 255, 255, 0);
+    //   border-top-color: #fff;
+    //   margin-left: -4px;
+    // }
 
-    &::before {
-      border-width: 6px;
-      border-color: rgba(221, 221, 221, 0);
-      border-top-color: #ddd;
-      margin-left: -6px;
-      border: none;
-    }
+    // &::before {
+    //   content: '';
+    //   border-width: 6px;
+    //   border-color: rgba(221, 221, 221, 0);
+    //   border-top-color: #ddd;
+    //   margin-left: -6px;
+    //   border: none;
+    // }
 
     .expando {
       flex-grow: 1;
-      background-color: #f9f9f9;
+      background-color: #fff;
     }
 
     .toolbar-separator {

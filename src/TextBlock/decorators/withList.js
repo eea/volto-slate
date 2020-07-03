@@ -46,6 +46,23 @@ const thereIsNoListItemBelowSelection = (editor) => {
   return true;
 };
 
+const insertNewListItem = (
+  editor,
+  { typeLi = 'list-item', typeP = 'paragraph', at, select = false },
+) => {
+  Transforms.insertNodes(
+    editor,
+    {
+      type: typeLi,
+      children: [{ type: typeP, children: [{ text: '' }] }],
+    },
+    { at: at },
+  );
+  if (select) {
+    Transforms.select(editor, at);
+  }
+};
+
 const handleBreakInListItem = (
   editor,
   {
@@ -53,13 +70,13 @@ const handleBreakInListItem = (
     paragraphNode,
     listItemPath,
     listItemNode,
-    typeLi,
-    typeP,
+    typeLi = 'list-item',
+    typeP = 'paragraph',
     createAndSelectNewBlockAfter,
   },
 ) => {
   // if selection is expanded, delete it
-  if (!Range.isCollapsed(editor.selection)) {
+  if (Range.isExpanded(editor.selection)) {
     Transforms.delete(editor);
   }
 
@@ -68,8 +85,6 @@ const handleBreakInListItem = (
 
   const isStart = Point.equals(editor.selection.anchor, start);
   const isEnd = Point.equals(editor.selection.anchor, end);
-
-  // console.log('isStart', isStart);
 
   /**
    * If cursor on start of paragraph, if the paragraph is empty, remove the paragraph (and the list item), then break the block!
@@ -81,31 +96,22 @@ const handleBreakInListItem = (
         simulateBackspaceAtEndOfEditor(editor);
         const bottomBlockValue = settings.slate.defaultValue();
         createAndSelectNewBlockAfter(bottomBlockValue);
-        return;
       } else {
         let [upBlock, bottomBlock] = splitEditorInTwoLists(
           editor,
           listItemPath,
         );
-
         replaceAllContentInEditorWith(editor, upBlock);
         createAndSelectNewBlockAfter(bottomBlock);
-        return;
       }
+      return;
     } else {
-      console.log('inserting new list item');
-      Transforms.insertNodes(
-        editor,
-        {
-          type: typeLi,
-          children: [{ type: typeP, children: [{ text: '' }] }],
-        },
-        { at: listItemPath },
-      );
+      insertNewListItem(editor, {
+        at: listItemPath,
+      });
     }
   }
 
-  // console.log('isEnd', isEnd);
   const nextParagraphPath = Path.next(paragraphPath);
   const nextListItemPath = Path.next(listItemPath);
   /**
@@ -131,18 +137,10 @@ const handleBreakInListItem = (
     }
   } else {
     if (!isBlockTextEmpty(paragraphNode)) {
-      /**
-       * If end, insert a list item after and select it
-       */
-      Transforms.insertNodes(
-        editor,
-        {
-          type: typeLi,
-          children: [{ type: typeP, children: [{ text: '' }] }],
-        },
-        { at: nextListItemPath },
-      );
-      Transforms.select(editor, nextListItemPath);
+      insertNewListItem(editor, {
+        at: nextListItemPath,
+        select: true,
+      });
     }
   }
 

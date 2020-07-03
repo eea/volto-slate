@@ -65,6 +65,16 @@ const insertNewListItem = (
   }
 };
 
+const matchParagraphWithSelection = (editor, { paragraphPath }) => {
+  const start = Editor.start(editor, paragraphPath);
+  const end = Editor.end(editor, paragraphPath);
+
+  const isStart = Point.equals(editor.selection.anchor, start);
+  const isEnd = Point.equals(editor.selection.anchor, end);
+
+  return [isStart, isEnd];
+};
+
 const handleBreakInListItem = (
   editor,
   {
@@ -82,11 +92,9 @@ const handleBreakInListItem = (
     Transforms.delete(editor);
   }
 
-  const start = Editor.start(editor, paragraphPath);
-  const end = Editor.end(editor, paragraphPath);
-
-  const isStart = Point.equals(editor.selection.anchor, start);
-  const isEnd = Point.equals(editor.selection.anchor, end);
+  const [isStart, isEnd] = matchParagraphWithSelection(editor, {
+    paragraphPath,
+  });
 
   /**
    * If cursor on start of paragraph, if the paragraph is empty, remove the paragraph (and the list item), then break the block!

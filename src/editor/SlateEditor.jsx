@@ -3,12 +3,12 @@ import cx from 'classnames';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
 import { SlateToolbar } from './ui';
-import { toggleMark } from './utils';
+// import { toggleMark } from './utils';
 import { settings } from '~/config';
 
 import withTestingFeatures from './withTestingFeatures';
@@ -26,15 +26,10 @@ const SlateEditor = ({
   decorators,
   defaultSelection,
 }) => {
-  const [showToolbar, setShowToolbar] = useState(false);
-  const [currentSelection, setCurrentSelection] = useState(null);
-
   const { slate } = settings;
 
-  const renderElement = useCallback((props) => {
-    return <Element {...props} />;
-  }, []);
-  const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
+  const [showToolbar, setShowToolbar] = useState(false);
+  const [currentSelection, setCurrentSelection] = useState(null);
 
   const paramdecos = React.useRef(decorators || []);
 
@@ -115,23 +110,23 @@ const SlateEditor = ({
         <Editable
           readOnly={!selected}
           placeholder={placeholder}
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
+          renderElement={Element}
+          renderLeaf={Leaf}
           onKeyDown={(event) => {
-            let wasHotkey = false;
-
-            for (const hotkey in slate.hotkeys) {
-              if (isHotkey(hotkey, event)) {
-                event.preventDefault();
-                const mark = slate.hotkeys[hotkey];
-                toggleMark(editor, mark);
-                wasHotkey = true;
-              }
-            }
-
-            if (wasHotkey) {
-              return;
-            }
+            // let wasHotkey = false;
+            //
+            // for (const hotkey in slate.hotkeys) {
+            //   if (isHotkey(hotkey, event)) {
+            //     event.preventDefault();
+            //     const mark = slate.hotkeys[hotkey];
+            //     toggleMark(editor, mark);
+            //     wasHotkey = true;
+            //   }
+            // }
+            //
+            // if (wasHotkey) {
+            //   return;
+            // }
 
             onKeyDown && onKeyDown({ editor, event });
           }}
@@ -147,7 +142,7 @@ export default connect((state, props) => {
     defaultSelection: state.slate_block_selections?.[blockId],
   };
 })(
-  !__SERVER__ && window?.Cypress
+  __CLIENT__ && window?.Cypress
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,
 );

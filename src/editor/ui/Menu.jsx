@@ -1,14 +1,12 @@
 import cx from 'classnames';
 import React from 'react';
-import { Menu as UIMenu, Button, Ref } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 
 const Menu = React.forwardRef(({ className, ...props }, ref) => {
   return (
-    <Ref innerRef={ref}>
-      <UIMenu className={cx(className, 'slate-menu')}>
-        <Button.Group {...props} />
-      </UIMenu>
-    </Ref>
+    <div className={cx(className, 'slate-menu')} ref={ref}>
+      <Button.Group {...props} />
+    </div>
   );
 });
 

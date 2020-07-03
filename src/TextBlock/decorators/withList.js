@@ -46,9 +46,118 @@ const thereIsNoListItemBelowSelection = (editor) => {
   return true;
 };
 
+const handleBreakInListItem = (
+  editor,
+  {
+    paragraphPath,
+    paragraphNode,
+    listItemPath,
+    listItemNode,
+    typeLi,
+    typeP,
+    createAndSelectNewBlockAfter,
+  },
+) => {
+  // if selection is expanded, delete it
+  if (!Range.isCollapsed(editor.selection)) {
+    Transforms.delete(editor);
+  }
+
+  const start = Editor.start(editor, paragraphPath);
+  const end = Editor.end(editor, paragraphPath);
+
+  const isStart = Point.equals(editor.selection.anchor, start);
+  const isEnd = Point.equals(editor.selection.anchor, end);
+
+  // console.log('isStart', isStart);
+
+  /**
+   * If cursor on start of paragraph, if the paragraph is empty, remove the paragraph (and the list item), then break the block!
+   * if it is not empty, insert a new empty list item.
+   */
+  if (isStart) {
+    if (isBlockTextEmpty(paragraphNode)) {
+      if (thereIsNoListItemBelowSelection(editor)) {
+        simulateBackspaceAtEndOfEditor(editor);
+        const bottomBlockValue = settings.slate.defaultValue();
+        createAndSelectNewBlockAfter(bottomBlockValue);
+        return;
+      } else {
+        let [upBlock, bottomBlock] = splitEditorInTwoLists(
+          editor,
+          listItemPath,
+        );
+
+        replaceAllContentInEditorWith(editor, upBlock);
+        createAndSelectNewBlockAfter(bottomBlock);
+        return;
+      }
+    } else {
+      console.log('inserting new list item');
+      Transforms.insertNodes(
+        editor,
+        {
+          type: typeLi,
+          children: [{ type: typeP, children: [{ text: '' }] }],
+        },
+        { at: listItemPath },
+      );
+    }
+  }
+
+  // console.log('isEnd', isEnd);
+  const nextParagraphPath = Path.next(paragraphPath);
+  const nextListItemPath = Path.next(listItemPath);
+  /**
+   * If not end, split nodes, wrap a list item on the new paragraph and move it to the next list item
+   */
+  if (!isEnd) {
+    Transforms.splitNodes(editor, { at: editor.selection });
+
+    // this condition is necessary to avoid a not understood bug
+    if (Node.has(editor, nextParagraphPath)) {
+      Transforms.wrapNodes(
+        editor,
+        {
+          type: typeLi,
+          children: [{ text: '' }],
+        },
+        { at: nextParagraphPath },
+      );
+      Transforms.moveNodes(editor, {
+        at: nextParagraphPath,
+        to: nextListItemPath,
+      });
+    }
+  } else {
+    if (!isBlockTextEmpty(paragraphNode)) {
+      /**
+       * If end, insert a list item after and select it
+       */
+      Transforms.insertNodes(
+        editor,
+        {
+          type: typeLi,
+          children: [{ type: typeP, children: [{ text: '' }] }],
+        },
+        { at: nextListItemPath },
+      );
+      Transforms.select(editor, nextListItemPath);
+    }
+  }
+
+  /**
+   * If there is a list in the list item, move it to the next list item
+   */
+  if (listItemNode.children.length > 1) {
+    Transforms.moveNodes(editor, {
+      at: nextParagraphPath,
+      to: nextListItemPath.concat(1),
+    });
+  }
+};
+
 const withList = ({
-  typeUl = 'bulleted-list',
-  typeOl = 'numbered-list',
   typeLi = 'list-item',
   typeP = 'paragraph',
   onChangeBlock,
@@ -83,104 +192,15 @@ const withList = ({
 
         // if the paragraph is inside a list item
         if (listItemEntry && listItemNode.type === typeLi) {
-          // if selection is expanded, delete it
-          if (!Range.isCollapsed(editor.selection)) {
-            Transforms.delete(editor);
-          }
-
-          const start = Editor.start(editor, paragraphPath);
-          const end = Editor.end(editor, paragraphPath);
-
-          const isStart = Point.equals(editor.selection.anchor, start);
-          const isEnd = Point.equals(editor.selection.anchor, end);
-
-          // console.log('isStart', isStart);
-
-          /**
-           * If cursor on start of paragraph, if the paragraph is empty, remove the paragraph (and the list item), then break the block!
-           * if it is not empty, insert a new empty list item.
-           */
-          if (isStart) {
-            if (isBlockTextEmpty(paragraphNode)) {
-              if (thereIsNoListItemBelowSelection(editor)) {
-                simulateBackspaceAtEndOfEditor(editor);
-                const bottomBlockValue = settings.slate.defaultValue();
-                createAndSelectNewBlockAfter(bottomBlockValue);
-                return;
-              } else {
-                let [upBlock, bottomBlock] = splitEditorInTwoLists(
-                  editor,
-                  listItemPath,
-                );
-
-                replaceAllContentInEditorWith(editor, upBlock);
-                createAndSelectNewBlockAfter(bottomBlock);
-                return;
-              }
-            } else {
-              console.log('inserting new list item');
-              Transforms.insertNodes(
-                editor,
-                {
-                  type: typeLi,
-                  children: [{ type: typeP, children: [{ text: '' }] }],
-                },
-                { at: listItemPath },
-              );
-            }
-          }
-
-          // console.log('isEnd', isEnd);
-          const nextParagraphPath = Path.next(paragraphPath);
-          const nextListItemPath = Path.next(listItemPath);
-          /**
-           * If not end, split nodes, wrap a list item on the new paragraph and move it to the next list item
-           */
-          if (!isEnd) {
-            Transforms.splitNodes(editor, { at: editor.selection });
-
-            // this condition is necessary to avoid a not understood bug
-            if (Node.has(editor, nextParagraphPath)) {
-              Transforms.wrapNodes(
-                editor,
-                {
-                  type: typeLi,
-                  children: [{ text: '' }],
-                },
-                { at: nextParagraphPath },
-              );
-              Transforms.moveNodes(editor, {
-                at: nextParagraphPath,
-                to: nextListItemPath,
-              });
-            }
-          } else {
-            if (!isBlockTextEmpty(paragraphNode)) {
-              /**
-               * If end, insert a list item after and select it
-               */
-              Transforms.insertNodes(
-                editor,
-                {
-                  type: typeLi,
-                  children: [{ type: typeP, children: [{ text: '' }] }],
-                },
-                { at: nextListItemPath },
-              );
-              Transforms.select(editor, nextListItemPath);
-            }
-          }
-
-          /**
-           * If there is a list in the list item, move it to the next list item
-           */
-          if (listItemNode.children.length > 1) {
-            Transforms.moveNodes(editor, {
-              at: nextParagraphPath,
-              to: nextListItemPath.concat(1),
-            });
-          }
-
+          handleBreakInListItem(editor, {
+            createAndSelectNewBlockAfter,
+            listItemNode,
+            listItemPath,
+            paragraphNode,
+            paragraphPath,
+            typeLi,
+            typeP,
+          });
           return;
         }
       }

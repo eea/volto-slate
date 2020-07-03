@@ -216,6 +216,7 @@ const withList = ({
         // const [paragraphNode, paragraphPath] = paragraphEntry;
         const [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
         replaceAllContentInEditorWith(editor, upBlock);
+        console.log('bottomBlock', bottomBlock);
         createAndSelectNewBlockAfter(bottomBlock);
       }
       return;

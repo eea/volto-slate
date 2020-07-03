@@ -485,16 +485,19 @@ export function replaceAllContentInEditorWith(editor, block) {
 }
 
 export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
-  return Editor.fragment(
+  const r = Editor.range(
     editor,
-    Editor.range(
-      editor,
-      Range.isBackward(editor.selection)
-        ? editor.selection.focus
-        : editor.selection.anchor,
-      Editor.end(editor, []),
-    ),
+    Range.isBackward(editor.selection)
+      ? editor.selection.focus
+      : editor.selection.anchor,
+    Editor.end(editor, []),
   );
+
+  if (Range.isCollapsed(r)) {
+    return [{ type: 'paragraph', children: [{ text: '' }] }];
+  }
+
+  return Editor.fragment(editor, r);
 }
 
 export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {

@@ -11,6 +11,8 @@ import { SlateToolbar } from './ui';
 import { toggleMark } from './utils';
 import { settings } from '~/config';
 
+import withTestingFeatures from './withTestingFeatures';
+
 import './less/editor.less';
 
 const SlateEditor = ({
@@ -66,10 +68,6 @@ const SlateEditor = ({
         }
         return () => ReactEditor.blur(editor);
       }
-      // TODO: rewrite this with Slate api
-      // BUG: this causes the selection of the other block to become null when clicking on the second block, simply commenting this out makes the test pass, but with what price?
-      // TODO: step into: it is clear it is a bad hack (manual change to editor.selection is bad):
-      // fixSelection(editor);
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected, defaultSelection]);
@@ -87,44 +85,6 @@ const SlateEditor = ({
   });
 
   const initialValue = slate.defaultValue();
-
-  // TODO: explain why this is needed. Obscure code without an explanation
-  // will be removed!
-  //
-  // // Source: https://stackoverflow.com/a/53623568/258462
-  // const onTestSelectWord = (val) => {
-  //   let slateEditor =
-  //     val.detail.parentElement.parentElement.parentElement.parentElement;
-  //
-  //   // Events are special, can't use spread or Object.keys
-  //   let selectEvent = {};
-  //   for (let key in val) {
-  //     if (key === 'currentTarget') {
-  //       selectEvent['currentTarget'] = slateEditor;
-  //     } else if (key === 'type') {
-  //       selectEvent['type'] = 'select';
-  //     } else {
-  //       selectEvent[key] = val[key];
-  //     }
-  //   }
-  //
-  //   // Make selection
-  //   let selection = window.getSelection();
-  //   let range = document.createRange();
-  //   range.selectNodeContents(val.detail);
-  //   selection.removeAllRanges();
-  //   selection.addRange(range);
-  //
-  //   // Slate monitors DOM selection changes automatically
-  // };
-  //
-  // React.useEffect(() => {
-  //   document.addEventListener('Test_SelectWord', onTestSelectWord);
-  //
-  //   return () => {
-  //     document.removeEventListener('Test_SelectWord', onTestSelectWord);
-  //   };
-  // });
 
   // TODO: make this, data-slate-value, etc, a HOC
   // remove after solving the issue with null selection
@@ -186,4 +146,8 @@ export default connect((state, props) => {
   return {
     defaultSelection: state.slate_block_selections?.[blockId],
   };
-})(SlateEditor);
+})(
+  !__SERVER__ && window?.Cypress
+    ? withTestingFeatures(SlateEditor)
+    : SlateEditor,
+);

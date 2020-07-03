@@ -23,27 +23,29 @@ const isBlockTextEmpty = (node) => {
   return Text.isText(lastChild) && !lastChild.text.length;
 };
 
-const thereIsNoListItemBelowSelection = (editor) => {
+/**
+ * @param {Editor} editor
+ * @returns true if the cursor is on a list item after which there are no more list items
+ */
+const thereIsNoListItemBelowSelection = (editor, listItemPath) => {
   let sel = editor.selection;
   if (Range.isExpanded(sel)) {
     Transforms.collapse(editor, { edge: 'start' });
   }
-  // path of paragraph (TODO: what if there is no paragraph, but a nested list?)
-  let pg = Path.parent(sel.anchor.path);
-  // Path of list-item
-  let p = Path.parent(pg);
-  // Path of numbered/bulleted list
-  let pp = Path.parent(p);
+
+  // path of numbered/bulleted list that should be taken into account
+  let pp = Path.parent(listItemPath);
+
+  let indexInList = listItemPath[listItemPath.length - 1];
 
   let listItems = Node.children(editor, pp);
 
-  for (let [, path] of listItems) {
-    if (Path.isAfter(path, p)) {
-      return false;
-    }
+  if (indexInList === Array.from(listItems).length - 1) {
+    // the list item with selection is the last in the list
+    return true;
   }
 
-  return true;
+  return false;
 };
 
 const insertNewListItem = (
@@ -92,7 +94,7 @@ const handleBreakInListItem = (
    */
   if (isStart) {
     if (isBlockTextEmpty(paragraphNode)) {
-      if (thereIsNoListItemBelowSelection(editor)) {
+      if (thereIsNoListItemBelowSelection(editor, listItemPath)) {
         simulateBackspaceAtEndOfEditor(editor);
         const bottomBlockValue = settings.slate.defaultValue();
         createAndSelectNewBlockAfter(bottomBlockValue);

@@ -6,6 +6,7 @@ import {
   splitEditorInTwoFragments,
   replaceAllContentInEditorWith,
 } from 'volto-slate/utils';
+import { splitEditorInTwoLists } from '../../utils';
 
 const isPointAtRoot = (point) => point.path.length === 2;
 
@@ -107,39 +108,13 @@ const withList = ({
                 createAndSelectNewBlockAfter(bottomBlockValue);
                 return;
               } else {
-                console.log('should split the list in two Volto blocks!');
-                let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
+                let [upBlock, bottomBlock] = splitEditorInTwoLists(
+                  editor,
+                  listItemPath,
+                );
 
-                let [listNode] = Editor.parent(editor, listItemPath);
-
-                let theType = listNode.type;
-
-                let newUpBlock = [
-                  {
-                    type: theType,
-                    children: upBlock[0].children.slice(
-                      0,
-                      upBlock[0].children.length - 1,
-                    ),
-                  },
-                ];
-
-                let newBottomBlock = [
-                  {
-                    type: theType,
-                    children: bottomBlock[0].children.slice(
-                      1,
-                      bottomBlock[0].children.length,
-                    ),
-                  },
-                ];
-
-                console.log('newUpBlock', newUpBlock);
-                // console.log('newBottomBlock', newBottomBlock);
-
-                replaceAllContentInEditorWith(editor, newUpBlock);
-                createAndSelectNewBlockAfter(newBottomBlock);
-
+                replaceAllContentInEditorWith(editor, upBlock);
+                createAndSelectNewBlockAfter(bottomBlock);
                 return;
               }
             } else {
@@ -155,7 +130,7 @@ const withList = ({
             }
           }
 
-          console.log('isEnd', isEnd);
+          // console.log('isEnd', isEnd);
           const nextParagraphPath = Path.next(paragraphPath);
           const nextListItemPath = Path.next(listItemPath);
           /**
@@ -213,10 +188,8 @@ const withList = ({
       const paragraphEntry = Editor.parent(editor, editor.selection);
 
       if (paragraphEntry) {
-        // const [paragraphNode, paragraphPath] = paragraphEntry;
         const [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
         replaceAllContentInEditorWith(editor, upBlock);
-        console.log('bottomBlock', bottomBlock);
         createAndSelectNewBlockAfter(bottomBlock);
       }
       return;

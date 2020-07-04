@@ -11,9 +11,9 @@ import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 import { settings } from '~/config';
 
-import { setSlateBlockSelection } from './../actions';
-import SlateEditor from './../editor';
-import { plaintext_serialize } from './../editor/render';
+import { setSlateBlockSelection } from 'volto-slate/actions';
+import SlateEditor from 'volto-slate/editor';
+import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
 import { withList, withDeserializeHtml } from './decorators';
 import {
@@ -116,7 +116,7 @@ const TextBlockEdit = (props) => {
           onChangeBlock(block, {
             ...data,
             value,
-            plaintext: plaintext_serialize(value || []),
+            plaintext: serializeNodesToText(value || []),
           });
         }}
         onKeyDown={({ editor, event }) => {

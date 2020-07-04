@@ -1,5 +1,5 @@
 import { Editor, Transforms, Range, Node, Text } from 'slate';
-import { plaintext_serialize } from './editor/render';
+import { serializeNodesToText } from './editor/render';
 import { settings } from '~/config';
 import { LISTTYPES } from './constants';
 
@@ -450,7 +450,7 @@ export function createAndSelectNewSlateBlock(
   const options = {
     '@type': 'slate',
     value: JSON.parse(JSON.stringify(value)),
-    plaintext: plaintext_serialize(value),
+    plaintext: serializeNodesToText(value),
   };
   onChangeBlock(id, options);
   onSelectBlock(id);

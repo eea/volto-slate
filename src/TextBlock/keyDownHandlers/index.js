@@ -1,7 +1,7 @@
 import { LISTTYPES } from 'volto-slate/constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from 'volto-slate/utils';
 import { Editor, Transforms, Range } from 'slate';
-import { plaintext_serialize } from 'volto-slate/editor/render';
+import { serializeNodesToText } from 'volto-slate/editor/render';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
@@ -111,7 +111,7 @@ function blockIsEmpty(editor) {
   const value = editor.children;
   // TODO: this is very optimistic, we might have void nodes that are
   // meaningful. We should test if only one child, with empty text
-  if (plaintext_serialize(value || []).length === 0) {
+  if (serializeNodesToText(value || []).length === 0) {
     return true;
   }
 }
@@ -174,7 +174,7 @@ export const getBackspaceKeyDownHandlers = ({
           onChangeBlock(prevBlockId, {
             '@type': 'slate',
             value: combined,
-            plaintext: plaintext_serialize(combined || []),
+            plaintext: serializeNodesToText(combined || []),
           });
           setTimeout(() => onDeleteBlock(block, true));
         });

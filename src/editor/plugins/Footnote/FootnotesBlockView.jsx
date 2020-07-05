@@ -1,5 +1,5 @@
 import React from 'react';
-import { Editor, Range, Transforms } from 'slate';
+import { Node } from 'slate';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
@@ -15,20 +15,38 @@ const getBlocks = (properties) => {
 };
 
 const FootnotesBlockView = (props) => {
-  const { properties } = props;
+  const { data, properties } = props;
 
+  // console.log(properties);
   const blocks = getBlocks(properties);
   const footnotes = [];
+  // TODO: slice the blocks according to existing footnote listing blocks.
+  // A footnote listing block should reset the counter of the footnotes above it
+  // If so, then it should only include the footnotes between the last footnotes listing block and this block
   blocks
     .filter((b) => b['@type'] === 'slate')
     .forEach(({ value }) => {
       if (!value) return;
-      const nodes = Editor.nodes(value, {
-        match: (n) => n.type === FOOTNOTE,
+
+      Array.from(Node.elements(value[0])).forEach(([node]) => {
+        if (node.type === FOOTNOTE) {
+          footnotes.push(node.data);
+        }
       });
-      console.log('footnotes', Array.from(nodes), value);
     });
-  return <div>Footnotes</div>;
+
+  return (
+    <>
+      <h3>{data.title}</h3>
+      {footnotes && (
+        <ul>
+          {footnotes.map((data) => (
+            <li>{data.footnote}</li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
 };
 
 export default FootnotesBlockView;

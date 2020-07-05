@@ -15,7 +15,7 @@ import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 import InlineForm from 'volto-slate/futurevolto/InlineForm';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import FootnoteSchema from './schema';
+import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from './constants';
 
 export const wrapFootnote = (editor, data) => {

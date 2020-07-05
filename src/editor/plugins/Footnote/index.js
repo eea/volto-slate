@@ -33,7 +33,7 @@ export default function install(config) {
     restricted: false,
     mostUsed: true,
     blockHasOwnFocusManagement: false,
-    sidebarTab: 0,
+    sidebarTab: 1,
     security: {
       addPermission: [],
       view: [],

@@ -19,7 +19,7 @@ import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from './constants';
 
 export const wrapFootnote = (editor, data) => {
-  if (isFootnote(editor)) {
+  if (isActiveFootnote(editor)) {
     unwrapFootnote(editor);
   }
 
@@ -48,24 +48,35 @@ function unwrapFootnote(editor) {
   Transforms.unwrapNodes(editor, { match: (n) => n.type === FOOTNOTE });
 }
 
-export const isFootnote = (editor) => {
-  const [link] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
+export const isActiveFootnote = (editor) => {
+  const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
   // console.log('links', Array.from(links));
   // return Array.from(links).length === 1;
 
-  return !!link;
+  return !!note;
+};
+
+export const getActiveFootnote = (editor) => {
+  const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
+  return note;
 };
 
 const FootnoteButton = () => {
   const editor = useSlate();
   const [showForm, setShowForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
-  const [data, setData] = React.useState({});
+  const note = getActiveFootnote(editor);
+  let data = {};
+  if (note) {
+    data = note.data;
+  }
+  console.log('note', note);
+  const [formData, setFormdata] = React.useState(data);
 
   const submitHandler = React.useCallback(
     (formData) => {
       // TODO: have an algorithm that decides which one is used
-      console.log('formdata', formData, selection);
+      console.log('formData', formData, selection);
       const { footnote } = formData;
       if (footnote) {
         Transforms.select(editor, selection);
@@ -77,19 +88,19 @@ const FootnoteButton = () => {
     [editor, selection],
   );
 
-  const isFootnote = true;
+  const isFootnote = isActiveFootnote(editor);
 
   return (
     <>
-      <SidebarPopup open={showForm} icon={briefcaseSVG} actions={'bla'}>
+      <SidebarPopup open={showForm}>
         <InlineForm
           schema={FootnoteSchema}
           title={FootnoteSchema.title}
           icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
           onChangeField={(id, value) => {
-            setData({ ...data, [id]: value });
+            setFormdata({ ...formData, [id]: value });
           }}
-          formData={data}
+          formData={formData}
           headerActions={
             <>
               <button

@@ -9,7 +9,7 @@ export const FootnoteSchema = {
   ],
   properties: {
     footnote: {
-      title: 'Footnote',
+      title: 'Reference text',
       widget: 'textarea',
     },
   },

@@ -3,8 +3,6 @@ import { LINK } from './constants';
 
 export const isLinkActive = (editor) => {
   const [link] = Editor.nodes(editor, { match: (n) => n.type === LINK });
-  // console.log('links', Array.from(links));
-  // return Array.from(links).length === 1;
 
   return !!link;
 };

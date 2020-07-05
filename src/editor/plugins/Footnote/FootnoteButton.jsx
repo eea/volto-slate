@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { Transforms } from 'slate';
+import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
 import { Segment } from 'semantic-ui-react';
 
@@ -16,10 +16,45 @@ import InlineForm from 'volto-slate/futurevolto/InlineForm';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import FootnoteSchema from './schema';
+import { FOOTNOTE } from './constants';
 
-function insertFootnote() {}
+export const wrapFootnote = (editor, data) => {
+  if (isFootnote(editor)) {
+    unwrapFootnote(editor);
+  }
 
-function unwrapFootnote() {}
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
+  const footnote = {
+    type: FOOTNOTE,
+    data,
+  };
+
+  if (isCollapsed) {
+    Transforms.insertNodes(editor, footnote);
+  } else {
+    Transforms.wrapNodes(editor, footnote, { split: true });
+    Transforms.collapse(editor, { edge: 'end' });
+  }
+};
+
+function insertFootnote(editor, data) {
+  if (editor.selection) {
+    wrapFootnote(editor, data);
+  }
+}
+
+function unwrapFootnote(editor) {
+  Transforms.unwrapNodes(editor, { match: (n) => n.type === FOOTNOTE });
+}
+
+export const isFootnote = (editor) => {
+  const [link] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
+  // console.log('links', Array.from(links));
+  // return Array.from(links).length === 1;
+
+  return !!link;
+};
 
 const FootnoteButton = () => {
   const editor = useSlate();
@@ -34,7 +69,7 @@ const FootnoteButton = () => {
       const { footnote } = formData;
       if (footnote) {
         Transforms.select(editor, selection);
-        insertFootnote(editor, footnote);
+        insertFootnote(editor, formData);
       } else {
         unwrapFootnote(editor);
       }
@@ -69,6 +104,7 @@ const FootnoteButton = () => {
               <button
                 onClick={() => {
                   setShowForm(false);
+                  unwrapFootnote(editor);
                   ReactEditor.focus(editor);
                 }}
               >
@@ -88,30 +124,18 @@ const FootnoteButton = () => {
         />
         <Segment>bla</Segment>
       </SidebarPopup>
-
-      <div className="grouper">
-        <div className="grouper-wrapper">
-          <ToolbarButton
-            active={isFootnote}
-            onMouseDown={() => {
-              if (!showForm) {
-                setSelection(editor.selection);
-                setShowForm(true);
-              }
-            }}
-            icon={superindexSVG}
-          />
-        </div>
-      </div>
+      <ToolbarButton
+        active={isFootnote}
+        onMouseDown={() => {
+          if (!showForm) {
+            setSelection(editor.selection);
+            setShowForm(true);
+          }
+        }}
+        icon={superindexSVG}
+      />
     </>
   );
 };
-
-// {isFootnote && (
-//   <ToolbarButton
-//     onMouseDown={() => unwrapFootnote(editor)}
-//     icon={formatClearSVG}
-//   />
-// )}
 
 export default FootnoteButton;

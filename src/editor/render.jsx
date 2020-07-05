@@ -28,6 +28,7 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
 export const serializeNodes = (nodes) =>
   nodes.map((node) => {
     if (SlateText.isText(node)) {
+      console.log('node leaf', node);
       return Leaf({
         leaf: node,
         text: node,
@@ -36,6 +37,8 @@ export const serializeNodes = (nodes) =>
         mode: 'view',
       });
     }
+
+    console.log('node el', node);
     return Element({
       element: node,
       children: serializeNodes(node.children),

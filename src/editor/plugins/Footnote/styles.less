@@ -1,0 +1,24 @@
+/*  See https://www.sitepoint.com/accessible-footnotes-css/ */
+
+a[aria-describedby='footnote-label'] {
+  color: inherit; /* 2 */
+  counter-increment: footnotes; /* 1 */
+  cursor: default; /* 2 */
+  outline: none; /* 2 */
+  text-decoration: none; /* 2 */
+}
+
+a[aria-describedby='footnote-label']::after {
+  margin-left: 2px;
+  color: blue;
+  content: '[' counter(footnotes) ']';
+  cursor: pointer; /* 5 */
+  font-size: 0.8em;
+  text-decoration: underline;
+  vertical-align: super;
+}
+
+a[aria-describedby='footnote-label']:focus::after {
+  outline: thin dotted;
+  outline-offset: 2px;
+}

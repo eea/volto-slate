@@ -4,12 +4,7 @@ import React from 'react';
 
 import { FootnoteElement } from './render';
 import FootnoteButton from './FootnoteButton';
-
-// import LinkButton from './LinkButton';
-// import { withLinks } from './decorators';
-// import { LinkElement } from './render';
-
-const withFootnotes = (editor) => editor;
+import { withFootnote } from './editorPlugins';
 
 export default function install(config) {
   const { slate } = config.settings;
@@ -17,7 +12,7 @@ export default function install(config) {
   slate.buttons.footnote = (props) => <FootnoteButton {...props} />;
   slate.elements.footnote = FootnoteElement;
 
-  slate.editorPlugins = [...(slate.editorPlugins || []), withFootnotes];
+  slate.editorPlugins = [...(slate.editorPlugins || []), withFootnote];
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'footnote'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),

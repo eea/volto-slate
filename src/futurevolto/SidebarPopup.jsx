@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+// TODO: add CSS transition on display
+
 const SidebarPopup = (props, ref) => {
   const { children, open } = props;
   return open
@@ -10,9 +12,12 @@ const SidebarPopup = (props, ref) => {
           onClick={(e) => {
             e.stopPropagation();
           }}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+          }}
           ref={ref}
           key="sidebarpopup"
-          className="sidebar-container selected"
+          className="sidebar-container"
         >
           {children}
         </aside>,

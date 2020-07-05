@@ -21,14 +21,12 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
     return leaf[name] ? leafs[name]({ children: acc }) : acc;
   }, children);
 
-  // return <span {...attributes}>{children}</span>;
   return mode === 'view' ? children : <span {...attributes}>{children}</span>;
 };
 
 export const serializeNodes = (nodes) =>
-  nodes.map((node) => {
+  (nodes || []).map((node) => {
     if (SlateText.isText(node)) {
-      console.log('node leaf', node);
       return Leaf({
         leaf: node,
         text: node,
@@ -38,7 +36,6 @@ export const serializeNodes = (nodes) =>
       });
     }
 
-    console.log('node el', node);
     return Element({
       element: node,
       children: serializeNodes(node.children),

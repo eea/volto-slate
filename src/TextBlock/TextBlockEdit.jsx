@@ -15,7 +15,7 @@ import { setSlateBlockSelection } from 'volto-slate/actions';
 import SlateEditor from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withList, withDeserializeHtml } from './decorators';
+import { withList, withDeserializeHtml } from './editorPlugins';
 import {
   getBackspaceKeyDownHandlers,
   getFocusRelatedKeyDownHandlers,
@@ -102,7 +102,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        decorators={[configuredWithList, withDeserializeHtml]}
+        editorPlugins={[configuredWithList, withDeserializeHtml]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

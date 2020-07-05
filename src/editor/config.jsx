@@ -72,7 +72,7 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 //
 // Each decorator is a simple mutator function with signature: editor =>
 // editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
-export const decorators = [];
+export const editorPlugins = [];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {

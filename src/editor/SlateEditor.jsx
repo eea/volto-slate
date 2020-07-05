@@ -23,17 +23,18 @@ const SlateEditor = ({
   placeholder,
   onKeyDown,
   properties,
-  decorators,
   defaultSelection,
+  editorPlugins,
+  editorDecorators,
 }) => {
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
   const [currentSelection, setCurrentSelection] = useState(null);
 
-  const paramdecos = React.useRef(decorators || []);
+  const paramdecos = React.useRef(editorPlugins || []);
 
-  const defaultDecorators = slate.decorators;
+  const defaultPlugins = slate.editorPlugins;
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
@@ -43,12 +44,14 @@ const SlateEditor = ({
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...paramdecos.current,
-      ...defaultDecorators,
+      ...defaultPlugins,
     ];
     return decos.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultDecorators]);
+  }, [defaultPlugins]);
 
   const initial_selection = React.useRef();
+
+  // TODO: check this: https://docs.slatejs.org/libraries/slate-react#hooks
 
   // Handles the case when block was just joined with backspace, in that
   // case we want to restore the cursor close to the initial position
@@ -130,6 +133,7 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
+          decorators={editorDecorators}
         />
       </Slate>
     </div>

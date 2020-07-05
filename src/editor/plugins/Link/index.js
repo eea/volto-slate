@@ -1,7 +1,7 @@
 import React from 'react';
 
 import LinkButton from './LinkButton';
-import { withLinks } from './decorators';
+import { withLinks } from './editorPlugins';
 import { LinkElement } from './render';
 
 export default function install(config) {
@@ -10,7 +10,7 @@ export default function install(config) {
   slate.buttons.link = (props) => <LinkButton {...props} />;
   slate.elements.link = LinkElement;
 
-  slate.decorators = [...(slate.decorators || []), withLinks];
+  slate.editorPlugins = [...(slate.editorPlugins || []), withLinks];
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'link'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),

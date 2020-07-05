@@ -141,6 +141,10 @@ export function getActiveEntry(editor, format) {
 }
 
 export function isMarkActive(editor, format) {
+  // TODO: this implementation is not current. LibreOffice Writer only shows
+  // mark button as active if the mark is applied to the entire selected range
+  // Here, it seems, the mark doesn't need to cover the entire selection,
+  // which is wrong
   let marks;
   try {
     marks = Editor.marks(editor);

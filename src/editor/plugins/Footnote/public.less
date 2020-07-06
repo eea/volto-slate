@@ -2,9 +2,14 @@
 
 // TODO: use LESS variables
 
+body {
+  counter-reset: footnotes;
+}
+
 a[aria-describedby='footnote-label'] {
   color: inherit;
   counter-increment: footnotes;
+  // counter-reset: none;
   cursor: default;
   outline: none;
   text-decoration: none;

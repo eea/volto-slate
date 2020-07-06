@@ -2,43 +2,8 @@ import { LISTTYPES } from 'volto-slate/constants';
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from 'volto-slate/utils';
 import { Editor, Transforms, Range } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import {
-  getBlocksFieldname,
-  getBlocksLayoutFieldname,
-} from '@plone/volto/helpers';
 import { unwrapList } from 'volto-slate/utils.js';
 export { onKeyDownList } from './listsKeyDownHandlers';
-
-function getPreviousBlock(index, properties) {
-  if (index === 0) return;
-
-  // join this block with previous block, if previous block is slate
-  const blocksFieldname = getBlocksFieldname(properties);
-  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
-
-  const blocks_layout = properties[blocksLayoutFieldname];
-  const prevBlockId = blocks_layout.items[index - 1];
-  const prevBlock = properties[blocksFieldname][prevBlockId];
-  return [prevBlock, prevBlockId];
-}
-
-function isCursorInList(editor) {
-  const result = Editor.above(editor, {
-    match: (n) => n.type === 'list-item',
-  });
-
-  if (!result) {
-    return false;
-  }
-
-  const [listItemWithSelection] = result;
-
-  // whether the selection is inside a list item
-  const listItemCase =
-    Range.isCollapsed(editor.selection) && listItemWithSelection;
-
-  return listItemCase;
-}
 
 function handleBackspaceInList({
   editor,

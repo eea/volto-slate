@@ -19,7 +19,6 @@ const SlateEditor = ({
   selected,
   value,
   onChange,
-  data,
   placeholder,
   onKeyDown,
   properties,

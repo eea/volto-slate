@@ -15,12 +15,14 @@ import { setSlateBlockSelection } from 'volto-slate/actions';
 import SlateEditor from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withList, withDeserializeHtml } from './extensions';
-import {
-  getBackspaceKeyDownHandlers,
-  getFocusRelatedKeyDownHandlers,
-  onKeyDownList,
-} from './keyDownHandlers';
+import { handleKey } from './keyboard';
+
+// import { withList, withDeserializeHtml } from './extensions';
+// import {
+//   getBackspaceKeyDownHandlers,
+//   getFocusRelatedKeyDownHandlers,
+//   onKeyDownList,
+// } from './keyDownHandlers';
 
 const TextBlockEdit = (props) => {
   const {
@@ -110,7 +112,6 @@ const TextBlockEdit = (props) => {
         ]}
         onSelectBlock={onSelectBlock}
         value={value}
-        data={data}
         block={block}
         onChange={(value, selection) => {
           // without using setTimeout, the user types characters on the right side of the text cursor
@@ -124,15 +125,7 @@ const TextBlockEdit = (props) => {
             plaintext: serializeNodesToText(value || []),
           });
         }}
-        onKeyDown={({ editor, event }) => {
-          // configuredOnKeyDownList(event, editor);
-          // keyDownHandlers[event.key] &&
-          //   keyDownHandlers[event.key]({
-          //     ...props,
-          //     editor,
-          //     event,
-          //   });
-        }}
+        onKeyDown={handleKey}
         selected={selected}
         placeholder="Enter some rich text…"
       />

@@ -2,6 +2,10 @@ import { Editor, Transforms, Range, Node, Text } from 'slate';
 import { serializeNodesToText } from './editor/render';
 import { settings } from '~/config';
 import { LISTTYPES } from './constants';
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
 
 export function getMaxRange(editor) {
   const maxRange = {
@@ -569,4 +573,35 @@ export function splitEditorInTwoLists(editor, listItemPath) {
   ];
 
   return [newUpBlock, newBottomBlock];
+}
+
+export function isCursorInList(editor) {
+  const result = Editor.above(editor, {
+    match: (n) => n.type === 'list-item',
+  });
+
+  if (!result) {
+    return false;
+  }
+
+  const [listItemWithSelection] = result;
+
+  // whether the selection is inside a list item
+  const listItemCase =
+    Range.isCollapsed(editor.selection) && listItemWithSelection;
+
+  return listItemCase;
+}
+
+export function getPreviousBlock(index, properties) {
+  if (index === 0) return;
+
+  // join this block with previous block, if previous block is slate
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  const blocks_layout = properties[blocksLayoutFieldname];
+  const prevBlockId = blocks_layout.items[index - 1];
+  const prevBlock = properties[blocksFieldname][prevBlockId];
+  return [prevBlock, prevBlockId];
 }

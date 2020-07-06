@@ -112,6 +112,7 @@ const InlineForm = ({
           </Segment>
         </div>
       ))}
+      {footer}
     </Segment.Group>
   );
 };

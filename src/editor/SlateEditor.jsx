@@ -10,7 +10,7 @@ import { Element, Leaf } from './render';
 import { SlateToolbar } from './ui';
 import { settings } from '~/config';
 
-import withTestingFeatures from './withTestingFeatures';
+import withTestingFeatures from './editorPlugins/withTestingFeatures';
 // import { toggleMark } from './utils';
 
 import './less/editor.less';
@@ -31,6 +31,8 @@ const SlateEditor = ({
   const [showToolbar, setShowToolbar] = useState(false);
   const [currentSelection, setCurrentSelection] = useState(null);
 
+  // the use of useRef here is very unusual. The code only works like this,
+  // but if possible a better method should be used
   const paramdecos = React.useRef(editorPlugins || []);
 
   const defaultPlugins = slate.editorPlugins;
@@ -38,19 +40,17 @@ const SlateEditor = ({
     const raw = withHistory(withReact(createEditor()));
 
     // TODO: this needs cleanup
-    const decos = [
+    const plugins = [
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...paramdecos.current,
       ...defaultPlugins,
     ];
-    return decos.reduce((acc, apply) => apply(acc), raw);
+    return plugins.reduce((acc, apply) => apply(acc), raw);
   }, [defaultPlugins]);
 
   const initial_selection = React.useRef();
-
-  // TODO: check this: https://docs.slatejs.org/libraries/slate-react#hooks
 
   // Handles the case when block was just joined with backspace, in that
   // case we want to restore the cursor close to the initial position

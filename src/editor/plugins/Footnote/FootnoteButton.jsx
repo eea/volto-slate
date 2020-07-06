@@ -65,13 +65,7 @@ const FootnoteButton = () => {
   const editor = useSlate();
   const [showForm, setShowForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
-  const note = getActiveFootnote(editor);
-  let data = {};
-  if (note) {
-    data = note.data;
-  }
-  console.log('note', note);
-  const [formData, setFormdata] = React.useState(data);
+  const [formData, setFormdata] = React.useState({});
 
   const submitHandler = React.useCallback(
     (formData) => {
@@ -106,7 +100,7 @@ const FootnoteButton = () => {
               <button
                 onClick={() => {
                   setShowForm(false);
-                  submitHandler(data);
+                  submitHandler(formData);
                   ReactEditor.focus(editor);
                 }}
               >
@@ -140,6 +134,11 @@ const FootnoteButton = () => {
         onMouseDown={() => {
           if (!showForm) {
             setSelection(editor.selection);
+
+            const note = getActiveFootnote(editor) || [];
+            const [{ data = {} }] = note;
+
+            setFormdata(data);
             setShowForm(true);
           }
         }}

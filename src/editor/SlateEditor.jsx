@@ -34,11 +34,9 @@ const SlateEditor = ({
 
   // the use of useRef here is very unusual. The code only works like this,
   // but if possible a better method should be used
-  const paramdecos = React.useRef(extensions || []);
+  const paramExtensions = React.useRef(extensions || []);
 
   const defaultExtensions = slate.extensions;
-  console.log('defaultExtensions', defaultExtensions);
-  console.log('extensions', extensions);
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
@@ -47,7 +45,7 @@ const SlateEditor = ({
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      // ...paramdecos.current,
+      ...paramExtensions.current,
       ...defaultExtensions,
     ];
     return plugins.reduce((acc, apply) => apply(acc), raw);

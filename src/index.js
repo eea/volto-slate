@@ -8,6 +8,7 @@ import * as slateConfig from './editor/config';
 import installDefaultPlugins from './editor/plugins';
 
 import { TextBlockView, TextBlockEdit } from './TextBlock';
+import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {
@@ -32,7 +33,7 @@ const applyConfig = (config) => {
 
   config.settings.defaultBlockType = 'slate';
   config.settings.slate = {
-    textblockEditorPlugins: [],
+    textblockExtensions: [withDeserializeHtml],
     ...slateConfig,
   };
 

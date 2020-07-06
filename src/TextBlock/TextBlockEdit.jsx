@@ -25,15 +25,11 @@ import {
 const TextBlockEdit = (props) => {
   const {
     block,
-    blockNode,
     data,
     detached,
     index,
     onAddBlock,
     onChangeBlock,
-    onDeleteBlock,
-    onFocusNextBlock,
-    onFocusPreviousBlock,
     onMutateBlock,
     onSelectBlock,
     properties,
@@ -42,6 +38,7 @@ const TextBlockEdit = (props) => {
   } = props;
 
   const { slate } = settings;
+  const { textblockExtensions } = slate;
   const { value } = data;
   const [addNewBlockOpened, setAddNewBlockOpened] = useState();
 
@@ -76,19 +73,17 @@ const TextBlockEdit = (props) => {
   //   properties,
   //   setSlateBlockSelection,
   // ]);
-
   // const configuredWithList = useMemo(
   //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
   //   [index, onAddBlock, onChangeBlock, onSelectBlock],
   // );
+  // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
+  //withBlockProps, withList
 
   const withBlockProps = (editor) => {
     editor.blockProps = props;
     return editor;
   };
-
-  // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
-  const defaultPlugins = slate.textblockExtensions;
 
   let timeoutTillRerender = null;
   React.useEffect(() => {
@@ -98,8 +93,6 @@ const TextBlockEdit = (props) => {
       }
     };
   });
-
-  //withBlockProps, withList
 
   return (
     <>
@@ -111,7 +104,10 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        extensions={[withBlockProps, withDeserializeHtml]}
+        extensions={[
+          withBlockProps, // needs to be first, before other block extensions
+          ...textblockExtensions,
+        ]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

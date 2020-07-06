@@ -11,7 +11,7 @@ import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 import { settings } from '~/config';
 
-import { setSlateBlockSelection } from 'volto-slate/actions';
+import { saveSlateBlockSelection } from 'volto-slate/actions';
 import SlateEditor from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
@@ -50,7 +50,7 @@ const TextBlockEdit = (props) => {
   //       onDeleteBlock,
   //       index,
   //       properties,
-  //       setSlateBlockSelection,
+  //       saveSlateBlockSelection,
   //       onChangeBlock,
   //       onFocusPreviousBlock,
   //       blockNode,
@@ -72,7 +72,7 @@ const TextBlockEdit = (props) => {
   //   onDeleteBlock,
   //   onChangeBlock,
   //   properties,
-  //   setSlateBlockSelection,
+  //   saveSlateBlockSelection,
   // ]);
   // const configuredWithList = useMemo(
   //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
@@ -115,7 +115,7 @@ const TextBlockEdit = (props) => {
         onChange={(value, selection) => {
           // without using setTimeout, the user types characters on the right side of the text cursor
           // timeoutTillRerender = setTimeout(() => {
-          //   setSlateBlockSelection(block, selection);
+          //   saveSlateBlockSelection(block, selection);
           // });
 
           onChangeBlock(block, {
@@ -146,5 +146,5 @@ const TextBlockEdit = (props) => {
 };
 
 export default connect(null, {
-  setSlateBlockSelection, // needed to dispatch action in keyboard handlers
+  saveSlateBlockSelection, // needed to dispatch action in keyboard handlers
 })(TextBlockEdit);

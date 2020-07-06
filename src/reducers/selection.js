@@ -5,7 +5,7 @@ export default function slate_block_selections(
   action = {},
 ) {
   switch (action.type) {
-    case 'SET_SLATE_BLOCK_SELECTION':
+    case 'SAVE_SLATE_BLOCK_SELECTION':
       return {
         ...state,
         [action.blockid]: action.selection,

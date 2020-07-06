@@ -38,7 +38,7 @@ function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
       block,
       index,
       properties,
-      setSlateBlockSelection,
+      saveSlateBlockSelection,
       onChangeBlock,
       onDeleteBlock,
       onSelectBlock,
@@ -61,12 +61,11 @@ function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
     // TODO: after Enter, the current filled-with-previous-block
     // block is visible for a fraction of second
 
+    saveSlateBlockSelection(otherBlockId, selection);
+
     // setTimeout ensures setState has been successfully
     // executed in Form.jsx. See
     // https://github.com/plone/volto/issues/1519
-
-    setSlateBlockSelection(otherBlockId, selection);
-
     setTimeout(() => {
       onChangeBlock(otherBlockId, {
         '@type': 'slate',
@@ -78,8 +77,6 @@ function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
         onSelectBlock(otherBlockId);
       });
     });
-
-    // ReactEditor.focus(editor);
 
     return true;
   };

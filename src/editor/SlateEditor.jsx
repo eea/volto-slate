@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import cx from 'classnames';
-import { createEditor, Transforms, Node } from 'slate';
+import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useState } from 'react';
@@ -25,7 +25,6 @@ const SlateEditor = ({
   properties,
   defaultSelection,
   editorPlugins,
-  editorDecorators,
 }) => {
   const { slate } = settings;
 
@@ -91,25 +90,16 @@ const SlateEditor = ({
     return onChange(...args, editor.selection);
   };
 
-  const { nodeTypesToHighlight } = slate;
+  const { runtimeDecorators = [] } = slate;
 
-  const decorate = React.useCallback(
+  const multiDecorate = React.useCallback(
     ([node, path]) => {
-      const ranges = [];
-
-      if (nodeTypesToHighlight.includes(node.type)) {
-        const text = Node.string(node) || '';
-        ranges.push({
-          anchor: { path, offset: 0 },
-          focus: { path, offset: text.length },
-          highlight: true,
-          highlightType: node.type,
-        });
-      }
-
-      return ranges;
+      return runtimeDecorators.reduce(
+        (acc, deco) => deco([node, path], acc),
+        [],
+      );
     },
-    [nodeTypesToHighlight],
+    [runtimeDecorators],
   );
 
   return (
@@ -136,7 +126,7 @@ const SlateEditor = ({
           placeholder={placeholder}
           renderElement={Element}
           renderLeaf={Leaf}
-          decorate={decorate}
+          decorate={multiDecorate}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //
@@ -155,7 +145,6 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
-          decorators={editorDecorators}
         />
       </Slate>
     </div>

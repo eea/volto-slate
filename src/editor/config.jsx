@@ -16,6 +16,7 @@ import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
+import { highlightByType } from './decorate';
 
 // Registry of available buttons
 export const buttons = {
@@ -88,6 +89,7 @@ export const keyDownHandlers = {};
 
 export const listTypes = ['numbered-list', 'bulleted-list'];
 
+// default rendered elements
 export const elements = {
   'bulleted-list': ({ attributes, children }) => (
     <ul {...attributes}>{children}</ul>
@@ -104,6 +106,7 @@ export const elements = {
   'numbered-list': ({ attributes, children }) => (
     <ol {...attributes}>{children}</ol>
   ),
+  paragraph: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
 };
 
@@ -126,3 +129,7 @@ export const defaultValue = () => {
 
 // types to decorate as highlight in the editor
 export const nodeTypesToHighlight = [];
+
+// decorator functions. Signature: ([node, path], ranges) => ranges
+console.log('high', highlightByType);
+export const runtimeDecorators = [highlightByType];

@@ -134,10 +134,13 @@ const FootnoteButton = () => {
           if (!showForm) {
             setSelection(editor.selection);
 
-            const note = getActiveFootnote(editor) || [];
-            const [{ data = {} }] = note;
+            const note = getActiveFootnote(editor);
+            if (note) {
+              const [node] = note;
+              const { data } = node;
+              setFormdata(data);
+            }
 
-            setFormdata(data);
             setShowForm(true);
           }
         }}

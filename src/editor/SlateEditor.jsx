@@ -36,7 +36,9 @@ const SlateEditor = ({
   // but if possible a better method should be used
   const paramdecos = React.useRef(extensions || []);
 
-  const defaultPlugins = slate.extensions;
+  const defaultExtensions = slate.extensions;
+  console.log('defaultExtensions', defaultExtensions);
+  console.log('extensions', extensions);
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
@@ -45,11 +47,11 @@ const SlateEditor = ({
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...paramdecos.current,
-      ...defaultPlugins,
+      // ...paramdecos.current,
+      ...defaultExtensions,
     ];
     return plugins.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultPlugins]);
+  }, [defaultExtensions]);
 
   const initial_selection = React.useRef();
 

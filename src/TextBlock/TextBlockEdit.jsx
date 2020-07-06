@@ -88,7 +88,7 @@ const TextBlockEdit = (props) => {
   };
 
   // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
-  const defaultPlugins = slate.textblockEditorPlugins;
+  const defaultPlugins = slate.textblockExtensions;
 
   let timeoutTillRerender = null;
   React.useEffect(() => {
@@ -98,6 +98,8 @@ const TextBlockEdit = (props) => {
       }
     };
   });
+
+  //withBlockProps, withList
 
   return (
     <>
@@ -109,7 +111,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        extensions={[withBlockProps, withList, withDeserializeHtml]}
+        extensions={[withBlockProps, withDeserializeHtml]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}

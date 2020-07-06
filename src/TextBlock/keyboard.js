@@ -1,4 +1,5 @@
 import { settings } from '~/config';
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import {
   isCursorInList,
@@ -30,7 +31,7 @@ export function handleBackspaceInList({ editor, event }) {
 }
 
 function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
-  return function wrapped({ editor, event }) {
+  return ({ editor, event }) => {
     // Join this block with previous block, if the blocks are compatible.
     const { blockProps } = editor;
     const {
@@ -40,8 +41,9 @@ function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
       setSlateBlockSelection,
       onChangeBlock,
       onDeleteBlock,
+      onSelectBlock,
     } = blockProps;
-    const [otherBlock = {}, otherBlockId] = getPreviousBlock(index, properties);
+    const [otherBlock = {}, otherBlockId] = getNeighbor(index, properties);
 
     if (!isValidOp(editor)) return true;
 
@@ -71,8 +73,13 @@ function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
         value: combined,
         plaintext: serializeNodesToText(combined || []),
       });
-      setTimeout(() => onDeleteBlock(block, true));
+      setTimeout(() => {
+        onDeleteBlock(block, false);
+        onSelectBlock(otherBlockId);
+      });
     });
+
+    // ReactEditor.focus(editor);
 
     return true;
   };

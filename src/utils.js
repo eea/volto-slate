@@ -618,10 +618,10 @@ export function getNextBlock(index, properties) {
 
   if (index === blocks_layout.items.length) return;
 
-  const prevBlockId = blocks_layout.items[index + 1];
-  const prevBlock = properties[blocksFieldname][prevBlockId];
+  const nextBlockId = blocks_layout.items[index + 1];
+  const nextBlock = properties[blocksFieldname][nextBlockId];
 
-  return [prevBlock, prevBlockId];
+  return [nextBlock, nextBlockId];
 }
 
 export const fixSelection = (editor) => {
@@ -687,7 +687,6 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // collapse the selection to its start point
   // Transforms.collapse(editor, { edge: 'start' });
 
-  console.log('prev', prev);
   // insert the contents of the previous editor into the current editor
   Transforms.insertNodes(editor, prev, {
     at: Editor.start(editor, []),
@@ -709,10 +708,10 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   const next = nextBlock.value;
 
   // collapse the selection to its start point
-  Transforms.collapse(editor, { edge: 'start' });
+  Transforms.collapse(editor, { edge: 'end' });
   Transforms.insertNodes(editor, next, {
-    at: Editor.start(editor, []),
+    at: Editor.end(editor, []),
   });
 
-  Editor.deleteBackward(editor, { unit: 'character' });
+  Editor.deleteForward(editor, { unit: 'character' });
 }

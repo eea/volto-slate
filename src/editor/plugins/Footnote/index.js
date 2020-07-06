@@ -6,7 +6,7 @@ import codeSVG from '@plone/volto/icons/code.svg';
 
 import { FootnoteElement } from './render';
 import FootnoteButton from './FootnoteButton';
-import { withFootnote } from './editorPlugins';
+import { withFootnote } from './extensions';
 import FootnotesBlockView from './FootnotesBlockView';
 import FootnotesBlockEdit from './FootnotesBlockEdit';
 import { FOOTNOTE } from './constants';
@@ -17,7 +17,7 @@ export default function install(config) {
   slate.buttons.footnote = (props) => <FootnoteButton {...props} />;
   slate.elements.footnote = FootnoteElement;
 
-  slate.editorPlugins = [...(slate.editorPlugins || []), withFootnote];
+  slate.extensions = [...(slate.extensions || []), withFootnote];
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'footnote'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),

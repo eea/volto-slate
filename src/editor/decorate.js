@@ -18,15 +18,3 @@ export const highlightByType = ([node, path], ranges) => {
 
   return ranges;
 };
-
-// const decorate = React.useCallback(
-//   ([node, path]) => {
-//     const ranges = [];
-//
-//
-//     return ranges;
-//   },
-//   [nodeTypesToHighlight],
-// );
-//
-//

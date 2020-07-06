@@ -10,7 +10,7 @@ import { Element, Leaf } from './render';
 import { SlateToolbar } from './ui';
 import { settings } from '~/config';
 
-import withTestingFeatures from './editorPlugins/withTestingFeatures';
+import withTestingFeatures from './extensions/withTestingFeatures';
 // import { toggleMark } from './utils';
 
 import './less/editor.less';
@@ -24,7 +24,7 @@ const SlateEditor = ({
   onKeyDown,
   properties,
   defaultSelection,
-  editorPlugins,
+  extensions,
 }) => {
   const { slate } = settings;
 
@@ -33,9 +33,9 @@ const SlateEditor = ({
 
   // the use of useRef here is very unusual. The code only works like this,
   // but if possible a better method should be used
-  const paramdecos = React.useRef(editorPlugins || []);
+  const paramdecos = React.useRef(extensions || []);
 
-  const defaultPlugins = slate.editorPlugins;
+  const defaultPlugins = slate.extensions;
   const editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 

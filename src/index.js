@@ -32,6 +32,7 @@ const applyConfig = (config) => {
 
   config.settings.defaultBlockType = 'slate';
   config.settings.slate = {
+    textblockEditorPlugins: [],
     ...slateConfig,
   };
 

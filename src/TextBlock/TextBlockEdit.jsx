@@ -15,7 +15,7 @@ import { setSlateBlockSelection } from 'volto-slate/actions';
 import SlateEditor from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withList, withDeserializeHtml } from './editorPlugins';
+import { withList, withDeserializeHtml } from './extensions';
 import {
   getBackspaceKeyDownHandlers,
   getFocusRelatedKeyDownHandlers,
@@ -41,47 +41,54 @@ const TextBlockEdit = (props) => {
     setSlateBlockSelection,
   } = props;
 
+  const { slate } = settings;
   const { value } = data;
   const [addNewBlockOpened, setAddNewBlockOpened] = useState();
 
-  const keyDownHandlers = useMemo(() => {
-    return {
-      ...getBackspaceKeyDownHandlers({
-        block,
-        onDeleteBlock,
-        index,
-        properties,
-        setSlateBlockSelection,
-        onChangeBlock,
-        onFocusPreviousBlock,
-        blockNode,
-      }),
-      ...getFocusRelatedKeyDownHandlers({
-        block,
-        blockNode,
-        onFocusNextBlock,
-        onFocusPreviousBlock,
-      }),
-      ...settings.slate?.keyDownHandlers,
-    };
-  }, [
-    block,
-    blockNode,
-    index,
-    onFocusNextBlock,
-    onFocusPreviousBlock,
-    onDeleteBlock,
-    onChangeBlock,
-    properties,
-    setSlateBlockSelection,
-  ]);
+  // const keyDownHandlers = useMemo(() => {
+  //   return {
+  //     ...getBackspaceKeyDownHandlers({
+  //       block,
+  //       onDeleteBlock,
+  //       index,
+  //       properties,
+  //       setSlateBlockSelection,
+  //       onChangeBlock,
+  //       onFocusPreviousBlock,
+  //       blockNode,
+  //     }),
+  //     ...getFocusRelatedKeyDownHandlers({
+  //       block,
+  //       blockNode,
+  //       onFocusNextBlock,
+  //       onFocusPreviousBlock,
+  //     }),
+  //     ...slate.keyDownHandlers,
+  //   };
+  // }, [
+  //   block,
+  //   blockNode,
+  //   index,
+  //   onFocusNextBlock,
+  //   onFocusPreviousBlock,
+  //   onDeleteBlock,
+  //   onChangeBlock,
+  //   properties,
+  //   setSlateBlockSelection,
+  // ]);
 
-  const configuredWithList = useMemo(
-    () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
-    [index, onAddBlock, onChangeBlock, onSelectBlock],
-  );
+  // const configuredWithList = useMemo(
+  //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
+  //   [index, onAddBlock, onChangeBlock, onSelectBlock],
+  // );
 
-  const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
+  const withBlockProps = (editor) => {
+    editor.blockProps = props;
+    return editor;
+  };
+
+  // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
+  const defaultPlugins = slate.textblockEditorPlugins;
 
   let timeoutTillRerender = null;
   React.useEffect(() => {
@@ -102,7 +109,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        editorPlugins={[configuredWithList, withDeserializeHtml]}
+        extensions={[withBlockProps, withList, withDeserializeHtml]}
         onSelectBlock={onSelectBlock}
         value={value}
         data={data}
@@ -120,14 +127,13 @@ const TextBlockEdit = (props) => {
           });
         }}
         onKeyDown={({ editor, event }) => {
-          configuredOnKeyDownList(event, editor);
-
-          keyDownHandlers[event.key] &&
-            keyDownHandlers[event.key]({
-              ...props,
-              editor,
-              event,
-            });
+          // configuredOnKeyDownList(event, editor);
+          // keyDownHandlers[event.key] &&
+          //   keyDownHandlers[event.key]({
+          //     ...props,
+          //     editor,
+          //     event,
+          //   });
         }}
         selected={selected}
         placeholder="Enter some rich text…"

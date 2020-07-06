@@ -9,7 +9,11 @@ import installDefaultPlugins from './editor/plugins';
 
 import { TextBlockView, TextBlockEdit } from './TextBlock';
 import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
-import { handleBackendInList, handleBackend } from './TextBlock/keyboard';
+import {
+  handleBackspaceInList,
+  joinWithPreviousBlock,
+  joinWithNextBlock,
+} from './TextBlock/keyboard';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {
@@ -36,7 +40,8 @@ const applyConfig = (config) => {
   config.settings.slate = {
     textblockExtensions: [withDeserializeHtml],
     textblockKeyboardHandlers: {
-      Backspace: [handleBackendInList, handleBackend],
+      Backspace: [handleBackspaceInList, joinWithPreviousBlock],
+      Delete: [joinWithNextBlock],
     },
     ...slateConfig,
   };

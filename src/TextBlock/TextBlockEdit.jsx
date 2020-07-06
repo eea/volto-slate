@@ -36,7 +36,6 @@ const TextBlockEdit = (props) => {
     onSelectBlock,
     properties,
     selected,
-    setSlateBlockSelection,
   } = props;
 
   const { slate } = settings;
@@ -87,14 +86,14 @@ const TextBlockEdit = (props) => {
     return editor;
   };
 
-  let timeoutTillRerender = null;
-  React.useEffect(() => {
-    return () => {
-      if (timeoutTillRerender) {
-        clearTimeout(timeoutTillRerender);
-      }
-    };
-  });
+  // let timeoutTillRerender = null;
+  // React.useEffect(() => {
+  //   return () => {
+  //     if (timeoutTillRerender) {
+  //       clearTimeout(timeoutTillRerender);
+  //     }
+  //   };
+  // });
 
   return (
     <>
@@ -115,9 +114,9 @@ const TextBlockEdit = (props) => {
         block={block}
         onChange={(value, selection) => {
           // without using setTimeout, the user types characters on the right side of the text cursor
-          timeoutTillRerender = setTimeout(() => {
-            setSlateBlockSelection(block, selection);
-          });
+          // timeoutTillRerender = setTimeout(() => {
+          //   setSlateBlockSelection(block, selection);
+          // });
 
           onChangeBlock(block, {
             ...data,
@@ -147,5 +146,5 @@ const TextBlockEdit = (props) => {
 };
 
 export default connect(null, {
-  setSlateBlockSelection,
+  setSlateBlockSelection, // needed to dispatch action in keyboard handlers
 })(TextBlockEdit);

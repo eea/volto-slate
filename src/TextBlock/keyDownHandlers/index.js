@@ -36,41 +36,41 @@ function handleBackspaceInList({
   return true;
 }
 
-function handleBackspaceInText(editor, prevBlock, event) {
-  // To work around current architecture limitations, read the value
-  // from previous block. Replace it in the current editor (over
-  // which we have control), join with current block value, then use
-  // this result for previous block, delete current block
-
-  const prev = prevBlock.value;
-
-  // collapse the selection to its start point
-  Transforms.collapse(editor, { edge: 'start' });
-
-  // TODO: do we really want to insert this text here?
-
-  // insert a space before the left edge of the selection
-  editor.apply({
-    type: 'insert_text',
-    path: [0, 0],
-    offset: 0,
-    text: ' ',
-  });
-
-  // collapse the selection to its start point
-  Transforms.collapse(editor, { edge: 'start' });
-
-  // insert the contents of the previous editor into the current editor
-  Transforms.insertNodes(editor, prev, {
-    at: Editor.start(editor, []),
-  });
-
-  // not needed currently: delete the useless space inserted above
-  //Editor.deleteBackward(editor, { unit: 'character' });
-
-  // merge the contents separated by the collapsed selection
-  Transforms.mergeNodes(editor);
-}
+// function handleBackspaceInText(editor, prevBlock, event) {
+//   // To work around current architecture limitations, read the value
+//   // from previous block. Replace it in the current editor (over
+//   // which we have control), join with current block value, then use
+//   // this result for previous block, delete current block
+//
+//   const prev = prevBlock.value;
+//
+//   // collapse the selection to its start point
+//   Transforms.collapse(editor, { edge: 'start' });
+//
+//   // TODO: do we really want to insert this text here?
+//
+//   // insert a space before the left edge of the selection
+//   editor.apply({
+//     type: 'insert_text',
+//     path: [0, 0],
+//     offset: 0,
+//     text: ' ',
+//   });
+//
+//   // collapse the selection to its start point
+//   Transforms.collapse(editor, { edge: 'start' });
+//
+//   // insert the contents of the previous editor into the current editor
+//   Transforms.insertNodes(editor, prev, {
+//     at: Editor.start(editor, []),
+//   });
+//
+//   // not needed currently: delete the useless space inserted above
+//   //Editor.deleteBackward(editor, { unit: 'character' });
+//
+//   // merge the contents separated by the collapsed selection
+//   Transforms.mergeNodes(editor);
+// }
 
 function blockIsEmpty(editor) {
   const value = editor.children;

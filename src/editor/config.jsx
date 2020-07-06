@@ -131,5 +131,4 @@ export const defaultValue = () => {
 export const nodeTypesToHighlight = [];
 
 // decorator functions. Signature: ([node, path], ranges) => ranges
-console.log('high', highlightByType);
 export const runtimeDecorators = [highlightByType];

@@ -1,3 +1,4 @@
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { Editor, Transforms, Range, Node, Text } from 'slate';
 import { serializeNodesToText } from './editor/render';
 import { settings } from '~/config';
@@ -594,14 +595,124 @@ export function isCursorInList(editor) {
 }
 
 export function getPreviousBlock(index, properties) {
+  // TODO: look for any prev slate block
   if (index === 0) return;
 
-  // join this block with previous block, if previous block is slate
   const blocksFieldname = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
   const blocks_layout = properties[blocksLayoutFieldname];
   const prevBlockId = blocks_layout.items[index - 1];
   const prevBlock = properties[blocksFieldname][prevBlockId];
+
   return [prevBlock, prevBlockId];
+}
+
+export function getNextBlock(index, properties) {
+  // TODO: look for any next slate block
+  // join this block with previous block, if previous block is slate
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  const blocks_layout = properties[blocksLayoutFieldname];
+
+  if (index === blocks_layout.items.length) return;
+
+  const prevBlockId = blocks_layout.items[index + 1];
+  const prevBlock = properties[blocksFieldname][prevBlockId];
+
+  return [prevBlock, prevBlockId];
+}
+
+export const fixSelection = (editor) => {
+  // This makes the Backspace key work properly in block.
+  // Don't remove it, unless this test passes:
+  // - with the Slate block unselected, click in the block.
+  // - Hit backspace. If it deletes, then the test passes
+
+  if (!editor.selection) {
+    const sel = window.getSelection();
+
+    // in unit tests (jsdom) sel is null
+    if (sel) {
+      const s = ReactEditor.toSlateRange(editor, sel);
+      // console.log('selection range', s);
+      editor.selection = s;
+    }
+    // See also dicussions in https://github.com/ianstormtaylor/slate/pull/3652
+    // console.log('fixing selection', JSON.stringify(sel), editor.selection);
+    // sel.collapse(
+    //   sel.focusNode,
+    //   sel.anchorOffset > 0 ? sel.anchorOffset - 1 : 0,
+    // );
+    // sel.collapse(
+    //   sel.focusNode,
+    //   sel.anchorOffset > 0 ? sel.anchorOffset + 1 : 0,
+    // );
+    // Fixes a Slate bug with selection handling when the block has just been selected
+    // React.useEffect(() => {
+    //   const sel = window.getSelection();
+    //
+    //   // check for sel to be defined for the case of unit tests
+    //   if (sel && selected && sel.type === 'None') {
+    //     // in case this block was programatically created (by enter/backspace key)
+    //     const el = ReactEditor.toDOMNode(editor, editor);
+    //     sel.collapse(el, 0);
+    //   }
+    // });
+  }
+};
+
+export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
+  // To work around current architecture limitations, read the value
+  // from previous block. Replace it in the current editor (over
+  // which we have control), join with current block value, then use
+  // this result for previous block, delete current block
+
+  const prev = prevBlock.value;
+
+  // collapse the selection to its start point
+  Transforms.collapse(editor, { edge: 'start' });
+
+  // TODO: do we really want to insert this text here?
+
+  // insert a space before the left edge of the selection
+  // editor.apply({
+  //   type: 'insert_text',
+  //   path: [0, 0],
+  //   offset: 0,
+  //   text: ' ',
+  // });
+
+  // collapse the selection to its start point
+  // Transforms.collapse(editor, { edge: 'start' });
+
+  console.log('prev', prev);
+  // insert the contents of the previous editor into the current editor
+  Transforms.insertNodes(editor, prev, {
+    at: Editor.start(editor, []),
+  });
+
+  // not needed currently: delete the useless space inserted above
+  Editor.deleteBackward(editor, { unit: 'character' });
+
+  // merge the contents separated by the collapsed selection
+  // Transforms.mergeNodes(editor);
+}
+
+export function mergeSlateWithBlockForward(editor, nextBlock, event) {
+  // To work around current architecture limitations, read the value
+  // from nextious block. Replace it in the current editor (over
+  // which we have control), join with current block value, then use
+  // this result for nextious block, delete current block
+
+  const next = nextBlock.value;
+
+  // collapse the selection to its start point
+  Transforms.collapse(editor, { edge: 'start' });
+  Transforms.insertNodes(editor, next, {
+    at: Editor.start(editor, []),
+  });
+
+  Editor.deleteBackward(editor, { unit: 'character' });
 }

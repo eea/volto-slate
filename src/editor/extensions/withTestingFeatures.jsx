@@ -4,6 +4,8 @@ const withTestingFeatures = (slateEditorComponent) => {
   const Component = slateEditorComponent;
 
   return (props) => {
+    let ref = React.useRef();
+
     // Source: https://stackoverflow.com/a/53623568/258462
     const onTestSelectWord = (val) => {
       let slateEditor =
@@ -39,7 +41,20 @@ const withTestingFeatures = (slateEditorComponent) => {
       };
     });
 
-    return <Component {...props} />;
+    return (
+      <Component
+        data-slate-value={
+          window?.Cypress ? JSON.stringify(props.value, null, 2) : null
+        }
+        data-slate-selection={
+          window?.Cypress
+            ? JSON.stringify(ref?.current?.selection, null, 2)
+            : null
+        }
+        testingEditorRef={ref}
+        {...props}
+      />
+    );
   };
 };
 

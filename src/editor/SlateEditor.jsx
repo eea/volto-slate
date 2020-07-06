@@ -25,11 +25,12 @@ const SlateEditor = ({
   properties,
   defaultSelection,
   extensions,
+  testingEditorRef,
+  ...props
 }) => {
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-  const [currentSelection, setCurrentSelection] = useState(null);
 
   // the use of useRef here is very unusual. The code only works like this,
   // but if possible a better method should be used
@@ -83,13 +84,6 @@ const SlateEditor = ({
 
   const initialValue = slate.defaultValue();
 
-  // TODO: make this, data-slate-value, etc, a HOC
-  // remove after solving the issue with null selection
-  const handleChange = (...args) => {
-    setCurrentSelection(editor.selection);
-    return onChange(...args, editor.selection);
-  };
-
   const { runtimeDecorators = [] } = slate;
 
   const multiDecorate = React.useCallback(
@@ -102,20 +96,17 @@ const SlateEditor = ({
     [runtimeDecorators],
   );
 
+  if (testingEditorRef) {
+    testingEditorRef.current = editor;
+  }
+
   return (
     <div
-      data-slate-value={window?.Cypress ? JSON.stringify(value, null, 2) : null}
-      data-slate-selection={
-        window?.Cypress ? JSON.stringify(currentSelection, null, 2) : null
-      }
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
+      {...props}
     >
       {/* {block} - {selected ? 'sel' : 'notsel'} */}
-      <Slate
-        editor={editor}
-        value={value || initialValue}
-        onChange={handleChange}
-      >
+      <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         <SlateToolbar
           selected={selected}
           showToolbar={showToolbar}

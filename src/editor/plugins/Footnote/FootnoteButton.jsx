@@ -71,7 +71,6 @@ const FootnoteButton = () => {
   const submitHandler = React.useCallback(
     (formData) => {
       // TODO: have an algorithm that decides which one is used
-      console.log('formData', formData, selection);
       const { footnote } = formData;
       if (footnote) {
         Transforms.select(editor, selection);
@@ -84,6 +83,8 @@ const FootnoteButton = () => {
   );
 
   const isFootnote = isActiveFootnote(editor);
+
+  // TODO: generate a uid for footnote, don't use genkey to generate uids
 
   return (
     <>

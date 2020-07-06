@@ -1,6 +1,6 @@
 import isHotkey from 'is-hotkey';
 import cx from 'classnames';
-import { createEditor, Transforms } from 'slate';
+import { createEditor, Transforms, Node } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useState } from 'react';
@@ -8,10 +8,10 @@ import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
 import { SlateToolbar } from './ui';
-// import { toggleMark } from './utils';
 import { settings } from '~/config';
 
 import withTestingFeatures from './withTestingFeatures';
+// import { toggleMark } from './utils';
 
 import './less/editor.less';
 
@@ -91,6 +91,27 @@ const SlateEditor = ({
     return onChange(...args, editor.selection);
   };
 
+  const { nodeTypesToHighlight } = slate;
+
+  const decorate = React.useCallback(
+    ([node, path]) => {
+      const ranges = [];
+
+      if (nodeTypesToHighlight.includes(node.type)) {
+        const text = Node.string(node) || '';
+        ranges.push({
+          anchor: { path, offset: 0 },
+          focus: { path, offset: text.length },
+          highlight: true,
+          highlightType: node.type,
+        });
+      }
+
+      return ranges;
+    },
+    [nodeTypesToHighlight],
+  );
+
   return (
     <div
       data-slate-value={window?.Cypress ? JSON.stringify(value, null, 2) : null}
@@ -115,6 +136,7 @@ const SlateEditor = ({
           placeholder={placeholder}
           renderElement={Element}
           renderLeaf={Leaf}
+          decorate={decorate}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //

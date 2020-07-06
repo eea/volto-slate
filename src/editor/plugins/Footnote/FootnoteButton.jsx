@@ -2,7 +2,6 @@ import React from 'react';
 import { useSlate } from 'slate-react';
 import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
-import { Segment } from 'semantic-ui-react';
 
 import { Icon as VoltoIcon } from '@plone/volto/components';
 import superindexSVG from '@plone/volto/icons/superindex.svg';
@@ -17,6 +16,8 @@ import InlineForm from 'volto-slate/futurevolto/InlineForm';
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from './constants';
+
+import './editor.less';
 
 export const wrapFootnote = (editor, data) => {
   if (isActiveFootnote(editor)) {
@@ -118,7 +119,6 @@ const FootnoteButton = () => {
               <button
                 onClick={() => {
                   setShowForm(false);
-                  console.log('editor', editor);
                   ReactEditor.focus(editor);
                 }}
               >
@@ -127,7 +127,6 @@ const FootnoteButton = () => {
             </>
           }
         />
-        <Segment>bla</Segment>
       </SidebarPopup>
       <ToolbarButton
         active={isFootnote}

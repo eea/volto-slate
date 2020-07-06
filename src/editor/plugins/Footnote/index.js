@@ -9,6 +9,7 @@ import FootnoteButton from './FootnoteButton';
 import { withFootnote } from './editorPlugins';
 import FootnotesBlockView from './FootnotesBlockView';
 import FootnotesBlockEdit from './FootnotesBlockEdit';
+import { FOOTNOTE } from './constants';
 
 export default function install(config) {
   const { slate } = config.settings;
@@ -22,6 +23,8 @@ export default function install(config) {
     ...(slate.expandedToolbarButtons || []),
     'footnote',
   ];
+
+  slate.nodeTypesToHighlight.push(FOOTNOTE);
 
   config.blocks.blocksConfig.slateFootnotes = {
     id: 'slateFootnotes',

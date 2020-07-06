@@ -41,7 +41,7 @@ const FootnotesBlockView = (props) => {
     <div className="footnotes-listing-block">
       <h3>{title}</h3>
       {footnotes && (
-        <ul>
+        <ol>
           {footnotes.map((data) => {
             const key = genkey(data);
             return (
@@ -53,7 +53,7 @@ const FootnotesBlockView = (props) => {
               </li>
             );
           })}
-        </ul>
+        </ol>
       )}
     </div>
   );

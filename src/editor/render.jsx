@@ -21,7 +21,18 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
     return leaf[name] ? leafs[name]({ children: acc }) : acc;
   }, children);
 
-  return mode === 'view' ? children : <span {...attributes}>{children}</span>;
+  const klass =
+    mode !== 'view' && leaf.highlight
+      ? `highlight-${leaf.highlightType}`
+      : null;
+
+  return mode === 'view' ? (
+    children
+  ) : (
+    <span {...attributes} className={klass}>
+      {children}
+    </span>
+  );
 };
 
 export const serializeNodes = (nodes) =>

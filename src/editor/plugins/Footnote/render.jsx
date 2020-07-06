@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles.less';
+import './public.less';
 import genkey from 'weak-key';
 
 export const FootnoteElement = ({ attributes, children, element, mode }) => {

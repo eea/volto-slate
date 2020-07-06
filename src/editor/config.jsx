@@ -123,3 +123,6 @@ export const leafs = {
 export const defaultValue = () => {
   return [createEmptyParagraph()];
 };
+
+// types to decorate as highlight in the editor
+export const nodeTypesToHighlight = [];

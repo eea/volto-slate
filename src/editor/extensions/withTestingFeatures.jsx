@@ -43,14 +43,8 @@ const withTestingFeatures = (slateEditorComponent) => {
 
     return (
       <Component
-        data-slate-value={
-          window?.Cypress ? JSON.stringify(props.value, null, 2) : null
-        }
-        data-slate-selection={
-          window?.Cypress
-            ? JSON.stringify(ref?.current?.selection, null, 2)
-            : null
-        }
+        data-slate-value={JSON.stringify(props.value, null, 2)}
+        data-slate-selection={JSON.stringify(ref?.current?.selection, null, 2)}
         testingEditorRef={ref}
         {...props}
       />

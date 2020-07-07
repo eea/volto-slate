@@ -129,6 +129,17 @@ class SlateEditorComponent extends React.Component {
   }
 }
 
+// export default connect((state, props) => {
+//   const blockId = props.block;
+//   return {
+//     defaultSelection: state.slate_block_selections?.[blockId],
+//   };
+// })(
+//   __CLIENT__ && window?.Cypress
+//     ? withTestingFeatures(SlateEditorComponent)
+//     : SlateEditorComponent,
+// );
+
 const SlateEditor = ({
   selected,
   value,
@@ -143,16 +154,10 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  console.log('extensions', extensions);
   const [showToolbar, setShowToolbar] = useState(false);
 
-  // the use of useRef here is very unusual. The code only works like this,
-  // but if possible a better method should be used
-  // It causes a circular dependency, for some reason, if we remove it
-  const paramExtensions = React.useRef(extensions || []);
-
   const defaultExtensions = slate.extensions;
-  const editor = React.useMemo(() => {
+  let editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
     // TODO: this needs cleanup
@@ -160,12 +165,12 @@ const SlateEditor = ({
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...paramExtensions.current,
-      // ...extensions,
       ...defaultExtensions,
     ];
     return plugins.reduce((acc, apply) => apply(acc), raw);
   }, [defaultExtensions]);
+
+  editor = extensions.reduce((acc, apply) => apply(acc), editor);
 
   const initial_selection = React.useRef();
 
@@ -258,6 +263,6 @@ export default connect((state, props) => {
   };
 })(
   __CLIENT__ && window?.Cypress
-    ? withTestingFeatures(SlateEditorComponent)
-    : SlateEditorComponent,
+    ? withTestingFeatures(SlateEditor)
+    : SlateEditor,
 );

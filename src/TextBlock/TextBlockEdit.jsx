@@ -35,6 +35,10 @@ const TextBlockEdit = (props) => {
     properties,
     selected,
     setSlateBlockSelection,
+    onDeleteBlock,
+    onFocusNextBlock,
+    onFocusPreviousBlock,
+    blockNode,
   } = props;
 
   const { slate } = settings;
@@ -42,41 +46,43 @@ const TextBlockEdit = (props) => {
   const { value } = data;
   const [addNewBlockOpened, setAddNewBlockOpened] = useState();
 
-  // const keyDownHandlers = useMemo(() => {
-  //   return {
-  //     ...getBackspaceKeyDownHandlers({
-  //       block,
-  //       onDeleteBlock,
-  //       index,
-  //       properties,
-  //       setSlateBlockSelection,
-  //       onChangeBlock,
-  //       onFocusPreviousBlock,
-  //       blockNode,
-  //     }),
-  //     ...getFocusRelatedKeyDownHandlers({
-  //       block,
-  //       blockNode,
-  //       onFocusNextBlock,
-  //       onFocusPreviousBlock,
-  //     }),
-  //     ...slate.keyDownHandlers,
-  //   };
-  // }, [
-  //   block,
-  //   blockNode,
-  //   index,
-  //   onFocusNextBlock,
-  //   onFocusPreviousBlock,
-  //   onDeleteBlock,
-  //   onChangeBlock,
-  //   properties,
-  //   setSlateBlockSelection,
-  // ]);
-  // const configuredWithList = useMemo(
-  //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
-  //   [index, onAddBlock, onChangeBlock, onSelectBlock],
-  // );
+  // TODO: replace these lines with the comment below
+  const keyDownHandlers = useMemo(() => {
+    return {
+      ...getBackspaceKeyDownHandlers({
+        block,
+        onDeleteBlock,
+        index,
+        properties,
+        setSlateBlockSelection,
+        onChangeBlock,
+        onFocusPreviousBlock,
+        blockNode,
+      }),
+      ...getFocusRelatedKeyDownHandlers({
+        block,
+        blockNode,
+        onFocusNextBlock,
+        onFocusPreviousBlock,
+      }),
+      ...slate.keyDownHandlers,
+    };
+  }, [
+    block,
+    onDeleteBlock,
+    index,
+    properties,
+    setSlateBlockSelection,
+    onChangeBlock,
+    onFocusPreviousBlock,
+    blockNode,
+    onFocusNextBlock,
+    slate.keyDownHandlers,
+  ]);
+  const configuredWithList = useMemo(
+    () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
+    [index, onAddBlock, onChangeBlock, onSelectBlock],
+  );
   // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
   //withBlockProps, withList
 
@@ -106,6 +112,8 @@ const TextBlockEdit = (props) => {
         onAddBlock={onAddBlock}
         extensions={[
           withBlockProps, // needs to be first, before other block extensions
+          configuredWithList,
+          withDeserializeHtml,
           ...textblockExtensions,
         ]}
         onSelectBlock={onSelectBlock}
@@ -125,13 +133,14 @@ const TextBlockEdit = (props) => {
           });
         }}
         onKeyDown={({ editor, event }) => {
+          // TODO: replace these lines with the comment below:
+          keyDownHandlers[event.key] &&
+            keyDownHandlers[event.key]({
+              ...props,
+              editor,
+              event,
+            });
           // configuredOnKeyDownList(event, editor);
-          // keyDownHandlers[event.key] &&
-          //   keyDownHandlers[event.key]({
-          //     ...props,
-          //     editor,
-          //     event,
-          //   });
         }}
         selected={selected}
         placeholder="Enter some rich text…"

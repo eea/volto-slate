@@ -1,4 +1,3 @@
-import genkey from 'weak-key';
 import React from 'react';
 import { Node } from 'slate';
 import {
@@ -32,7 +31,7 @@ const FootnotesBlockView = (props) => {
 
       Array.from(Node.elements(value[0])).forEach(([node]) => {
         if (node.type === FOOTNOTE) {
-          footnotes.push(node.data);
+          footnotes.push(node);
         }
       });
     });
@@ -42,12 +41,12 @@ const FootnotesBlockView = (props) => {
       <h3>{title}</h3>
       {footnotes && (
         <ol>
-          {footnotes.map((data) => {
-            const key = genkey(data);
+          {footnotes.map(({ data }) => {
+            const { uuid, footnote } = data;
             return (
-              <li key={key} id={`footnote-${key}`}>
-                {data.footnote}
-                <a href={`#ref-${key}`} aria-label="Back to content">
+              <li key={uuid} id={`footnote-${uuid}`}>
+                {footnote}
+                <a href={`#ref-${uuid}`} aria-label="Back to content">
                   ↵
                 </a>
               </li>

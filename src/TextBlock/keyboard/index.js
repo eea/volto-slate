@@ -2,6 +2,7 @@ import { settings } from '~/config';
 
 export * from './joinBlocks';
 export * from './backspaceInList';
+export * from './softBreak';
 
 export function handleKey({ editor, event }) {
   const { slate } = settings;

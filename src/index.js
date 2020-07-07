@@ -13,6 +13,7 @@ import {
   handleBackspaceInList,
   joinWithPreviousBlock,
   joinWithNextBlock,
+  softBreak,
 } from './TextBlock/keyboard';
 
 const applyConfig = (config) => {
@@ -43,6 +44,7 @@ const applyConfig = (config) => {
       Backspace: [handleBackspaceInList, joinWithPreviousBlock],
       Delete: [joinWithNextBlock],
       Enter: [
+        softBreak,
         // ({ editor, event }) => {
         //   console.log('editor', editor.getBlockProps());
         // },

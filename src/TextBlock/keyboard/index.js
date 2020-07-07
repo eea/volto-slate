@@ -3,6 +3,7 @@ import { settings } from '~/config';
 export * from './joinBlocks';
 export * from './backspaceInList';
 export * from './softBreak';
+export * from './traverseBlocks';
 
 export function handleKey({ editor, event }) {
   const { slate } = settings;
@@ -185,16 +186,6 @@ export function handleKey({ editor, event }) {
 //   onFocusPreviousBlock,
 // }) => {
 //   return {
-//     ArrowUp: ({ editor, event }) => {
-//       if (isCursorAtBlockStart(editor))
-//         onFocusPreviousBlock(block, blockNode.current);
-//     },
-//
-//     ArrowDown: ({ editor, event }) => {
-//       if (isCursorAtBlockEnd(editor))
-//         onFocusNextBlock(block, blockNode.current);
-//     },
-//
 //     Tab: ({ editor, event }) => {
 //       /* Intended behavior:
 //        *

@@ -14,6 +14,8 @@ import {
   joinWithPreviousBlock,
   joinWithNextBlock,
   softBreak,
+  goUp,
+  goDown,
 } from './TextBlock/keyboard';
 
 const applyConfig = (config) => {
@@ -44,11 +46,10 @@ const applyConfig = (config) => {
       Backspace: [handleBackspaceInList, joinWithPreviousBlock],
       Delete: [joinWithNextBlock],
       Enter: [
-        softBreak,
-        // ({ editor, event }) => {
-        //   console.log('editor', editor.getBlockProps());
-        // },
+        softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
+      ArrowUp: [goUp],
+      ArrowDown: [goDown],
     },
     ...slateConfig,
   };

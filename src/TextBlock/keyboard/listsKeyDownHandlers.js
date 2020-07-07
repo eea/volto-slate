@@ -1,63 +1,10 @@
 import { Editor, Path, Transforms, Text } from 'slate';
-import { castArray } from 'lodash';
 
 const ListHotkey = {
   TAB: 'Tab',
   ENTER: 'Enter',
   DELETE_BACKWARD: 'Backspace',
 };
-
-const defaultListTypes = {
-  typeUl: 'bulleted-list',
-  typeOl: 'numbered-list',
-  typeLi: 'list-item',
-  typeP: 'paragraph',
-};
-
-/**
- * Get the nodes with a type included in `types` in the selection (from root to leaf).
- */
-const getSelectionNodesByType = (editor, types, options = {}) => {
-  types = castArray(types);
-
-  return Editor.nodes(editor, {
-    match: (n) => {
-      return types.includes(n.type);
-    },
-    ...options,
-  });
-};
-
-/**
- * Is there a node with a type included in `types` in the selection (from root to leaf).
- */
-const isNodeInSelection = (editor, types, options = {}) => {
-  const [match] = getSelectionNodesByType(editor, types, options);
-  return !!match;
-};
-
-const isPointAtRoot = (point) => point.path.length === 2;
-
-const isRangeAtRoot = (range) =>
-  isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
-
-const isList = (options = defaultListTypes) => (n) =>
-  [options.typeOl, options.typeUl].includes(n.type);
-
-/**
- * Has the node an empty text
- * TODO: try Node.string
- */
-const isBlockTextEmpty = (node) => {
-  const lastChild = node.children[node.children.length - 1];
-
-  return Text.isText(lastChild) && !lastChild.text.length;
-};
-
-/**
- * Is it the first child of the parent
- */
-const isFirstChild = (path) => path[path.length - 1] === 0;
 
 /**
  * Move a list item next to its parent.

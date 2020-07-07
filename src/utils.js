@@ -7,6 +7,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
+import { castArray } from 'lodash';
 
 export function getMaxRange(editor) {
   const maxRange = {
@@ -22,18 +23,6 @@ export function getMaxRange(editor) {
 export function isNodeInSelection(editor, types, options = {}) {
   const [match] = getSelectionNodesByType(editor, types, options);
   return !!match;
-}
-
-/**
- * Get the nodes with a type included in `types` in the selection (from root to leaf).
- */
-export function getSelectionNodesByType(editor, types, options = {}) {
-  return Editor.nodes(editor, {
-    match: (n) => {
-      return types.includes(n.type);
-    },
-    ...options,
-  });
 }
 
 export function toggleBlock(editor, format, justSelection) {
@@ -715,3 +704,47 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
 
   Editor.deleteForward(editor, { unit: 'character' });
 }
+
+const isPointAtRoot = (point) => point.path.length === 2;
+
+export const isRangeAtRoot = (range) =>
+  isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
+
+export const defaultListTypes = {
+  typeUl: 'bulleted-list',
+  typeOl: 'numbered-list',
+  typeLi: 'list-item',
+  typeP: 'paragraph',
+};
+
+export const isList = (options = defaultListTypes) => (n) =>
+  [options.typeOl, options.typeUl].includes(n.type);
+
+/**
+ * Has the node an empty text
+ * TODO: try Node.string
+ */
+export const isBlockTextEmpty = (node) => {
+  const lastChild = node.children[node.children.length - 1];
+
+  return Text.isText(lastChild) && !lastChild.text.length;
+};
+
+/**
+ * Is it the first child of the parent
+ */
+export const isFirstChild = (path) => path[path.length - 1] === 0;
+
+/**
+ * Get the nodes with a type included in `types` in the selection (from root to leaf).
+ */
+export const getSelectionNodesByType = (editor, types, options = {}) => {
+  types = castArray(types);
+
+  return Editor.nodes(editor, {
+    match: (n) => {
+      return types.includes(n.type);
+    },
+    ...options,
+  });
+};

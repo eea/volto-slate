@@ -19,6 +19,7 @@ import { withList, withDeserializeHtml } from './extensions';
 import {
   getBackspaceKeyDownHandlers,
   getFocusRelatedKeyDownHandlers,
+  softBreakHandler,
   onKeyDownList,
 } from './keyDownHandlers';
 
@@ -133,6 +134,12 @@ const TextBlockEdit = (props) => {
           });
         }}
         onKeyDown={({ editor, event }) => {
+          softBreakHandler(event, editor);
+
+          if (event.isDefaultPrevented()) {
+            return;
+          }
+
           // TODO: replace these lines with the comment below:
           keyDownHandlers[event.key] &&
             keyDownHandlers[event.key]({

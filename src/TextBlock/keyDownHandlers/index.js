@@ -7,6 +7,8 @@ import {
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 import { unwrapList } from 'volto-slate/utils.js';
+
+export { softBreakHandler } from './softBreakHandler';
 export { onKeyDownList } from './listsKeyDownHandlers';
 
 function getPreviousBlock(index, properties) {

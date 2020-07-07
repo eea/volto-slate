@@ -1,8 +1,6 @@
-import { settings } from '~/config';
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import {
-  isCursorInList,
+  // isCursorInList,
   getPreviousBlock,
   getNextBlock,
   isCursorAtBlockStart,
@@ -11,29 +9,10 @@ import {
   mergeSlateWithBlockForward,
 } from 'volto-slate/utils';
 
-export function handleKey({ editor, event }) {
-  const { slate } = settings;
-  //
-  // try to find a handler for this shortcut
-  const handlers = slate.textblockKeyboardHandlers[event.key];
-
-  if (handlers) {
-    // a handler can return `true` to signify it has handled the event
-    // in this case, the execution flow is stopped
-    return handlers.find((handler) => handler({ editor, event }));
-  }
-}
-
-export function handleBackspaceInList({ editor, event }) {
-  if (!isCursorInList(editor)) return false;
-  console.log('backend list');
-  return true;
-}
-
 /*
  * Join current block with neighbor block, if the blocks are compatible.
  */
-function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
+export function joinWithNeighborBlock(getNeighbor, isValidOp, mergeOp) {
   return ({ editor, event }) => {
     // TODO: read block values not from editor properties, but from block
     // properties

@@ -8,7 +8,7 @@ import * as slateConfig from './editor/config';
 import installDefaultPlugins from './editor/plugins';
 
 import { TextBlockView, TextBlockEdit } from './TextBlock';
-import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
+// import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
 import {
   handleBackspaceInList,
   joinWithPreviousBlock,

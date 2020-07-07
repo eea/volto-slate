@@ -38,6 +38,8 @@ const TextBlockEdit = (props) => {
     selected,
   } = props;
 
+  // console.log('properties', properties);
+
   const { slate } = settings;
   const { textblockExtensions } = slate;
   const { value } = data;
@@ -81,11 +83,6 @@ const TextBlockEdit = (props) => {
   // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
   //withBlockProps, withList
 
-  const withBlockProps = (editor) => {
-    editor.blockProps = props;
-    return editor;
-  };
-
   // let timeoutTillRerender = null;
   // React.useEffect(() => {
   //   return () => {
@@ -94,6 +91,20 @@ const TextBlockEdit = (props) => {
   //     }
   //   };
   // });
+
+  // const getLatestProps = () => {
+  //   const [contextData] = useFormContext();
+  //   return contextData;
+  // };
+  const withBlockProperties = React.useCallback(
+    (editor) => {
+      editor.getBlockProps = () => {
+        return props;
+      };
+      return editor;
+    },
+    [props],
+  );
 
   return (
     <>
@@ -105,10 +116,7 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        extensions={[
-          withBlockProps, // needs to be first, before other block extensions
-          ...textblockExtensions,
-        ]}
+        extensions={[withBlockProperties, ...textblockExtensions]}
         onSelectBlock={onSelectBlock}
         value={value}
         block={block}

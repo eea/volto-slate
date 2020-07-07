@@ -1,4 +1,4 @@
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { ReactEditor } from 'slate-react';
 import { Editor, Transforms, Range, Node, Text } from 'slate';
 import { serializeNodesToText } from './editor/render';
 import { settings } from '~/config';

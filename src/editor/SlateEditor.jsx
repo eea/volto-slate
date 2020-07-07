@@ -16,6 +16,119 @@ import { fixSelection } from 'volto-slate/utils';
 
 import './less/editor.less';
 
+class SlateEditorComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const { slate } = settings;
+    const initialValue = slate.defaultValue();
+
+    this.createEditor = this.createEditor.bind(this);
+    this.mixEditor = this.mixEditor.bind(this);
+
+    this.state = {
+      showToolbar: false,
+      editor: this.createEditor(),
+      initialValue,
+    };
+  }
+
+  createEditor() {
+    const { slate } = settings;
+    const defaultExtensions = slate.extensions;
+    const raw = withHistory(withReact(createEditor()));
+    const editor = defaultExtensions.reduce((acc, apply) => apply(acc), raw);
+
+    console.log('created editor');
+    return editor;
+  }
+
+  mixEditor(raw) {
+    // const { slate } = settings;
+    // const plugins = [
+    //   // TODO: this needs cleanup
+    //   // FIXME: commented out for testing reasons:
+    //   // withDelete,
+    //   // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
+    //   ...extensions,
+    //   // ...defaultExtensions,
+    // ];
+    const { extensions = [] } = this.props;
+    const editor = extensions.reduce((acc, apply) => apply(acc), raw);
+    return editor;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.selected && this.props.selected) {
+      ReactEditor.focus(this.state.editor);
+      // This makes the Backspace key work properly in block.
+      // Don't remove it, unless this test passes:
+      // - with the Slate block unselected, click in the block.
+      // - Hit backspace. If it deletes, then the test passes
+      fixSelection(this.state.editor);
+    }
+    // if (prevProps.extensions !== this.props.extensions) {
+    //   // console.log(this.createEditor());
+    //   this.setState({ editor: this.createEditor() });
+    // }
+  }
+
+  componentDidMount() {}
+
+  render() {
+    const { showToolbar, editor, initialValue } = this.state;
+    const { selected, value, onChange, placeholder, onKeyDown } = this.props;
+
+    const mixedEditor = this.mixEditor(editor);
+
+    // decorate={multiDecorate}
+
+    return (
+      <div
+        className={cx('slate-editor', {
+          'show-toolbar': showToolbar,
+          selected,
+        })}
+      >
+        <Slate
+          editor={mixedEditor}
+          value={value || initialValue}
+          onChange={onChange}
+        >
+          <SlateToolbar
+            selected={selected}
+            showToolbar={showToolbar}
+            setShowToolbar={(showToolbar) => this.setState({ showToolbar })}
+          />
+          <Editable
+            readOnly={!selected}
+            placeholder={placeholder}
+            renderElement={Element}
+            renderLeaf={Leaf}
+            onKeyDown={(event) => {
+              // let wasHotkey = false;
+              //
+              // for (const hotkey in slate.hotkeys) {
+              //   if (isHotkey(hotkey, event)) {
+              //     event.preventDefault();
+              //     const mark = slate.hotkeys[hotkey];
+              //     toggleMark(editor, mark);
+              //     wasHotkey = true;
+              //   }
+              // }
+              //
+              // if (wasHotkey) {
+              //   return;
+              // }
+              onKeyDown && onKeyDown({ editor: mixedEditor, event });
+            }}
+          />
+        </Slate>
+      </div>
+    );
+  }
+}
+
 const SlateEditor = ({
   selected,
   value,
@@ -30,10 +143,12 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
+  console.log('extensions', extensions);
   const [showToolbar, setShowToolbar] = useState(false);
 
   // the use of useRef here is very unusual. The code only works like this,
   // but if possible a better method should be used
+  // It causes a circular dependency, for some reason, if we remove it
   const paramExtensions = React.useRef(extensions || []);
 
   const defaultExtensions = slate.extensions;
@@ -46,6 +161,7 @@ const SlateEditor = ({
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
       ...paramExtensions.current,
+      // ...extensions,
       ...defaultExtensions,
     ];
     return plugins.reduce((acc, apply) => apply(acc), raw);
@@ -142,6 +258,6 @@ export default connect((state, props) => {
   };
 })(
   __CLIENT__ && window?.Cypress
-    ? withTestingFeatures(SlateEditor)
-    : SlateEditor,
+    ? withTestingFeatures(SlateEditorComponent)
+    : SlateEditorComponent,
 );

@@ -38,10 +38,22 @@ const applyConfig = (config) => {
 
   config.settings.defaultBlockType = 'slate';
   config.settings.slate = {
-    textblockExtensions: [withDeserializeHtml],
+    textblockExtensions: [], // withDeserializeHtml
     textblockKeyboardHandlers: {
       Backspace: [handleBackspaceInList, joinWithPreviousBlock],
       Delete: [joinWithNextBlock],
+      Enter: [
+        ({ editor, event }) => {
+          console.log(
+            'editor',
+            // editor,
+            editor.getBlockProps(),
+            // .properties.blocks_layout.items.length,
+            // .contextData.properties.blocks_layout.items.length,
+            // editor.blockProps.properties.blocks_layout.items.length,
+          );
+        },
+      ],
     },
     ...slateConfig,
   };

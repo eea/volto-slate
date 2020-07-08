@@ -1,15 +1,7 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { Transforms } from 'slate';
+import { Editor, Transforms } from 'slate';
 
-import {
-  getActiveEntry,
-  isBlockActive,
-  LIST_TYPES,
-  // toggleBlock,
-  // toggleList,
-  // convertAllToParagraph,
-} from 'volto-slate/utils';
 import ToolbarButton from './ToolbarButton';
 
 // const newToggleBlock = (editor, format, isActive) => {
@@ -34,29 +26,59 @@ import ToolbarButton from './ToolbarButton';
 //   }
 // };
 
+const isBlockActive = (editor, format) => {
+  const [match] = Editor.nodes(editor, {
+    match: (n) => n.type === format,
+  });
+
+  return !!match;
+};
+
+const LIST_TYPES = ['numbered-list', 'bulleted-list'];
+
 export const toggleBlock = (editor, format) => {
   const isActive = isBlockActive(editor, format);
   const isList = LIST_TYPES.includes(format);
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) => LIST_TYPES.includes(n.type),
-    split: true,
-  });
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => LIST_TYPES.includes(n.type),
+  //   split: true,
+  // });
+  //
+  const isListItem = isBlockActive(editor, 'list-item');
+  if (isListItem) {
+    Transforms.setNodes(editor, {
+      type: format,
+    });
 
-  Transforms.setNodes(editor, {
-    type: isActive ? 'paragraph' : isList ? 'list-item' : format,
-  });
+    const [match] = Editor.nodes(editor, {
+      match: (n) => n.type === 'list-item',
+    });
 
-  if (!isActive && isList) {
-    const block = { type: format, children: [] };
-    Transforms.wrapNodes(editor, block);
+    if (!match) {
+      const block = { type: 'list-item', children: [] };
+      Transforms.wrapNodes(editor, block);
+    }
+  } else {
+    // if list-items are never "active", as list-item is not a format
+    const type = isActive ? 'paragraph' : isList ? 'list-item' : format;
+    Transforms.setNodes(editor, {
+      type,
+    });
   }
+
+  //
+  // if (!isActive && isList) {
+  //   const block = { type: format, children: [] };
+  //   Transforms.wrapNodes(editor, block);
+  // }
 };
 
 const BlockButton = ({ format, icon }) => {
   const editor = useSlate();
 
-  const isActive = !!getActiveEntry(editor, format);
+  // const isActive = !!getActiveEntry(editor, format);
+  const isActive = isBlockActive(editor, format);
 
   const handleMouseDown = React.useCallback(
     (event) => {
@@ -67,7 +89,7 @@ const BlockButton = ({ format, icon }) => {
       //   toggleBlock(editor, format, false);
       // }
     },
-    [editor, format, isActive],
+    [editor, format], // , isActive
   );
 
   return (

@@ -1,4 +1,4 @@
-import { Editor, Path, Point, Range, Transforms, Text, Node } from 'slate';
+import { Editor, Path, Range, Transforms, Node } from 'slate';
 import { settings } from '~/config';
 import {
   simulateBackspaceAtEndOfEditor,
@@ -6,22 +6,7 @@ import {
   splitEditorInTwoFragments,
   replaceAllContentInEditorWith,
 } from 'volto-slate/utils';
-import { splitEditorInTwoLists } from '../../utils';
-
-const isPointAtRoot = (point) => point.path.length === 2;
-
-const isRangeAtRoot = (range) =>
-  isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
-
-/**
- * Has the node an empty text
- * TODO: try Node.string
- */
-const isBlockTextEmpty = (node) => {
-  const lastChild = node.children[node.children.length - 1];
-
-  return Text.isText(lastChild) && !lastChild.text.length;
-};
+import { splitEditorInTwoLists } from 'volto-slate/utils';
 
 /**
  * @param {Editor} editor
@@ -63,16 +48,6 @@ const insertNewListItem = (
   if (select) {
     Transforms.select(editor, at);
   }
-};
-
-const matchParagraphWithSelection = (editor, { paragraphPath }) => {
-  const start = Editor.start(editor, paragraphPath);
-  const end = Editor.end(editor, paragraphPath);
-
-  const isStart = Point.equals(editor.selection.anchor, start);
-  const isEnd = Point.equals(editor.selection.anchor, end);
-
-  return [isStart, isEnd];
 };
 
 const handleBreakInListItem = (

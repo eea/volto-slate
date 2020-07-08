@@ -8,15 +8,16 @@ import * as slateConfig from './editor/config';
 import installDefaultPlugins from './editor/plugins';
 
 import { TextBlockView, TextBlockEdit } from './TextBlock';
-// import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
 import {
-  handleBackspaceInList,
-  joinWithPreviousBlock,
-  joinWithNextBlock,
-  softBreak,
-  goUp,
   goDown,
+  goUp,
+  handleBackspaceInList,
+  joinWithNextBlock,
+  joinWithPreviousBlock,
+  softBreak,
 } from './TextBlock/keyboard';
+import { withDeleteSelectionOnEnter } from './editor/extensions';
+import { withSplitBlocksOnBreak } from './TextBlock/extensions';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {
@@ -40,16 +41,27 @@ const applyConfig = (config) => {
   };
 
   config.settings.defaultBlockType = 'slate';
+
   config.settings.slate = {
-    textblockExtensions: [], // withDeserializeHtml
+    // TODO: should we inverse order? First here gets executed last
+    textblockExtensions: [withSplitBlocksOnBreak, withDeleteSelectionOnEnter], // withDeserializeHtml
+
+    // Pluggable handlers for the onKeyDown event of <Editable />
+    // Order matters here. A handler can return `true` to stop executing any
+    // following handler
     textblockKeyboardHandlers: {
-      Backspace: [handleBackspaceInList, joinWithPreviousBlock],
-      Delete: [joinWithNextBlock],
+      Backspace: [
+        handleBackspaceInList,
+        joinWithPreviousBlock, // join with previous block
+      ],
+      Delete: [
+        joinWithNextBlock, // join with next block
+      ],
       Enter: [
         softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
-      ArrowUp: [goUp],
-      ArrowDown: [goDown],
+      ArrowUp: [goUp], // Move up to previous block
+      ArrowDown: [goDown], // Move down to next block
     },
     ...slateConfig,
   };

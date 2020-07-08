@@ -1,11 +1,4 @@
 import React from 'react';
-import {
-  MarkButton,
-  BlockButton,
-  Separator,
-  Expando,
-} from 'volto-slate/editor/ui';
-import { createEmptyParagraph } from 'volto-slate/utils';
 
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
@@ -16,7 +9,12 @@ import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
+
+import { createEmptyParagraph } from 'volto-slate/utils';
+
+import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType } from './decorate';
+import { withDeleteSelectionOnEnter } from './extensions';
 
 // Registry of available buttons
 export const buttons = {
@@ -73,7 +71,7 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 //
 // Each extension is a simple mutator function with signature: editor =>
 // editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
-export const extensions = [];
+export const extensions = [withDeleteSelectionOnEnter];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Node } from 'slate';
+import { Node, Text } from 'slate';
+
 import { settings } from '~/config';
-import { Text as SlateText } from 'slate';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
@@ -37,7 +37,7 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
 
 export const serializeNodes = (nodes) =>
   (nodes || []).map((node) => {
-    if (SlateText.isText(node)) {
+    if (Text.isText(node)) {
       return Leaf({
         leaf: node,
         text: node,

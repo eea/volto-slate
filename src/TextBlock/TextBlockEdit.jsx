@@ -1,6 +1,6 @@
 /**
  * A lot of inspiration from the great https://github.com/udecode/slate-plugins/,
- * especially the list element.
+ * especially the list element and autoformat handlers.
  */
 
 import React, { useMemo, useState } from 'react';

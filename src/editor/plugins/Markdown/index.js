@@ -1,11 +1,13 @@
-import { withShortcuts } from './extensions';
+import { withAutoformat } from './extensions';
+import { autoformatRules } from './constants';
 
-// TODO: this plugin seems to not work well
-// (e.g. # and ## characters do not turn the block into a header)
 export default function install(config) {
   const { slate } = config.settings;
 
-  slate.extensions = [...(slate.extensions || []), withShortcuts];
+  slate.extensions = [
+    ...(slate.extensions || []),
+    withAutoformat({ rules: autoformatRules }),
+  ];
 
   return config;
 }

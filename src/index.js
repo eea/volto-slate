@@ -11,7 +11,7 @@ import { TextBlockView, TextBlockEdit } from './TextBlock';
 import {
   goDown,
   goUp,
-  handleBackspaceInList,
+  // handleBackspaceInList,
   joinWithNextBlock,
   joinWithPreviousBlock,
   softBreak,
@@ -51,7 +51,7 @@ const applyConfig = (config) => {
     // following handler
     textblockKeyboardHandlers: {
       Backspace: [
-        handleBackspaceInList,
+        // handleBackspaceInList,
         joinWithPreviousBlock, // join with previous block
       ],
       Delete: [

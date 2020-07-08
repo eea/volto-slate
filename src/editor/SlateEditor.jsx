@@ -66,7 +66,7 @@ const SlateEditor = ({
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
           initial_selection.current = defaultSelection;
-          Transforms.select(editor, defaultSelection);
+          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
         }
         return () => ReactEditor.blur(editor);
       }

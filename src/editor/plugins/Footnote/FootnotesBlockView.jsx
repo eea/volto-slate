@@ -42,11 +42,11 @@ const FootnotesBlockView = (props) => {
       {footnotes && (
         <ol>
           {footnotes.map(({ data }) => {
-            const { uuid, footnote } = data;
+            const { uid, footnote } = data;
             return (
-              <li key={uuid} id={`footnote-${uuid}`}>
+              <li key={uid} id={`footnote-${uid}`}>
                 {footnote}
-                <a href={`#ref-${uuid}`} aria-label="Back to content">
+                <a href={`#ref-${uid}`} aria-label="Back to content">
                   ↵
                 </a>
               </li>

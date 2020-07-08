@@ -3,14 +3,14 @@ import './public.less';
 
 export const FootnoteElement = ({ attributes, children, element, mode }) => {
   const { data = {} } = element;
-  const { uuid = 'undefined' } = data;
+  const { uid = 'undefined' } = data;
 
   return (
     <>
       {mode === 'view' ? (
         <a
-          href={`#footnote-${uuid}`}
-          id={`ref-${uuid}`}
+          href={`#footnote-${uid}`}
+          id={`ref-${uid}`}
           aria-describedby="footnote-label"
         >
           {children}

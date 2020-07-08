@@ -17,7 +17,7 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from './constants';
 
-import { v4 as uuidv4 } from 'uuid';
+import { footnoteKeyGen } from './utils';
 
 import './editor.less';
 
@@ -76,7 +76,7 @@ const FootnoteButton = () => {
       const { footnote } = formData;
       if (footnote) {
         Transforms.select(editor, selection);
-        insertFootnote(editor, { ...formData, uuid: uuidv4() });
+        insertFootnote(editor, { ...formData, uid: footnoteKeyGen() });
       } else {
         unwrapFootnote(editor);
       }

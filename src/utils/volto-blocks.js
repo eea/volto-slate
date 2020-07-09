@@ -102,3 +102,24 @@ export function getPreviousBlock(index, properties) {
 
   return [prevBlock, prevBlockId];
 }
+
+export function deconstructToVoltoBlocks(editor) {
+  // Explodes editor content into separate blocks
+  const blockProps = editor.getBlockProps();
+  const { index } = blockProps;
+
+  setTimeout(() => {
+    const [first, ...rest] = editor.children;
+    if (!rest.length) return;
+    for (let i = 0; i <= editor.children.length + 1; i++) {
+      Transforms.removeNodes(editor, { at: [0] });
+    }
+    Transforms.insertNodes(editor, first);
+
+    setTimeout(() => {
+      rest.reverse().forEach((block) => {
+        createSlateBlock([block], index, blockProps);
+      });
+    }, 0);
+  }, 0);
+}

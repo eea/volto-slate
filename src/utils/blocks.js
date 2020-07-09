@@ -1,6 +1,10 @@
 import { Editor, Transforms } from 'slate';
 import { settings } from '~/config';
-import { createSlateBlock, setEditorContent } from 'volto-slate/utils';
+import {
+  // createSlateBlock,
+  // setEditorContent,
+  deconstructToVoltoBlocks,
+} from 'volto-slate/utils';
 
 export function createEmptyParagraph() {
   return {
@@ -40,6 +44,10 @@ export const changeBlockToList = (editor, format) => {
   Transforms.wrapNodes(editor, block);
 };
 
+/*
+ * Applies a block format unto a list item. Will split the list and deconstruct the
+ * block
+ */
 export const toggleFormatAsListItem = (editor, format) => {
   const { slate } = settings;
   Transforms.unwrapNodes(editor, {
@@ -51,9 +59,12 @@ export const toggleFormatAsListItem = (editor, format) => {
     type: format,
   });
 
-  console.log('list editor', editor.children);
+  deconstructToVoltoBlocks(editor);
 };
 
+/*
+ * Toggles between list types by exploding the block
+ */
 export const switchListType = (editor, format) => {
   const { slate } = settings;
   Transforms.unwrapNodes(editor, {
@@ -63,24 +74,7 @@ export const switchListType = (editor, format) => {
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
 
-  // Explodes editor content into separate blocks
-  const blockProps = editor.getBlockProps();
-  const { index } = blockProps;
-
-  setTimeout(() => {
-    const [first, ...rest] = editor.children;
-    if (!rest.length) return;
-    for (let i = 0; i <= editor.children.length + 1; i++) {
-      Transforms.removeNodes(editor, { at: [0] });
-    }
-    Transforms.insertNodes(editor, first);
-
-    setTimeout(() => {
-      rest.reverse().forEach((block) => {
-        createSlateBlock([block], index, blockProps);
-      });
-    }, 0);
-  }, 0);
+  deconstructToVoltoBlocks(editor);
 };
 
 export const toggleBlock = (editor, format) => {

@@ -43,21 +43,22 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   Editor.deleteForward(editor, { unit: 'character' });
 }
 
-export function createAndSelectNewSlateBlock(
-  value,
-  index,
-  { onChangeBlock, onAddBlock, onSelectBlock },
-) {
-  // add a new block
+export function createSlateBlock(value, index, { onChangeBlock, onAddBlock }) {
+  console.log('createSlate', value, index);
   const id = onAddBlock('slate', index + 1);
 
-  // change the new block
   const options = {
     '@type': 'slate',
     value: JSON.parse(JSON.stringify(value)),
     plaintext: serializeNodesToText(value),
   };
   onChangeBlock(id, options);
+  return id;
+}
+
+export function createAndSelectNewSlateBlock(value, index, props) {
+  const id = createSlateBlock(value, index, props);
+  const { onSelectBlock } = props;
   onSelectBlock(id);
   return id;
 }

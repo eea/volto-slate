@@ -87,6 +87,8 @@ export const keyDownHandlers = {};
 
 export const listTypes = ['numbered-list', 'bulleted-list'];
 
+export const defaultBlockType = 'paragraph';
+
 // default rendered elements
 export const elements = {
   'bulleted-list': ({ attributes, children }) => (

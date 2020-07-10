@@ -27,7 +27,24 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
       : null;
 
   return mode === 'view' ? (
-    children
+    typeof children === 'string' ? (
+      children.split('\n').map((t, i) => {
+        return (
+          <>
+            {children.split('\n').length > i ? (
+              <>
+                {t}
+                <br />
+              </>
+            ) : (
+              t
+            )}
+          </>
+        );
+      })
+    ) : (
+      children
+    )
   ) : (
     <span {...attributes} className={klass}>
       {children}

@@ -3,6 +3,7 @@ import { isCursorInList } from 'volto-slate/utils';
 
 export function moveListItemUp({ editor, event }) {
   if (!(event.ctrlKey && isCursorInList(editor))) return;
+  console.log(editor.selection);
   const { anchor } = editor.selection;
 
   // don't allow in first line list item

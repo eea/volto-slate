@@ -75,18 +75,11 @@ export function isCursorAtBlockStart(editor) {
   //
   // fixSelection(editor);
 
-  // if the selection is collapsed
   if (editor.selection && Range.isCollapsed(editor.selection)) {
-    // if the selection is at root block or in the first block
-    if (
-      !editor.selection.anchor.path ||
-      editor.selection.anchor.path[0] === 0
-    ) {
-      // if the selection is on the first character of that block
-      if (editor.selection.anchor.offset === 0) {
-        return true;
-      }
-    }
+    const { anchor } = editor.selection;
+    return anchor.offset > 0
+      ? false
+      : anchor.path.reduce((acc, x) => acc + x, 0) === 0;
   }
   return false;
 }

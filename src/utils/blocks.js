@@ -88,10 +88,9 @@ export const toggleBlock = (editor, format) => {
   const wantsList = listTypes.includes(format);
 
   if (isListItem && !wantsList) {
-    // TODO: test if all list items are selected, then toggle off list
     toggleFormatAsListItem(editor, format);
   } else if (isListItem && wantsList && !isActive) {
-    switchListType(editor, format); // this might break blocks
+    switchListType(editor, format); // this will deconstruct to Volto blocks
   } else if (!isListItem && wantsList) {
     changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {

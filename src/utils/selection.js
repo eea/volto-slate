@@ -3,8 +3,12 @@ import { Editor, Transforms, Range, Node } from 'slate';
 
 /**
  * Get the nodes with a type included in `types` in the selection (from root to leaf).
+ *
+ * @param {} editor
+ * @param {} types
+ * @param {} options
  */
-export const getSelectionNodesByType = (editor, types, options = {}) => {
+export function getSelectionNodesByType(editor, types, options = {}) {
   types = castArray(types);
 
   return Editor.nodes(editor, {
@@ -13,7 +17,7 @@ export const getSelectionNodesByType = (editor, types, options = {}) => {
     },
     ...options,
   });
-};
+}
 
 /**
  * Is there a node with a type included in `types` in the selection (from root to leaf).
@@ -23,10 +27,22 @@ export function isNodeInSelection(editor, types, options = {}) {
   return !!match;
 }
 
+/**
+ * getSelectionNodesArrayByType.
+ *
+ * @param {} editor
+ * @param {} types
+ * @param {} options
+ */
 export function getSelectionNodesArrayByType(editor, types, options = {}) {
   return Array.from(getSelectionNodesByType(editor, types, options));
 }
 
+/**
+ * getMaxRange.
+ *
+ * @param {} editor
+ */
 export function getMaxRange(editor) {
   const maxRange = {
     anchor: Editor.start(editor, [0]),
@@ -35,6 +51,11 @@ export function getMaxRange(editor) {
   return maxRange;
 }
 
+/**
+ * selectAll.
+ *
+ * @param {} editor
+ */
 export function selectAll(editor) {
   Transforms.select(editor, getMaxRange(editor));
 }
@@ -43,7 +64,15 @@ export function selectAll(editor) {
 // Range.isCollapsed(editor.selection) &&
 // Point.equals(editor.selection.anchor, Editor.start(editor, []))
 
+/**
+ * isCursorAtBlockStart.
+ *
+ * @param {} editor
+ */
 export function isCursorAtBlockStart(editor) {
+  // TODO: this is not working properly, it needs to be fixed.
+  // It does not work properly with lists
+  //
   // fixSelection(editor);
 
   // if the selection is collapsed
@@ -62,6 +91,11 @@ export function isCursorAtBlockStart(editor) {
   return false;
 }
 
+/**
+ * isCursorAtBlockEnd.
+ *
+ * @param {} editor
+ */
 export function isCursorAtBlockEnd(editor) {
   // fixSelection(editor);
 
@@ -84,6 +118,11 @@ export function isCursorAtBlockEnd(editor) {
   return false;
 }
 
+/**
+ * getFragmentFromStartOfSelectionToEndOfEditor.
+ *
+ * @param {} editor
+ */
 export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
   const r = Editor.range(
     editor,
@@ -102,6 +141,11 @@ export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
   return Editor.fragment(editor, r);
 }
 
+/**
+ * getFragmentFromBeginningOfEditorToStartOfSelection.
+ *
+ * @param {} editor
+ */
 export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
   return Editor.fragment(
     editor,

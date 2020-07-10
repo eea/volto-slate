@@ -1,15 +1,7 @@
+// TODO: need to redo this
+//
 import { Editor } from 'slate';
 import { LISTTYPES } from 'volto-slate/constants';
-
-export function listEntryAboveSelection(editor) {
-  // the first node entry above the selection (towards the root) that is a list (ordered or bulleted) (a block)
-  return Editor.above(editor, {
-    match: (n) =>
-      LISTTYPES.includes(
-        typeof n.type === 'undefined' ? n.type : n.type.toString(),
-      ),
-  });
-}
 
 // toggle list type
 // preserves structure of list if going from a list type to another

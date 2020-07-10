@@ -25,7 +25,6 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   Editor.deleteBackward(editor, { unit: 'character' });
 }
 
-// TODO: should be made generic, no need for "nextBlock.value"
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   // To work around current architecture limitations, read the value from next
   // block. Replace it in the current editor (over which we have control), join
@@ -44,7 +43,6 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
 }
 
 export function createSlateBlock(value, index, { onChangeBlock, onAddBlock }) {
-  console.log('createSlate', value, index);
   const id = onAddBlock('slate', index + 1);
 
   const options = {
@@ -108,18 +106,21 @@ export function deconstructToVoltoBlocks(editor) {
   const blockProps = editor.getBlockProps();
   const { index } = blockProps;
 
-  setTimeout(() => {
-    const [first, ...rest] = editor.children;
-    if (!rest.length) return;
-    for (let i = 0; i <= editor.children.length + 1; i++) {
-      Transforms.removeNodes(editor, { at: [0] });
-    }
-    Transforms.insertNodes(editor, first);
-
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      rest.reverse().forEach((block) => {
-        createSlateBlock([block], index, blockProps);
-      });
+      const [first, ...rest] = editor.children;
+      if (!rest.length) return;
+      for (let i = 0; i <= editor.children.length + 1; i++) {
+        Transforms.removeNodes(editor, { at: [0] });
+      }
+      Transforms.insertNodes(editor, first);
+
+      setTimeout(() => {
+        rest.reverse().forEach((block) => {
+          createSlateBlock([block], index, blockProps);
+        });
+      }, 0);
     }, 0);
-  }, 0);
+    resolve();
+  });
 }

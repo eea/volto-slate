@@ -1,3 +1,6 @@
+// TODO: we could decorate the editor with these methods, instead of having
+// the here separate.
+
 import codeSVG from '@plone/volto/icons/code.svg';
 
 import { slate_block_selections } from './reducers';
@@ -11,7 +14,7 @@ import { TextBlockView, TextBlockEdit } from './TextBlock';
 import {
   goDown,
   goUp,
-  // handleBackspaceInList,
+  backspaceInList,
   joinWithNextBlock,
   joinWithPreviousBlock,
   softBreak,
@@ -51,7 +54,7 @@ const applyConfig = (config) => {
     // following handler
     textblockKeyboardHandlers: {
       Backspace: [
-        // handleBackspaceInList,
+        backspaceInList,
         joinWithPreviousBlock, // join with previous block
       ],
       Delete: [

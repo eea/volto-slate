@@ -1,5 +1,7 @@
 import { isCursorAtBlockStart, isCursorAtBlockEnd } from 'volto-slate/utils';
 
+// TODO: test for modifier key (ctrl)
+
 export function goUp({ editor, event }) {
   if (isCursorAtBlockStart(editor)) {
     const props = editor.getBlockProps();

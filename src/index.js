@@ -18,6 +18,8 @@ import {
   joinWithNextBlock,
   joinWithPreviousBlock,
   softBreak,
+  moveListItemDown,
+  moveListItemUp,
 } from './TextBlock/keyboard';
 import { withDeleteSelectionOnEnter } from './editor/extensions';
 import { withSplitBlocksOnBreak } from './TextBlock/extensions';
@@ -63,8 +65,8 @@ const applyConfig = (config) => {
       Enter: [
         softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
-      ArrowUp: [goUp], // Move up to previous block
-      ArrowDown: [goDown], // Move down to next block
+      ArrowUp: [moveListItemUp, goUp], // Move up to previous block
+      ArrowDown: [moveListItemDown, goDown], // Move down to next block
     },
     ...slateConfig,
   };

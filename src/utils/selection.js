@@ -97,13 +97,13 @@ export function isCursorAtBlockEnd(editor) {
     const anchor = editor.selection?.anchor || {};
 
     // the last block node in the editor
-    const [n] = Node.last(editor, []);
+    const [node] = Node.last(editor, []);
 
     if (
       // if the node with the selection is the last block node
-      Node.get(editor, anchor.path) === n &&
+      Node.get(editor, anchor.path) === node &&
       // if the collapsed selection is at the end of the last block node
-      anchor.offset === n.text.length
+      anchor.offset === node.text.length
     ) {
       return true;
     }

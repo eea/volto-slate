@@ -11,8 +11,6 @@ export function backspaceInList({ editor, event }) {
 
   // split the first line as an independent block
   if (isCursorAtBlockStart(editor)) {
-    console.log('at block start');
-
     const { slate } = settings;
 
     Transforms.liftNodes(editor, {

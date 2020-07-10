@@ -6,16 +6,19 @@ import {
   getPreviousBlock,
 } from 'volto-slate/utils';
 
+/**
+ * goUp.
+ *
+ * @param {}
+ */
 export function goUp({ editor, event }) {
   if (isCursorAtBlockStart(editor)) {
     const props = editor.getBlockProps();
     const { onFocusPreviousBlock, block, blockNode } = props;
 
     const prev = getPreviousBlock(props.index, props.properties);
-    if (prev?.['@type'] !== 'slate')
+    if (!prev || prev[0]?.['@type'] !== 'slate')
       return onFocusPreviousBlock(block, blockNode.current);
-
-    console.log('prev', prev);
 
     const [slateBlock, id] = prev;
     const pseudoEditor = { children: slateBlock.value };
@@ -30,13 +33,18 @@ export function goUp({ editor, event }) {
   }
 }
 
+/**
+ * goDown.
+ *
+ * @param {}
+ */
 export function goDown({ editor, event }) {
   if (isCursorAtBlockEnd(editor)) {
     const props = editor.getBlockProps();
     const { onFocusNextBlock, block, blockNode } = props;
 
     const next = getNextBlock(props.index, props.properties);
-    if (next?.['@type'] !== 'slate')
+    if (!next || next[0]?.['@type'] !== 'slate')
       return onFocusNextBlock(block, blockNode.current);
 
     const [slateBlock, id] = next;

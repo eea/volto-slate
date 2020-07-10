@@ -15,6 +15,7 @@ import {
   goDown,
   goUp,
   backspaceInList,
+  indentListItems,
   joinWithNextBlock,
   joinWithPreviousBlock,
   softBreak,
@@ -67,6 +68,7 @@ const applyConfig = (config) => {
       ],
       ArrowUp: [moveListItemUp, goUp], // Move up to previous block
       ArrowDown: [moveListItemDown, goDown], // Move down to next block
+      Tab: [indentListItems],
     },
     ...slateConfig,
   };

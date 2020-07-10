@@ -108,6 +108,8 @@ export const elements = {
   ),
   paragraph: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  nop: ({ attributes, children, mode }) =>
+    mode === 'view' ? children : <div {...attributes}>{children}</div>,
 };
 
 // Order of definition here is important (higher = inner element)

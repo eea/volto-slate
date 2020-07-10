@@ -6,6 +6,8 @@ export function moveListItemUp({ editor, event }) {
   console.log(editor.selection);
   const { anchor } = editor.selection;
 
+  // TODO: this will need reimplementation when we have sublists
+
   // don't allow in first line list item
   if (anchor.path.slice(1).reduce((acc, n) => acc + n, 0) === 0) return;
 

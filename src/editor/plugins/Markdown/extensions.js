@@ -1,5 +1,5 @@
 import { SHORTCUTS } from './constants';
-import { toggleList } from 'volto-slate/utils.js';
+import { toggleList } from 'volto-slate/utils';
 import { Editor, Transforms, Range } from 'slate';
 
 export const withShortcuts = (editor) => {

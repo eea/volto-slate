@@ -1,8 +1,6 @@
 import React from 'react';
 
-const withTestingFeatures = (slateEditorComponent) => {
-  const Component = slateEditorComponent;
-
+const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
     let ref = React.useRef();
 
@@ -42,7 +40,7 @@ const withTestingFeatures = (slateEditorComponent) => {
     });
 
     return (
-      <Component
+      <WrappedComponent
         data-slate-value={JSON.stringify(props.value, null, 2)}
         data-slate-selection={JSON.stringify(ref?.current?.selection, null, 2)}
         testingEditorRef={ref}

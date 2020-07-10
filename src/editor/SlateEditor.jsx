@@ -11,6 +11,7 @@ import { SlateToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
+import { fixSelection } from 'volto-slate/utils';
 // import { toggleMark } from './utils';
 
 import './less/editor.less';
@@ -19,7 +20,6 @@ const SlateEditor = ({
   selected,
   value,
   onChange,
-  data,
   placeholder,
   onKeyDown,
   properties,
@@ -32,12 +32,8 @@ const SlateEditor = ({
 
   const [showToolbar, setShowToolbar] = useState(false);
 
-  // the use of useRef here is very unusual. The code only works like this,
-  // but if possible a better method should be used
-  const paramExtensions = React.useRef(extensions || []);
-
   const defaultExtensions = slate.extensions;
-  const editor = React.useMemo(() => {
+  let editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
 
     // TODO: this needs cleanup
@@ -45,11 +41,12 @@ const SlateEditor = ({
       // FIXME: commented out for testing reasons:
       // withDelete,
       // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...paramExtensions.current,
       ...defaultExtensions,
     ];
     return plugins.reduce((acc, apply) => apply(acc), raw);
   }, [defaultExtensions]);
+
+  editor = extensions.reduce((acc, apply) => apply(acc), editor);
 
   const initial_selection = React.useRef();
 
@@ -59,28 +56,23 @@ const SlateEditor = ({
     if (selected) {
       ReactEditor.focus(editor);
 
+      // This makes the Backspace key work properly in block.
+      // Don't remove it, unless this test passes:
+      // - with the Slate block unselected, click in the block.
+      // - Hit backspace. If it deletes, then the test passes
+
+      fixSelection(editor);
+
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
           initial_selection.current = defaultSelection;
-          Transforms.select(editor, defaultSelection);
+          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
         }
         return () => ReactEditor.blur(editor);
       }
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected, defaultSelection]);
-
-  // Fixes a Slate bug with selection handling when the block has just been selected
-  React.useEffect(() => {
-    const sel = window.getSelection();
-
-    // check for sel to be defined for the case of unit tests
-    if (sel && selected && sel.type === 'None') {
-      // in case this block was programatically created (by enter/backspace key)
-      const el = ReactEditor.toDOMNode(editor, editor);
-      sel.collapse(el, 0);
-    }
-  });
 
   const initialValue = slate.defaultValue();
 
@@ -103,9 +95,7 @@ const SlateEditor = ({
   return (
     <div
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
-      {...props}
     >
-      {/* {block} - {selected ? 'sel' : 'notsel'} */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         <SlateToolbar
           selected={selected}

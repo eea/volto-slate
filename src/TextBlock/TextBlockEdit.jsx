@@ -11,17 +11,18 @@ import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 import { settings } from '~/config';
 
-import { setSlateBlockSelection } from 'volto-slate/actions';
+import { saveSlateBlockSelection } from 'volto-slate/actions';
 import SlateEditor from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
-import { withList, withDeserializeHtml } from './extensions';
-import {
-  getBackspaceKeyDownHandlers,
-  getFocusRelatedKeyDownHandlers,
-  softBreakHandler,
-  onKeyDownList,
-} from './keyDownHandlers';
+import { handleKey } from './keyboard';
+
+// import { withList, withDeserializeHtml } from './extensions';
+// import {
+//   getBackspaceKeyDownHandlers,
+//   getFocusRelatedKeyDownHandlers,
+//   onKeyDownList,
+// } from './keyDownHandlers';
 
 const TextBlockEdit = (props) => {
   const {
@@ -35,71 +36,75 @@ const TextBlockEdit = (props) => {
     onSelectBlock,
     properties,
     selected,
-    setSlateBlockSelection,
-    onDeleteBlock,
-    onFocusNextBlock,
-    onFocusPreviousBlock,
-    blockNode,
   } = props;
+
+  // console.log('properties', properties);
 
   const { slate } = settings;
   const { textblockExtensions } = slate;
   const { value } = data;
   const [addNewBlockOpened, setAddNewBlockOpened] = useState();
 
-  // TODO: replace these lines with the comment below
-  const keyDownHandlers = useMemo(() => {
-    return {
-      ...getBackspaceKeyDownHandlers({
-        block,
-        onDeleteBlock,
-        index,
-        properties,
-        setSlateBlockSelection,
-        onChangeBlock,
-        onFocusPreviousBlock,
-        blockNode,
-      }),
-      ...getFocusRelatedKeyDownHandlers({
-        block,
-        blockNode,
-        onFocusNextBlock,
-        onFocusPreviousBlock,
-      }),
-      ...slate.keyDownHandlers,
-    };
-  }, [
-    block,
-    onDeleteBlock,
-    index,
-    properties,
-    setSlateBlockSelection,
-    onChangeBlock,
-    onFocusPreviousBlock,
-    blockNode,
-    onFocusNextBlock,
-    slate.keyDownHandlers,
-  ]);
-  const configuredWithList = useMemo(
-    () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
-    [index, onAddBlock, onChangeBlock, onSelectBlock],
-  );
+  // const keyDownHandlers = useMemo(() => {
+  //   return {
+  //     ...getBackspaceKeyDownHandlers({
+  //       block,
+  //       onDeleteBlock,
+  //       index,
+  //       properties,
+  //       saveSlateBlockSelection,
+  //       onChangeBlock,
+  //       onFocusPreviousBlock,
+  //       blockNode,
+  //     }),
+  //     ...getFocusRelatedKeyDownHandlers({
+  //       block,
+  //       blockNode,
+  //       onFocusNextBlock,
+  //       onFocusPreviousBlock,
+  //     }),
+  //     ...slate.keyDownHandlers,
+  //   };
+  // }, [
+  //   block,
+  //   blockNode,
+  //   index,
+  //   onFocusNextBlock,
+  //   onFocusPreviousBlock,
+  //   onDeleteBlock,
+  //   onChangeBlock,
+  //   properties,
+  //   saveSlateBlockSelection,
+  // ]);
+  // const configuredWithList = useMemo(
+  //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
+  //   [index, onAddBlock, onChangeBlock, onSelectBlock],
+  // );
   // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
   //withBlockProps, withList
 
-  const withBlockProps = (editor) => {
-    editor.blockProps = props;
-    return editor;
-  };
+  // let timeoutTillRerender = null;
+  // React.useEffect(() => {
+  //   return () => {
+  //     if (timeoutTillRerender) {
+  //       clearTimeout(timeoutTillRerender);
+  //     }
+  //   };
+  // });
 
-  let timeoutTillRerender = null;
-  React.useEffect(() => {
-    return () => {
-      if (timeoutTillRerender) {
-        clearTimeout(timeoutTillRerender);
-      }
-    };
-  });
+  // const getLatestProps = () => {
+  //   const [contextData] = useFormContext();
+  //   return contextData;
+  // };
+  const withBlockProperties = React.useCallback(
+    (editor) => {
+      editor.getBlockProps = () => {
+        return props;
+      };
+      return editor;
+    },
+    [props],
+  );
 
   return (
     <>
@@ -111,21 +116,15 @@ const TextBlockEdit = (props) => {
         index={index}
         properties={properties}
         onAddBlock={onAddBlock}
-        extensions={[
-          withBlockProps, // needs to be first, before other block extensions
-          configuredWithList,
-          withDeserializeHtml,
-          ...textblockExtensions,
-        ]}
+        extensions={[withBlockProperties, ...textblockExtensions]}
         onSelectBlock={onSelectBlock}
         value={value}
-        data={data}
         block={block}
         onChange={(value, selection) => {
           // without using setTimeout, the user types characters on the right side of the text cursor
-          timeoutTillRerender = setTimeout(() => {
-            setSlateBlockSelection(block, selection);
-          });
+          // timeoutTillRerender = setTimeout(() => {
+          //   saveSlateBlockSelection(block, selection);
+          // });
 
           onChangeBlock(block, {
             ...data,
@@ -133,22 +132,7 @@ const TextBlockEdit = (props) => {
             plaintext: serializeNodesToText(value || []),
           });
         }}
-        onKeyDown={({ editor, event }) => {
-          softBreakHandler(event, editor);
-
-          if (event.isDefaultPrevented()) {
-            return;
-          }
-
-          // TODO: replace these lines with the comment below:
-          keyDownHandlers[event.key] &&
-            keyDownHandlers[event.key]({
-              ...props,
-              editor,
-              event,
-            });
-          // configuredOnKeyDownList(event, editor);
-        }}
+        onKeyDown={handleKey}
         selected={selected}
         placeholder="Enter some rich text…"
       />
@@ -170,5 +154,5 @@ const TextBlockEdit = (props) => {
 };
 
 export default connect(null, {
-  setSlateBlockSelection,
+  saveSlateBlockSelection, // needed to dispatch action in keyboard handlers
 })(TextBlockEdit);

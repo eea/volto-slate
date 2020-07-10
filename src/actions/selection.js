@@ -1,6 +1,6 @@
-export default function setSlateBlockSelection(blockid, selection) {
+export default function saveSlateBlockSelection(blockid, selection) {
   return {
-    type: 'SET_SLATE_BLOCK_SELECTION',
+    type: 'SAVE_SLATE_BLOCK_SELECTION',
     blockid,
     selection,
   };

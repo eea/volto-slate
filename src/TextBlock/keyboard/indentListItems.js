@@ -30,25 +30,32 @@ export function indentListItems({ editor, event }) {
 
   const isList = ({ type }) => slate.listTypes.includes(type);
 
+  // console.log('editor', editor.children);
+
   const prevSiblingPath = getPreviousSiblingPath(listItemPath);
   if (!!prevSiblingPath) {
     const sibling = Node.get(editor, prevSiblingPath);
     console.log('sibling', sibling);
 
-    const [lastChild, lastChildPath] = Editor.last(editor, prevSiblingPath);
+    const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
+    // const allChildren = Array.from(
+    //   Editor.nodes(editor, { at: prevSiblingPath, mode: 'lowest' }),
+    // );
 
     // Slate prefers that block elements sit next to other block elements
-    if (Text.isText(lastChild) || Editor.isInline(editor, lastChild)) {
+    // If the sibling node has inlines then it needs a wrapper node over them
+    if (Editor.hasInlines(editor, sibling)) {
       Transforms.wrapNodes(
         editor,
         {
           type: 'nop',
           children: [],
         },
-        { at: lastChildPath },
+        { at: prevSiblingPath, mode: 'lowest', match: (n) => n !== sibling },
       );
     }
 
+    // TODO: this might be wrong
     const newp = lastChildPath.slice(0, lastChildPath.length - 1).concat(1);
     Transforms.wrapNodes(
       editor,
@@ -62,4 +69,7 @@ export function indentListItems({ editor, event }) {
       to: newp,
     });
   }
+
+  // console.log('editor', editor.children);
 }
+// Text.isText(lastChild) || Editor.isInline(editor, lastChild)

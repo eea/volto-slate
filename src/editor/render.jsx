@@ -31,7 +31,8 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
       children.split('\n').map((t, i) => {
         return (
           <>
-            {children.split('\n').length > i ? (
+            {children.indexOf('\n') > -1 &&
+            children.split('\n').length - 1 > i ? (
               <>
                 {t}
                 <br />

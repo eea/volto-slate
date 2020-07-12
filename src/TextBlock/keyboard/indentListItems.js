@@ -31,13 +31,8 @@ export function indentListItems({ editor, event }) {
   return event.shiftKey ? decreaseItemDepth(editor) : increaseItemDepth(editor);
 }
 
-// Text.isText(lastChild) || Editor.isInline(editor, lastChild)
-// const allChildren = Array.from(
-//   Editor.nodes(editor, { at: prevSiblingPath, mode: 'lowest' }),
-// );
-// const isList = ({ type }) => slate.listTypes.includes(type);
-
 const getPreviousSiblingPath = function (path) {
+  console.log(path);
   const last = path[path.length - 1];
 
   if (last <= 0) {
@@ -50,11 +45,13 @@ const getPreviousSiblingPath = function (path) {
 export function decreaseItemDepth(editor) {}
 
 export function increaseItemDepth(editor) {
+  console.log(editor.children, JSON.stringify(editor.children, null, ' '));
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === 'list-item',
+    mode: 'lowest',
   });
-  const [listItemNode, listItemPath] = match;
+  const [, listItemPath] = match; // current list item being indented
 
   let parents = Array.from(
     Node.ancestors(editor, listItemPath, { reverse: true }),
@@ -67,11 +64,10 @@ export function increaseItemDepth(editor) {
   if (!!prevSiblingPath) {
     const sibling = Node.get(editor, prevSiblingPath);
     const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
-    //
-    // Slate prefers that block elements sit next to other block elements
-    // If the sibling node has inlines then it needs a wrapper node over them
+
     if (Editor.hasInlines(editor, sibling)) {
-      console.log('hasinlines');
+      // Slate prefers that block elements sit next to other block elements
+      // If the sibling node has inlines then it needs a wrapper node over them
       Transforms.wrapNodes(
         editor,
         {
@@ -114,5 +110,13 @@ export function increaseItemDepth(editor) {
       at: listItemPath,
       to: newp,
     });
+  } else {
+    console.log('no prev');
   }
 }
+
+// Text.isText(lastChild) || Editor.isInline(editor, lastChild)
+// const allChildren = Array.from(
+//   Editor.nodes(editor, { at: prevSiblingPath, mode: 'lowest' }),
+// );
+// const isList = ({ type }) => slate.listTypes.includes(type);

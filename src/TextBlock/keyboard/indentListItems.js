@@ -13,7 +13,7 @@ import { settings } from '~/config';
  *      <li>something
  *        <ul>
  *          <li>else</li>
- *          </ul>
+ *        </ul>
  *      </li>
  *    </ul>
  * - So, when indenting a second-child, first-level list item, we look in the
@@ -22,13 +22,37 @@ import { settings } from '~/config';
  *   inline elements with block elements, so we need to first wrap the existing
  *   children in a "nop-ish" div. This div is not rendered at view time (see
  *   `editor/render.jsx`).
+ * - So we'll be producing markup like this:
+ *   <ul>
+ *     <li>
+ *        <div class="nop">something</div>
+ *        <ul>
+ *           <li>else</li>
+ *        </ul>
+ *     </li>
+ *  </ul>
+ *
+ *  We will treat next siblings to the current list item as following:
+ *  - <Tab> will indent only the current list item and its own children. This
+ *  requires wrapping the current <li> list item in a <ul/ol> list
+ *  - <C-Tab> will indent current list item and all its next sibligings in the
+ *  list.
+ *
+ *  Of course, when indenting/outdenting we always need to look at the previous
+ *  sibling, in case it already has a list that can "host" the current target
+ *  list item.
  *
  * @param {}
  */
 export function indentListItems({ editor, event }) {
   if (!isCursorInList(editor)) return;
 
-  return event.shiftKey ? decreaseItemDepth(editor) : increaseItemDepth(editor);
+  event.preventDefault();
+  event.stopPropagation();
+
+  return event.shiftKey
+    ? decreaseItemDepth(editor, event)
+    : increaseItemDepth(editor, event);
 }
 
 const getPreviousSiblingPath = function (path) {
@@ -42,9 +66,71 @@ const getPreviousSiblingPath = function (path) {
   return path.slice(0, -1).concat(last - 1);
 };
 
-export function decreaseItemDepth(editor) {}
+export function decreaseItemDepth(editor, event) {
+  const { slate } = settings;
 
-export function increaseItemDepth(editor) {
+  // Get the current list item
+  const [match] = Editor.nodes(editor, {
+    match: (n) => n.type === 'list-item',
+    mode: 'lowest',
+  });
+  const [, listItemPath] = match; // current list item being indented
+
+  // Get the parent list for the current list item
+  let parents = Array.from(
+    Node.ancestors(editor, listItemPath, { reverse: true }),
+  );
+  const [parentList, parentListPath] = parents.find(([node, path]) =>
+    slate.listTypes.includes(node.type),
+  );
+
+  // Get the parent list item for the parent
+
+  const [listParentNode, listParentPath] = Editor.parent(
+    editor,
+    parentListPath,
+  );
+
+  const newListItemPath = Path.next(listParentPath);
+  Transforms.moveNodes(editor, {
+    at: listItemPath,
+    to: newListItemPath,
+  });
+
+  // check if the old parent list has more children
+  // - If it doesn't delete it
+  // - if it does have children, take all next siblings and move them in
+  // a sublist
+  console.log(listParentPath);
+
+  const siblings = Editor.nodes(editor, parentListPath, {
+    reverse: true,
+    pass: ([node, path]) => true,
+  });
+
+  // Take all next siblings and move them in a new sublist
+
+  // Identify if we are the
+  // const [ln, lp] = Node.last(editor, parentListPath);
+  //
+  // const query = Array.from(
+  //   Editor.nodes(editor, {
+  //     at: lp,
+  //     mode: 'lowest',
+  //     match: (n) => {
+  //       return slate.listTypes.includes(n.type);
+  //     },
+  //   }),
+  // );
+  // const [prev] = query;
+  // const [prevNode, prevPath] = prev;
+  //
+  // console.log(prevPath, parentListPath);
+
+  return true;
+}
+
+export function increaseItemDepth(editor, event) {
   console.log(editor.children, JSON.stringify(editor.children, null, ' '));
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {
@@ -113,6 +199,8 @@ export function increaseItemDepth(editor) {
   } else {
     console.log('no prev');
   }
+
+  return true;
 }
 
 // Text.isText(lastChild) || Editor.isInline(editor, lastChild)
@@ -120,3 +208,16 @@ export function increaseItemDepth(editor) {
 //   Editor.nodes(editor, { at: prevSiblingPath, mode: 'lowest' }),
 // );
 // const isList = ({ type }) => slate.listTypes.includes(type);
+// const lastParentListChild
+// const res = Node.nodes(parentList, {
+//   from: parentListPath,
+//   reverse: true,
+// });
+// console.log('parent', Array.from(res));
+// const prevSiblingPath = getPreviousSiblingPath(listItemPath);
+// if (!!prevSiblingPath) {
+//   const sibling = Node.get(editor, prevSiblingPath);
+//   const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
+//
+//   console.log('sibling', sibling, lastChildPath);
+// }

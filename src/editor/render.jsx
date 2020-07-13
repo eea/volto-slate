@@ -54,23 +54,30 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
 };
 
 export const serializeNodes = (nodes) =>
-  (nodes || []).map((node) => {
+  (nodes || []).map((node, i) => {
     if (Text.isText(node)) {
-      return Leaf({
-        leaf: node,
-        text: node,
-        children: node.text,
-        attributes: { 'data-slate-leaf': true },
-        mode: 'view',
-      });
+      return (
+        <Leaf
+          leaf={node}
+          text={node}
+          attributes={{ 'data-slate-leaf': true }}
+          mode="view"
+          key={node.id || i}
+        >
+          {node.text}
+        </Leaf>
+      );
     }
-
-    return Element({
-      element: node,
-      children: serializeNodes(node.children),
-      attributes: { 'data-slate-node': 'element', ref: null },
-      mode: 'view',
-    });
+    return (
+      <Element
+        element={node}
+        attributes={{ 'data-slate-node': 'element', ref: null }}
+        mode="view"
+        key={i}
+      >
+        {serializeNodes(node.children)}
+      </Element>
+    );
   });
 
 export const serializeNodesToText = (nodes) => {

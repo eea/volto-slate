@@ -4,9 +4,11 @@ import {
   // createSlateBlock,
   // setEditorContent,
   deconstructToVoltoBlocks,
+  nanoid,
 } from 'volto-slate/utils';
 
 export function createEmptyParagraph() {
+  // TODO: rename to createEmptyBlock
   return {
     type: settings.slate.defaultBlockType,
     children: [{ text: '' }],
@@ -38,6 +40,7 @@ export const changeBlockToList = (editor, format) => {
   if (!match) {
     Transforms.setNodes(editor, {
       type: 'list-item',
+      id: nanoid(8),
     });
   }
   const block = { type: format, children: [] };

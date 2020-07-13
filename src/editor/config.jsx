@@ -14,7 +14,7 @@ import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType } from './decorate';
-import { withDeleteSelectionOnEnter } from './extensions';
+import { withDeleteSelectionOnEnter, withNodeIds } from './extensions';
 
 // Registry of available buttons
 export const buttons = {
@@ -71,7 +71,7 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 //
 // Each extension is a simple mutator function with signature: editor =>
 // editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
-export const extensions = [withDeleteSelectionOnEnter];
+export const extensions = [withDeleteSelectionOnEnter, withNodeIds];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {

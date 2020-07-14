@@ -1,10 +1,11 @@
 import { Editor, Path, Transforms, Node } from 'slate';
 import { isCursorInList } from 'volto-slate/utils';
+import { settings } from '~/config';
 
 export function moveListItemUp({ editor, event }) {
   if (!(event.ctrlKey && isCursorInList(editor))) return;
-  console.log(editor.selection);
   const { anchor } = editor.selection;
+  const { slate } = settings;
 
   // TODO: this will need reimplementation when we have sublists
 
@@ -12,7 +13,7 @@ export function moveListItemUp({ editor, event }) {
   if (anchor.path.slice(1).reduce((acc, n) => acc + n, 0) === 0) return;
 
   const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === 'list-item',
+    match: (n) => n.type === slate.listItemType,
   });
 
   const path = match[1];
@@ -30,8 +31,10 @@ export function moveListItemDown({ editor, event }) {
   if (!event.ctrlKey) return;
   if (!isCursorInList(editor)) return false;
 
+  const { slate } = settings;
+
   const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === 'list-item',
+    match: (n) => n.type === slate.listItemType,
   });
 
   const path = match[1];

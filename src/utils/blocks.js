@@ -33,13 +33,14 @@ export const toggleFormat = (editor, format) => {
 };
 
 export const changeBlockToList = (editor, format) => {
+  const { slate } = settings;
   const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === 'list-item',
+    match: (n) => n.type === slate.listItemType,
   });
 
   if (!match) {
     Transforms.setNodes(editor, {
-      type: 'list-item',
+      type: slate.listItemType,
       id: nanoid(8),
     });
   }
@@ -86,7 +87,7 @@ export const toggleBlock = (editor, format) => {
   const { slate } = settings;
   const { listTypes } = slate;
 
-  const isListItem = isBlockActive(editor, 'list-item');
+  const isListItem = isBlockActive(editor, slate.listItemType);
   const isActive = isBlockActive(editor, format);
   const wantsList = listTypes.includes(format);
 

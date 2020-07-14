@@ -66,8 +66,14 @@ const applyConfig = (config) => {
       Enter: [
         softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
-      ArrowUp: [moveListItemUp, goUp], // Move up to previous block
-      ArrowDown: [moveListItemDown, goDown], // Move down to next block
+      ArrowUp: [
+        moveListItemUp, // Move down a list with with Ctrl+down
+        goUp, // Move up to previous block
+      ],
+      ArrowDown: [
+        moveListItemDown, // Move down a list with with Ctrl+down
+        goDown, // Move down to next block
+      ],
       Tab: [indentListItems],
     },
     ...slateConfig,

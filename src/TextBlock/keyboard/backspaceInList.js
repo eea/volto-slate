@@ -1,4 +1,4 @@
-import { Transforms, Editor } from 'slate';
+import { Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   isCursorInList,
@@ -14,7 +14,7 @@ export function backspaceInList({ editor, event }) {
     const { slate } = settings;
 
     Transforms.liftNodes(editor, {
-      match: (n) => n.type === 'list-item',
+      match: (n) => n.type === slate.listItemType,
     });
 
     Transforms.setNodes(editor, { type: slate.defaultBlockType });

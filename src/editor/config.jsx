@@ -70,7 +70,8 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 // (editor) => editor
 //
 // Each extension is a simple mutator function with signature: editor =>
-// editor. See https://docs.slatejs.org/concepts/07-plugins and // https://docs.slatejs.org/concepts/06-editor
+// editor. See https://docs.slatejs.org/concepts/07-plugins and
+// https://docs.slatejs.org/concepts/06-editor
 export const extensions = [withDeleteSelectionOnEnter, withNodeIds];
 
 // Default hotkeys and the format they trigger
@@ -85,28 +86,19 @@ export const hotkeys = {
 // Raw shortcut/keydown handlers
 export const keyDownHandlers = {};
 
-export const listTypes = ['numbered-list', 'bulleted-list'];
-
-export const defaultBlockType = 'paragraph';
+// Paragraphs (as default type of blocks) and lists need special handling
+export const listTypes = ['ul', 'ol'];
+export const listItemType = 'li';
+export const defaultBlockType = 'p';
 
 // default rendered elements
 export const elements = {
-  'bulleted-list': ({ attributes, children }) => (
-    <ul {...attributes}>{children}</ul>
-  ),
-  'heading-two': ({ attributes, children }) => (
-    <h2 {...attributes}>{children}</h2>
-  ),
-  'heading-three': ({ attributes, children }) => (
-    <h3 {...attributes}>{children}</h3>
-  ),
-  'list-item': ({ attributes, children }) => (
-    <li {...attributes}>{children}</li>
-  ),
-  'numbered-list': ({ attributes, children }) => (
-    <ol {...attributes}>{children}</ol>
-  ),
-  paragraph: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+  h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
+  h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
+  li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
+  ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
+  p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   nop: ({ attributes, children, mode }) =>
     mode === 'view' ? children : <div {...attributes}>{children}</div>,

@@ -30,17 +30,15 @@ export const buttons = {
   ),
   code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
   'heading-two': (props) => (
-    <BlockButton format="heading-two" icon={headingIcon} {...props} />
+    <BlockButton format="h2" icon={headingIcon} {...props} />
   ),
   'heading-three': (props) => (
-    <BlockButton format="heading-three" icon={subheadingIcon} {...props} />
+    <BlockButton format="h3" icon={subheadingIcon} {...props} />
   ),
   'numbered-list': (props) => (
-    <BlockButton format="numbered-list" icon={listNumberedIcon} {...props} />
+    <BlockButton format="ol" icon={listNumberedIcon} {...props} />
   ),
-  'bulleted-list': (props) => (
-    <BlockButton format="bulleted-list" icon={listBulletIcon} />
-  ),
+  'bulleted-list': (props) => <BlockButton format="ul" icon={listBulletIcon} />,
   separator: (props) => <Separator />,
   expando: (props) => <Expando />,
 };

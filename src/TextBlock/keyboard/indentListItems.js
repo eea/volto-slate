@@ -5,7 +5,8 @@ import { settings } from '~/config';
 /**
  * indentListItems.
  *
- * This bit is quite involved. You need a good understanding of Slate API.
+ * This bit is quite involved. You need a good understanding of Slate API and
+ * Slate's DOM behaviour.
  *
  * The general idea is this:
  *  - we want to produce markup like:
@@ -45,27 +46,27 @@ import { settings } from '~/config';
  * @param {}
  */
 export function indentListItems({ editor, event }) {
+  // TODO: test if the cursor is at the beginning of the list item
   if (!isCursorInList(editor)) return;
 
   event.preventDefault();
   event.stopPropagation();
 
   return event.shiftKey
-    ? decreaseItemDepth(editor, event)
+    ? event.ctrlKey
+      ? decreaseMultipleItemsDepth(editor, event)
+      : decreaseItemDepth(editor, event)
+    : event.ctrlKey
+    ? increaseMultipleItemDepth(editor, event)
     : increaseItemDepth(editor, event);
 }
 
-const getPreviousSiblingPath = function (path) {
-  console.log(path);
-  const last = path[path.length - 1];
-
-  if (last <= 0) {
-    return null;
-  }
-
-  return path.slice(0, -1).concat(last - 1);
-};
-
+/**
+ * decreaseItemDepth.
+ *
+ * @param {} editor
+ * @param {} event
+ */
 export function decreaseItemDepth(editor, event) {
   const { slate } = settings;
 
@@ -80,21 +81,17 @@ export function decreaseItemDepth(editor, event) {
   let parents = Array.from(
     Node.ancestors(editor, listItemPath, { reverse: true }),
   );
-  const [parentList, parentListPath] = parents.find(([node, path]) =>
+  const [, parentListPath] = parents.find(([node, path]) =>
     slate.listTypes.includes(node.type),
   );
 
   // Get the parent list item for the parent
 
-  const [listParentNode, listParentPath] = Editor.parent(
-    editor,
-    parentListPath,
-  );
+  const [, listParentPath] = Editor.parent(editor, parentListPath);
 
-  const newListItemPath = Path.next(listParentPath);
   Transforms.moveNodes(editor, {
     at: listItemPath,
-    to: newListItemPath,
+    to: Path.next(listParentPath),
   });
 
   // check if the old parent list has more children
@@ -130,7 +127,16 @@ export function decreaseItemDepth(editor, event) {
   return true;
 }
 
+/**
+ * increaseItemDepth.
+ *
+ * Increases the depth of a single list item
+ *
+ * @param {} editor
+ * @param {} event
+ */
 export function increaseItemDepth(editor, event) {
+  console.log('increase');
   console.log(editor.children, JSON.stringify(editor.children, null, ' '));
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {
@@ -202,6 +208,21 @@ export function increaseItemDepth(editor, event) {
 
   return true;
 }
+
+export function increaseMultipleItemDepth(editor, event) {}
+
+export function decreaseMultipleItemsDepth(editor, event) {}
+
+const getPreviousSiblingPath = function (path) {
+  // Doesn't raise an error if no previous sibling exists
+  const last = path[path.length - 1];
+
+  if (last <= 0) {
+    return null;
+  }
+
+  return path.slice(0, -1).concat(last - 1);
+};
 
 // Text.isText(lastChild) || Editor.isInline(editor, lastChild)
 // const allChildren = Array.from(

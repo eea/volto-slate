@@ -10,4 +10,4 @@ export * from './random';
 export * from './selection';
 export * from './volto-blocks';
 
-export * from './todo';
+// export * from './todo';

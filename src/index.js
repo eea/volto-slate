@@ -1,5 +1,5 @@
 // TODO: we could decorate the editor with these methods, instead of having
-// the here separate.
+// them here separate.
 
 import codeSVG from '@plone/volto/icons/code.svg';
 
@@ -74,7 +74,9 @@ const applyConfig = (config) => {
         moveListItemDown, // Move down a list with with Ctrl+down
         goDown, // Move down to next block
       ],
-      Tab: [indentListItems],
+      Tab: [
+        indentListItems, // <tab> and <c-tab> behaviour for list items
+      ],
     },
     ...slateConfig,
   };

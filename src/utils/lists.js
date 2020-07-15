@@ -1,7 +1,27 @@
 // TODO: need to redo this
 //
 import { Editor } from 'slate';
-import { LISTTYPES } from 'volto-slate/constants';
+import { settings } from '~/config';
+
+export function isCursorInList(editor) {
+  const { slate } = settings;
+
+  const result = Editor.above(editor, {
+    match: (n) => n.type === settings.listItemType,
+  });
+
+  if (!result) {
+    return false;
+  }
+
+  const [listItemWithSelection] = result;
+
+  // whether the selection is inside a list item
+  const listItemCase =
+    Range.isCollapsed(editor.selection) && listItemWithSelection;
+
+  return listItemCase;
+}
 
 // toggle list type
 // preserves structure of list if going from a list type to another

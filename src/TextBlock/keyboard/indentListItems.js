@@ -3,7 +3,7 @@ import { isCursorInList } from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
- * indentListItems.
+ *
  *
  * This bit is quite involved. You need a good understanding of Slate API and
  * Slate's DOM behaviour.
@@ -43,6 +43,7 @@ import { settings } from '~/config';
  *  sibling, in case it already has a list that can "host" the current target
  *  list item.
  *
+ * @function indentListItems
  * @param {}
  */
 export function indentListItems({ editor, event }) {
@@ -157,7 +158,7 @@ export function increaseItemDepth(editor, event) {
     return;
   }
   const sibling = Node.get(editor, prevSiblingPath);
-  const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
+  const [, lastChildPath] = Node.last(editor, prevSiblingPath);
 
   if (Editor.hasInlines(editor, sibling)) {
     // Slate prefers that block elements sit next to other block elements
@@ -172,19 +173,17 @@ export function increaseItemDepth(editor, event) {
     );
   } else {
     const matches = Array.from(
-      Editor.nodes(editor, {
-        at: prevSiblingPath,
-        mode: 'lowest',
-        match: (n) => {
-          return slate.listTypes.includes(n.type);
-        },
+      Node.children(editor, prevSiblingPath, {
+        reverse: true,
       }),
     );
+
     if (matches) {
       // If a list type exists in the previous sibling, we simply move to it
-      const [, sublistPath] = matches[matches.length - 1];
-      const [, lastPath] = Editor.last(editor, sublistPath);
-      const newPath = Path.next(Path.parent(lastPath));
+      const [sublist, sublistPath] = matches.find(([node, path]) =>
+        slate.listTypes.includes(node.type),
+      );
+      const newPath = [...sublistPath, sublist.children.length];
       Transforms.moveNodes(editor, {
         at: listItemPath,
         to: newPath,
@@ -224,22 +223,3 @@ const getPreviousSiblingPath = function (path) {
 
   return path.slice(0, -1).concat(last - 1);
 };
-
-// Text.isText(lastChild) || Editor.isInline(editor, lastChild)
-// const allChildren = Array.from(
-//   Editor.nodes(editor, { at: prevSiblingPath, mode: 'lowest' }),
-// );
-// const isList = ({ type }) => slate.listTypes.includes(type);
-// const lastParentListChild
-// const res = Node.nodes(parentList, {
-//   from: parentListPath,
-//   reverse: true,
-// });
-// console.log('parent', Array.from(res));
-// const prevSiblingPath = getPreviousSiblingPath(listItemPath);
-// if (!!prevSiblingPath) {
-//   const sibling = Node.get(editor, prevSiblingPath);
-//   const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
-//
-//   console.log('sibling', sibling, lastChildPath);
-// }

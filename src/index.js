@@ -15,6 +15,7 @@ import {
   goDown,
   goUp,
   backspaceInList,
+  breakList,
   indentListItems,
   joinWithNextBlock,
   joinWithPreviousBlock,
@@ -58,27 +59,29 @@ const applyConfig = (config) => {
     textblockKeyboardHandlers: {
       Backspace: [
         backspaceInList,
-        joinWithPreviousBlock, // join with previous block
+        joinWithPreviousBlock, // Backspace at beginning of block joins with previous block
       ],
       Delete: [
-        joinWithNextBlock, // join with next block
+        joinWithNextBlock, // Delete at end of block joins with next block
       ],
       Enter: [
         softBreak, // Handles shift+Enter as a newline (<br/>)
+        breakList, // Handles Enter on an empty list item
       ],
       ArrowUp: [
         moveListItemUp, // Move down a list with with Ctrl+down
-        goUp, // Move up to previous block
+        goUp, // Select previous block
       ],
       ArrowDown: [
-        moveListItemDown, // Move down a list with with Ctrl+down
-        goDown, // Move down to next block
+        moveListItemDown, // Move down a list item with Ctrl+down
+        goDown, // Select next block
       ],
       Tab: [
         indentListItems, // <tab> and <c-tab> behaviour for list items
       ],
     },
-    ...slateConfig,
+
+    ...slateConfig, // TODO: is this correct for volto-slate addons?
   };
 
   installDefaultPlugins(config);

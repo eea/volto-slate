@@ -72,7 +72,7 @@ export function decreaseItemDepth(editor, event) {
 
   // Get the current list item
   const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === 'list-item',
+    match: (n) => n.type === slate.listItemType,
     mode: 'lowest',
   });
   const [, listItemPath] = match; // current list item being indented
@@ -136,11 +136,10 @@ export function decreaseItemDepth(editor, event) {
  * @param {} event
  */
 export function increaseItemDepth(editor, event) {
-  console.log('increase');
-  console.log(editor.children, JSON.stringify(editor.children, null, ' '));
+  // console.log(editor.children, JSON.stringify(editor.children, null, ' '));
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === 'list-item',
+    match: (n) => n.type === slate.listItemType,
     mode: 'lowest',
   });
   const [, listItemPath] = match; // current list item being indented
@@ -153,58 +152,60 @@ export function increaseItemDepth(editor, event) {
   );
 
   const prevSiblingPath = getPreviousSiblingPath(listItemPath);
-  if (!!prevSiblingPath) {
-    const sibling = Node.get(editor, prevSiblingPath);
-    const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
+  if (!prevSiblingPath) {
+    console.warn("Can't indent first list item in a list");
+    return;
+  }
+  const sibling = Node.get(editor, prevSiblingPath);
+  const [, lastChildPath] = Editor.last(editor, prevSiblingPath);
 
-    if (Editor.hasInlines(editor, sibling)) {
-      // Slate prefers that block elements sit next to other block elements
-      // If the sibling node has inlines then it needs a wrapper node over them
-      Transforms.wrapNodes(
-        editor,
-        {
-          type: 'nop',
-          children: [],
-        },
-        { at: prevSiblingPath, mode: 'lowest', match: (n) => n !== sibling },
-      );
-    } else {
-      const matches = Array.from(
-        Editor.nodes(editor, {
-          at: prevSiblingPath,
-          mode: 'lowest',
-          match: (n) => {
-            return slate.listTypes.includes(n.type);
-          },
-        }),
-      );
-      if (matches) {
-        const [, sublistPath] = matches[matches.length - 1];
-        const [, lastPath] = Editor.last(editor, sublistPath);
-        const newPath = Path.next(Path.parent(lastPath));
-        Transforms.moveNodes(editor, {
-          at: listItemPath,
-          to: newPath,
-        });
-        return true;
-      }
-    }
-
-    const newp = [...lastChildPath.slice(0, lastChildPath.length - 1), 1];
+  if (Editor.hasInlines(editor, sibling)) {
+    // Slate prefers that block elements sit next to other block elements
+    // If the sibling node has inlines then it needs a wrapper node over them
     Transforms.wrapNodes(
       editor,
-      { type: parentList.type, children: [] },
       {
-        at: listItemPath,
+        type: 'nop',
+        children: [],
       },
+      { at: prevSiblingPath, mode: 'lowest', match: (n) => n !== sibling },
     );
-    Transforms.moveNodes(editor, {
-      at: listItemPath,
-      to: newp,
-    });
   } else {
-    console.log('no prev');
+    const matches = Array.from(
+      Editor.nodes(editor, {
+        at: prevSiblingPath,
+        mode: 'lowest',
+        match: (n) => {
+          return slate.listTypes.includes(n.type);
+        },
+      }),
+    );
+    if (matches) {
+      // If a list type exists in the previous sibling, we simply move to it
+      const [, sublistPath] = matches[matches.length - 1];
+      const [, lastPath] = Editor.last(editor, sublistPath);
+      const newPath = Path.next(Path.parent(lastPath));
+      Transforms.moveNodes(editor, {
+        at: listItemPath,
+        to: newPath,
+      });
+      return true;
+    }
   }
+
+  // We create a new list type, based on the type from the parent list
+  const newp = [...lastChildPath.slice(0, lastChildPath.length - 1), 1];
+  Transforms.wrapNodes(
+    editor,
+    { type: parentList.type, children: [] },
+    {
+      at: listItemPath,
+    },
+  );
+  Transforms.moveNodes(editor, {
+    at: listItemPath,
+    to: newp,
+  });
 
   return true;
 }

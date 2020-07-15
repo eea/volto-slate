@@ -1,13 +1,11 @@
-// TODO: need to redo this
-//
-import { Editor } from 'slate';
+import { Editor, Range } from 'slate';
 import { settings } from '~/config';
 
 export function isCursorInList(editor) {
   const { slate } = settings;
 
   const result = Editor.above(editor, {
-    match: (n) => n.type === settings.listItemType,
+    match: (n) => n.type === slate.listItemType,
   });
 
   if (!result) {
@@ -25,6 +23,8 @@ export function isCursorInList(editor) {
 
 // toggle list type
 // preserves structure of list if going from a list type to another
+// TODO: need to redo this
+//
 export function toggleList(
   editor,
   {

@@ -98,6 +98,9 @@ export const elements = {
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
   p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+
+  // A "no-op" special node, needed to wrap list items leafs that include
+  // sublists
   nop: ({ attributes, children, mode }) =>
     mode === 'view' ? children : <div {...attributes}>{children}</div>,
 };

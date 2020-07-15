@@ -8,7 +8,6 @@ export const withDeleteSelectionOnEnter = (editor) => {
     if (Range.isExpanded(editor.selection)) {
       Transforms.delete(editor);
     }
-    console.log(editor.children);
     return insertBreak();
   };
 

@@ -2,6 +2,7 @@ import { settings } from '~/config';
 
 export * from './backspaceInList';
 export * from './breakBlocks';
+export * from './breakList';
 export * from './indentListItems';
 export * from './joinBlocks';
 export * from './moveListItems';

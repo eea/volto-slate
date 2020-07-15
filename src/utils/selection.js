@@ -1,5 +1,6 @@
 import { castArray } from 'lodash';
 import { Editor, Transforms, Range, Node } from 'slate';
+import { settings } from '~/config';
 
 /**
  * Get the nodes with a type included in `types` in the selection (from root to leaf).
@@ -117,6 +118,7 @@ export function isCursorAtBlockEnd(editor) {
  * @param {} editor
  */
 export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
+  const { slate } = settings;
   const r = Editor.range(
     editor,
     Range.isBackward(editor.selection)
@@ -128,7 +130,7 @@ export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
   // this is the case when the fragment is empty, and we must return
   // empty fragment but without formatting
   if (Range.isCollapsed(r)) {
-    return [{ type: 'paragraph', children: [{ text: '' }] }];
+    return slate.defaultValue();
   }
 
   return Editor.fragment(editor, r);

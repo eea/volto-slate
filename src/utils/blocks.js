@@ -100,7 +100,7 @@ export const toggleBlock = (editor, format) => {
   } else if (!isListItem && !wantsList) {
     toggleFormat(editor, format);
   } else {
-    console.log('uncovered case', {
+    console.warn('toggleBlock case not covered, please examine:', {
       wantsList,
       isActive,
       isListItem,

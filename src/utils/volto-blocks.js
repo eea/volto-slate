@@ -55,10 +55,13 @@ export function createSlateBlock(value, index, { onChangeBlock, onAddBlock }) {
 }
 
 export function createAndSelectNewSlateBlock(value, index, props) {
-  const id = createSlateBlock(value, index, props);
-  const { onSelectBlock } = props;
-  onSelectBlock(id);
-  return id;
+  setTimeout(() => {
+    const id = createSlateBlock(value, index, props);
+    console.log('created block', id);
+    const { onSelectBlock } = props;
+
+    setTimeout(() => onSelectBlock(id), 0);
+  }, 0);
 }
 
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {

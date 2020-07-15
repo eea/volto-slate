@@ -6,6 +6,6 @@ export const isPointAtRoot = (point) => point.path.length === 2;
  * TODO: confirm this description
  */
 export const isRangeAtRoot = (range) => {
-  console.log('isRangeAtRoot', range);
+  // console.log('isRangeAtRoot', range);
   return isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
 };

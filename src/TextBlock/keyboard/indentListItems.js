@@ -3,10 +3,12 @@ import { isCursorInList } from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
- *
+ * @function indentListItems
+ * @param editor {Object}
+ * @param event {Object}
  *
  * This bit is quite involved. You need a good understanding of Slate API and
- * Slate's DOM behaviour.
+ * Slate's DOM-like behaviour.
  *
  * The general idea is this:
  *  - we want to produce markup like:
@@ -43,8 +45,6 @@ import { settings } from '~/config';
  *  sibling, in case it already has a list that can "host" the current target
  *  list item.
  *
- * @function indentListItems
- * @param {}
  */
 export function indentListItems({ editor, event }) {
   // TODO: test if the cursor is at the beginning of the list item

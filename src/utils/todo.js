@@ -234,33 +234,6 @@ export function emptyListEntryAboveSelection(editor) {
   );
 }
 
-export function splitEditorInTwoLists(editor, listItemPath) {
-  let [upBlock, bottomBlock] = splitEditorInTwoFragments(editor);
-
-  let [listNode] = Editor.parent(editor, listItemPath);
-
-  let theType = listNode.type;
-
-  let newUpBlock = [
-    {
-      type: theType,
-      children: upBlock[0].children.slice(0, upBlock[0].children.length - 1),
-    },
-  ];
-
-  let newBottomBlock = [
-    {
-      type: theType,
-      children: bottomBlock[0].children.slice(
-        1,
-        bottomBlock[0].children.length,
-      ),
-    },
-  ];
-
-  return [newUpBlock, newBottomBlock];
-}
-
 export const defaultListTypes = {
   typeUl: 'bulleted-list',
   typeOl: 'numbered-list',

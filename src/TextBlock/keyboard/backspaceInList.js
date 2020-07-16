@@ -2,15 +2,15 @@ import { Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   isCursorInList,
-  isCursorAtBlockStart,
+  isCursorAtListBlockStart,
   deconstructToVoltoBlocks,
 } from 'volto-slate/utils';
 
 export function backspaceInList({ editor, event }) {
   if (!isCursorInList(editor)) return false;
 
-  // split the first line as an independent block
-  if (isCursorAtBlockStart(editor)) {
+  if (isCursorAtListBlockStart(editor)) {
+    console.log('at block start', editor.children);
     const { slate } = settings;
 
     Transforms.liftNodes(editor, {
@@ -28,6 +28,7 @@ export function backspaceInList({ editor, event }) {
         props.onSelectBlock(props.id);
       }, 100);
     });
+    return true;
   }
-  return true;
+  console.log('else', editor.children);
 }

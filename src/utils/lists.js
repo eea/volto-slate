@@ -21,6 +21,16 @@ export function isCursorInList(editor) {
   return listItemCase;
 }
 
+export function isCursorAtListBlockStart(editor) {
+  if (editor.selection && Range.isCollapsed(editor.selection)) {
+    const { anchor } = editor.selection;
+    return anchor.offset > 0
+      ? false
+      : anchor.path.length === 3 &&
+          anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+  }
+}
+
 // toggle list type
 // preserves structure of list if going from a list type to another
 // TODO: need to redo this

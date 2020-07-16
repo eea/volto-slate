@@ -120,10 +120,10 @@ export function deconstructToVoltoBlocks(editor) {
 
       setTimeout(() => {
         rest.reverse().forEach((block) => {
-          createSlateBlock([block], index, blockProps);
+          const newid = createSlateBlock([block], index, blockProps);
+          resolve(newid);
         });
       }, 0);
     }, 0);
-    resolve();
   });
 }

@@ -1,5 +1,9 @@
 import { Editor, Node, Path, Text, Transforms } from 'slate';
-import { isCursorInList } from 'volto-slate/utils';
+import {
+  isCursorInList,
+  deconstructToVoltoBlocks,
+  createAndSelectNewSlateBlock,
+} from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
@@ -76,7 +80,7 @@ export function decreaseItemDepth(editor, event) {
     match: (n) => n.type === slate.listItemType,
     mode: 'lowest',
   });
-  const [, listItemPath] = match; // current list item being indented
+  const [listItemNode, listItemPath] = match; // current list item being unindented
 
   // Get the parent list for the current list item
   let parents = Array.from(
@@ -85,6 +89,16 @@ export function decreaseItemDepth(editor, event) {
   const [, parentListPath] = parents.find(([node, path]) =>
     slate.listTypes.includes(node.type),
   );
+
+  if (parentListPath.length === 1) {
+    // unindenting out of list
+    const newnode = { ...listItemNode, type: slate.defaultBlockType };
+    Transforms.removeNodes(editor, { at: listItemPath });
+    const blockProps = editor.getBlockProps();
+    const { index } = blockProps;
+    createAndSelectNewSlateBlock([newnode], index, blockProps);
+    return true;
+  }
 
   // Get the parent list item for the parent
 

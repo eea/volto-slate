@@ -27,8 +27,9 @@ export function breakList({ editor, event }) {
     setEditorContent(editor, top);
     createAndSelectNewBlockAfter(editor, bottom);
 
+    return true;
+
     // TODO: we need to fix the first child, in case we've dealt with deep
     // lists
   }
-  return true;
 }

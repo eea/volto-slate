@@ -2,8 +2,8 @@ import { Node } from 'slate';
 import {
   isCursorAtBlockStart,
   isCursorAtBlockEnd,
-  getNextBlock,
-  getPreviousBlock,
+  getNextVoltoBlock,
+  getPreviousVoltoBlock,
 } from 'volto-slate/utils';
 
 /**
@@ -16,7 +16,7 @@ export function goUp({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusPreviousBlock, block, blockNode } = props;
 
-    const prev = getPreviousBlock(props.index, props.properties);
+    const prev = getPreviousVoltoBlock(props.index, props.properties);
     if (!prev || prev[0]?.['@type'] !== 'slate')
       return onFocusPreviousBlock(block, blockNode.current);
 
@@ -43,7 +43,7 @@ export function goDown({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusNextBlock, block, blockNode } = props;
 
-    const next = getNextBlock(props.index, props.properties);
+    const next = getNextVoltoBlock(props.index, props.properties);
     if (!next || next[0]?.['@type'] !== 'slate')
       return onFocusNextBlock(block, blockNode.current);
 

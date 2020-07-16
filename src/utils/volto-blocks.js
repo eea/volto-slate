@@ -15,7 +15,7 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   //
   console.log('merge backward', prevBlock.value);
 
-  const text = Editor.string(editor, editor.selection);
+  const text = Editor.string(editor, []);
   if (!text) {
     selectAll(editor);
     Transforms.delete(editor);
@@ -90,7 +90,7 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   });
 };
 
-export function getNextBlock(index, properties) {
+export function getNextVoltoBlock(index, properties) {
   // TODO: look for any next slate block
   // join this block with previous block, if previous block is slate
   const blocksFieldname = getBlocksFieldname(properties);
@@ -106,7 +106,7 @@ export function getNextBlock(index, properties) {
   return [nextBlock, nextBlockId];
 }
 
-export function getPreviousBlock(index, properties) {
+export function getPreviousVoltoBlock(index, properties) {
   // TODO: look for any prev slate block
   if (index === 0) return;
 

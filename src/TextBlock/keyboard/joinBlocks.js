@@ -14,7 +14,7 @@ import {
  * Join current block with neighbor block, if the blocks are compatible.
  */
 export function joinWithNeighborBlock(
-  getNeighbor,
+  getNeighborVoltoBlock,
   getCursorPosition,
   isValidOp,
   mergeOp,
@@ -33,7 +33,10 @@ export function joinWithNeighborBlock(
       onSelectBlock,
     } = blockProps;
 
-    const [otherBlock = {}, otherBlockId] = getNeighbor(index, properties);
+    const [otherBlock = {}, otherBlockId] = getNeighborVoltoBlock(
+      index,
+      properties,
+    );
 
     if (!isValidOp(editor)) return;
 
@@ -54,6 +57,7 @@ export function joinWithNeighborBlock(
     // block is visible for a fraction of second
 
     const cursor = getCursorPosition(otherBlock, selection);
+    console.log('cursor', cursor, combined);
     saveSlateBlockSelection(otherBlockId, cursor);
 
     // setTimeout ensures setState has been successfully executed in Form.jsx.

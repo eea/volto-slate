@@ -4,6 +4,7 @@ import {
 } from '@plone/volto/helpers';
 import { Transforms, Editor } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
+import { selectAll } from './selection';
 
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
@@ -11,6 +12,19 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // previous block. Replace it in the current editor (over which we have
   // control), join with current block value, then use this result for previous
   // block, delete current block
+  //
+  console.log('merge backward', prevBlock.value);
+
+  const text = Editor.string(editor, editor.selection);
+  if (!text) {
+    selectAll(editor);
+    Transforms.delete(editor);
+    Editor.insertFragment(editor, prevBlock.value);
+    console.log('returning early');
+    // Editor.deleteBackward(editor);
+    // TODO: replace editor content with prevBlock.value
+    return; // no point in merging with an empty paragraph
+  }
 
   const prev = prevBlock.value;
 
@@ -30,6 +44,8 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   // block. Replace it in the current editor (over which we have control), join
   // with current block value, then use this result for next block, delete
   // current block
+
+  console.log('merge forward');
 
   const next = nextBlock.value;
 

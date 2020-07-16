@@ -43,6 +43,8 @@ export function getSelectionNodesArrayByType(editor, types, options = {}) {
  * getMaxRange.
  *
  * @param {} editor
+ *
+ * TODO: is [0] ok as a path?
  */
 export function getMaxRange(editor) {
   const maxRange = {

@@ -75,8 +75,10 @@ export function isCursorAtBlockStart(editor) {
 
   if (editor.selection && Range.isCollapsed(editor.selection)) {
     const { anchor } = editor.selection;
-    return anchor.offset > 0 ? false : anchor.path === [0, 0];
-    // : anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+    return anchor.offset > 0
+      ? false
+      : anchor.path.length === 2 &&
+          anchor.path.reduce((acc, x) => acc + x, 0) === 0;
   }
   return false;
 }

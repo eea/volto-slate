@@ -35,7 +35,7 @@ export function joinWithNeighborBlock(
 
     const [otherBlock = {}, otherBlockId] = getNeighbor(index, properties);
 
-    if (!isValidOp(editor)) return true;
+    if (!isValidOp(editor)) return;
 
     if (otherBlock['@type'] !== 'slate') return;
 
@@ -55,7 +55,6 @@ export function joinWithNeighborBlock(
 
     const cursor = getCursorPosition(otherBlock, selection);
     saveSlateBlockSelection(otherBlockId, cursor);
-    console.log('cursor', cursor, otherBlockId);
 
     // setTimeout ensures setState has been successfully executed in Form.jsx.
     // See https://github.com/plone/volto/issues/1519

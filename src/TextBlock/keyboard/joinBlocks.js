@@ -36,9 +36,22 @@ export function joinWithPreviousBlock({ editor, event }) {
   event.stopPropagation();
   event.preventDefault();
 
+  const text = Editor.string(editor, []);
+  if (!text) {
+    // we're dealing with an empty paragraph, no sense in merging
+    const cursor = getBlockEndAsRange(otherBlock);
+    saveSlateBlockSelection(otherBlockId, cursor);
+
+    setTimeout(() => {
+      onDeleteBlock(block, false);
+      onSelectBlock(otherBlockId);
+    }, 10);
+    return true;
+  }
+
   mergeSlateWithBlockBackward(editor, otherBlock);
 
-  const selection = JSON.parse(JSON.stringify(editor.selection));
+  // const selection = JSON.parse(JSON.stringify(editor.selection));
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc
@@ -47,8 +60,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   // TODO: after Enter, the current filled-with-previous-block
   // block is visible for a fraction of second
 
-  const cursor = getBlockEndAsRange(otherBlock, selection);
-  console.log('cursor', cursor, combined);
+  const cursor = getBlockEndAsRange(otherBlock);
   saveSlateBlockSelection(otherBlockId, cursor);
 
   // setTimeout ensures setState has been successfully executed in Form.jsx.
@@ -62,17 +74,13 @@ export function joinWithPreviousBlock({ editor, event }) {
     setTimeout(() => {
       onDeleteBlock(block, false);
       onSelectBlock(otherBlockId);
-    }, 100);
+    }, 10);
   });
 
   return true;
 }
 
 export function joinWithNextBlock({ editor, event }) {
-  //   getNextBlock,
-  //   getBlockStartAsRange,
-  //   isCursorAtBlockEnd,
-  //   mergeSlateWithBlockForward,
   // TODO: read block values not from editor properties, but from block
   // properties
 
@@ -107,8 +115,7 @@ export function joinWithNextBlock({ editor, event }) {
   // TODO: after Enter, the current filled-with-previous-block
   // block is visible for a fraction of second
 
-  const cursor = getBlockStartAsRange(otherBlock, selection);
-  console.log('cursor', cursor, combined);
+  const cursor = selection;
   saveSlateBlockSelection(otherBlockId, cursor);
 
   // setTimeout ensures setState has been successfully executed in Form.jsx.
@@ -175,7 +182,6 @@ export function joinWithNeighborBlock(
     // block is visible for a fraction of second
 
     const cursor = getCursorPosition(otherBlock, selection);
-    console.log('cursor', cursor, combined);
     saveSlateBlockSelection(otherBlockId, cursor);
 
     // setTimeout ensures setState has been successfully executed in Form.jsx.
@@ -196,7 +202,7 @@ export function joinWithNeighborBlock(
   };
 }
 
-function getBlockEndAsRange(block, selection) {
+function getBlockEndAsRange(block) {
   const { value } = block;
   const location = [value.length - 1];
   const editor = { children: value };
@@ -208,25 +214,3 @@ function getBlockEndAsRange(block, selection) {
     focus: { path: leafpath, offset },
   };
 }
-
-function getBlockStartAsRange(block, selection) {
-  return selection;
-}
-
-// export const joinWithPreviousBlock = joinWithNeighborBlock(
-// getPreviousBlock,
-// getBlockEndAsRange,
-// isCursorAtBlockStart,
-// mergeSlateWithBlockBackward,
-//   getPreviousBlock,
-//   getBlockEndAsRange,
-//   isCursorAtBlockStart,
-//   mergeSlateWithBlockBackward,
-// );
-//
-// export const joinWithNextBlock = joinWithNeighborBlock(
-//   getNextBlock,
-//   getBlockStartAsRange,
-//   isCursorAtBlockEnd,
-//   mergeSlateWithBlockForward,
-// );

@@ -1,7 +1,6 @@
-import { Editor, Node, Path, Text, Transforms } from 'slate';
+import { Editor, Node, Path, Transforms } from 'slate';
 import {
   isCursorInList,
-  deconstructToVoltoBlocks,
   createAndSelectNewSlateBlock,
 } from 'volto-slate/utils';
 import { settings } from '~/config';
@@ -67,7 +66,16 @@ export function indentListItems({ editor, event }) {
 }
 
 /**
- * decreaseItemDepth.
+ * @function decreaseItemDepth
+ *
+ * Overall behaviour:
+ *
+ * 1. get the current list item
+ * 2. get its list (ul/ol) parent
+ * 3. if parent seems to be at root, break from this Volto block as a new paragraph
+ * 4. find if current list has a list as an ancestor
+ * 5. move to that list
+ * 6. cleanup the old list (from step 2) if it's empty
  *
  * @param {} editor
  * @param {} event
@@ -86,7 +94,7 @@ export function decreaseItemDepth(editor, event) {
   let parents = Array.from(
     Node.ancestors(editor, listItemPath, { reverse: true }),
   );
-  const [, parentListPath] = parents.find(([node, path]) =>
+  let [, parentListPath] = parents.find(([node, path]) =>
     slate.listTypes.includes(node.type),
   );
 
@@ -102,42 +110,17 @@ export function decreaseItemDepth(editor, event) {
 
   // Get the parent list item for the parent
 
-  const [, listParentPath] = Editor.parent(editor, parentListPath);
+  const [, parentListItemPath] = Editor.parent(editor, parentListPath);
 
   Transforms.moveNodes(editor, {
     at: listItemPath,
-    to: Path.next(listParentPath),
+    to: Path.next(parentListItemPath),
   });
 
-  // check if the old parent list has more children
-  // - If it doesn't delete it
-  // - if it does have children, take all next siblings and move them in
-  // a sublist
-  console.log(listParentPath);
-
-  const siblings = Editor.nodes(editor, parentListPath, {
-    reverse: true,
-    pass: ([node, path]) => true,
-  });
-
-  // Take all next siblings and move them in a new sublist
-
-  // Identify if we are the
-  // const [ln, lp] = Node.last(editor, parentListPath);
-  //
-  // const query = Array.from(
-  //   Editor.nodes(editor, {
-  //     at: lp,
-  //     mode: 'lowest',
-  //     match: (n) => {
-  //       return slate.listTypes.includes(n.type);
-  //     },
-  //   }),
-  // );
-  // const [prev] = query;
-  // const [prevNode, prevPath] = prev;
-  //
-  // console.log(prevPath, parentListPath);
+  // Remove placeholder list for the list item, if it's empty. It will be
+  // recreated as needed
+  const text = Editor.string(editor, parentListPath);
+  if (!text) Transforms.removeNodes(editor, { at: parentListPath });
 
   return true;
 }
@@ -223,9 +206,15 @@ export function increaseItemDepth(editor, event) {
   return true;
 }
 
-export function increaseMultipleItemDepth(editor, event) {}
+export function increaseMultipleItemDepth(editor, event) {
+  // TODO: implement indenting current list item + plus siblings that come
+  // after it
+}
 
-export function decreaseMultipleItemsDepth(editor, event) {}
+export function decreaseMultipleItemsDepth(editor, event) {
+  // TODO: implement un-indenting current list item + plus siblings that come
+  // after it
+}
 
 const getPreviousSiblingPath = function (path) {
   // Doesn't raise an error if no previous sibling exists

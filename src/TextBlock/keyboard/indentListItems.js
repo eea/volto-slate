@@ -177,14 +177,25 @@ export function increaseItemDepth(editor, event) {
 
     if (matches) {
       // If a list type exists in the previous sibling, we simply move to it
-      const [sublist, sublistPath] = matches.find(([node, path]) =>
+      const listfound = matches.find(([node, path]) =>
         slate.listTypes.includes(node.type),
       );
-      const newPath = [...sublistPath, sublist.children.length];
-      Transforms.moveNodes(editor, {
-        at: listItemPath,
-        to: newPath,
-      });
+      if (listfound) {
+        const [sublist, sublistPath] = listfound;
+        const newPath = [...sublistPath, sublist.children.length];
+        Transforms.moveNodes(editor, {
+          at: listItemPath,
+          to: newPath,
+        });
+      } else {
+        Transforms.wrapNodes(
+          editor,
+          { type: parentList.type, children: [] },
+          {
+            at: listItemPath,
+          },
+        );
+      }
       return true;
     }
   }

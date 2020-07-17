@@ -65,6 +65,26 @@ export function indentListItems({ editor, event }) {
     : increaseItemDepth(editor, event);
 }
 
+function getCurrentListItem(editor) {
+  const { slate } = settings;
+  const [match] = Editor.nodes(editor, {
+    at: editor.selection.anchor.path,
+    match: (n) => n.type === slate.listItemType,
+    mode: 'lowest',
+  });
+  return match;
+}
+
+// function getParentList(editor, listItemPath) {
+//   // Get the parent list for the current list item
+//   const { slate } = settings;
+//   let parents = Array.from(
+//     Node.ancestors(editor, listItemPath, { reverse: true }),
+//   );
+//   return parents.find(([node, path]) => slate.listTypes.includes(node.type));
+//   // return Editor.parent(editor, listItemPath);
+// }
+
 /**
  * @function decreaseItemDepth
  *
@@ -83,23 +103,13 @@ export function indentListItems({ editor, event }) {
 export function decreaseItemDepth(editor, event) {
   const { slate } = settings;
 
-  // Get the current list item
-  const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === slate.listItemType,
-    mode: 'lowest',
-  });
-  const [listItemNode, listItemPath] = match; // current list item being unindented
-
-  // Get the parent list for the current list item
-  let parents = Array.from(
-    Node.ancestors(editor, listItemPath, { reverse: true }),
-  );
-  let [, parentListPath] = parents.find(([node, path]) =>
-    slate.listTypes.includes(node.type),
-  );
+  // Current list item being unindented
+  const [listItemNode, listItemPath] = getCurrentListItem(editor);
+  // The ul/ol that holds the current list item
+  const [, parentListPath] = Editor.parent(editor, listItemPath);
 
   if (parentListPath.length === 1) {
-    // unindenting out of list
+    // the list is block root, so we unindent "out" of the list
     const newnode = { ...listItemNode, type: slate.defaultBlockType };
     Transforms.removeNodes(editor, { at: listItemPath });
     const blockProps = editor.getBlockProps();
@@ -109,7 +119,6 @@ export function decreaseItemDepth(editor, event) {
   }
 
   // Get the parent list item for the parent
-
   const [, parentListItemPath] = Editor.parent(editor, parentListPath);
 
   Transforms.moveNodes(editor, {
@@ -134,20 +143,10 @@ export function decreaseItemDepth(editor, event) {
  * @param {} event
  */
 export function increaseItemDepth(editor, event) {
-  // console.log(editor.children, JSON.stringify(editor.children, null, ' '));
   const { slate } = settings;
-  const [match] = Editor.nodes(editor, {
-    match: (n) => n.type === slate.listItemType,
-    mode: 'lowest',
-  });
-  const [, listItemPath] = match; // current list item being indented
 
-  let parents = Array.from(
-    Node.ancestors(editor, listItemPath, { reverse: true }),
-  );
-  const [parentList] = parents.find(([node, path]) =>
-    slate.listTypes.includes(node.type),
-  );
+  const [, listItemPath] = getCurrentListItem(editor);
+  const [parentList] = Editor.parent(editor, listItemPath);
 
   const prevSiblingPath = getPreviousSiblingPath(listItemPath);
   if (!prevSiblingPath) {
@@ -188,6 +187,25 @@ export function increaseItemDepth(editor, event) {
           to: newPath,
         });
       } else {
+        const [match] = matches;
+        const [child, childPath] = match;
+        if (Editor.hasInlines(editor, child)) {
+          // Slate prefers that block elements sit next to other block elements
+          // If the sibling node has inlines then it needs a wrapper node over them
+          Transforms.wrapNodes(
+            editor,
+            {
+              type: 'nop',
+              children: [],
+            },
+            {
+              at: childPath,
+              mode: 'lowest',
+              match: (n) => n !== sibling,
+            },
+          );
+        }
+        const newp = [...childPath.slice(0, childPath.length - 1), 1];
         Transforms.wrapNodes(
           editor,
           { type: parentList.type, children: [] },
@@ -195,6 +213,10 @@ export function increaseItemDepth(editor, event) {
             at: listItemPath,
           },
         );
+        Transforms.moveNodes(editor, {
+          at: listItemPath,
+          to: newp,
+        });
       }
       return true;
     }

@@ -1,4 +1,4 @@
-import { Editor, Range, Node } from 'slate';
+import { Editor, Range, Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   splitEditorInTwoFragments,
@@ -13,14 +13,34 @@ export function breakList({ editor, event }) {
 
   if (editor.selection && Range.isCollapsed(editor.selection)) {
     const { anchor } = editor.selection;
-    const parent = Node.parent(editor, anchor.path);
+    // const parent = Node.parent(editor, anchor.path);
+    const [parent, parentPath] = Editor.parent(editor, anchor.path);
 
-    if (parent.type !== slate.listItemType || anchor.offset > 0) {
-      return;
+    const types = [slate.listItemType, 'nop'];
+    if (!types.includes(parent.type) || anchor.offset > 0) {
+      return; // applies default behaviour, as defined in insertBreak.js extension
     }
 
     event.preventDefault();
     event.stopPropagation();
+
+    if (parent.type === 'nop') {
+      const [, parentListItemPath] = Editor.parent(editor, parentPath);
+      Transforms.insertNodes(
+        editor,
+        {
+          type: slate.listItemType,
+          children: [{ text: '' }],
+        },
+        {
+          at: parentListItemPath,
+        },
+      );
+      return true;
+    }
+
+    // TODO: while this is interesting as a tech demo, I'm not sure that this
+    // is what we really want, to be able to break lists in two separate blocks
 
     Editor.deleteBackward(editor, { unit: 'line' });
     const [top, bottom] = splitEditorInTwoFragments(editor);
@@ -28,8 +48,5 @@ export function breakList({ editor, event }) {
     createAndSelectNewBlockAfter(editor, bottom);
 
     return true;
-
-    // TODO: we need to fix the first child, in case we've dealt with deep
-    // lists
   }
 }

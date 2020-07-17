@@ -75,16 +75,6 @@ function getCurrentListItem(editor) {
   return match;
 }
 
-// function getParentList(editor, listItemPath) {
-//   // Get the parent list for the current list item
-//   const { slate } = settings;
-//   let parents = Array.from(
-//     Node.ancestors(editor, listItemPath, { reverse: true }),
-//   );
-//   return parents.find(([node, path]) => slate.listTypes.includes(node.type));
-//   // return Editor.parent(editor, listItemPath);
-// }
-
 /**
  * @function decreaseItemDepth
  *

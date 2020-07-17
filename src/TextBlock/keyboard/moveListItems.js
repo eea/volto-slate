@@ -2,25 +2,28 @@ import { Editor, Path, Transforms, Node } from 'slate';
 import { isCursorInList } from 'volto-slate/utils';
 import { settings } from '~/config';
 
+// TODO: this will need reimplementation when we have sublists
 export function moveListItemUp({ editor, event }) {
   if (!(event.ctrlKey && isCursorInList(editor))) return;
   const { anchor } = editor.selection;
   const { slate } = settings;
-
-  // TODO: this will need reimplementation when we have sublists
 
   // don't allow in first line list item
   if (anchor.path.slice(1).reduce((acc, n) => acc + n, 0) === 0) return;
 
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === slate.listItemType,
+    // reverse: true,
+    mode: 'lowest',
   });
 
-  const path = match[1];
+  const [, at] = match;
+  const to = Path.previous(at);
+  console.log('move', at, to);
 
-  Transforms.moveNodes(editor, {
-    to: Path.previous(path),
-  });
+  if (!Node.has(editor, to)) return true;
+
+  Transforms.moveNodes(editor, { at, to });
 
   event.preventDefault();
   event.stopPropagation();
@@ -35,16 +38,20 @@ export function moveListItemDown({ editor, event }) {
 
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === slate.listItemType,
+    reverse: true,
+    mode: 'lowest',
   });
 
-  const path = match[1];
-  const parentPath = Path.parent(path);
-  const pathToLast = Node.last(editor, parentPath)[1];
-  if (Path.isCommon(path, pathToLast)) return;
+  const [, at] = match;
+  const to = Path.next(at);
 
-  Transforms.moveNodes(editor, {
-    to: Path.next(path),
-  });
+  if (!Node.has(editor, to)) return true;
+
+  // const parentPath = Path.parent(path);
+  // const pathToLast = Node.last(editor, parentPath)[1];
+  // if (Path.isCommon(path, pathToLast)) return;
+
+  Transforms.moveNodes(editor, { at, to });
 
   event.preventDefault();
   event.stopPropagation();

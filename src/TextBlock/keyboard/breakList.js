@@ -22,20 +22,21 @@ export function breakList({ editor, event }) {
     }),
   );
 
-  // event.preventDefault();
-  // event.stopPropagation();
-  // console.log('nop', nops);
-  // return true;
   if (nops.length) {
     // Break the nop into two, identify parent listitem, create a sibling for
     // it and move the second node to that
     event.preventDefault();
     event.stopPropagation();
+
     const [, nopPath] = nops[0];
     const [listItem, listItemPath] = Editor.parent(editor, nopPath);
+
+    // break the nop in 2
     Transforms.splitNodes(editor, {
       always: true,
     });
+
+    // push down the current list item by inserting a new one at same path
     Transforms.insertNodes(
       editor,
       {
@@ -44,6 +45,8 @@ export function breakList({ editor, event }) {
       },
       { at: listItemPath },
     );
+
+    // Transfer the first splitted nop to the old listitem location
     const newListItemPath = Path.next(listItemPath);
     const newNopPath = [...newListItemPath, 0];
     Transforms.moveNodes(editor, {

@@ -10,7 +10,6 @@ export function backspaceInList({ editor, event }) {
   if (!isCursorInList(editor)) return false;
 
   if (isCursorAtListBlockStart(editor)) {
-    console.log('at block start', editor.children);
     const { slate } = settings;
 
     Transforms.liftNodes(editor, {
@@ -30,5 +29,4 @@ export function backspaceInList({ editor, event }) {
     });
     return true;
   }
-  console.log('else', editor.children);
 }

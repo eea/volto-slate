@@ -69,6 +69,10 @@ export function breakList({ editor, event }) {
   // TODO: while this is interesting as a tech demo, I'm not sure that this
   // is what we really want (break lists in two separate blocks)
 
+  // Split the list in two separat Volto blocks
+  // Currently it is buggy with sublists, and it's not clear to me which is the
+  // best behaviour. In any case, this may be hard to "cleanup" and get to
+  // a proper solution
   Editor.deleteBackward(editor, { unit: 'line' });
   const [top, bottom] = splitEditorInTwoFragments(editor);
   setEditorContent(editor, top);

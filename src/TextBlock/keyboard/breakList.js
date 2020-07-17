@@ -1,4 +1,4 @@
-import { Editor, Range, Transforms } from 'slate';
+import { Editor, Path, Range, Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   splitEditorInTwoFragments,
@@ -13,31 +13,49 @@ export function breakList({ editor, event }) {
 
   if (editor.selection && Range.isCollapsed(editor.selection)) {
     const { anchor } = editor.selection;
-    // const parent = Node.parent(editor, anchor.path);
-    const [parent, parentPath] = Editor.parent(editor, anchor.path);
 
-    const types = [slate.listItemType, 'nop'];
-    if (!types.includes(parent.type) || anchor.offset > 0) {
+    const nops = Array.from(
+      Editor.nodes(editor, {
+        match: (node) => node.type === 'nop',
+        at: anchor.path,
+      }),
+    );
+    if (nops) {
+      // Break the nop into two, identify parent listitem, create a sibling for
+      // it and move the second node to that
+      event.preventDefault();
+      event.stopPropagation();
+      const [, nopPath] = nops[0];
+      const [listItem, listItemPath] = Editor.parent(editor, nopPath);
+      Transforms.splitNodes(editor, {
+        always: true,
+      });
+      Transforms.insertNodes(
+        editor,
+        {
+          type: listItem.type,
+          children: [{ text: '' }],
+        },
+        { at: listItemPath },
+      );
+      const newListItemPath = Path.next(listItemPath);
+      const newNopPath = [...newListItemPath, 0];
+      Transforms.moveNodes(editor, {
+        at: newNopPath,
+        to: [...listItemPath, 0],
+        mode: 'lowest',
+        match: (node) => node.type === 'nop',
+      });
+      return true;
+    }
+
+    const [parent] = Editor.parent(editor, anchor.path);
+    if (parent.type !== slate.listItemType || anchor.offset > 0) {
       return; // applies default behaviour, as defined in insertBreak.js extension
     }
 
     event.preventDefault();
     event.stopPropagation();
-
-    if (parent.type === 'nop') {
-      const [, parentListItemPath] = Editor.parent(editor, parentPath);
-      Transforms.insertNodes(
-        editor,
-        {
-          type: slate.listItemType,
-          children: [{ text: '' }],
-        },
-        {
-          at: parentListItemPath,
-        },
-      );
-      return true;
-    }
 
     // TODO: while this is interesting as a tech demo, I'm not sure that this
     // is what we really want, to be able to break lists in two separate blocks

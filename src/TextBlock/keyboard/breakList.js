@@ -18,9 +18,14 @@ export function breakList({ editor, event }) {
     Editor.nodes(editor, {
       match: (node) => node.type === 'nop',
       at: anchor.path,
+      reverse: true,
     }),
   );
 
+  // event.preventDefault();
+  // event.stopPropagation();
+  // console.log('nop', nops);
+  // return true;
   if (nops.length) {
     // Break the nop into two, identify parent listitem, create a sibling for
     // it and move the second node to that
@@ -59,7 +64,7 @@ export function breakList({ editor, event }) {
   event.stopPropagation();
 
   // TODO: while this is interesting as a tech demo, I'm not sure that this
-  // is what we really want, to be able to break lists in two separate blocks
+  // is what we really want (break lists in two separate blocks)
 
   Editor.deleteBackward(editor, { unit: 'line' });
   const [top, bottom] = splitEditorInTwoFragments(editor);

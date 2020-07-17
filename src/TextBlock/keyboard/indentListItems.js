@@ -179,7 +179,7 @@ export function increaseItemDepth(editor, event) {
       } else {
         const [match] = matches;
         const [child, childPath] = match;
-        if (Editor.hasInlines(editor, child)) {
+        if (Editor.hasInlines(editor, child) && !child.type === 'nop') {
           // Slate prefers that block elements sit next to other block elements
           // If the sibling node has inlines then it needs a wrapper node over them
           Transforms.wrapNodes(

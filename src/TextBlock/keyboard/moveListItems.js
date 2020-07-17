@@ -19,7 +19,6 @@ export function moveListItemUp({ editor, event }) {
 
   const [, at] = match;
   const to = Path.previous(at);
-  console.log('move', at, to);
 
   if (!Node.has(editor, to)) return true;
 

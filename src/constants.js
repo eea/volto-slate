@@ -1,5 +1,2 @@
-export const LISTTYPES = ['bulleted-list', 'numbered-list'];
-
-export default {
-  LISTTYPES,
-};
+export const SAVE_SLATE_BLOCK_SELECTION = 'SAVE_SLATE_BLOCK_SELECTION';
+export const UPLOAD_CONTENT = 'UPLOAD_CONTENT';

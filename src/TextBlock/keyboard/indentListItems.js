@@ -95,6 +95,7 @@ export function decreaseItemDepth(editor, event) {
 
   // Current list item being unindented
   const [listItemNode, listItemPath] = getCurrentListItem(editor);
+
   // The ul/ol that holds the current list item
   const [, parentListPath] = Editor.parent(editor, listItemPath);
 
@@ -107,6 +108,9 @@ export function decreaseItemDepth(editor, event) {
     createAndSelectNewSlateBlock([newnode], index, blockProps);
     return true;
   }
+
+  // TODO: when unindenting a sublist item, it should take its next siblings
+  // with it as a sublist
 
   // Get the parent list item for the parent
   const [, parentListItemPath] = Editor.parent(editor, parentListPath);

@@ -3,7 +3,7 @@
 
 import codeSVG from '@plone/volto/icons/code.svg';
 
-import { slate_block_selections } from './reducers';
+import { slate_block_selections, upload_content } from './reducers';
 
 import installVoltoProposals from './futurevolto/config';
 
@@ -90,6 +90,7 @@ const applyConfig = (config) => {
   config.addonReducers = {
     ...config.addonReducers,
     slate_block_selections,
+    upload_content,
   };
 
   config.views = {

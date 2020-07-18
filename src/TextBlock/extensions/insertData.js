@@ -1,5 +1,11 @@
-import { jsx } from 'slate-hyperscript';
+import { createHyperscript } from 'slate-hyperscript';
 import { Transforms } from 'slate';
+
+const jsx = createHyperscript({
+  creators: {
+    // element:
+  },
+});
 
 const ELEMENT_TAGS = {
   H1: () => ({ type: 'h2' }),
@@ -84,7 +90,6 @@ export const withDeserializeHtml = (editor) => {
 
   editor.insertData = (data) => {
     const html = data.getData('text/html');
-    console.log('insertdata', html);
 
     if (html) {
       console.log('html', html);

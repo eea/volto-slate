@@ -1,5 +1,5 @@
 import { jsx } from 'slate-hyperscript';
-import { settings } from '~/config';
+// import { settings } from '~/config';
 
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
@@ -15,6 +15,7 @@ export const deserialize = (editor, el) => {
   }
 
   const { nodeName } = el;
+  console.log('n', nodeName);
 
   if (htmlTagsToSlate[nodeName]) {
     return htmlTagsToSlate[nodeName](editor, el);
@@ -26,9 +27,7 @@ export const deserialize = (editor, el) => {
     .map((el) => deserialize(editor, el))
     .flat();
 
-  const { slate } = settings;
-
-  return jsx('element', { type: slate.defaultBlockType }, children);
+  return children;
 };
 
 export const preTagDeserializer = (editor, el) => {

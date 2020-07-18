@@ -30,7 +30,7 @@ export const withDeserializeHtml = (editor) => {
       // if (firstNodeType && !inlineTypes.includes(firstNodeType)) {
       //   Transforms.setNodes(editor, { type: fragment[0].type });
       // }
-      // Transforms.insertNodes(editor, fragment);
+      Transforms.insertNodes(editor, fragment);
       return;
     }
 

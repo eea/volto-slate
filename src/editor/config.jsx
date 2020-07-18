@@ -14,7 +14,13 @@ import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType } from './decorate';
-import { withDeleteSelectionOnEnter, withNodeIds } from './extensions';
+import { withDeleteSelectionOnEnter, withDeserializers } from './extensions';
+import {
+  inlineTagDeserializer,
+  bodyTagDeserializer,
+  blockTagDeserializer,
+  preTagDeserializer,
+} from './deserialize';
 
 // Registry of available buttons
 export const buttons = {
@@ -70,7 +76,7 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 // Each extension is a simple mutator function with signature: editor =>
 // editor. See https://docs.slatejs.org/concepts/07-plugins and
 // https://docs.slatejs.org/concepts/06-editor
-export const extensions = [withDeleteSelectionOnEnter, withNodeIds];
+export const extensions = [withDeleteSelectionOnEnter, withDeserializers];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {
@@ -91,13 +97,13 @@ export const defaultBlockType = 'p';
 
 // default rendered elements
 export const elements = {
-  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+  default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
   h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
   p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
-  default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
 
   // A "no-op" special node, needed to wrap list items leafs that include
   // sublists
@@ -127,3 +133,37 @@ export const nodeTypesToHighlight = [];
 
 // decorator functions. Signature: ([node, path], ranges) => ranges
 export const runtimeDecorators = [highlightByType];
+
+// HTML deserialization (html -> slate data conversion)
+export const htmlTagsToSlate = {
+  BODY: bodyTagDeserializer,
+  H1: blockTagDeserializer('h1'),
+  H2: blockTagDeserializer('h2'),
+  H3: blockTagDeserializer('h3'),
+  H4: blockTagDeserializer('h4'),
+  H5: blockTagDeserializer('h5'),
+  H6: blockTagDeserializer('h6'),
+  P: blockTagDeserializer('p'),
+  BLOCKQUOTE: blockTagDeserializer('blockquote'),
+  PRE: preTagDeserializer,
+
+  // TextBlock overrides these deserializers for better integration
+  OL: blockTagDeserializer('ol'),
+  UL: blockTagDeserializer('ul'),
+  LI: blockTagDeserializer('li'),
+
+  // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
+  CODE: inlineTagDeserializer({ code: true }),
+  DEL: inlineTagDeserializer({ strikethrough: true }),
+  EM: inlineTagDeserializer({ italic: true }),
+  I: inlineTagDeserializer({ italic: true }),
+  S: inlineTagDeserializer({ strikethrough: true }),
+  STRONG: inlineTagDeserializer({ bold: true }),
+  U: inlineTagDeserializer({ underline: true }),
+  SPAN: inlineTagDeserializer(),
+
+  // OL: listElementToSlateDeserializer('ol'),
+  // UL: listElementToSlateDeserializer('ul'),
+  // LI: () => ({ type: 'li' }),
+  // PRE: () => ({ type: 'code' }),
+};

@@ -4,6 +4,7 @@ import LinkButton from './LinkButton';
 import { withLinks } from './extensions';
 import { LinkElement } from './render';
 import { LINK } from './constants';
+import { linkDeserializer } from './deserialize';
 
 export default function install(config) {
   const { slate } = config.settings;
@@ -18,5 +19,6 @@ export default function install(config) {
     'link',
   ];
 
+  slate.htmlTagsToSlate.A = linkDeserializer;
   return config;
 }

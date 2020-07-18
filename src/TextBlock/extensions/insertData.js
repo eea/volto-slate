@@ -1,79 +1,5 @@
-import { createHyperscript } from 'slate-hyperscript';
 import { Transforms } from 'slate';
-
-const jsx = createHyperscript({
-  creators: {
-    // element:
-  },
-});
-
-const ELEMENT_TAGS = {
-  H1: () => ({ type: 'h2' }),
-  H2: () => ({ type: 'h2' }),
-  H3: () => ({ type: 'h3' }),
-  H4: () => ({ type: 'h3' }),
-  H5: () => ({ type: 'h3' }),
-  H6: () => ({ type: 'h3' }),
-  LI: () => ({ type: 'li' }),
-  OL: () => ({ type: 'ol' }),
-  UL: () => ({ type: 'ul' }),
-  P: () => ({ type: 'p' }),
-  BLOCKQUOTE: () => ({ type: 'blockquote' }),
-  A: (el) => ({ type: 'link', url: el.getAttribute('href') }),
-  // TODO: functionality exists, but toolbar button does not, so commented this out:
-  // PRE: () => ({ type: 'code' }),
-};
-
-// COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
-const TEXT_TAGS = {
-  CODE: () => ({ code: true }),
-  DEL: () => ({ strikethrough: true }),
-  EM: () => ({ italic: true }),
-  I: () => ({ italic: true }),
-  S: () => ({ strikethrough: true }),
-  STRONG: () => ({ bold: true }),
-  U: () => ({ underline: true }),
-};
-
-export const deserialize = (el) => {
-  if (el.nodeType === 3) {
-    // TEXT_NODE
-    return el.nodeValue === '\n' ? null : el.textContent;
-  } else if (el.nodeType !== 1) {
-    // !== ELEMENT_NODE
-    return null;
-  } else if (el.nodeName === 'BR') {
-    return '\n';
-  }
-
-  const { nodeName } = el;
-  let parent = el;
-
-  if (
-    nodeName === 'PRE' &&
-    el.childNodes[0] &&
-    el.childNodes[0].nodeName === 'CODE'
-  ) {
-    parent = el.childNodes[0];
-  }
-  const children = Array.from(parent.childNodes).map(deserialize).flat();
-
-  if (el.nodeName === 'BODY') {
-    return jsx('fragment', {}, children);
-  }
-
-  if (ELEMENT_TAGS[nodeName]) {
-    const attrs = ELEMENT_TAGS[nodeName](el);
-    return jsx('element', attrs, children);
-  }
-
-  if (TEXT_TAGS[nodeName]) {
-    const attrs = TEXT_TAGS[nodeName](el);
-    return children.map((child) => jsx('text', attrs, child));
-  }
-
-  return children;
-};
+import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const withDeserializeHtml = (editor) => {
   const { insertData } = editor;
@@ -86,25 +12,25 @@ export const withDeserializeHtml = (editor) => {
   //   return element.type === 'image' ? true : isVoid(element);
   // };
 
-  const inlineTypes = ['link'];
+  // const inlineTypes = ['link'];
 
   editor.insertData = (data) => {
+    // console.log('paste data', data);
     const html = data.getData('text/html');
 
     if (html) {
       console.log('html', html);
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
-      const fragment = deserialize(parsed.body);
+      const fragment = deserialize(editor, parsed.body);
       console.log('fragment', fragment);
 
-      const firstNodeType = fragment[0].type;
-
+      // const firstNodeType = fragment[0].type;
       // replace the selected node type by the first block type
-      if (firstNodeType && !inlineTypes.includes(firstNodeType)) {
-        Transforms.setNodes(editor, { type: fragment[0].type });
-      }
-      Transforms.insertNodes(editor, fragment);
+      // if (firstNodeType && !inlineTypes.includes(firstNodeType)) {
+      //   Transforms.setNodes(editor, { type: fragment[0].type });
+      // }
+      // Transforms.insertNodes(editor, fragment);
       return;
     }
 

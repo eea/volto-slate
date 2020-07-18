@@ -24,7 +24,10 @@ import {
   moveListItemUp,
 } from './TextBlock/keyboard';
 import { withDeleteSelectionOnEnter } from './editor/extensions';
-import { withSplitBlocksOnBreak } from './TextBlock/extensions';
+import {
+  withSplitBlocksOnBreak,
+  withDeserializeHtml,
+} from './TextBlock/extensions';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slate = {
@@ -51,7 +54,11 @@ const applyConfig = (config) => {
 
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
-    textblockExtensions: [withSplitBlocksOnBreak, withDeleteSelectionOnEnter], // withDeserializeHtml
+    textblockExtensions: [
+      withSplitBlocksOnBreak,
+      withDeleteSelectionOnEnter,
+      withDeserializeHtml,
+    ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />
     // Order matters here. A handler can return `true` to stop executing any

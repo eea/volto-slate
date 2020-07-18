@@ -1,27 +1,21 @@
-/*
- * TODO: this needs to be moved as a decorator to the editor subfolder
- * also, rewrite using the settings.slate.elements
- * also, make it pluggable
- */
-
 import { jsx } from 'slate-hyperscript';
 import { Transforms } from 'slate';
 
 const ELEMENT_TAGS = {
+  H1: () => ({ type: 'h2' }),
+  H2: () => ({ type: 'h2' }),
+  H3: () => ({ type: 'h3' }),
+  H4: () => ({ type: 'h3' }),
+  H5: () => ({ type: 'h3' }),
+  H6: () => ({ type: 'h3' }),
+  LI: () => ({ type: 'li' }),
+  OL: () => ({ type: 'ol' }),
+  UL: () => ({ type: 'ul' }),
+  P: () => ({ type: 'p' }),
+  BLOCKQUOTE: () => ({ type: 'blockquote' }),
   A: (el) => ({ type: 'link', url: el.getAttribute('href') }),
-  BLOCKQUOTE: () => ({ type: 'block-quote' }),
-  H1: () => ({ type: 'heading-two' }),
-  H2: () => ({ type: 'heading-two' }),
-  H3: () => ({ type: 'heading-three' }),
-  H4: () => ({ type: 'heading-three' }),
-  H5: () => ({ type: 'heading-three' }),
-  H6: () => ({ type: 'heading-three' }),
-  LI: () => ({ type: 'list-item' }),
-  OL: () => ({ type: 'numbered-list' }),
-  P: () => ({ type: 'paragraph' }),
   // TODO: functionality exists, but toolbar button does not, so commented this out:
   // PRE: () => ({ type: 'code' }),
-  UL: () => ({ type: 'bulleted-list' }),
 };
 
 // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
@@ -75,7 +69,7 @@ export const deserialize = (el) => {
   return children;
 };
 
-const withDeserializeHtml = (editor) => {
+export const withDeserializeHtml = (editor) => {
   const { insertData } = editor;
 
   // editor.isInline = (element) => {
@@ -90,11 +84,14 @@ const withDeserializeHtml = (editor) => {
 
   editor.insertData = (data) => {
     const html = data.getData('text/html');
+    console.log('insertdata', html);
 
     if (html) {
+      console.log('html', html);
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
       const fragment = deserialize(parsed.body);
+      console.log('fragment', fragment);
 
       const firstNodeType = fragment[0].type;
 
@@ -111,5 +108,3 @@ const withDeserializeHtml = (editor) => {
 
   return editor;
 };
-
-export default withDeserializeHtml;

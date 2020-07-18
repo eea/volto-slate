@@ -1,8 +1,3 @@
-/**
- * A lot of inspiration from the great https://github.com/udecode/slate-plugins/,
- * especially the list element.
- */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
@@ -12,11 +7,7 @@ import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import { uploadContent } from 'volto-slate/actions';
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
-import {
-  flattenToAppURL,
-  getBaseUrl,
-  isInternalURL,
-} from '@plone/volto/helpers';
+import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
@@ -27,12 +18,7 @@ import { handleKey } from './keyboard';
 import Dropzone from 'react-dropzone';
 import './styles.css';
 
-// import { withList, withDeserializeHtml } from './extensions';
-// import {
-//   getBackspaceKeyDownHandlers,
-//   getFocusRelatedKeyDownHandlers,
-//   onKeyDownList,
-// } from './keyDownHandlers';
+// TODO: refactor dropzone to separate component wrapper
 
 const TextBlockEdit = (props) => {
   const {
@@ -63,44 +49,6 @@ const TextBlockEdit = (props) => {
 
   const prevReq = React.useRef(null);
 
-  // const keyDownHandlers = useMemo(() => {
-  //   return {
-  //     ...getBackspaceKeyDownHandlers({
-  //       block,
-  //       onDeleteBlock,
-  //       index,
-  //       properties,
-  //       saveSlateBlockSelection,
-  //       onChangeBlock,
-  //       onFocusPreviousBlock,
-  //       blockNode,
-  //     }),
-  //     ...getFocusRelatedKeyDownHandlers({
-  //       block,
-  //       blockNode,
-  //       onFocusNextBlock,
-  //       onFocusPreviousBlock,
-  //     }),
-  //     ...slate.keyDownHandlers,
-  //   };
-  // }, [
-  //   block,
-  //   blockNode,
-  //   index,
-  //   onFocusNextBlock,
-  //   onFocusPreviousBlock,
-  //   onDeleteBlock,
-  //   onChangeBlock,
-  //   properties,
-  //   saveSlateBlockSelection,
-  // ]);
-  // const configuredWithList = useMemo(
-  //   () => withList({ onChangeBlock, onAddBlock, onSelectBlock, index }),
-  //   [index, onAddBlock, onChangeBlock, onSelectBlock],
-  // );
-  // const configuredOnKeyDownList = useMemo(() => onKeyDownList(), []);
-  //withBlockProps, withList
-
   // let timeoutTillRerender = null;
   // React.useEffect(() => {
   //   return () => {
@@ -110,10 +58,6 @@ const TextBlockEdit = (props) => {
   //   };
   // });
 
-  // const getLatestProps = () => {
-  //   const [contextData] = useFormContext();
-  //   return contextData;
-  // };
   const withBlockProperties = React.useCallback(
     (editor) => {
       editor.getBlockProps = () => {
@@ -126,24 +70,30 @@ const TextBlockEdit = (props) => {
 
   const onDrop = React.useCallback(
     (files) => {
+      // TODO: need to fix setUploading, treat uploading indicator
+      // inteligently, show progress report on uploading files
       setUploading(true);
-      const file = files[0];
-      readAsDataURL(file).then((data) => {
-        const fields = data.match(/^data:(.*);(.*),(.*)$/);
-        uploadContent(
-          getBaseUrl(pathname),
-          {
-            '@type': 'Image',
-            title: file.name,
-            image: {
-              data: fields[3],
-              encoding: fields[2],
-              'content-type': fields[1],
-              filename: file.name,
+      files.forEach((file) => {
+        const [mime] = file.type.split('/');
+        if (mime !== 'image') return;
+
+        readAsDataURL(file).then((data) => {
+          const fields = data.match(/^data:(.*);(.*),(.*)$/);
+          uploadContent(
+            getBaseUrl(pathname),
+            {
+              '@type': 'Image',
+              title: file.name,
+              image: {
+                data: fields[3],
+                encoding: fields[2],
+                'content-type': fields[1],
+                filename: file.name,
+              },
             },
-          },
-          block,
-        );
+            block,
+          );
+        });
       });
       setShowDropzone(false);
     },

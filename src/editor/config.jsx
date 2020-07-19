@@ -107,8 +107,8 @@ export const elements = {
 
   // A "no-op" special node, needed to wrap list items leafs that include
   // sublists
-  nop: ({ attributes, children, mode }) =>
-    mode === 'view' ? children : <div {...attributes}>{children}</div>,
+  // nop: ({ attributes, children, mode }) =>
+  //   mode === 'view' ? children : <div {...attributes}>{children}</div>,
 };
 
 // Order of definition here is important (higher = inner element)

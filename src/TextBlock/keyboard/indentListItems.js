@@ -1,8 +1,5 @@
-import { Editor, Node, Path, Transforms } from 'slate';
-import {
-  isCursorInList,
-  createAndSelectNewSlateBlock,
-} from 'volto-slate/utils';
+import { Editor, Path, Transforms } from 'slate';
+import { isCursorInList, deconstructToVoltoBlocks } from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
@@ -13,41 +10,24 @@ import { settings } from '~/config';
  * This bit is quite involved. You need a good understanding of Slate API and
  * Slate's DOM-like behaviour.
  *
- * The general idea is this:
- *  - we want to produce markup like:
+ * The markup we're trying to produce is like:
+ *
+ * ```
+ *  <ul>
+ *    <li>something</li>
  *    <ul>
- *      <li>something
- *        <ul>
- *          <li>else</li>
- *        </ul>
- *      </li>
+ *      <li>else</li>
  *    </ul>
- * - So, when indenting a second-child, first-level list item, we look in the
- *   above sibling and we want to produce a list there.
- * - The problem is that Slate will not insertNodes at a location that mixes
- *   inline elements with block elements, so we need to first wrap the existing
- *   children in a "nop-ish" div. This div is not rendered at view time (see
- *   `editor/render.jsx`).
- * - So we'll be producing markup like this:
- *   <ul>
- *     <li>
- *        <div class="nop">something</div>
- *        <ul>
- *           <li>else</li>
- *        </ul>
- *     </li>
  *  </ul>
+ * ```
  *
- *  We will treat next siblings to the current list item as following:
- *  - <Tab> will indent only the current list item and its own children. This
- *  requires wrapping the current <li> list item in a <ul/ol> list
- *  - <C-Tab> will indent current list item and all its next sibligings in the
- *  list.
+ * Although not the cleanest, there are numerous advantages to having lists
+ * like this:
+ * - code is cleaner
+ * - Google Docs produces the same type of lists
  *
- *  Of course, when indenting/outdenting we always need to look at the previous
- *  sibling, in case it already has a list that can "host" the current target
- *  list item.
- *
+ * See https://github.com/eea/volto-slate/releases/tag/ul_inside_li for an
+ * implementation that "inlines" the <ul> tags inside <li>. It's not pretty.
  */
 export function indentListItems({ editor, event }) {
   // TODO: test if the cursor is at the beginning of the list item
@@ -97,33 +77,40 @@ export function decreaseItemDepth(editor, event) {
   const [listItemNode, listItemPath] = getCurrentListItem(editor);
 
   // The ul/ol that holds the current list item
-  const [, parentListPath] = Editor.parent(editor, listItemPath);
-
-  if (parentListPath.length === 1) {
-    // the list is block root, so we unindent "out" of the list
-    const newnode = { ...listItemNode, type: slate.defaultBlockType };
-    Transforms.removeNodes(editor, { at: listItemPath });
-    const blockProps = editor.getBlockProps();
-    const { index } = blockProps;
-    createAndSelectNewSlateBlock([newnode], index, blockProps);
-    return true;
-  }
+  const [parentList, parentListPath] = Editor.parent(editor, listItemPath);
 
   // TODO: when unindenting a sublist item, it should take its next siblings
   // with it as a sublist
 
-  // Get the parent list item for the parent
-  const [, parentListItemPath] = Editor.parent(editor, parentListPath);
+  const to = Path.next(parentListPath);
 
   Transforms.moveNodes(editor, {
     at: listItemPath,
-    to: Path.next(parentListItemPath),
+    to,
   });
 
-  // Remove placeholder list for the list item, if it's empty. It will be
-  // recreated as needed
-  const text = Editor.string(editor, parentListPath);
-  if (!text) Transforms.removeNodes(editor, { at: parentListPath });
+  if (parentListPath.length === 1) {
+    // we're unwrapping the list item as the user wants to break out
+    Transforms.setNodes(
+      editor,
+      { type: slate.defaultBlockType },
+      {
+        at: to,
+        match: (node) => node === listItemNode,
+      },
+    );
+  }
+
+  if (parentList.children.length === 1) {
+    Transforms.removeNodes(editor, { at: parentListPath });
+  }
+
+  if (editor.children.length > 1) {
+    const blockProps = editor.getBlockProps();
+    deconstructToVoltoBlocks(editor).then((newId) => {
+      setTimeout(() => blockProps.onSelectBlock(newId), 10);
+    });
+  }
 
   return true;
 }
@@ -178,141 +165,7 @@ export function increaseItemDepth(editor, event) {
     );
   }
   return true;
-
-  // if (siblingPath) {
-  //   sibling = Editor.node(editor, siblingPath);
-  //   if (slate.listTypes.includes(sibling.type)) {
-  //     Transforms.moveNodes(editor, {
-  //       at: listItemPath,
-  //       to: [...siblingPath, (sibling.children || []).length],
-  //     });
-  //     return true;
-  //   } else {
-  //     Transforms.wrapNodes(
-  //       editor,
-  //       { type: parentList.type, children: [] },
-  //       {
-  //         at: listItemPath,
-  //       },
-  //     );
-  //     return true;
-  //   }
-  // }
-  //
-  // siblingPath =
-  // sibling = Editor.node(editor, siblingPath);
-  // if (slate.listTypes.includes(sibling.type)) {
-  //   Transforms.moveNodes(editor, {
-  //     at: listItemPath,
-  //     to: [...siblingPath, 0],
-  //   });
-  //   return true;
-  // } else {
-  //   Transforms.wrapNodes(
-  //     editor,
-  //     { type: parentList.type, children: [] },
-  //     {
-  //       at: listItemPath,
-  //     },
-  //   );
-  // }
 }
-// export function increaseItemDepth(editor, event) {
-//   const { slate } = settings;
-//
-//   const [, listItemPath] = getCurrentListItem(editor);
-//   const [parentList] = Editor.parent(editor, listItemPath);
-//
-//   const prevSiblingPath = getPreviousSiblingPath(listItemPath);
-//   if (!prevSiblingPath) {
-//     console.warn("Can't indent first list item in a list");
-//     return;
-//   }
-//   const sibling = Node.get(editor, prevSiblingPath);
-//   const [, lastChildPath] = Node.last(editor, prevSiblingPath);
-//
-//   if (Editor.hasInlines(editor, sibling) && sibling.type !== 'nop') {
-//     // Slate prefers that block elements sit next to other block elements
-//     // If the sibling node has inlines then it needs a wrapper node over them
-//     Transforms.wrapNodes(
-//       editor,
-//       {
-//         type: 'nop',
-//         children: [],
-//       },
-//       { at: prevSiblingPath, mode: 'lowest', match: (n) => n !== sibling },
-//     );
-//   } else {
-//     const matches = Array.from(
-//       Node.children(editor, prevSiblingPath, {
-//         reverse: true,
-//       }),
-//     );
-//
-//     if (matches) {
-//       // If a list type exists in the previous sibling, we simply move to it
-//       const listfound = matches.find(([node, path]) =>
-//         slate.listTypes.includes(node.type),
-//       );
-//       if (listfound) {
-//         const [sublist, sublistPath] = listfound;
-//         const newPath = [...sublistPath, sublist.children.length];
-//         Transforms.moveNodes(editor, {
-//           at: listItemPath,
-//           to: newPath,
-//         });
-//       } else {
-//         const [match] = matches;
-//         const [child, childPath] = match;
-//         if (Editor.hasInlines(editor, child) && !child.type === 'nop') {
-//           // Slate prefers that block elements sit next to other block elements
-//           // If the sibling node has inlines then it needs a wrapper node over them
-//           Transforms.wrapNodes(
-//             editor,
-//             {
-//               type: 'nop',
-//               children: [],
-//             },
-//             {
-//               at: childPath,
-//               mode: 'lowest',
-//               match: (n) => n !== sibling,
-//             },
-//           );
-//         }
-//         const newp = [...childPath.slice(0, childPath.length - 1), 1];
-//         Transforms.wrapNodes(
-//           editor,
-//           { type: parentList.type, children: [] },
-//           {
-//             at: listItemPath,
-//           },
-//         );
-//         Transforms.moveNodes(editor, {
-//           at: listItemPath,
-//           to: newp,
-//         });
-//       }
-//       return true;
-//     }
-//   }
-//
-//   // We create a new list type, based on the type from the parent list
-//   const newp = [...lastChildPath.slice(0, lastChildPath.length - 1), 1];
-//   Transforms.wrapNodes(
-//     editor,
-//     { type: parentList.type, children: [] },
-//     {
-//       at: listItemPath,
-//     },
-//   );
-//   Transforms.moveNodes(editor, {
-//     at: listItemPath,
-//     to: newp,
-//   });
-//
-//   return true;
-// }
 
 export function increaseMultipleItemDepth(editor, event) {
   // TODO: implement indenting current list item + plus siblings that come

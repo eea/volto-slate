@@ -71,10 +71,10 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 // wrap editor with new functionality. While Slate calls them plugins, we
 // use "extension" to avoid confusion. A Volto Slate editor plugins adds more
 // functionality: buttons, new elements, etc.
-// (editor) => editor
 //
-// Each extension is a simple mutator function with signature: editor =>
-// editor. See https://docs.slatejs.org/concepts/07-plugins and
+// Each extension is a simple mutator function with signature:
+// `editor => editor`.
+// See https://docs.slatejs.org/concepts/07-plugins and
 // https://docs.slatejs.org/concepts/06-editor
 export const extensions = [withDeleteSelectionOnEnter, withDeserializers];
 

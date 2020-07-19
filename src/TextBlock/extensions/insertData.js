@@ -1,18 +1,14 @@
-import { Transforms } from 'slate';
+import { Editor, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 
-export const withDeserializeHtml = (editor) => {
-  const { insertData } = editor;
+// TODO: implement for the wysiwyg editor
 
-  // editor.isInline = (element) => {
-  //   return element.type === 'link' ? true : isInline(element);
-  // };
+export const insertData = (editor) => {
+  const { insertData } = editor;
 
   // editor.isVoid = (element) => {
   //   return element.type === 'image' ? true : isVoid(element);
   // };
-
-  // const inlineTypes = ['link'];
 
   editor.insertData = (data) => {
     // console.log('paste data', data);
@@ -30,7 +26,20 @@ export const withDeserializeHtml = (editor) => {
       // if (firstNodeType && !inlineTypes.includes(firstNodeType)) {
       //   Transforms.setNodes(editor, { type: fragment[0].type });
       // }
+
+      // TODO: implement split to volto blocks
+
+      // Replace the current selection with pasted content
+      //
+      // TODO: removeNodes is not correct, it removes the active node. Should
+      // test if the current node is empty, then remove it, otherwise insert
+      // after it
+      Transforms.removeNodes(editor);
       Transforms.insertNodes(editor, fragment);
+
+      // We can't afford to insert a fragment, as it will mess up our carefully
+      // constructed fragment with its logic.
+      // Editor.insertFragment(editor, fragment);
       return;
     }
 

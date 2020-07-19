@@ -26,7 +26,8 @@ import {
 import { withDeleteSelectionOnEnter } from './editor/extensions';
 import {
   withSplitBlocksOnBreak,
-  withDeserializeHtml,
+  insertData,
+  withDeserializers,
 } from './TextBlock/extensions';
 
 const applyConfig = (config) => {

@@ -170,6 +170,7 @@ export function increaseItemDepth(editor, event) {
     if (slate.listTypes.includes(prevSibling.type)) {
       Transforms.mergeNodes(editor, {
         match: (node) => node.type === type,
+        mode: 'highest',
         at: currentListRef.current,
       });
     }
@@ -177,6 +178,7 @@ export function increaseItemDepth(editor, event) {
 
   // Merge with any next <ul/ol> list
   const { current } = currentListRef;
+  const [currentList] = Editor.node(editor, current);
   const [parent] = Editor.parent(editor, current);
 
   if (parent.children.length - 1 > current[current.length - 1]) {
@@ -185,8 +187,9 @@ export function increaseItemDepth(editor, event) {
 
     if (slate.listTypes.includes(nextSibling.type)) {
       Transforms.mergeNodes(editor, {
-        match: (node) => node.type === type,
+        match: (node) => node === currentList,
         at: nextSiblingPath,
+        mode: 'highest',
       });
     }
   }

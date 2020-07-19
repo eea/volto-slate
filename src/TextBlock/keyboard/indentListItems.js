@@ -135,7 +135,6 @@ export function increaseItemDepth(editor, event) {
   // test if there's a sibling ul element above (in this case we insert at end)
   // or below (then we insert at top)
 
-  const { slate } = settings;
   const [, listItemPath] = getCurrentListItem(editor);
 
   const [parentList] = Editor.parent(editor, listItemPath); // TODO: should look up a list
@@ -151,6 +150,7 @@ export function increaseItemDepth(editor, event) {
     );
     return true;
   }
+
   const { type } = parentList;
   Transforms.wrapNodes(
     editor,
@@ -160,29 +160,41 @@ export function increaseItemDepth(editor, event) {
     },
   );
 
+  // listItemPath now points to a list
   const currentListRef = Editor.pathRef(editor, listItemPath);
 
   // Merge with any previous <ul/ol> list
-  const prevSiblingPath = getPreviousSiblingPath(listItemPath);
+  mergeWithPreviousList(editor, currentListRef.current);
+
+  // Merge with any next <ul/ol> list
+  mergeWithNextList(editor, currentListRef.current);
+
+  return true;
+}
+
+export function mergeWithPreviousList(editor, listPath) {
+  const { slate } = settings;
+  const prevSiblingPath = getPreviousSiblingPath(listPath);
   if (prevSiblingPath) {
     const [prevSibling] = Editor.node(editor, prevSiblingPath);
 
     if (slate.listTypes.includes(prevSibling.type)) {
       Transforms.mergeNodes(editor, {
-        match: (node) => node.type === type,
+        match: (node) => slate.listTypes.includes(node.type),
         mode: 'highest',
-        at: currentListRef.current,
+        at: listPath,
       });
     }
   }
+}
 
-  // Merge with any next <ul/ol> list
-  const { current } = currentListRef;
-  const [currentList] = Editor.node(editor, current);
-  const [parent] = Editor.parent(editor, current);
+export function mergeWithNextList(editor, listPath) {
+  const { slate } = settings;
+  const [currentList] = Editor.node(editor, listPath);
+  const [parent] = Editor.parent(editor, listPath);
 
-  if (parent.children.length - 1 > current[current.length - 1]) {
-    const nextSiblingPath = Path.next(current);
+  if (parent.children.length - 1 > listPath[listPath.length - 1]) {
+    const nextSiblingPath = Path.next(listPath);
     const [nextSibling] = Editor.node(editor, nextSiblingPath);
 
     if (slate.listTypes.includes(nextSibling.type)) {
@@ -193,8 +205,6 @@ export function increaseItemDepth(editor, event) {
       });
     }
   }
-
-  return true;
 }
 
 export function increaseMultipleItemDepth(editor, event) {

@@ -23,8 +23,9 @@ import { settings } from '~/config';
  *
  * Although not the cleanest, there are numerous advantages to having lists
  * like this:
- * - code is cleaner
+ * - Code is a lot cleaner, easy to understand and maintain
  * - Google Docs produces the same type of lists
+ * - HTML produced by LibreWriter (as witnesed in clipboard transfer) is same
  *
  * See https://github.com/eea/volto-slate/releases/tag/ul_inside_li for an
  * implementation that "inlines" the <ul> tags inside <li>. It's not pretty.
@@ -58,15 +59,6 @@ function getCurrentListItem(editor) {
 /**
  * @function decreaseItemDepth
  *
- * Overall behaviour:
- *
- * 1. get the current list item
- * 2. get its list (ul/ol) parent
- * 3. if parent seems to be at root, break from this Volto block as a new paragraph
- * 4. find if current list has a list as an ancestor
- * 5. move to that list
- * 6. cleanup the old list (from step 2) if it's empty
- *
  * @param {} editor
  * @param {} event
  */
@@ -81,15 +73,23 @@ export function decreaseItemDepth(editor, event) {
 
   // TODO: when unindenting a sublist item, it should take its next siblings
   // with it as a sublist
+  const listItemRef = Editor.pathRef(editor, listItemPath);
+
+  Transforms.unwrapNodes(editor, {
+    at: listItemPath,
+    split: true,
+    mode: 'lowest',
+    match: (node) => slate.listTypes.includes(node.type),
+  });
+
+  // return;
 
   const to = Path.next(parentListPath);
 
-  Transforms.moveNodes(editor, {
-    at: listItemPath,
-    to,
-  });
-  // Transforms.unwrapNodes(editor, {
-  // }
+  // Transforms.moveNodes(editor, {
+  //   at: listItemPath,
+  //   to,
+  // });
 
   // check if the next future after sibling is an <ul/ol>
   // in that case, move my after siblings to that <ul/ol>
@@ -108,9 +108,9 @@ export function decreaseItemDepth(editor, event) {
   }
 
   // remove the old list that contained the just-moved list item
-  if (parentList.children.length === 1) {
-    Transforms.removeNodes(editor, { at: parentListPath });
-  }
+  // if (parentList.children.length === 1) {
+  //   Transforms.removeNodes(editor, { at: parentListPath });
+  // }
 
   // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {

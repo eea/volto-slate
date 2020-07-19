@@ -88,9 +88,15 @@ export function decreaseItemDepth(editor, event) {
     at: listItemPath,
     to,
   });
+  // Transforms.unwrapNodes(editor, {
+  // }
+
+  // check if the next future after sibling is an <ul/ol>
+  // in that case, move my after siblings to that <ul/ol>
+  // otherwise, create a new <ul/ol> to contain them
 
   if (parentListPath.length === 1) {
-    // we're unwrapping the list item as the user wants to break out
+    // Our parent is at root, unwrapping list item, user wants to break out
     Transforms.setNodes(
       editor,
       { type: slate.defaultBlockType },
@@ -101,10 +107,12 @@ export function decreaseItemDepth(editor, event) {
     );
   }
 
+  // remove the old list that contained the just-moved list item
   if (parentList.children.length === 1) {
     Transforms.removeNodes(editor, { at: parentListPath });
   }
 
+  // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {
     const blockProps = editor.getBlockProps();
     deconstructToVoltoBlocks(editor).then((newId) => {
@@ -129,6 +137,7 @@ export function increaseItemDepth(editor, event) {
 
   const { slate } = settings;
   const [, listItemPath] = getCurrentListItem(editor);
+
   const [parentList] = Editor.parent(editor, listItemPath); // TODO: should look up a list
 
   if (parentList.children.length === 1) {
@@ -142,28 +151,40 @@ export function increaseItemDepth(editor, event) {
     );
     return true;
   }
-
-  const siblingPath =
-    getPreviousSiblingPath(listItemPath) || Path.next(listItemPath);
-  const [sibling] = Editor.node(editor, siblingPath);
-  if (slate.listTypes.includes(sibling.type)) {
-    const to =
-      siblingPath > listItemPath
-        ? [...siblingPath, (sibling.children || []).length]
-        : [...siblingPath, 0];
-    Transforms.moveNodes(editor, {
+  const { type } = parentList;
+  Transforms.wrapNodes(
+    editor,
+    { type, children: [] },
+    {
       at: listItemPath,
-      to,
-    });
-  } else {
-    Transforms.wrapNodes(
-      editor,
-      { type: parentList.type, children: [] },
-      {
-        at: listItemPath,
-      },
-    );
+    },
+  );
+
+  const currentListRef = Editor.pathRef(editor, listItemPath);
+
+  // Merge with any previous <ul/ol> list
+  const prevSiblingPath = getPreviousSiblingPath(listItemPath);
+  if (prevSiblingPath) {
+    const [prevSibling] = Editor.node(editor, prevSiblingPath);
+
+    if (slate.listTypes.includes(prevSibling.type)) {
+      Transforms.mergeNodes(editor, {
+        match: (node) => node.type === type,
+        at: currentListRef.current,
+      });
+    }
   }
+
+  // Merge with any next <ul/ol> list
+  const { current } = currentListRef;
+  const [parent] = Editor.parent(editor, current);
+  if (parent.children.length > current[current.length - 1]) {
+    Transforms.mergeNodes(editor, {
+      match: (node) => node.type === type,
+      at: Path.next(current),
+    });
+  }
+
   return true;
 }
 

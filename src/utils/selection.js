@@ -79,8 +79,8 @@ export function isCursorAtBlockStart(editor) {
     const { anchor } = editor.selection;
     return anchor.offset > 0
       ? false
-      : anchor.path.length === 2 &&
-          anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+      : anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+    // anchor.path.length === 2 &&
   }
   return false;
 }

@@ -58,7 +58,7 @@ const applyConfig = (config) => {
     textblockExtensions: [
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
-      withDeserializeHtml,
+      // withDeserializeHtml,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />

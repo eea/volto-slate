@@ -178,11 +178,17 @@ export function increaseItemDepth(editor, event) {
   // Merge with any next <ul/ol> list
   const { current } = currentListRef;
   const [parent] = Editor.parent(editor, current);
-  if (parent.children.length > current[current.length - 1]) {
-    Transforms.mergeNodes(editor, {
-      match: (node) => node.type === type,
-      at: Path.next(current),
-    });
+
+  if (parent.children.length - 1 > current[current.length - 1]) {
+    const nextSiblingPath = Path.next(current);
+    const [nextSibling] = Editor.node(editor, nextSiblingPath);
+
+    if (slate.listTypes.includes(nextSibling.type)) {
+      Transforms.mergeNodes(editor, {
+        match: (node) => node.type === type,
+        at: nextSiblingPath,
+      });
+    }
   }
 
   return true;

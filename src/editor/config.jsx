@@ -70,16 +70,17 @@ export let toolbarButtons = [...defaultToolbarButtons];
 
 export let expandedToolbarButtons = [...defaultToolbarButtons];
 
-// The slate editor is "decorated" with the capabilities from this list
-
-// wrap editor with new functionality. While Slate calls them plugins, we
-// use "extension" to avoid confusion. A Volto Slate editor plugins adds more
-// functionality: buttons, new elements, etc.
-//
-// Each extension is a simple mutator function with signature:
-// `editor => editor`.
+// The slate editor is "decorated" with the capabilities from this list.
+// While Slate calls them plugins, we use "extension" to avoid confusion.
+// A Volto Slate editor plugins adds more functionality: buttons, new elements,
+// etc.
+// Each extension is a simple mutator function with signature: `editor => editor`.
 // See https://docs.slatejs.org/concepts/07-plugins and
 // https://docs.slatejs.org/concepts/06-editor
+//
+// First here gets executed last, so if you want to override behavior, push new
+// extensions to the end of this list, to rely on default behavior implemented
+// here.
 export const extensions = [
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -131,13 +132,8 @@ export const defaultValue = () => {
   return [createEmptyParagraph()];
 };
 
-// types to decorate as highlight in the editor
-export const nodeTypesToHighlight = [];
-
-// decorator functions. Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [highlightByType];
-
 // HTML deserialization (html -> slate data conversion)
+// These are used in clipboard paste handling
 export const htmlTagsToSlate = {
   BODY: bodyTagDeserializer,
   H1: blockTagDeserializer('h1'),
@@ -163,10 +159,17 @@ export const htmlTagsToSlate = {
   S: inlineTagDeserializer({ strikethrough: true }),
   STRONG: inlineTagDeserializer({ bold: true }),
   U: inlineTagDeserializer({ underline: true }),
-  SPAN: inlineTagDeserializer(),
+  // SPAN: inlineTagDeserializer(),
 
   // OL: listElementToSlateDeserializer('ol'),
   // UL: listElementToSlateDeserializer('ul'),
   // LI: () => ({ type: 'li' }),
   // PRE: () => ({ type: 'code' }),
 };
+
+// types to decorate as highlight in the editor. See the Footnote plugin for
+// an example.
+export const nodeTypesToHighlight = [];
+
+// decorator functions. Signature: ([node, path], ranges) => ranges
+export const runtimeDecorators = [highlightByType];

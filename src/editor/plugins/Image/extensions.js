@@ -1,24 +1,12 @@
-/*
- *
- *
- *
- *
- *
- *
- *
- * TODO: needs to implement uploading as a Volto block! We don't want images in
- * Volto richtext.
- * - there are some useful code snippets to use in the code for that below:
- *
- *
- *
- *
- *
- */
+// The default behavior is to allow images to be copy/pasted inside the editor
+// The TextBlockEdit extensions will come and then split the images into
+// separate dedicated Volto image blocks.
+
 import isUrl from 'is-url';
 import imageExtensions from 'image-extensions';
-// import { ReactEditor } from 'slate-react';
 import { Transforms } from 'slate';
+import { IMAGE } from './constants';
+import { jsx } from 'slate-hyperscript';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -33,10 +21,18 @@ export const onImageLoad = (editor, reader) => () => {
   if (url) insertImage(editor, url);
 };
 
-export const insertImage = (editor, url, { typeImg = 'image' } = {}) => {
-  const text = { text: '' };
-  const image = { type: typeImg, url, children: [text] };
+export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
+  const image = { type: typeImg, url, children: [{ text: '' }] };
   Transforms.insertNodes(editor, image);
+};
+
+export const deserializeImageTag = (editor, el) => {
+  const attrs = { type: IMAGE };
+
+  for (const name of el.getAttributeNames()) {
+    attrs[name] = el.getAttribute(name);
+  }
+  return jsx('element', attrs, []);
 };
 
 /**
@@ -45,13 +41,19 @@ export const insertImage = (editor, url, { typeImg = 'image' } = {}) => {
  * @param typeImg
  */
 export const withImage = (editor) => {
-  const { isVoid, insertData } = editor;
+  const { insertData, isVoid } = editor;
 
   editor.isVoid = (element) => {
-    return element.type === 'image' ? true : isVoid(element);
+    return element.type === IMAGE ? true : isVoid(element);
+  };
+
+  editor.htmlTagsToSlate = {
+    ...editor.htmlTagsToSlate,
+    IMG: deserializeImageTag,
   };
 
   editor.insertData = (data) => {
+    console.log('image insert data');
     const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {

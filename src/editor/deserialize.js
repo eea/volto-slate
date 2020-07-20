@@ -75,7 +75,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
     .flat();
 
   return children.map((child) => {
-    // console.log('text child', attrs);
+    console.log('text child', attrs, child);
     return jsx('text', attrs, child);
   });
 };

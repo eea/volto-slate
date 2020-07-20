@@ -1,4 +1,4 @@
-import { settings } from '~/config';
+// import { settings } from '~/config';
 
 export const deserializeListTag = (tagname) => (editor, el) => {
   console.log('list', el);

@@ -15,7 +15,7 @@ export const deserialize = (editor, el) => {
   }
 
   const { nodeName } = el;
-  console.log('n', nodeName);
+  // console.log('n', nodeName);
 
   if (htmlTagsToSlate[nodeName]) {
     return htmlTagsToSlate[nodeName](editor, el);
@@ -52,7 +52,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     .flat();
   const attrs = { type: tagname };
 
-  console.log('element', attrs);
+  // console.log('element', attrs);
   return jsx('element', attrs, children);
 };
 
@@ -63,7 +63,7 @@ export const bodyTagDeserializer = (editor, el) => {
     .map((el) => deserialize(editor, el))
     .flat();
 
-  console.log('fragment (body)');
+  // console.log('fragment (body)');
   return jsx('fragment', {}, children);
 };
 
@@ -75,7 +75,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
     .flat();
 
   return children.map((child) => {
-    console.log('text child', attrs);
+    // console.log('text child', attrs);
     return jsx('text', attrs, child);
   });
 };

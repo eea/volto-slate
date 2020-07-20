@@ -14,7 +14,11 @@ import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType } from './decorate';
-import { withDeleteSelectionOnEnter, withDeserializers } from './extensions';
+import {
+  withDeleteSelectionOnEnter,
+  withDeserializers,
+  insertData,
+} from './extensions';
 import {
   inlineTagDeserializer,
   bodyTagDeserializer,
@@ -76,7 +80,11 @@ export let expandedToolbarButtons = [...defaultToolbarButtons];
 // `editor => editor`.
 // See https://docs.slatejs.org/concepts/07-plugins and
 // https://docs.slatejs.org/concepts/06-editor
-export const extensions = [withDeleteSelectionOnEnter, withDeserializers];
+export const extensions = [
+  withDeleteSelectionOnEnter,
+  withDeserializers,
+  insertData,
+];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {

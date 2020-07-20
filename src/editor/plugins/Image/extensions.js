@@ -54,25 +54,25 @@ export const withImage = (editor) => {
     IMG: deserializeImageTag,
   };
 
-  // editor.insertData = (data) => {
-  //   const text = data.getData('text/plain');
-  //   const { files } = data;
-  //   if (files && files.length > 0) {
-  //     for (const file of files) {
-  //       const reader = new FileReader();
-  //       const [mime] = file.type.split('/');
-  //       if (mime === 'image') {
-  //         reader.addEventListener('load', onImageLoad(editor, reader));
-  //         reader.readAsDataURL(file);
-  //       }
-  //     }
-  //   } else if (isImageUrl(text)) {
-  //     insertImage(editor, text);
-  //   } else {
-  //     // console.log('regular data insert');
-  //     insertData(data);
-  //   }
-  // };
+  editor.insertData = (data) => {
+    const text = data.getData('text/plain');
+    const { files } = data;
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const reader = new FileReader();
+        const [mime] = file.type.split('/');
+        if (mime === 'image') {
+          reader.addEventListener('load', onImageLoad(editor, reader));
+          reader.readAsDataURL(file);
+        }
+      }
+    } else if (isImageUrl(text)) {
+      insertImage(editor, text);
+    } else {
+      // console.log('regular data insert');
+      insertData(data);
+    }
+  };
 
   return editor;
 };

@@ -1,5 +1,11 @@
 import { Editor, Path, Transforms } from 'slate';
-import { isCursorInList, deconstructToVoltoBlocks } from 'volto-slate/utils';
+import {
+  isCursorInList,
+  deconstructToVoltoBlocks,
+  getCurrentListItem,
+  mergeWithNextList,
+  mergeWithPreviousList,
+} from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
@@ -46,16 +52,6 @@ export function indentListItems({ editor, event }) {
     : increaseItemDepth(editor, event);
 }
 
-function getCurrentListItem(editor) {
-  const { slate } = settings;
-  const [match] = Editor.nodes(editor, {
-    at: editor.selection.anchor.path,
-    match: (n) => n.type === slate.listItemType,
-    mode: 'lowest',
-  });
-  return match;
-}
-
 /**
  * @function decreaseItemDepth
  *
@@ -69,7 +65,7 @@ export function decreaseItemDepth(editor, event) {
   const [listItemNode, listItemPath] = getCurrentListItem(editor);
 
   // The ul/ol that holds the current list item
-  const [parentList, parentListPath] = Editor.parent(editor, listItemPath);
+  const [, parentListPath] = Editor.parent(editor, listItemPath);
 
   // TODO: when unindenting a sublist item, it should take its next siblings
   // with it as a sublist
@@ -82,18 +78,13 @@ export function decreaseItemDepth(editor, event) {
     match: (node) => slate.listTypes.includes(node.type),
   });
 
-  // return;
+  // Merge with any previous <ul/ol> list
+  if (listItemRef.current.length > 1)
+    mergeWithPreviousList(editor, Path.parent(listItemRef.current));
 
-  const to = Path.next(parentListPath);
-
-  // Transforms.moveNodes(editor, {
-  //   at: listItemPath,
-  //   to,
-  // });
-
-  // check if the next future after sibling is an <ul/ol>
-  // in that case, move my after siblings to that <ul/ol>
-  // otherwise, create a new <ul/ol> to contain them
+  // Merge with any next <ul/ol> list
+  if (listItemRef.current.length > 1)
+    mergeWithNextList(editor, Path.parent(listItemRef.current));
 
   if (parentListPath.length === 1) {
     // Our parent is at root, unwrapping list item, user wants to break out
@@ -101,16 +92,11 @@ export function decreaseItemDepth(editor, event) {
       editor,
       { type: slate.defaultBlockType },
       {
-        at: to,
+        at: listItemRef.current,
         match: (node) => node === listItemNode,
       },
     );
   }
-
-  // remove the old list that contained the just-moved list item
-  // if (parentList.children.length === 1) {
-  //   Transforms.removeNodes(editor, { at: parentListPath });
-  // }
 
   // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {
@@ -160,7 +146,7 @@ export function increaseItemDepth(editor, event) {
     },
   );
 
-  // listItemPath now points to a list
+  // listItemPath was wrapped in a node, so it now points to a list
   const currentListRef = Editor.pathRef(editor, listItemPath);
 
   // Merge with any previous <ul/ol> list
@@ -172,43 +158,6 @@ export function increaseItemDepth(editor, event) {
   return true;
 }
 
-export function mergeWithPreviousList(editor, listPath) {
-  const { slate } = settings;
-  const prevSiblingPath = getPreviousSiblingPath(listPath);
-  if (prevSiblingPath) {
-    const [prevSibling] = Editor.node(editor, prevSiblingPath);
-
-    if (slate.listTypes.includes(prevSibling.type)) {
-      Transforms.mergeNodes(editor, {
-        match: (node) => slate.listTypes.includes(node.type),
-        mode: 'highest',
-        at: listPath,
-      });
-    }
-  }
-}
-
-export function mergeWithNextList(editor, listPath) {
-  const { slate } = settings;
-  const [currentList] = Editor.node(editor, listPath);
-  const [parent] = Editor.parent(editor, listPath);
-
-  if (parent.children.length - 1 > listPath[listPath.length - 1]) {
-    const nextSiblingPath = Path.next(listPath);
-    const [nextSibling] = Editor.node(editor, nextSiblingPath);
-
-    if (slate.listTypes.includes(nextSibling.type)) {
-      Transforms.mergeNodes(editor, {
-        match: (node) => {
-          return node === currentList || node === nextSibling;
-        },
-        at: nextSiblingPath,
-        mode: 'highest',
-      });
-    }
-  }
-}
-
 export function increaseMultipleItemDepth(editor, event) {
   // TODO: implement indenting current list item + plus siblings that come
   // after it
@@ -218,14 +167,3 @@ export function decreaseMultipleItemsDepth(editor, event) {
   // TODO: implement un-indenting current list item + plus siblings that come
   // after it
 }
-
-const getPreviousSiblingPath = function (path) {
-  // Doesn't raise an error if no previous sibling exists
-  const last = path[path.length - 1];
-
-  if (last <= 0) {
-    return null;
-  }
-
-  return path.slice(0, -1).concat(last - 1);
-};

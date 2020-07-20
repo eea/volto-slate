@@ -55,6 +55,17 @@ export function createSlateBlock(value, index, { onChangeBlock, onAddBlock }) {
   return id;
 }
 
+export function createImageBlock(url, index, { onChangeBlock, onAddBlock }) {
+  const id = onAddBlock('slate', index + 1);
+
+  const options = {
+    '@type': 'image',
+    url,
+  };
+  onChangeBlock(id, options);
+  return id;
+}
+
 export function createAndSelectNewSlateBlock(value, index, props) {
   setTimeout(() => {
     const id = createSlateBlock(value, index, props);
@@ -111,15 +122,47 @@ export function deconstructToVoltoBlocks(editor) {
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
+      const total = editor.children.length;
       const [first, ...rest] = editor.children;
+
+      // extract all image elements separately, create Volto blocks from them
+      const images = Array.from(
+        Editor.nodes(editor, {
+          at: [],
+          match: (node) => node.type === 'img', // hardcoded
+        }),
+      );
+      console.log('images', images);
+
+      images.forEach(([el, path]) => {
+        if (path[0] === 0) {
+          Transforms.removeNodes(editor, { at: path });
+          const newid = createImageBlock(el.src, index, blockProps);
+          resolve(newid);
+        }
+      });
+
       if (!rest.length) return;
+
+      // removes all children from the editor
       for (let i = 0; i <= editor.children.length + 1; i++) {
         Transforms.removeNodes(editor, { at: [0] });
       }
+      // insert back the first child
       Transforms.insertNodes(editor, first);
 
       setTimeout(() => {
-        rest.reverse().forEach((block) => {
+        rest.reverse().forEach((block, i) => {
+          // due to reverse() above. Advantage is that we don't
+          // have to keep track of index. Might be error-prone
+          const imgIndex = total - i;
+          images.forEach(([el, path]) => {
+            if (path[0] === imgIndex) {
+              Transforms.removeNodes(editor, { at: path });
+              const newid = createImageBlock(el.src, index, blockProps);
+              resolve(newid);
+            }
+          });
           const newid = createSlateBlock([block], index, blockProps);
           resolve(newid);
         });

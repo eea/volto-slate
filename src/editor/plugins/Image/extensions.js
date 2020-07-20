@@ -32,9 +32,7 @@ export const deserializeImageTag = (editor, el) => {
   for (const name of el.getAttributeNames()) {
     attrs[name] = el.getAttribute(name);
   }
-  const res = jsx('element', attrs, [{ text: '' }]);
-  console.log('image', res);
-  return res;
+  return jsx('element', attrs, [{ text: '' }]);
 };
 
 /**

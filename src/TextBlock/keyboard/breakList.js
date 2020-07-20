@@ -12,6 +12,22 @@ export function breakList({ editor, event }) {
   const { slate } = settings;
   const { anchor } = editor.selection;
 
+  // if one of the parents is a list item, break that list item
+  const [listItem, listItemPath] = Editor.nodes(editor, {
+    at: editor.selection,
+    mode: 'lowest',
+    match: (node) => node.type === slate.listItemType,
+  });
+  if (listItem) {
+    Transforms.splitNodes(editor, {
+      at: listItemPath,
+      match: (node) => node.type === slate.listItemType,
+    });
+    event.preventDefault();
+    event.stopPropagation();
+    return true;
+  }
+
   const [parent] = Editor.parent(editor, anchor.path);
   if (parent.type !== slate.listItemType || anchor.offset > 0) {
     return; // applies default behaviour, as defined in insertBreak.js extension

@@ -5,7 +5,6 @@ export const insertData = (editor) => {
 
   editor.insertData = (data) => {
     insertData(data);
-
     deconstructToVoltoBlocks(editor);
     return;
   };

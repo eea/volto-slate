@@ -32,7 +32,9 @@ export const deserializeImageTag = (editor, el) => {
   for (const name of el.getAttributeNames()) {
     attrs[name] = el.getAttribute(name);
   }
-  return jsx('element', attrs, []);
+  const res = jsx('element', attrs, [{ text: '' }]);
+  console.log('image', res);
+  return res;
 };
 
 /**
@@ -52,25 +54,25 @@ export const withImage = (editor) => {
     IMG: deserializeImageTag,
   };
 
-  editor.insertData = (data) => {
-    console.log('image insert data');
-    const text = data.getData('text/plain');
-    const { files } = data;
-    if (files && files.length > 0) {
-      for (const file of files) {
-        const reader = new FileReader();
-        const [mime] = file.type.split('/');
-        if (mime === 'image') {
-          reader.addEventListener('load', onImageLoad(editor, reader));
-          reader.readAsDataURL(file);
-        }
-      }
-    } else if (isImageUrl(text)) {
-      insertImage(editor, text);
-    } else {
-      insertData(data);
-    }
-  };
+  // editor.insertData = (data) => {
+  //   const text = data.getData('text/plain');
+  //   const { files } = data;
+  //   if (files && files.length > 0) {
+  //     for (const file of files) {
+  //       const reader = new FileReader();
+  //       const [mime] = file.type.split('/');
+  //       if (mime === 'image') {
+  //         reader.addEventListener('load', onImageLoad(editor, reader));
+  //         reader.readAsDataURL(file);
+  //       }
+  //     }
+  //   } else if (isImageUrl(text)) {
+  //     insertImage(editor, text);
+  //   } else {
+  //     // console.log('regular data insert');
+  //     insertData(data);
+  //   }
+  // };
 
   return editor;
 };

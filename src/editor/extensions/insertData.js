@@ -24,7 +24,9 @@ export const insertData = (editor) => {
 
       // We can't afford to insert a fragment, we want Slate to clean up
       // Editor.insertFragment(editor, fragment);
+      // Transforms.insertFragment(editor, fragment);
       Transforms.insertNodes(editor, fragment);
+      Transforms.deselect(editor);
 
       return;
     }

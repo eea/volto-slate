@@ -199,7 +199,9 @@ export function mergeWithNextList(editor, listPath) {
 
     if (slate.listTypes.includes(nextSibling.type)) {
       Transforms.mergeNodes(editor, {
-        match: (node) => node === currentList,
+        match: (node) => {
+          return node === currentList || node === nextSibling;
+        },
         at: nextSiblingPath,
         mode: 'highest',
       });

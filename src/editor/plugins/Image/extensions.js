@@ -7,6 +7,7 @@ import imageExtensions from 'image-extensions';
 import { Transforms } from 'slate';
 import { IMAGE } from './constants';
 import { jsx } from 'slate-hyperscript';
+import { getBaseUrl } from '@plone/volto/helpers';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -17,8 +18,33 @@ export const isImageUrl = (url) => {
 };
 
 export const onImageLoad = (editor, reader) => () => {
-  const url = reader.result;
-  if (url) insertImage(editor, url);
+  const data = reader.result;
+  // console.log('onImageload', reader);
+
+  // TODO: we need an orchestrator at redux level that would get the
+  // "create image block with this content" action and implement it.
+
+  // if (url) insertImage(editor, url);
+  // const fields = data.match(/^data:(.*);(.*),(.*)$/);
+  // const blockProps = editor.getBlockProps();
+  // const { uploadContent, pathname, block } = blockProps;
+  // TODO: we need a way to get the uploaded image URL
+  // This would be easier if we would have block transformers-based image
+  // blocks
+  // uploadContent(
+  //   getBaseUrl(pathname),
+  //   {
+  //     '@type': 'Image',
+  //     title: 'clipboard',
+  //     image: {
+  //       data: fields[3],
+  //       encoding: fields[2],
+  //       'content-type': fields[1],
+  //       filename: 'clipboard',
+  //     },
+  //   },
+  //   block,
+  // );
 };
 
 export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
@@ -59,7 +85,6 @@ export const withImage = (editor) => {
   };
 
   editor.insertData = (data) => {
-    console.log('image insertData');
     const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {
@@ -74,7 +99,6 @@ export const withImage = (editor) => {
     } else if (isImageUrl(text)) {
       insertImage(editor, text);
     } else {
-      // console.log('regular data insert');
       insertData(data);
     }
   };

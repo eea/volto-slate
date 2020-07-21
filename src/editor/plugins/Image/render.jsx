@@ -14,9 +14,9 @@ export const ImageElement = (props) => {
   };
 
   return (
-    <div {...attributes}>
+    <span {...attributes} style={{ display: 'inline-block' }}>
       {children}
       <img alt="" src={element.src} style={style} />
-    </div>
+    </span>
   );
 };

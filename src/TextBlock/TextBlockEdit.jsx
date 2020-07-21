@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import { readAsDataURL } from 'promise-file-reader';
 
@@ -40,7 +40,6 @@ const TextBlockEdit = (props) => {
 
   const { slate } = settings;
   const { textblockExtensions } = slate;
-  console.log('render', block);
   const { value } = data;
 
   const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
@@ -59,19 +58,19 @@ const TextBlockEdit = (props) => {
   //   };
   // });
 
+  const dispatch = useDispatch(); // just in case is needed in extensions
   const withBlockProperties = React.useCallback(
     (editor) => {
       editor.getBlockProps = () => {
-        return props;
+        return {
+          ...props,
+          dispatch,
+        };
       };
       return editor;
     },
-    [props],
+    [props, dispatch],
   );
-
-  // let extensions = React.useMemo(() => {
-  //   return [withBlockProperties, ...textblockExtensions]; //
-  // }, [textblockExtensions]);
 
   const onDrop = React.useCallback(
     (files) => {

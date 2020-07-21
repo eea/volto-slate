@@ -101,6 +101,7 @@ export function decreaseItemDepth(editor, event) {
   // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {
     const blockProps = editor.getBlockProps();
+    console.log('indent deconstruct');
     deconstructToVoltoBlocks(editor).then((newId) => {
       setTimeout(() => blockProps.onSelectBlock(newId), 10);
     });

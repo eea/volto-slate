@@ -25,7 +25,7 @@ import {
 } from './TextBlock/keyboard';
 import { withDeleteSelectionOnEnter } from './editor/extensions';
 import {
-  insertData,
+  withInsertData,
   withSplitBlocksOnBreak,
   withDeserializers,
 } from './TextBlock/extensions';
@@ -56,10 +56,10 @@ const applyConfig = (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
-      insertData,
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
       withDeserializers,
+      withInsertData,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />

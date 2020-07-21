@@ -40,6 +40,7 @@ const TextBlockEdit = (props) => {
 
   const { slate } = settings;
   const { textblockExtensions } = slate;
+  console.log('render', block);
   const { value } = data;
 
   const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
@@ -67,6 +68,10 @@ const TextBlockEdit = (props) => {
     },
     [props],
   );
+
+  // let extensions = React.useMemo(() => {
+  //   return [withBlockProperties, ...textblockExtensions]; //
+  // }, [textblockExtensions]);
 
   const onDrop = React.useCallback(
     (files) => {
@@ -162,7 +167,8 @@ const TextBlockEdit = (props) => {
             index={index}
             properties={properties}
             onAddBlock={onAddBlock}
-            extensions={[withBlockProperties, ...textblockExtensions]}
+            extensions={textblockExtensions}
+            renderExtensions={[withBlockProperties]}
             onSelectBlock={onSelectBlock}
             value={value}
             block={block}

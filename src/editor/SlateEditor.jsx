@@ -25,6 +25,7 @@ const SlateEditor = ({
   properties,
   defaultSelection,
   extensions,
+  renderExtensions = [],
   testingEditorRef,
   ...props
 }) => {
@@ -35,18 +36,14 @@ const SlateEditor = ({
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
     const raw = withHistory(withReact(createEditor()));
-
-    // TODO: this needs cleanup
-    const plugins = [
-      // FIXME: commented out for testing reasons:
-      // withDelete,
-      // withBreakEmptyReset, // don't "clean" this up, it needs to stay here!
-      ...defaultExtensions,
-    ];
+    const plugins = [...defaultExtensions, ...extensions];
     return plugins.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultExtensions]);
+  }, [defaultExtensions, extensions]);
 
-  editor = extensions.reduce((acc, apply) => apply(acc), editor);
+  // renderExtensions is needed because the editor is memoized, so if these
+  // extensions need an updated state (for example to insert updated
+  // blockProps) then we need to always wrap the editor with them
+  editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
   const initial_selection = React.useRef();
 

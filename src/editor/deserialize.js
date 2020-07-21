@@ -14,8 +14,9 @@ export const deserialize = (editor, el) => {
     return '\n';
   }
 
+  console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
+
   const { nodeName } = el;
-  // console.log('n', nodeName);
 
   if (htmlTagsToSlate[nodeName]) {
     return htmlTagsToSlate[nodeName](editor, el);

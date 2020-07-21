@@ -41,10 +41,16 @@ export const deserializeImageTag = (editor, el) => {
  * @param typeImg
  */
 export const withImage = (editor) => {
-  const { insertData, isVoid } = editor;
+  const { insertData, isVoid, isInline } = editor;
 
   editor.isVoid = (element) => {
     return element.type === IMAGE ? true : isVoid(element);
+  };
+
+  // If it's not marked as inline, Slate will strip the {type:'img"} nodes when
+  // it finds them next to {text: ''} nodes
+  editor.isInline = (element) => {
+    return element.type === IMAGE ? true : isInline(element);
   };
 
   editor.htmlTagsToSlate = {
@@ -53,6 +59,7 @@ export const withImage = (editor) => {
   };
 
   editor.insertData = (data) => {
+    console.log('image insertData');
     const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {

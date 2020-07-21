@@ -124,17 +124,19 @@ export function deconstructToVoltoBlocks(editor) {
     setTimeout(() => {
       // setTimeout() hack needed to overcome Volto API limitations in Form.jsx
       const total = editor.children.length;
-      console.log('deconstruct', total, JSON.stringify(editor.children));
+      // console.log('deconstruct', total, JSON.stringify(editor.children));
       const [first, ...rest] = editor.children;
 
       // extract all image elements separately, create Volto blocks from them
+      // TODO: this is a temporary hack. We should reimplement when we have:
+      // - block transformer based "image upload"
       const images = Array.from(
         Editor.nodes(editor, {
           at: [],
           match: (node) => node.type === 'img', // hardcoded
         }),
       );
-      console.log('images', images);
+      // console.log('images', images);
 
       images.forEach(([el, path]) => {
         if (path[0] === 0) {

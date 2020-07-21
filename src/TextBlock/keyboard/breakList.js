@@ -22,6 +22,7 @@ export function breakList({ editor, event }) {
     Transforms.splitNodes(editor, {
       at: listItemPath,
       match: (node) => node.type === slate.listItemType,
+      always: true, // in case cursor is at end of line
     });
     event.preventDefault();
     event.stopPropagation();

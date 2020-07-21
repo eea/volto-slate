@@ -1,4 +1,4 @@
-import { Editor, Path, Range, Transforms } from 'slate';
+import { Editor, Range, Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   splitEditorInTwoFragments,
@@ -19,14 +19,16 @@ export function breakList({ editor, event }) {
     match: (node) => node.type === slate.listItemType,
   });
   if (listItem) {
-    Transforms.splitNodes(editor, {
-      at: listItemPath,
-      match: (node) => node.type === slate.listItemType,
-      always: true, // in case cursor is at end of line
-    });
-    event.preventDefault();
-    event.stopPropagation();
-    return true;
+    if (Editor.string(editor, editor.selection)) {
+      Transforms.splitNodes(editor, {
+        at: listItemPath,
+        match: (node) => node.type === slate.listItemType,
+        always: true, // in case cursor is at end of line
+      });
+      event.preventDefault();
+      event.stopPropagation();
+      return true;
+    }
   }
 
   const [parent] = Editor.parent(editor, anchor.path);

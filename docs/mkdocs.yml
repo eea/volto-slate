@@ -18,7 +18,10 @@ extra_css:
   - 'stylesheets/extra.css'
 
 nav:
-  - Getting Started: 'getting-started.md'
+  - The Plugin: 'index.md'
+  - Directory Structure: 'directory-structure.md'
+  - Volto Slate Plugins: 'volto-slate-plugins.md'
+  - Building the Docs: 'building-the-docs.md'
 
 plugins:
   - search

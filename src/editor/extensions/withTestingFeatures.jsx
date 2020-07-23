@@ -41,8 +41,14 @@ const withTestingFeatures = (WrappedComponent) => {
 
     return (
       <WrappedComponent
-        data-slate-value={JSON.stringify(props.value, null, 2)}
-        data-slate-selection={JSON.stringify(ref?.current?.selection, null, 2)}
+        debug-values={{
+          'data-slate-value': JSON.stringify(props.value, null, 2),
+          'data-slate-selection': JSON.stringify(
+            ref?.current?.selection,
+            null,
+            2,
+          ),
+        }}
         testingEditorRef={ref}
         {...props}
       />

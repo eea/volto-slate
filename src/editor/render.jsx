@@ -15,7 +15,6 @@ export const Element = (props) => {
 };
 
 export const Leaf = ({ attributes, leaf, children, mode }) => {
-  // console.log('leaf attrs', attributes);
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {

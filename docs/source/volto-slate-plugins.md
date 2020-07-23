@@ -35,7 +35,7 @@ Their initializations can be found inside `/src/editor/config.jsx`.
 - `slate.expandedToolbarButtons` - *List*. Add new buttons to the expanded (fixed) toolbar
 - `slate.elements` - *Object*. Define new block elements as properties of this object with `string` keys
 - `slate.extensions` - *List*. Decorator functions receiving a Slate.js `Editor` instance and returning a modified `Editor` instance object
-- `slate.nodeTypesToHighlight` - *List*. Strings used just in and with the `Footnote` default plugin
+- `slate.nodeTypesToHighlight` - *List*. Slate.js type strings (e.g. `"paragraph"`, `"image"` etc.) for the types to be highlighted in the `SlateEditor`
 - `slate.htmlTagsToSlate` - *Object*. Contains properties like this: if the property's key is `A`, the value of this property is a function receiving an `editor` parameter of type (Slate.js) `Editor` and an `el` Slate Element and this function handles link deserialization (`A` is the HTML tag name for links).
 
 ### For all the extension points of List type listed above

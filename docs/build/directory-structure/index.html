@@ -10,18 +10,18 @@
       
       
       
-      <link rel="shortcut icon" href="/images/favicon.ico">
+      <link rel="shortcut icon" href="../images/favicon.ico">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
     
     
       
-        <title>Volto Slate</title>
+        <title>Directory Structure - Volto Slate</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.fe0cca5b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.fe0cca5b.min.css">
       
-        <link rel="stylesheet" href="/assets/stylesheets/palette.a46bcfb3.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a46bcfb3.min.css">
       
       
         
@@ -39,7 +39,7 @@
     
     
     
-      <link rel="stylesheet" href="/stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
     
       
@@ -59,6 +59,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#directory-structure" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -66,9 +71,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href="/." title="Volto Slate" class="md-header-nav__button md-logo" aria-label="Volto Slate">
+    <a href=".." title="Volto Slate" class="md-header-nav__button md-logo" aria-label="Volto Slate">
       
-  <img src="/images/editing.svg" alt="logo">
+  <img src="../images/editing.svg" alt="logo">
 
     </a>
     <label class="md-header-nav__button md-icon" for="__drawer">
@@ -82,7 +87,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              
+              Directory Structure
             
           </span>
         </div>
@@ -152,9 +157,9 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="Volto Slate" class="md-nav__button md-logo" aria-label="Volto Slate">
+    <a href=".." title="Volto Slate" class="md-nav__button md-logo" aria-label="Volto Slate">
       
-  <img src="/images/editing.svg" alt="logo">
+  <img src="../images/editing.svg" alt="logo">
 
     </a>
     Volto Slate
@@ -181,7 +186,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/." title="The Plugin" class="md-nav__link">
+    <a href=".." title="The Plugin" class="md-nav__link">
       The Plugin
     </a>
   </li>
@@ -191,11 +196,20 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="/directory-structure/" title="Directory Structure" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Directory Structure" class="md-nav__link md-nav__link--active">
       Directory Structure
     </a>
+    
   </li>
 
     
@@ -205,7 +219,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/volto-slate-plugins/" title="Volto Slate Plugins" class="md-nav__link">
+    <a href="../volto-slate-plugins/" title="Volto Slate Plugins" class="md-nav__link">
       Volto Slate Plugins
     </a>
   </li>
@@ -217,7 +231,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/building-the-docs/" title="Building the Docs" class="md-nav__link">
+    <a href="../building-the-docs/" title="Building the Docs" class="md-nav__link">
       Building the Docs
     </a>
   </li>
@@ -230,12 +244,82 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
-  <h1>404 - Not found</h1>
+                
+                  <a href="https://github.com/eea/volto-slate/edit/master/docs/directory-structure.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="directory-structure">Directory structure<a class="headerlink" href="#directory-structure" title="Permanent link">#</a></h1>
+<p>The actual source code of this React-based Volto addon is inside the <code>src/</code> directory. Below is the directory structure:</p>
+<div class="highlight"><pre><span></span><code>docs/ - the documentation that you are reading right now
+  ...
+src/
+  actions/ - Redux action creators specific to volto-slate
+  editor/ - The essence of volto-slate: SlateEditor and all of its dependencies
+    ui/ - Some React components for Volto Slate toolbars
+    plugins/ - The currently 5 plugins that are used directly in the SlateEditor component
+    extensions/ - extensions (also called decorators) which are used with SlateEditor
+    less/ - The LESS styles for the SlateEditor
+  futurevolto/ - Backport of possible future features of Volto, as a plugin, containing a config.js file that is the entry point
+  reducers/ - Redux reducers specific to volto-slate
+  TextBlock/ - the TextBlockView and TextBlockEdit React components whose roles are presented below
+    keyboard/ - keyboard handlers used just in the TextBlockEdit component
+    extensions/ - extensions (also called decorators) which are used just with the TextBlockEdit component
+  utils/ - lots of functions used in the editor/ and TextBlock/ directories and grouped into 13 files
+</code></pre></div>
 
+<p>There also are some unit tests near the files that they test and having the extension <code>.test.jsx</code>. The unit tests are created with jest and the jest snapshots in directories called <code>__snapshots__</code>.</p>
+<p>Each direct subdirectory of <code>src/</code> except <code>futurevolto</code> contains an <code>index.js</code> file so that the directory can be imported from other JS files.</p>
+<p>The <code>/src</code> directory directly contains the <code>index.js</code> file which configures the addon. This <code>index.js</code> file specifies, in this order:</p>
+<ol>
+<li>imports of the two React components used as an intermediary between Volto and the <code>SlateEditor</code> component defined within volto-slate:<ol>
+<li><code>TextBlockView</code></li>
+<li><code>TextBlockEdit</code></li>
+</ol>
+</li>
+<li>configuration for the new <code>slate</code> block type</li>
+<li>a change of the default Volto block type to <code>slate</code></li>
+<li>extensions (also named decorators) and keyboard event handlers for <code>TextBlockEdit</code></li>
+<li>installs a few default plugins for volto-slate<ol>
+<li><code>Blockquote</code></li>
+<li><code>Link</code></li>
+<li><code>Footnote</code></li>
+<li><code>Markdown</code></li>
+<li><code>Image</code></li>
+</ol>
+</li>
+<li>installs Volto proposals' widgets:<ol>
+<li><code>"object"</code> (<code>ObjectWidget</code>)</li>
+<li><code>"object_browser"</code> (<code>ObjectBrowserWidget</code>)</li>
+</ol>
+</li>
+<li>installation of the addon's reducers</li>
+</ol>
+                
+              
               
                 
 
@@ -248,6 +332,41 @@
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href=".." title="The Plugin" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                The Plugin
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../volto-slate-plugins/" title="Volto Slate Plugins" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Volto Slate Plugins
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -269,15 +388,15 @@
       
     </div>
     
-      <script src="/assets/javascripts/vendor.d710d30a.min.js"></script>
-      <script src="/assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      <script src="../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
       
       <script>
         app = initialize({
-          base: "/",
+          base: "..",
           features: [],
           search: Object.assign({
-            worker: "/assets/javascripts/worker/search.a68abb33.min.js"
+            worker: "../assets/javascripts/worker/search.a68abb33.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>

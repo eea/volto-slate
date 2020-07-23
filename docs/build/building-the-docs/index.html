@@ -10,18 +10,18 @@
       
       
       
-      <link rel="shortcut icon" href="/images/favicon.ico">
+      <link rel="shortcut icon" href="../images/favicon.ico">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
     
     
       
-        <title>Volto Slate</title>
+        <title>Building the Docs - Volto Slate</title>
       
     
     
-      <link rel="stylesheet" href="/assets/stylesheets/main.fe0cca5b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.fe0cca5b.min.css">
       
-        <link rel="stylesheet" href="/assets/stylesheets/palette.a46bcfb3.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a46bcfb3.min.css">
       
       
         
@@ -39,7 +39,7 @@
     
     
     
-      <link rel="stylesheet" href="/stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
     
       
@@ -59,6 +59,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#to-build-the-docs" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -66,9 +71,9 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href="/." title="Volto Slate" class="md-header-nav__button md-logo" aria-label="Volto Slate">
+    <a href=".." title="Volto Slate" class="md-header-nav__button md-logo" aria-label="Volto Slate">
       
-  <img src="/images/editing.svg" alt="logo">
+  <img src="../images/editing.svg" alt="logo">
 
     </a>
     <label class="md-header-nav__button md-icon" for="__drawer">
@@ -82,7 +87,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              
+              Building the Docs
             
           </span>
         </div>
@@ -152,9 +157,9 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/." title="Volto Slate" class="md-nav__button md-logo" aria-label="Volto Slate">
+    <a href=".." title="Volto Slate" class="md-nav__button md-logo" aria-label="Volto Slate">
       
-  <img src="/images/editing.svg" alt="logo">
+  <img src="../images/editing.svg" alt="logo">
 
     </a>
     Volto Slate
@@ -181,7 +186,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/." title="The Plugin" class="md-nav__link">
+    <a href=".." title="The Plugin" class="md-nav__link">
       The Plugin
     </a>
   </li>
@@ -193,7 +198,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/directory-structure/" title="Directory Structure" class="md-nav__link">
+    <a href="../directory-structure/" title="Directory Structure" class="md-nav__link">
       Directory Structure
     </a>
   </li>
@@ -205,7 +210,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/volto-slate-plugins/" title="Volto Slate Plugins" class="md-nav__link">
+    <a href="../volto-slate-plugins/" title="Volto Slate Plugins" class="md-nav__link">
       Volto Slate Plugins
     </a>
   </li>
@@ -215,11 +220,20 @@
       
       
 
+  
 
-  <li class="md-nav__item">
-    <a href="/building-the-docs/" title="Building the Docs" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Building the Docs" class="md-nav__link md-nav__link--active">
       Building the Docs
     </a>
+    
   </li>
 
     
@@ -230,12 +244,50 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
-  <h1>404 - Not found</h1>
+                
+                  <a href="https://github.com/eea/volto-slate/edit/master/docs/building-the-docs.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <h1 id="to-build-the-docs">To build the docs<a class="headerlink" href="#to-build-the-docs" title="Permanent link">#</a></h1>
+<p>The prerequisites:</p>
+<div class="highlight"><pre><span></span><code>$ pip install mkdocs
+$ pip install pymdown-extensions
+$ pip install mkdocs-material
+</code></pre></div>
 
+<p>Then run this to start the local docs server:</p>
+<div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> path/to/volto-slate/git/clone
+$ <span class="nb">cd</span> docs
+$ mkdocs serve
+</code></pre></div>
+
+<p>For more info on mkdocs - the documentation engine being used by volto-slate - click <a href="https://www.mkdocs.org/">here</a>.</p>
+                
+              
               
                 
 
@@ -248,6 +300,27 @@
       
         
 <footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../volto-slate-plugins/" title="Volto Slate Plugins" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Volto Slate Plugins
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
@@ -269,15 +342,15 @@
       
     </div>
     
-      <script src="/assets/javascripts/vendor.d710d30a.min.js"></script>
-      <script src="/assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      <script src="../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
       
       <script>
         app = initialize({
-          base: "/",
+          base: "..",
           features: [],
           search: Object.assign({
-            worker: "/assets/javascripts/worker/search.a68abb33.min.js"
+            worker: "../assets/javascripts/worker/search.a68abb33.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>

@@ -140,7 +140,7 @@ export default connect((state, props) => {
     defaultSelection: state.slate_block_selections?.[blockId],
   };
 })(
-  __CLIENT__ && window?.Cypress
+  __CLIENT__ // && window?.Cypress
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,
 );

@@ -2,9 +2,15 @@ import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const insertData = (editor) => {
-  const { insertData } = editor;
+  const { insertData, apply } = editor;
+
+  // editor.apply = (op) => {
+  //   console.log('op', op);
+  //   return apply(op);
+  // };
 
   editor.insertData = (data) => {
+    console.log('data', data);
     const html = data.getData('text/html');
 
     if (html) {

@@ -62,7 +62,7 @@ export const serializeNodes = (nodes) =>
           text={node}
           attributes={{ 'data-slate-leaf': true }}
           mode="view"
-          key={node.id || i}
+          key={node.id}
         >
           {node.text}
         </Leaf>
@@ -73,7 +73,7 @@ export const serializeNodes = (nodes) =>
         element={node}
         attributes={{ 'data-slate-node': 'element', ref: null }}
         mode="view"
-        key={i}
+        key={node.id}
       >
         {serializeNodes(node.children)}
       </Element>

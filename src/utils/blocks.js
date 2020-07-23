@@ -41,7 +41,7 @@ export const changeBlockToList = (editor, format) => {
   if (!match) {
     Transforms.setNodes(editor, {
       type: slate.listItemType,
-      id: nanoid(8),
+      // id: nanoid(8),
     });
   }
   const block = { type: format, children: [] };

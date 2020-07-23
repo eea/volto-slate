@@ -17,7 +17,7 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from './constants';
 
-import { nanoid } from 'volto-slate/utils';
+// import { nanoid } from 'volto-slate/utils';
 
 import './editor.less';
 
@@ -74,7 +74,7 @@ const FootnoteButton = () => {
       const { footnote } = formData;
       if (footnote) {
         Transforms.select(editor, selection);
-        insertFootnote(editor, { ...formData, uid: nanoid(5) });
+        insertFootnote(editor, { ...formData });
       } else {
         unwrapFootnote(editor);
       }
@@ -130,6 +130,7 @@ const FootnoteButton = () => {
       <ToolbarButton
         active={isFootnote}
         onMouseDown={() => {
+          console.log(editor);
           if (!showForm) {
             setSelection(editor.selection);
 

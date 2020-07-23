@@ -27,7 +27,7 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
-  ...props
+  ...rest
 }) => {
   const { slate } = settings;
 
@@ -95,6 +95,7 @@ const SlateEditor = ({
 
   return (
     <div
+      {...rest} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>

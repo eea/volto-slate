@@ -15,6 +15,7 @@ export const Element = (props) => {
 };
 
 export const Leaf = ({ attributes, leaf, children, mode }) => {
+  // console.log('leaf attrs', attributes);
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
@@ -29,8 +30,9 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
   return mode === 'view' ? (
     typeof children === 'string' ? (
       children.split('\n').map((t, i) => {
+        // Softbreak support. Should do a plugin
         return (
-          <>
+          <React.Fragment key={`${i}`}>
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
@@ -40,7 +42,7 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
             ) : (
               t
             )}
-          </>
+          </React.Fragment>
         );
       })
     ) : (
@@ -53,32 +55,40 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
   );
 };
 
-export const serializeNodes = (nodes) =>
-  (nodes || []).map((node, i) => {
-    if (Text.isText(node)) {
+export const serializeNodes = (nodes) => {
+  let index = 0;
+
+  const _serializeNodes = (nodes) =>
+    (nodes || []).map((node, i) => {
+      const id = index++;
+
+      if (Text.isText(node)) {
+        return (
+          <Leaf
+            leaf={node}
+            text={node}
+            attributes={{ 'data-slate-leaf': true }}
+            mode="view"
+            key={id}
+          >
+            {node.text}
+          </Leaf>
+        );
+      }
       return (
-        <Leaf
-          leaf={node}
-          text={node}
-          attributes={{ 'data-slate-leaf': true }}
+        <Element
+          element={node}
+          attributes={{ 'data-slate-node': 'element', ref: null }}
           mode="view"
-          key={node.id}
+          key={id}
         >
-          {node.text}
-        </Leaf>
+          {_serializeNodes(node.children)}
+        </Element>
       );
-    }
-    return (
-      <Element
-        element={node}
-        attributes={{ 'data-slate-node': 'element', ref: null }}
-        mode="view"
-        key={node.id}
-      >
-        {serializeNodes(node.children)}
-      </Element>
-    );
-  });
+    });
+
+  return _serializeNodes(nodes);
+};
 
 export const serializeNodesToText = (nodes) => {
   return nodes.map((n) => Node.string(n)).join('\n');

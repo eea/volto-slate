@@ -209,8 +209,8 @@ const TextBlockEdit = (props) => {
 export default connect(
   (state, props) => {
     return {
-      uploadRequest: state.upload_content[props.block]?.upload || {},
-      uploadedContent: state.upload_content[props.block]?.data || {},
+      uploadRequest: state.upload_content?.[props.block]?.upload || {},
+      uploadedContent: state.upload_content?.[props.block]?.data || {},
     };
   },
   {

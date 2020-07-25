@@ -52,7 +52,7 @@ export function mergeWithPreviousList(editor, listPath) {
     if (slate.listTypes.includes(prevSibling.type)) {
       Transforms.mergeNodes(editor, {
         // match: (node) => slate.listTypes.includes(node.type),
-        match: (node) => node === prevSiblingPath || node === currentList,
+        match: (node) => node === prevSibling || node === currentList,
         mode: 'highest',
         at: listPath,
       });

@@ -1,9 +1,18 @@
+import { v4 as uuid } from 'uuid';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 import { Transforms, Editor } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
+
+function fromEntries(pairs) {
+  const res = {};
+  pairs.forEach((p) => {
+    res[p[0]] = p[1];
+  });
+  return res;
+}
 
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
@@ -117,61 +126,123 @@ export function getPreviousVoltoBlock(index, properties) {
 
 export function deconstructToVoltoBlocks(editor) {
   // Explodes editor content into separate blocks
+  // If the editor has multiple top-level children, split the current block
+  // into multiple slate blocks. This will delete and replace the current
+  // block.
+  //
+  // It returns a promise that, when resolved, will pass a list of Volto block
+  // ids that were affected
+  //
+  // For the Volto blocks manipulation we do low-level changes to the context
+  // form state, as that ensures a better performance (no un-needed UI updates)
+
   const blockProps = editor.getBlockProps();
-  const { index } = blockProps;
 
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // setTimeout() hack needed to overcome Volto API limitations in Form.jsx
-      const total = editor.children.length;
-      // console.log('deconstruct', total, JSON.stringify(editor.children));
-      const [first, ...rest] = editor.children;
+    if (editor.children.length === 1) {
+      return resolve([blockProps.block]);
+    }
 
-      // extract all image elements separately, create Volto blocks from them
-      // TODO: this is a temporary hack. We should reimplement when we have:
-      // - block transformer based "image upload"
-      const images = Array.from(
-        Editor.nodes(editor, {
-          at: [],
-          match: (node) => node.type === 'img', // hardcoded
-        }),
-      );
-      // console.log('images', images);
+    const { formContext } = editor;
+    const { contextData, setContextData } = formContext;
+    const { formData } = contextData;
+    const blocksFieldname = getBlocksFieldname(formData);
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
 
-      images.forEach(([el, path]) => {
-        if (path[0] === 0) {
-          Transforms.removeNodes(editor, { at: path });
-          const newid = createImageBlock(el.src, index, blockProps);
-          resolve(newid);
-        }
-      });
+    const { index } = blockProps;
+    const blocks = [];
 
-      if (!rest.length) return;
+    console.log('deconstruct', editor.children);
+    editor.children.forEach((child, i) => {
+      const id = uuid();
 
-      // removes all children from the editor
-      for (let i = 0; i <= editor.children.length + 1; i++) {
-        Transforms.removeNodes(editor, { at: [0] });
-      }
-      // insert back the first child
-      Transforms.insertNodes(editor, first);
+      const block = {
+        '@type': 'slate',
+        value: JSON.parse(JSON.stringify([child])),
+        plaintext: serializeNodesToText([child]),
+      };
+      blocks.push([id, block]);
+    });
 
-      setTimeout(() => {
-        rest.reverse().forEach((block, i) => {
-          // due to reverse() above. Advantage is that we don't
-          // have to keep track of index. Might be error-prone
-          const imgIndex = total - i;
-          images.forEach(([el, path]) => {
-            if (path[0] === imgIndex) {
-              // TODO: fix this
-              // Transforms.removeNodes(editor, { at: path });
-              const newid = createImageBlock(el.src, index, blockProps);
-              resolve(newid);
-            }
-          });
-          const newid = createSlateBlock([block], index, blockProps);
-          resolve(newid);
-        });
-      }, 0);
-    }, 0);
+    const blockids = blocks.map((b) => b[0]);
+
+    const layout = [
+      ...formData[blocksLayoutFieldname].items.slice(0, index),
+      ...blockids,
+      ...formData[blocksLayoutFieldname].items.slice(index),
+    ];
+
+    const data = {
+      ...contextData,
+      formData: {
+        ...formData,
+        [blocksFieldname]: {
+          ...formData[blocksFieldname],
+          ...fromEntries(blocks),
+        },
+        [blocksLayoutFieldname]: {
+          ...formData[blocksLayoutFieldname],
+          items: layout,
+        },
+      },
+    };
+    console.log('data', data);
+
+    setContextData(data).then(() => resolve(blockids));
+
+    // For each root child of the editor, identify its images and then remove
+    // them. They will be created as Volto blocks.
+
+    //   // setTimeout() hack needed to overcome Volto API limitations in Form.jsx
+    //   const total = editor.children.length;
+    //   // console.log('deconstruct', total, JSON.stringify(editor.children));
+    //   const [first, ...rest] = editor.children;
+    //
+    //   // extract all image elements separately, create Volto blocks from them
+    //   // TODO: this is a temporary hack. We should reimplement when we have:
+    //   // - block transformer based "image upload"
+    //   const images = Array.from(
+    //     Editor.nodes(editor, {
+    //       at: [],
+    //       match: (node) => node.type === 'img', // hardcoded
+    //     }),
+    //   );
+    //   // console.log('images', images);
+    //
+    //   images.forEach(([el, path]) => {
+    //     if (path[0] === 0) {
+    //       Transforms.removeNodes(editor, { at: path });
+    //       const newid = createImageBlock(el.src, index, blockProps);
+    //       resolve(newid);
+    //     }
+    //   });
+    //
+    //   if (!rest.length) return;
+    //
+    //   // removes all children from the editor
+    //   for (let i = 0; i <= editor.children.length + 1; i++) {
+    //     Transforms.removeNodes(editor, { at: [0] });
+    //   }
+    //   // insert back the first child
+    //   Transforms.insertNodes(editor, first);
+    //
+    //   setTimeout(() => {
+    //     rest.reverse().forEach((block, i) => {
+    //       // due to reverse() above. Advantage is that we don't
+    //       // have to keep track of index. Might be error-prone
+    //       const imgIndex = total - i;
+    //       images.forEach(([el, path]) => {
+    //         if (path[0] === imgIndex) {
+    //           // TODO: fix this
+    //           // Transforms.removeNodes(editor, { at: path });
+    //           const newid = createImageBlock(el.src, index, blockProps);
+    //           resolve(newid);
+    //         }
+    //       });
+    //       const newid = createSlateBlock([block], index, blockProps);
+    //       resolve(newid);
+    //     });
+    //   }, 0);
+    // }, 0);
   });
 }

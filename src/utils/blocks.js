@@ -3,8 +3,8 @@ import { settings } from '~/config';
 import {
   // createSlateBlock,
   // setEditorContent,
+  // nanoid,
   deconstructToVoltoBlocks,
-  nanoid,
 } from 'volto-slate/utils';
 
 export function createEmptyParagraph() {

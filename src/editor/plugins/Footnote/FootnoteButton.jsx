@@ -4,7 +4,7 @@ import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
 
 import { Icon as VoltoIcon } from '@plone/volto/components';
-import superindexSVG from '@plone/volto/icons/superindex.svg';
+import tagSVG from '@plone/volto/icons/tag.svg';
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 import formatClearSVG from '@plone/volto/icons/format-clear.svg';
 import checkSVG from '@plone/volto/icons/check.svg';
@@ -144,7 +144,7 @@ const FootnoteButton = () => {
             setShowForm(true);
           }
         }}
-        icon={superindexSVG}
+        icon={tagSVG}
       />
     </>
   );

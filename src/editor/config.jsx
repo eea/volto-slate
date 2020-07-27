@@ -9,6 +9,9 @@ import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
+import subindexIcon from '@plone/volto/icons/subindex.svg';
+import superindexIcon from '@plone/volto/icons/superindex.svg';
+
 
 import { createEmptyParagraph } from 'volto-slate/utils';
 
@@ -38,6 +41,12 @@ export const buttons = {
   strikethrough: (props) => (
     <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
   ),
+  sub: (props) => (
+    <MarkButton format="sub" icon={subindexIcon} {...props} />
+  ),
+  sup: (props) => (
+    <MarkButton format="sup" icon={superindexIcon} {...props} />
+  ),
   code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
   'heading-two': (props) => (
     <BlockButton format="h2" icon={headingIcon} {...props} />
@@ -61,6 +70,9 @@ export const defaultToolbarButtons = [
   'separator',
   'heading-two',
   'heading-three',
+  'separator',
+  "sub",
+  "sup",
   'separator',
   'numbered-list',
   'bulleted-list',
@@ -123,6 +135,8 @@ export const leafs = {
   },
   underline: ({ children }) => <u>{children}</u>,
   strikethrough: ({ children }) => <s>{children}</s>,
+  sub: ({ children }) => <sub>{children}</sub>,
+  sup: ({ children }) => <sup>{children}</sup>,
   code: ({ children }) => {
     return <code>{children}</code>;
   },
@@ -157,6 +171,8 @@ export const htmlTagsToSlate = {
   EM: inlineTagDeserializer({ italic: true }),
   I: inlineTagDeserializer({ italic: true }),
   S: inlineTagDeserializer({ strikethrough: true }),
+  SUB: inlineTagDeserializer({ sub: true }),
+  SUP: inlineTagDeserializer({ sup: true }),
   STRONG: inlineTagDeserializer({ bold: true }),
   U: inlineTagDeserializer({ underline: true }),
   // SPAN: inlineTagDeserializer(),

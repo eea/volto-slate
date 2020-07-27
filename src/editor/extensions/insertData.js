@@ -23,7 +23,10 @@ export const insertData = (editor) => {
         // Delete the empty placeholder paragraph, if we can
         Transforms.deselect(editor);
         Transforms.removeNodes(editor);
+        console.log('removed nodes');
       }
+
+      // TODO: use Editor.isEmpty(editor, editor);
 
       // const isTextFragment =
       //   Array.isArray(fragment) &&

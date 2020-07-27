@@ -14,7 +14,7 @@ export const deserialize = (editor, el) => {
     return '\n';
   }
 
-  console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
+  // console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
 
   const { nodeName } = el;
 
@@ -63,7 +63,7 @@ export const spanDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
   const children = deserializeChildren(el, editor);
 
-  // SUB
+  // Handle Google Docs' <sub> formatting
   if (style.replace(/\s/g, '').indexOf('vertical-align:sub') > -1) {
     const attrs = { sub: true };
     return children.map((child) => {
@@ -71,7 +71,7 @@ export const spanDeserializer = (editor, el) => {
     });
   }
 
-  // SUP
+  // Handle Google Docs' <sup> formatting
   if (style.replace(/\s/g, '').indexOf('vertical-align:super') > -1) {
     const attrs = { sup: true };
     return children.map((child) => {

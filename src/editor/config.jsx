@@ -27,6 +27,7 @@ import {
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
+  spanDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -175,7 +176,7 @@ export const htmlTagsToSlate = {
   SUP: inlineTagDeserializer({ sup: true }),
   STRONG: inlineTagDeserializer({ bold: true }),
   U: inlineTagDeserializer({ underline: true }),
-  // SPAN: inlineTagDeserializer(),
+  SPAN: spanDeserializer,
 
   // OL: listElementToSlateDeserializer('ol'),
   // UL: listElementToSlateDeserializer('ul'),

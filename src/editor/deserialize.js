@@ -79,3 +79,24 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
     return jsx('text', attrs, child);
   });
 };
+
+export const spanDeserializer = (editor, el) => {
+  const style = el.getAttribute('style') || '';
+  if (style.indexOf('vertical-align:super') > -1) {
+    const children = Array.from(el.childNodes)
+      .map((el) => deserialize(editor, el))
+      .flat();
+    const attrs = { sup: true };
+    return children.map((child) => {
+      return jsx('text', attrs, child);
+    });
+  }
+  const children = Array.from(el.childNodes)
+    .map((el) => {
+      console.log('el', el);
+      return deserialize(editor, el);
+    })
+    .flat();
+
+  return children;
+};

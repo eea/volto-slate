@@ -19,12 +19,14 @@ export function joinWithPreviousBlock({ editor, event }) {
   const {
     block,
     index,
-    properties,
     saveSlateBlockSelection,
     onChangeBlock,
     onDeleteBlock,
     onSelectBlock,
   } = blockProps;
+
+  const { formContext } = editor;
+  const properties = formContext.contextData.formData;
 
   const [otherBlock = {}, otherBlockId] = getPreviousVoltoBlock(
     index,
@@ -90,12 +92,14 @@ export function joinWithNextBlock({ editor, event }) {
   const {
     block,
     index,
-    properties,
     saveSlateBlockSelection,
     onChangeBlock,
     onDeleteBlock,
     onSelectBlock,
   } = blockProps;
+
+  const { formContext } = editor;
+  const properties = formContext.contextData.formData;
 
   const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
 
@@ -151,12 +155,14 @@ export function joinWithNeighborBlock(
     const {
       block,
       index,
-      properties,
       saveSlateBlockSelection,
       onChangeBlock,
       onDeleteBlock,
       onSelectBlock,
     } = blockProps;
+
+    const { formContext } = editor;
+    const properties = formContext.contextData.formData;
 
     const [otherBlock = {}, otherBlockId] = getNeighborVoltoBlock(
       index,

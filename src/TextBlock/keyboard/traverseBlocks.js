@@ -16,7 +16,10 @@ export function goUp({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusPreviousBlock, block, blockNode } = props;
 
-    const prev = getPreviousVoltoBlock(props.index, props.properties);
+    const { formContext } = editor;
+    const properties = formContext.contextData.formData;
+
+    const prev = getPreviousVoltoBlock(props.index, properties);
     if (!prev || prev[0]?.['@type'] !== 'slate')
       return onFocusPreviousBlock(block, blockNode.current);
 
@@ -43,7 +46,10 @@ export function goDown({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusNextBlock, block, blockNode } = props;
 
-    const next = getNextVoltoBlock(props.index, props.properties);
+    const { formContext } = editor;
+    const properties = formContext.contextData.formData;
+
+    const next = getNextVoltoBlock(props.index, properties);
     if (!next || next[0]?.['@type'] !== 'slate')
       return onFocusNextBlock(block, blockNode.current);
 

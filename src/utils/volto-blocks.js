@@ -53,16 +53,17 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   Editor.deleteForward(editor, { unit: 'character' });
 }
 
-export function createSlateBlock(value, index, { onChangeBlock, onAddBlock }) {
-  const id = onAddBlock('slate', index + 1);
-
-  const options = {
-    '@type': 'slate',
-    value: JSON.parse(JSON.stringify(value)),
-    plaintext: serializeNodesToText(value),
-  };
-  onChangeBlock(id, options);
-  return id;
+export function createSlateBlock(value, { index, onChangeBlock, onAddBlock }) {
+  return new Promise((resolve) => {
+    onAddBlock('slate', index + 1).then((id) => {
+      const options = {
+        '@type': 'slate',
+        value: JSON.parse(JSON.stringify(value)),
+        plaintext: serializeNodesToText(value),
+      };
+      onChangeBlock(id, options).then(() => resolve(id));
+    });
+  });
 }
 
 export function createImageBlock(url, index, { onChangeBlock, onAddBlock }) {
@@ -76,23 +77,10 @@ export function createImageBlock(url, index, { onChangeBlock, onAddBlock }) {
   return id;
 }
 
-export function createAndSelectNewSlateBlock(value, index, props) {
-  setTimeout(() => {
-    const id = createSlateBlock(value, index, props);
-    const { onSelectBlock } = props;
-
-    setTimeout(() => onSelectBlock(id), 0);
-  }, 0);
-}
-
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
-  const { index, onChangeBlock, onSelectBlock, onAddBlock } = blockProps;
-  return createAndSelectNewSlateBlock(blockValue, index, {
-    onChangeBlock,
-    onAddBlock,
-    onSelectBlock,
-  });
+  const { onSelectBlock } = blockProps;
+  createSlateBlock(blockValue, blockProps).then((id) => onSelectBlock(id));
 };
 
 export function getNextVoltoBlock(index, properties) {

@@ -11,6 +11,8 @@ export const insertData = (editor) => {
 
   editor.insertData = (data) => {
     console.log('data', data);
+    // const text = data.getData('text/rtf');
+    // console.log('text', text);
     const html = data.getData('text/html');
 
     if (html) {

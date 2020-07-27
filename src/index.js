@@ -15,7 +15,6 @@ import {
   goDown,
   goUp,
   backspaceInList,
-  breakList,
   indentListItems,
   joinWithNextBlock,
   joinWithPreviousBlock,
@@ -28,6 +27,7 @@ import {
   withInsertData,
   withSplitBlocksOnBreak,
   withDeserializers,
+  breakList,
 } from './TextBlock/extensions';
 
 const applyConfig = (config) => {
@@ -60,6 +60,7 @@ const applyConfig = (config) => {
       withDeleteSelectionOnEnter,
       withDeserializers,
       withInsertData,
+      breakList,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />
@@ -75,7 +76,6 @@ const applyConfig = (config) => {
       ],
       Enter: [
         softBreak, // Handles shift+Enter as a newline (<br/>)
-        breakList, // Handles Enter on an empty list item
       ],
       ArrowUp: [
         moveListItemUp, // Move down a list with with Ctrl+down

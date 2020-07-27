@@ -4,6 +4,7 @@ import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import { readAsDataURL } from 'promise-file-reader';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
+import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 import { uploadContent } from 'volto-slate/actions';
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
@@ -57,6 +58,8 @@ const TextBlockEdit = (props) => {
   //     }
   //   };
   // });
+  //
+  const formContext = useFormStateContext();
 
   const dispatch = useDispatch(); // just in case is needed in extensions
   const withBlockProperties = React.useCallback(
@@ -67,9 +70,10 @@ const TextBlockEdit = (props) => {
           dispatch,
         };
       };
+      editor.formContext = formContext;
       return editor;
     },
-    [props, dispatch],
+    [props, dispatch, formContext],
   );
 
   const onDrop = React.useCallback(

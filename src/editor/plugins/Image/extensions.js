@@ -58,7 +58,9 @@ export const deserializeImageTag = (editor, el) => {
   for (const name of el.getAttributeNames()) {
     attrs[name] = el.getAttribute(name);
   }
-  return jsx('element', attrs, [{ text: '' }]);
+  // return jsx('text', {}, '');
+  // return [jsx('element', attrs, [{ text: '' }]), jsx('text', {}, '')];
+  return [jsx('element', attrs, [{ text: '' }])];
 };
 
 /**

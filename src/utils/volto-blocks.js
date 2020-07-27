@@ -162,7 +162,8 @@ export function deconstructToVoltoBlocks(editor) {
           const imgIndex = total - i;
           images.forEach(([el, path]) => {
             if (path[0] === imgIndex) {
-              Transforms.removeNodes(editor, { at: path });
+              // TODO: fix this
+              // Transforms.removeNodes(editor, { at: path });
               const newid = createImageBlock(el.src, index, blockProps);
               resolve(newid);
             }

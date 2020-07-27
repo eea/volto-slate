@@ -82,7 +82,20 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 
 export const spanDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
-  if (style.indexOf('vertical-align:super') > -1) {
+
+  // SUB
+  if (style.replace(/\s/g, '').indexOf('vertical-align:sub') > -1) {
+    const children = Array.from(el.childNodes)
+      .map((el) => deserialize(editor, el))
+      .flat();
+    const attrs = { sub: true };
+    return children.map((child) => {
+      return jsx('text', attrs, child);
+    });
+  }
+
+  // SUP
+  if (style.replace(/\s/g, '').indexOf('vertical-align:super') > -1) {
     const children = Array.from(el.childNodes)
       .map((el) => deserialize(editor, el))
       .flat();
@@ -91,6 +104,7 @@ export const spanDeserializer = (editor, el) => {
       return jsx('text', attrs, child);
     });
   }
+
   const children = Array.from(el.childNodes)
     .map((el) => {
       console.log('el', el);

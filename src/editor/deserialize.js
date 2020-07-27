@@ -23,12 +23,7 @@ export const deserialize = (editor, el) => {
   }
 
   // fallback deserializer
-  let parent = el;
-  const children = Array.from(parent.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
-
-  return children;
+  return deserializeChildren(el, editor);
 };
 
 export const preTagDeserializer = (editor, el) => {
@@ -45,47 +40,28 @@ export const preTagDeserializer = (editor, el) => {
   return blockTagDeserializer(nodeName)(editor, parent);
 };
 
-export const blockTagDeserializer = (tagname) => (editor, el) => {
-  let parent = el;
-
-  const children = Array.from(parent.childNodes)
+export const deserializeChildren = (parent, editor) =>
+  Array.from(parent.childNodes)
     .map((el) => deserialize(editor, el))
     .flat();
-  const attrs = { type: tagname };
 
-  // console.log('element', attrs);
-  return jsx('element', attrs, children);
+export const blockTagDeserializer = (tagname) => (editor, el) => {
+  return jsx('element', { type: tagname }, deserializeChildren(el, editor));
 };
 
 export const bodyTagDeserializer = (editor, el) => {
-  let parent = el;
-
-  const children = Array.from(parent.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
-
-  // console.log('fragment (body)');
-  return jsx('fragment', {}, children);
+  return jsx('fragment', {}, deserializeChildren(el, editor));
 };
 
 export const inlineTagDeserializer = (attrs) => (editor, el) => {
-  let parent = el;
-
-  const children = Array.from(parent.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
-
-  return children.map((child) => {
+  return deserializeChildren(el, editor).map((child) => {
     return jsx('text', attrs, child);
   });
 };
 
 export const spanDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
-
-  const children = Array.from(el.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
+  const children = deserializeChildren(el, editor);
 
   // SUB
   if (style.replace(/\s/g, '').indexOf('vertical-align:sub') > -1) {

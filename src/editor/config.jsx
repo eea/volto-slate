@@ -12,7 +12,6 @@ import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 import subindexIcon from '@plone/volto/icons/subindex.svg';
 import superindexIcon from '@plone/volto/icons/superindex.svg';
 
-
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
@@ -42,12 +41,8 @@ export const buttons = {
   strikethrough: (props) => (
     <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
   ),
-  sub: (props) => (
-    <MarkButton format="sub" icon={subindexIcon} {...props} />
-  ),
-  sup: (props) => (
-    <MarkButton format="sup" icon={superindexIcon} {...props} />
-  ),
+  sub: (props) => <MarkButton format="sub" icon={subindexIcon} {...props} />,
+  sup: (props) => <MarkButton format="sup" icon={superindexIcon} {...props} />,
   code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
   'heading-two': (props) => (
     <BlockButton format="h2" icon={headingIcon} {...props} />
@@ -72,8 +67,8 @@ export const defaultToolbarButtons = [
   'heading-two',
   'heading-three',
   'separator',
-  "sub",
-  "sup",
+  'sub',
+  'sup',
   'separator',
   'numbered-list',
   'bulleted-list',

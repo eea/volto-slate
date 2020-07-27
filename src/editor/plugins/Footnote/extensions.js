@@ -1,4 +1,4 @@
-import { FOOTNOTE } from './constants';
+import { FOOTNOTE } from 'volto-slate/constants';
 import { nanoid } from 'volto-slate/utils';
 import { Transforms } from 'slate';
 

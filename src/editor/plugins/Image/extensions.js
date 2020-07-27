@@ -5,7 +5,7 @@
 import isUrl from 'is-url';
 import imageExtensions from 'image-extensions';
 import { Transforms } from 'slate';
-import { IMAGE } from './constants';
+import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
 

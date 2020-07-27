@@ -3,7 +3,7 @@ import React from 'react';
 import LinkButton from './LinkButton';
 import { withLinks } from './extensions';
 import { LinkElement } from './render';
-import { LINK } from './constants';
+import { LINK } from 'volto-slate/constants';
 import { linkDeserializer } from './deserialize';
 
 export default function install(config) {

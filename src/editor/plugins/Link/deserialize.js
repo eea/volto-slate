@@ -1,5 +1,5 @@
 import { jsx } from 'slate-hyperscript';
-import { LINK } from './constants';
+import { LINK } from 'volto-slate/constants';
 import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const linkDeserializer = (editor, el) => {

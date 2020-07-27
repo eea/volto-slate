@@ -1,1 +1,0 @@
-export const FOOTNOTE = 'footnote';

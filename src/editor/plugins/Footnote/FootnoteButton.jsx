@@ -15,7 +15,7 @@ import InlineForm from 'volto-slate/futurevolto/InlineForm';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
-import { FOOTNOTE } from './constants';
+import { FOOTNOTE } from 'volto-slate/constants';
 
 // import { nanoid } from 'volto-slate/utils';
 

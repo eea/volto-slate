@@ -1,6 +1,6 @@
 import isUrl from 'is-url';
 import { wrapLink } from './utils';
-import { LINK } from './constants';
+import { LINK } from 'volto-slate/constants';
 
 export const withLinks = (editor) => {
   const { insertData, insertText, isInline } = editor;

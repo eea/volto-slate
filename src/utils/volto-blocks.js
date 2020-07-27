@@ -5,6 +5,7 @@ import {
 } from '@plone/volto/helpers';
 import { Transforms, Editor } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
+import { omit } from 'lodash';
 
 function fromEntries(pairs) {
   const res = {};
@@ -152,9 +153,18 @@ export function deconstructToVoltoBlocks(editor) {
     const { index } = blockProps;
     const blocks = [];
 
-    console.log('deconstruct', editor.children);
     editor.children.forEach((child, i) => {
       const id = uuid();
+
+      // Discover and separate potential images
+      const images = Array.from(
+        Editor.nodes(editor, {
+          mode: 'all',
+          at: [],
+          universal: true,
+          match: (node) => node.type === 'img', // hardcoded
+        }),
+      );
 
       const block = {
         '@type': 'slate',
@@ -170,23 +180,29 @@ export function deconstructToVoltoBlocks(editor) {
       ...formData[blocksLayoutFieldname].items.slice(0, index),
       ...blockids,
       ...formData[blocksLayoutFieldname].items.slice(index),
-    ];
+    ].filter((id) => id !== blockProps.block);
+
+    // TODO: add the placeholder block, because we remove it (because we remove
+    // the current block)
 
     const data = {
       ...contextData,
       formData: {
         ...formData,
-        [blocksFieldname]: {
-          ...formData[blocksFieldname],
-          ...fromEntries(blocks),
-        },
+        [blocksFieldname]: omit(
+          {
+            ...formData[blocksFieldname],
+            ...fromEntries(blocks),
+          },
+          blockProps.block,
+        ),
         [blocksLayoutFieldname]: {
           ...formData[blocksLayoutFieldname],
           items: layout,
         },
       },
+      selected: blockids[blockids.length - 1],
     };
-    console.log('data', data);
 
     setContextData(data).then(() => resolve(blockids));
 

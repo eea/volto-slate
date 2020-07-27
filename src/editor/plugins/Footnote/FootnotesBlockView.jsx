@@ -4,7 +4,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { FOOTNOTE } from './constants';
+import { FOOTNOTE } from 'volto-slate/constants';
 
 const getBlocks = (properties) => {
   const blocksFieldName = getBlocksFieldname(properties);

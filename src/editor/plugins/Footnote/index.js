@@ -9,7 +9,7 @@ import FootnoteButton from './FootnoteButton';
 import { withFootnote } from './extensions';
 import FootnotesBlockView from './FootnotesBlockView';
 import FootnotesBlockEdit from './FootnotesBlockEdit';
-import { FOOTNOTE } from './constants';
+import { FOOTNOTE } from 'volto-slate/constants';
 
 export default function install(config) {
   const { slate } = config.settings;

@@ -13,22 +13,25 @@ import { settings } from '~/config';
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection } from 'volto-slate/utils';
 // import { toggleMark } from './utils';
-
+import { useDispatch } from 'react-redux';
+import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 import './less/editor.less';
 
-const SlateEditor = ({
-  selected,
-  value,
-  onChange,
-  placeholder,
-  onKeyDown,
-  properties,
-  defaultSelection,
-  extensions,
-  renderExtensions = [],
-  testingEditorRef,
-  ...rest
-}) => {
+const SlateEditor = (props) => {
+  const {
+    selected,
+    value,
+    onChange,
+    placeholder,
+    onKeyDown,
+    properties,
+    defaultSelection,
+    extensions,
+    renderExtensions = [],
+    testingEditorRef,
+    ...rest
+  } = props;
+
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
@@ -92,6 +95,23 @@ const SlateEditor = ({
   if (testingEditorRef) {
     testingEditorRef.current = editor;
   }
+
+  const formContext = useFormStateContext();
+
+  React.useEffect(() => {
+    console.log('changed formContext', formContext);
+  }, [formContext]);
+
+  const dispatch = useDispatch(); // just in case is needed in extensions
+
+  editor.getBlockProps = () => {
+    return {
+      ...props,
+      dispatch,
+    };
+  };
+
+  editor.formContext = formContext;
 
   return (
     <div

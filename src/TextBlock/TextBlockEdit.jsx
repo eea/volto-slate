@@ -62,6 +62,7 @@ const TextBlockEdit = (props) => {
   const formContext = useFormStateContext();
 
   const dispatch = useDispatch(); // just in case is needed in extensions
+
   const withBlockProperties = React.useCallback(
     (editor) => {
       editor.getBlockProps = () => {
@@ -70,10 +71,18 @@ const TextBlockEdit = (props) => {
           dispatch,
         };
       };
+      return editor;
+    },
+    [props, dispatch],
+  );
+
+  const withFormContext = React.useCallback(
+    (editor) => {
+      // console.log('changed formContext', formContext);
       editor.formContext = formContext;
       return editor;
     },
-    [props, dispatch, formContext],
+    [formContext],
   );
 
   const onDrop = React.useCallback(
@@ -171,7 +180,7 @@ const TextBlockEdit = (props) => {
             properties={properties}
             onAddBlock={onAddBlock}
             extensions={textblockExtensions}
-            renderExtensions={[withBlockProperties]}
+            renderExtensions={[withFormContext, withBlockProperties]}
             onSelectBlock={onSelectBlock}
             value={value}
             block={block}
@@ -189,7 +198,7 @@ const TextBlockEdit = (props) => {
             }}
             onKeyDown={handleKey}
             selected={selected}
-            placeholder={data.placeholder || "Enter some rich text…"}
+            placeholder={data.placeholder || 'Enter some rich text…'}
           />
         )}
       </Dropzone>

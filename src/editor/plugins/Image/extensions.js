@@ -19,32 +19,33 @@ export const isImageUrl = (url) => {
 
 export const onImageLoad = (editor, reader) => () => {
   const data = reader.result;
-  // console.log('onImageload', reader);
+  console.log('onImageload', reader);
 
   // TODO: we need an orchestrator at redux level that would get the
   // "create image block with this content" action and implement it.
 
   // if (url) insertImage(editor, url);
-  // const fields = data.match(/^data:(.*);(.*),(.*)$/);
-  // const blockProps = editor.getBlockProps();
-  // const { uploadContent, pathname, block } = blockProps;
+  const fields = data.match(/^data:(.*);(.*),(.*)$/);
+  const blockProps = editor.getBlockProps();
+  const { uploadContent, pathname, block } = blockProps;
   // TODO: we need a way to get the uploaded image URL
   // This would be easier if we would have block transformers-based image
   // blocks
-  // uploadContent(
-  //   getBaseUrl(pathname),
-  //   {
-  //     '@type': 'Image',
-  //     title: 'clipboard',
-  //     image: {
-  //       data: fields[3],
-  //       encoding: fields[2],
-  //       'content-type': fields[1],
-  //       filename: 'clipboard',
-  //     },
-  //   },
-  //   block,
-  // );
+  console.log('upload');
+  uploadContent(
+    getBaseUrl(pathname),
+    {
+      '@type': 'Image',
+      title: 'clipboard',
+      image: {
+        data: fields[3],
+        encoding: fields[2],
+        'content-type': fields[1],
+        filename: 'clipboard',
+      },
+    },
+    block,
+  );
 };
 
 export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
@@ -87,6 +88,7 @@ export const withImage = (editor) => {
   };
 
   editor.insertData = (data) => {
+    console.log('image insertData', data);
     const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {

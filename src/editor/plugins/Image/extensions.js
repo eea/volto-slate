@@ -8,6 +8,8 @@ import { Transforms } from 'slate';
 import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
+import { v4 } from 'uuid';
+import { deconstructToVoltoBlocks } from '../../../utils/volto-blocks';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -19,7 +21,7 @@ export const isImageUrl = (url) => {
 
 export const onImageLoad = (editor, reader) => () => {
   const data = reader.result;
-  console.log('onImageload', reader);
+  // console.log('onImageload', reader);
 
   // TODO: we need an orchestrator at redux level that would get the
   // "create image block with this content" action and implement it.
@@ -31,21 +33,27 @@ export const onImageLoad = (editor, reader) => () => {
   // TODO: we need a way to get the uploaded image URL
   // This would be easier if we would have block transformers-based image
   // blocks
-  console.log('upload');
-  uploadContent(
-    getBaseUrl(pathname),
-    {
-      '@type': 'Image',
-      title: 'clipboard',
-      image: {
-        data: fields[3],
-        encoding: fields[2],
-        'content-type': fields[1],
-        filename: 'clipboard',
-      },
+  const url = getBaseUrl(pathname);
+  const uploadId = v4();
+  const uploadFileName = `clipboard-${uploadId}`;
+  const uploadTitle = `Clipboard ${uploadId}`;
+  const content = {
+    '@type': 'Image',
+    title: uploadTitle,
+    image: {
+      data: fields[3],
+      encoding: fields[2],
+      'content-type': fields[1],
+      filename: uploadFileName,
     },
-    block,
-  );
+  };
+
+  const rv = uploadContent(url, content, block);
+  rv.then((data) => {
+    const dlUrl = data.image.download;
+    insertImage(editor, dlUrl);
+    deconstructToVoltoBlocks(editor);
+  });
 };
 
 export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
@@ -89,10 +97,29 @@ export const withImage = (editor) => {
 
   editor.insertData = (data) => {
     console.log('image insertData', data);
+
     const text = data.getData('text/plain');
-    const { files } = data;
-    if (files && files.length > 0) {
-      for (const file of files) {
+    // const imageData = data.getData('image');
+
+    /* if (data.items && data.items.length > 0) {
+      for (const item of data.items) {
+        if (item.kind === 'string') {
+          let file = item.getAsFile();
+          console.log('file object', file);
+        }
+        // const reader = new FileReader();
+        // const [mime] = file.type.split('/');
+        // if (mime === 'image') {
+        //   reader.addEventListener('load', onImageLoad(editor, reader));
+        //   reader.readAsDataURL(file);
+        // }
+      }
+    } else */ if (
+      // text &&
+      data.files &&
+      data.files.length > 0
+    ) {
+      for (const file of data.files) {
         const reader = new FileReader();
         const [mime] = file.type.split('/');
         if (mime === 'image') {
@@ -102,6 +129,7 @@ export const withImage = (editor) => {
       }
     } else if (isImageUrl(text)) {
       insertImage(editor, text);
+      deconstructToVoltoBlocks(editor);
     } else {
       insertData(data);
     }

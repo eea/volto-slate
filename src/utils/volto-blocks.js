@@ -134,6 +134,94 @@ export function getPreviousVoltoBlock(index, properties) {
   return [prevBlock, prevBlockId];
 }
 
+function createVoltoImages(editor, blocks) {
+  // console.log('BEGIN createVoltoImages: blocks = ', blocks);
+
+  for (const [, path] of Node.children(editor, [])) {
+    const pathRef = Editor.pathRef(editor, path);
+    const images = [];
+
+    // Discover and emit images as separate Volto image blocks
+    const imageNodes = Array.from(
+      Editor.nodes(editor, {
+        at: path,
+        match: (node) => node.type === IMAGE,
+      }),
+    );
+    imageNodes.forEach(([el, path]) => {
+      images.push(el);
+      Transforms.removeNodes(editor, { at: path });
+    });
+
+    const [childNode] = Editor.node(editor, pathRef.current);
+
+    if (childNode && !Editor.isEmpty(editor, childNode))
+      blocks.push(syncCreateSlateBlock([childNode]));
+
+    images.forEach((el) => {
+      blocks.push(syncCreateImageBlock(el.url));
+    });
+  }
+
+  // console.log('END createVoltoImages: blocks = ', blocks);
+}
+
+function processBlocks(
+  editor,
+  blocks,
+  blockProps,
+  resolve,
+  keepCurrentBlock = true,
+) {
+  const { formContext } = editor;
+  const { contextData, setContextData } = formContext;
+  const { formData } = contextData;
+  const blocksFieldname = getBlocksFieldname(formData);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
+
+  const { index } = blockProps;
+  const blockids = blocks.map((b) => b[0]);
+
+  let layout = [
+    ...formData[blocksLayoutFieldname].items.slice(0, index),
+    ...blockids,
+    ...formData[blocksLayoutFieldname].items.slice(index),
+  ];
+
+  if (!keepCurrentBlock) {
+    layout = layout.filter((id) => id !== blockProps.block);
+  }
+
+  // TODO: add the placeholder block, because we remove it (because we remove
+  // the current block)
+
+  let formDataBlocks = {
+    ...formData[blocksFieldname],
+    ...fromEntries(blocks),
+  };
+
+  if (!keepCurrentBlock) {
+    formDataBlocks = omit(formDataBlocks, blockProps.block);
+  }
+
+  const data = {
+    ...contextData,
+    formData: {
+      ...formData,
+      [blocksFieldname]: formDataBlocks,
+      [blocksLayoutFieldname]: {
+        ...formData[blocksLayoutFieldname],
+        items: layout,
+      },
+    },
+    selected: blockids[blockids.length - 1],
+  };
+
+  console.log('result of deconstructToVoltoBlocks:', data);
+
+  setContextData(data).then(() => resolve(blockids));
+}
+
 export function deconstructToVoltoBlocks(editor) {
   // Explodes editor content into separate blocks
   // If the editor has multiple top-level children, split the current block
@@ -146,78 +234,28 @@ export function deconstructToVoltoBlocks(editor) {
   // For the Volto blocks manipulation we do low-level changes to the context
   // form state, as that ensures a better performance (no un-needed UI updates)
 
+  console.log('deconstructToVoltoBlocks CALLED');
   const blockProps = editor.getBlockProps();
 
   return new Promise((resolve, reject) => {
+    // one child which is a Slate block of type non-image
+    // if (editor.children.length === 1 && editor.children[0].type !== 'image') {
+    //   return resolve([blockProps.block]);
+    // }
+
+    // one child which is a Slate block that is of type image
+    // so leave it there and transform it into a Volto Image block
     if (editor.children.length === 1) {
-      return resolve([blockProps.block]);
+      // convert it to a Volto image block
+      let blocks = [];
+      createVoltoImages(editor, blocks);
+      console.log('ONE SLATE IMAGE TO BECOME VOLTO IMAGE', blocks);
+      return processBlocks(editor, blocks, blockProps, resolve, false);
     }
 
-    const { formContext } = editor;
-    const { contextData, setContextData } = formContext;
-    const { formData } = contextData;
-    const blocksFieldname = getBlocksFieldname(formData);
-    const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
-
-    const { index } = blockProps;
-    const blocks = [];
-
-    for (const [, path] of Node.children(editor, [])) {
-      const pathRef = Editor.pathRef(editor, path);
-      const images = [];
-
-      // Discover and emit images as separate Volto image blocks
-      const imageNodes = Array.from(
-        Editor.nodes(editor, {
-          at: path,
-          match: (node) => node.type === IMAGE,
-        }),
-      );
-      imageNodes.forEach(([el, path]) => {
-        images.push(el);
-        Transforms.removeNodes(editor, { at: path });
-      });
-
-      const [childNode] = Editor.node(editor, pathRef.current);
-
-      if (childNode && !Editor.isEmpty(editor, childNode))
-        blocks.push(syncCreateSlateBlock([childNode]));
-
-      images.forEach((el) => {
-        blocks.push(syncCreateImageBlock(el.src));
-      });
-    }
-
-    const blockids = blocks.map((b) => b[0]);
-
-    const layout = [
-      ...formData[blocksLayoutFieldname].items.slice(0, index),
-      ...blockids,
-      ...formData[blocksLayoutFieldname].items.slice(index),
-    ].filter((id) => id !== blockProps.block);
-
-    // TODO: add the placeholder block, because we remove it (because we remove
-    // the current block)
-
-    const data = {
-      ...contextData,
-      formData: {
-        ...formData,
-        [blocksFieldname]: omit(
-          {
-            ...formData[blocksFieldname],
-            ...fromEntries(blocks),
-          },
-          blockProps.block,
-        ),
-        [blocksLayoutFieldname]: {
-          ...formData[blocksLayoutFieldname],
-          items: layout,
-        },
-      },
-      selected: blockids[blockids.length - 1],
-    };
-
-    setContextData(data).then(() => resolve(blockids));
+    // more than one child, do the break of the blocks that are images
+    let blocks = [];
+    createVoltoImages(editor, blocks);
+    return processBlocks(editor, blocks, blockProps, resolve);
   });
 }

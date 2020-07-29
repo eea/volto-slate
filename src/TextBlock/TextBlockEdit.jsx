@@ -189,7 +189,7 @@ const TextBlockEdit = (props) => {
             }}
             onKeyDown={handleKey}
             selected={selected}
-            placeholder={data.placeholder || "Enter some rich text…"}
+            placeholder={data.placeholder || 'Enter some rich text…'}
           />
         )}
       </Dropzone>

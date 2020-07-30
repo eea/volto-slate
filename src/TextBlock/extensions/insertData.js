@@ -5,7 +5,6 @@ export const withInsertData = (editor) => {
 
   editor.insertData = (data) => {
     insertData(data);
-    // console.log('insert', editor.children);
     deconstructToVoltoBlocks(editor);
   };
 

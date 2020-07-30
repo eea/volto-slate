@@ -8,7 +8,7 @@ import { Transforms } from 'slate';
 import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
-// import { createImageBlock } from 'volto-slate/utils';
+import { v4 as uuid } from 'uuid';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -32,21 +32,26 @@ export const onImageLoad = (editor, reader) => () => {
   // TODO: we need a way to get the uploaded image URL
   // This would be easier if we would have block transformers-based image
   // blocks
-
-  uploadContent(
-    getBaseUrl(pathname),
-    {
+  const url = getBaseUrl(pathname);
+  const uploadId = uuid();
+  const uploadFileName = `clipboard-${uploadId}`;
+  const uploadTitle = `Clipboard ${uploadId}`;
+  const content = {
       '@type': 'Image',
-      title: 'clipboard',
+    title: uploadTitle,
       image: {
         data: fields[3],
         encoding: fields[2],
         'content-type': fields[1],
-        filename: 'clipboard',
+      filename: uploadFileName,
       },
-    },
-    block,
-  );
+  };
+
+  const rv = uploadContent(url, content, block);
+  rv.then((data) => {
+    const dlUrl = data.image.download;
+    insertImage(editor, dlUrl);
+  });
 };
 
 export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
@@ -89,7 +94,6 @@ export const withImage = (editor) => {
   };
 
   editor.insertData = (data) => {
-    console.log('image insertData', data);
     const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {
@@ -101,8 +105,6 @@ export const withImage = (editor) => {
           reader.readAsDataURL(file);
         }
       }
-    } else if (isImageUrl(text)) {
-      insertImage(editor, text);
     } else {
       insertData(data);
     }

@@ -8,6 +8,7 @@ import { Transforms } from 'slate';
 import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
+// import { createImageBlock } from 'volto-slate/utils';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -19,7 +20,6 @@ export const isImageUrl = (url) => {
 
 export const onImageLoad = (editor, reader) => () => {
   const data = reader.result;
-  console.log('onImageload', reader);
 
   // TODO: we need an orchestrator at redux level that would get the
   // "create image block with this content" action and implement it.
@@ -27,11 +27,12 @@ export const onImageLoad = (editor, reader) => () => {
   // if (url) insertImage(editor, url);
   const fields = data.match(/^data:(.*);(.*),(.*)$/);
   const blockProps = editor.getBlockProps();
-  const { uploadContent, pathname, block } = blockProps;
+  const { block, uploadContent, pathname } = blockProps;
+
   // TODO: we need a way to get the uploaded image URL
   // This would be easier if we would have block transformers-based image
   // blocks
-  console.log('upload');
+
   uploadContent(
     getBaseUrl(pathname),
     {

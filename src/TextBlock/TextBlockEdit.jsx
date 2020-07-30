@@ -18,6 +18,7 @@ import ShortcutListing from './ShortcutListing';
 import { handleKey } from './keyboard';
 import Dropzone from 'react-dropzone';
 import './styles.css';
+import { createImageBlock } from 'volto-slate/utils';
 
 // TODO: refactor dropzone to separate component wrapper
 
@@ -116,14 +117,16 @@ const TextBlockEdit = (props) => {
     if (loaded && !loading && !prevLoaded && newImageId !== imageId) {
       const url = flattenToAppURL(imageId);
       setNewImageId(imageId);
-      setTimeout(() => {
-        const id = onAddBlock('image', index + 1);
+      createImageBlock('', index, {
+        onChangeBlock,
+        onAddBlock,
+      }).then((imageblockid) => {
         const options = {
           '@type': 'image',
           url,
         };
-        onChangeBlock(id, options);
-      }, 0);
+        onChangeBlock(imageblockid, options);
+      });
     }
     prevReq.current = loaded;
   }, [
@@ -189,7 +192,7 @@ const TextBlockEdit = (props) => {
             }}
             onKeyDown={handleKey}
             selected={selected}
-            placeholder={data.placeholder || "Enter some rich text…"}
+            placeholder={data.placeholder || 'Enter some rich text…'}
           />
         )}
       </Dropzone>

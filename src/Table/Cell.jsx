@@ -66,7 +66,9 @@ class Cell extends Component {
   }
 
   handleFocus() {
-    this.setState({ selected: true });
+    this.setState({ selected: true }, () => {
+      this.props.onSelectCell(this.props.row, this.props.cell);
+    });
   }
 
   /**
@@ -92,7 +94,7 @@ class Cell extends Component {
    * @returns {undefined}
    */
   onChange(val) {
-    this.props.onChange(this.props.row, this.props.cell, val);
+    this.props.onChange(this.props.row, this.props.cell, [...val]);
   }
 
   handleContainerFocus() {

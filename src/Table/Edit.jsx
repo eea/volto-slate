@@ -248,7 +248,7 @@ class Edit extends Component {
     const table = { ...this.props.data.table };
     table.rows[row].cells[cell] = {
       ...table.rows[row].cells[cell],
-      value: slateValue,
+      value: [...slateValue],
     };
     this.props.onChangeBlock(this.props.block, {
       ...this.props.data,

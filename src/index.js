@@ -51,7 +51,6 @@ const applyConfig = (config) => {
       view: [],
     },
     blockHasValue: (data) => {
-      // console.error('NOT IMPLEMENTED');
       return true;
     },
   };

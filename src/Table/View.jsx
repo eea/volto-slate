@@ -7,7 +7,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { map } from 'lodash';
-import redraft from 'redraft';
+import TextBlockView from '../TextBlock/TextBlockView';
+import { Node } from 'slate';
 
 import { settings } from '~/config';
 
@@ -35,13 +36,11 @@ const View = ({ data }) => (
                   key={cell.key}
                   as={cell.type === 'header' ? 'th' : 'td'}
                 >
-                  {cell.value && cell.value.blocks && cell.value.blocks[0].text
-                    ? redraft(
-                        cell.value,
-                        settings.ToHTMLRenderers,
-                        settings.ToHTMLOptions,
-                      )
-                    : '\u00A0'}
+                  {cell.value && Node.string(cell.value[0]).length > 0 ? (
+                    <TextBlockView data={{ value: cell.value }} />
+                  ) : (
+                    '\u00A0'
+                  )}
                 </Table.Cell>
               ))}
             </Table.Row>

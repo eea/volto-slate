@@ -21,7 +21,7 @@ import deleteSVG from '@plone/volto/icons/delete.svg';
 const getId = () => Math.floor(Math.random() * Math.pow(2, 24)).toString(32);
 
 function getEmptyParagraph() {
-  return { type: 'p', children: [{ text: '' }] };
+  return [{ type: 'p', children: [{ text: '' }] }];
 }
 
 const emptyCell = (type) => ({
@@ -246,8 +246,8 @@ class Edit extends Component {
    */
   onChangeCell(row, cell, slateValue) {
     const table = { ...this.props.data.table };
-    table.rows[row].cells[cell].value = {
-      ...table.rows[row].cells[cell].value,
+    table.rows[row].cells[cell] = {
+      ...table.rows[row].cells[cell],
       value: slateValue,
     };
     this.props.onChangeBlock(this.props.block, {

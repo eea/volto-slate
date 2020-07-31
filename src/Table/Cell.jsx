@@ -22,7 +22,7 @@ class Cell extends Component {
     onSelectCell: PropTypes.func.isRequired,
     row: PropTypes.number,
     cell: PropTypes.number,
-    value: PropTypes.object,
+    value: PropTypes.array,
     selected: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     isTableBlockSelected: PropTypes.bool,
@@ -46,14 +46,7 @@ class Cell extends Component {
 
     if (!__SERVER__) {
       this.state = {
-        // selected: this.props.selected,
-        // TODO: use utils function that creates the empty default value
-        slateValue: [
-          this.props.value || {
-            type: 'p',
-            children: [{ text: '' }],
-          },
-        ],
+        selected: this.props.selected,
       };
     }
   }
@@ -64,21 +57,16 @@ class Cell extends Component {
    * @returns {undefined}
    */
   componentDidMount() {
-    this.setState({ selected: this.props.selected }, () => {
+    this.state.selected &&
       this.props.onSelectCell(this.props.row, this.props.cell);
-    });
   }
 
   handleBlur() {
-    console.log('blur', this.props.row, this.props.column);
     this.setState({ selected: false });
   }
 
   handleFocus() {
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
-    console.log('focus', this.props.row, this.props.cell);
+    this.setState({ selected: true });
   }
 
   /**
@@ -88,35 +76,29 @@ class Cell extends Component {
    * @returns {undefined}
    */
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // TODO: see the original code in Cell.jsx of Draft Tables;
-    // if (
-    //   nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
-    //   this.props.cell === 0 &&
-    //   this.props.row === 0
-    // ) {
-    //   this.setState({ selected: this.props.selected });
-    // }
+    if (
+      nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      this.props.cell === 0 &&
+      this.props.row === 0
+    ) {
+      this.setState({ selected: this.props.selected });
+    }
   }
 
   /**
    * Change handler
    * @method onChange
-   * @param {object} editorState Editor state.
+   * @param {array} val Current value in the Slate editor.
    * @returns {undefined}
    */
   onChange(val) {
-    this.setState(
-      {
-        slateValue: val,
-      },
-      () => {
-        this.props.onChange(
-          this.props.row,
-          this.props.cell,
-          this.state.slateValue,
-        );
-      },
-    );
+    this.props.onChange(this.props.row, this.props.cell, val);
+  }
+
+  handleContainerFocus() {
+    this.setState({ selected: true }, () => {
+      this.props.onSelectCell(this.props.row, this.props.cell);
+    });
   }
 
   /**
@@ -130,11 +112,12 @@ class Cell extends Component {
     }
 
     return (
-      <div>
+      // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
+      <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
         <SlateEditor
           onChange={this.onChange.bind(this)}
-          value={this.state.slateValue}
-          selected={true}
+          value={this.props.value}
+          selected={this.state.selected}
           onFocus={this.handleFocus.bind(this)}
           onBlur={this.handleBlur.bind(this)}
         />

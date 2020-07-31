@@ -245,10 +245,10 @@ class Edit extends Component {
    * @returns {undefined}
    */
   onChangeCell(row, cell, slateValue) {
-    const table = { ...this.props.data.table };
+    const table = JSON.parse(JSON.stringify(this.props.data.table));
     table.rows[row].cells[cell] = {
       ...table.rows[row].cells[cell],
-      value: [...slateValue],
+      value: JSON.parse(JSON.stringify(slateValue)),
     };
     this.props.onChangeBlock(this.props.block, {
       ...this.props.data,

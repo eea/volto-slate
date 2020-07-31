@@ -18,7 +18,7 @@ import { settings } from '~/config';
  * @extends Component
  */
 const View = ({ data }) => (
-  <p>
+  <>
     {data && data.table && (
       <Table
         fixed={data.table.fixed}
@@ -36,6 +36,7 @@ const View = ({ data }) => (
                   key={cell.key}
                   as={cell.type === 'header' ? 'th' : 'td'}
                 >
+                  {/* TODO: below use blockHasValue from the Slate volto addon block's metadata */}
                   {cell.value && Node.string(cell.value[0]).length > 0 ? (
                     <TextBlockView data={{ value: cell.value }} />
                   ) : (
@@ -48,7 +49,7 @@ const View = ({ data }) => (
         </Table.Body>
       </Table>
     )}
-  </p>
+  </>
 );
 
 /**

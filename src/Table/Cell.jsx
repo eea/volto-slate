@@ -113,8 +113,10 @@ class Cell extends Component {
       return <div />;
     }
 
+    // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
     return (
-      // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
+      // The tabIndex is required for the keyboard navigation
+      /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
       <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
         <SlateEditor
           onChange={this.onChange.bind(this)}

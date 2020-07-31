@@ -89,6 +89,22 @@ export function createImageBlock(url, index, { onChangeBlock, onAddBlock }) {
   });
 }
 
+export function createSlateTableBlock(
+  rows,
+  index,
+  { onChangeBlock, onAddBlock },
+) {
+  const block = {
+    '@type': 'slateTable',
+    rows,
+  };
+  return new Promise((resolve) => {
+    onAddBlock('slateTable', index + 1).then((id) => {
+      onChangeBlock(id, block).then(resolve(id));
+    });
+  });
+}
+
 export function syncCreateImageBlock(url) {
   const id = uuid();
   const block = {

@@ -37,14 +37,14 @@ export const onImageLoad = (editor, reader) => () => {
   const uploadFileName = `clipboard-${uploadId}`;
   const uploadTitle = `Clipboard ${uploadId}`;
   const content = {
-      '@type': 'Image',
+    '@type': 'Image',
     title: uploadTitle,
-      image: {
-        data: fields[3],
-        encoding: fields[2],
-        'content-type': fields[1],
+    image: {
+      data: fields[3],
+      encoding: fields[2],
+      'content-type': fields[1],
       filename: uploadFileName,
-      },
+    },
   };
 
   const rv = uploadContent(url, content, block);
@@ -94,7 +94,7 @@ export const withImage = (editor) => {
   };
 
   editor.insertData = (data) => {
-    const text = data.getData('text/plain');
+    // const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {
       for (const file of files) {

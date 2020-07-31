@@ -27,6 +27,8 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
+  onFocus,
+  onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -110,6 +112,8 @@ const SlateEditor = ({
           renderElement={Element}
           renderLeaf={Leaf}
           decorate={multiDecorate}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //
@@ -132,6 +136,10 @@ const SlateEditor = ({
       </Slate>
     </div>
   );
+};
+
+SlateEditor.defaultProps = {
+  extensions: [],
 };
 
 export default connect((state, props) => {

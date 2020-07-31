@@ -30,7 +30,31 @@ import {
   breakList,
 } from './TextBlock/extensions';
 
+import Edit from './Table/Edit';
+import View from './Table/View';
+
 const applyConfig = (config) => {
+  // TODO: update metadata:
+  config.blocks.blocksConfig.slateTable = {
+    id: 'slateTable',
+    title: 'Slate Table',
+    icon: codeSVG,
+    group: 'text',
+    view: View,
+    edit: Edit,
+    restricted: false,
+    mostUsed: true,
+    blockHasOwnFocusManagement: true,
+    sidebarTab: 1,
+    security: {
+      addPermission: [],
+      view: [],
+    },
+    blockHasValue: (data) => {
+      return true;
+    },
+  };
+
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',

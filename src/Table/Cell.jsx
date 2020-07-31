@@ -6,7 +6,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SlateEditor from 'volto-slate/editor';
-import SlateEditorContext from 'volto-slate/editor/SlateEditorContext';
 
 /**
  * Edit text cell class.
@@ -23,7 +22,7 @@ class Cell extends Component {
     onSelectCell: PropTypes.func.isRequired,
     row: PropTypes.number,
     cell: PropTypes.number,
-    value: PropTypes.array,
+    value: PropTypes.object,
     selected: PropTypes.bool,
     onChange: PropTypes.func.isRequired,
     isTableBlockSelected: PropTypes.bool,
@@ -49,16 +48,14 @@ class Cell extends Component {
       this.state = {
         // selected: this.props.selected,
         // TODO: use utils function that creates the empty default value
-        slateValue: this.props.value || [
-          { type: 'p', children: [{ text: 'Replace me with a default text' }] },
+        slateValue: [
+          this.props.value || {
+            type: 'p',
+            children: [{ text: '' }],
+          },
         ],
-        slateEditorContextData: {
-          focused: false,
-        },
       };
     }
-
-    this.onChange = this.onChange.bind(this);
   }
 
   /**
@@ -67,18 +64,22 @@ class Cell extends Component {
    * @returns {undefined}
    */
   componentDidMount() {
-    // this.setState({ selected: this.props.selected }, () => {
-    //   this.props.onSelectCell(this.props.row, this.props.cell);
-    // });
+    this.setState({ selected: this.props.selected }, () => {
+      this.props.onSelectCell(this.props.row, this.props.cell);
+    });
   }
 
-  // handleBlur() {
-  //   console.log('blur', this.props.row, this.props.column);
-  // }
+  handleBlur() {
+    console.log('blur', this.props.row, this.props.column);
+    this.setState({ selected: false });
+  }
 
-  // handleFocus() {
-  //   console.log('focus', this.props.row, this.props.column);
-  // }
+  handleFocus() {
+    this.setState({ selected: true }, () => {
+      this.props.onSelectCell(this.props.row, this.props.cell);
+    });
+    console.log('focus', this.props.row, this.props.cell);
+  }
 
   /**
    * Component will receive props
@@ -103,14 +104,17 @@ class Cell extends Component {
    * @param {object} editorState Editor state.
    * @returns {undefined}
    */
-  onChange(slateValue) {
+  onChange(val) {
     this.setState(
       {
-        ...this.state,
-        slateValue,
+        slateValue: val,
       },
       () => {
-        this.props.onChange(this.props.row, this.props.cell, slateValue);
+        this.props.onChange(
+          this.props.row,
+          this.props.cell,
+          this.state.slateValue,
+        );
       },
     );
   }
@@ -127,13 +131,13 @@ class Cell extends Component {
 
     return (
       <div>
-        <SlateEditorContext.Provider value={this.state.slateEditorContextData}>
-          <SlateEditor
-            onChange={this.onChange}
-            value={this.state.slateValue}
-            selected={this.slateEditorContextData.focused}
-          />
-        </SlateEditorContext.Provider>
+        <SlateEditor
+          onChange={this.onChange.bind(this)}
+          value={this.state.slateValue}
+          selected={true}
+          onFocus={this.handleFocus.bind(this)}
+          onBlur={this.handleBlur.bind(this)}
+        />
       </div>
     );
   }

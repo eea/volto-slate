@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { map, remove } from 'lodash';
 import { Button, Segment, Table, Form } from 'semantic-ui-react';
-import { convertToRaw } from 'draft-js';
 import { Portal } from 'react-portal';
 import cx from 'classnames';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
@@ -22,7 +21,7 @@ import deleteSVG from '@plone/volto/icons/delete.svg';
 const getId = () => Math.floor(Math.random() * Math.pow(2, 24)).toString(32);
 
 function getEmptyParagraph() {
-  return [{ type: 'p', children: [{ text: '' }] }];
+  return { type: 'p', children: [{ text: '' }] };
 }
 
 const emptyCell = (type) => ({

@@ -14,8 +14,6 @@ import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection } from 'volto-slate/utils';
 // import { toggleMark } from './utils';
 
-import SlateEditorContextSetter from './SlateEditorContextSetter';
-
 import './less/editor.less';
 
 const SlateEditor = ({
@@ -29,6 +27,8 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
+  onFocus,
+  onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -101,7 +101,6 @@ const SlateEditor = ({
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        <SlateEditorContextSetter />
         <SlateToolbar
           selected={selected}
           showToolbar={showToolbar}
@@ -113,6 +112,8 @@ const SlateEditor = ({
           renderElement={Element}
           renderLeaf={Leaf}
           decorate={multiDecorate}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //

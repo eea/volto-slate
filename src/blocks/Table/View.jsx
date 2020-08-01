@@ -8,47 +8,49 @@ import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { map } from 'lodash';
 import { serializeNodes } from 'volto-slate/editor/render';
-import { Editor } from 'slate';
-
-// import { settings } from '~/config';
+import { Node } from 'slate';
 
 /**
  * View table block class.
  * @class View
  * @extends Component
  */
-const View = ({ data }) => (
-  <>
-    {data && data.table && (
-      <Table
-        fixed={data.table.fixed}
-        compact={data.table.compact}
-        basic={data.table.basic ? 'very' : false}
-        celled={data.table.celled}
-        inverted={data.table.inverted}
-        striped={data.table.striped}
-      >
-        <Table.Body>
-          {map(data.table.rows, (row) => (
-            <Table.Row key={row.key}>
-              {map(row.cells, (cell) => (
-                <Table.Cell
-                  key={cell.key}
-                  as={cell.type === 'header' ? 'th' : 'td'}
-                >
-                  {/* TODO: below use blockHasValue from the Slate volto addon block's metadata */}
-                  {cell.value && Editor.string(cell.value).length > 0
-                    ? serializeNodes(cell.value)
-                    : '\u00A0'}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
-    )}
-  </>
-);
+const View = ({ data }) => {
+  return (
+    <>
+      {data && data.table && (
+        <Table
+          fixed={data.table.fixed}
+          compact={data.table.compact}
+          basic={data.table.basic ? 'very' : false}
+          celled={data.table.celled}
+          inverted={data.table.inverted}
+          striped={data.table.striped}
+        >
+          <Table.Body>
+            {map(data.table.rows, (row) => (
+              <Table.Row key={row.key}>
+                {map(row.cells, (cell) => (
+                  <Table.Cell
+                    key={cell.key}
+                    as={cell.type === 'header' ? 'th' : 'td'}
+                  >
+                    {cell.value &&
+                    Node.string({ children: cell.value }).length > 0
+                      ? serializeNodes(cell.value)
+                      : '\u00A0'}
+
+                    {/* TODO: below use blockHasValue from the Slate volto addon block's metadata */}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      )}
+    </>
+  );
+};
 
 /**
  * Property types.

@@ -12,7 +12,7 @@ import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
-import SlateEditor from 'volto-slate/editor';
+import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import ShortcutListing from './ShortcutListing';
 import { handleKey } from './keyboard';

@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import SlateEditor from 'volto-slate/editor';
+import { SlateEditor } from 'volto-slate/editor';
 
 /**
  * Edit text cell class.

@@ -1,4 +1,3 @@
-import isHotkey from 'is-hotkey';
 import cx from 'classnames';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
@@ -12,6 +11,8 @@ import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection } from 'volto-slate/utils';
+
+// import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
 
 import './less/editor.less';

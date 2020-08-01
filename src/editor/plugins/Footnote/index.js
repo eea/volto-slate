@@ -2,16 +2,12 @@
 
 import React from 'react';
 
-import codeSVG from '@plone/volto/icons/code.svg';
-
 import { FootnoteElement } from './render';
 import FootnoteButton from './FootnoteButton';
 import { withFootnote } from './extensions';
-import FootnotesBlockView from './FootnotesBlockView';
-import FootnotesBlockEdit from './FootnotesBlockEdit';
 import { FOOTNOTE } from 'volto-slate/constants';
 
-export default function install(config) {
+export default (config) => {
   const { slate } = config.settings;
 
   slate.buttons.footnote = (props) => <FootnoteButton {...props} />;
@@ -26,22 +22,5 @@ export default function install(config) {
 
   slate.nodeTypesToHighlight.push(FOOTNOTE);
 
-  config.blocks.blocksConfig.slateFootnotes = {
-    id: 'slateFootnotes',
-    title: 'Slate Footnotes',
-    icon: codeSVG,
-    group: 'text',
-    view: FootnotesBlockView,
-    edit: FootnotesBlockEdit,
-    restricted: false,
-    mostUsed: true,
-    blockHasOwnFocusManagement: false,
-    sidebarTab: 1,
-    security: {
-      addPermission: [],
-      view: [],
-    },
-  };
-
   return config;
-}
+};

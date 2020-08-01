@@ -35,7 +35,7 @@ export const onImageLoad = (editor, reader) => () => {
   const url = getBaseUrl(pathname);
   const uploadId = uuid();
   const uploadFileName = `clipboard-${uploadId}`;
-  const uploadTitle = `Clipboard ${uploadId}`;
+  const uploadTitle = `Clipboard image`;
   const content = {
     '@type': 'Image',
     title: uploadTitle,
@@ -47,8 +47,7 @@ export const onImageLoad = (editor, reader) => () => {
     },
   };
 
-  const rv = uploadContent(url, content, block);
-  rv.then((data) => {
+  uploadContent(url, content, block).then((data) => {
     const dlUrl = data.image.download;
     insertImage(editor, dlUrl);
   });
@@ -65,8 +64,6 @@ export const deserializeImageTag = (editor, el) => {
   for (const name of el.getAttributeNames()) {
     attrs[name] = el.getAttribute(name);
   }
-  // return jsx('text', {}, '');
-  // return [jsx('element', attrs, [{ text: '' }]), jsx('text', {}, '')];
   return [jsx('element', attrs, [{ text: '' }])];
 };
 

@@ -1,7 +1,7 @@
-import { Transforms } from 'slate';
-import { IMAGE } from 'volto-slate/constants';
-import { jsx } from 'slate-hyperscript';
-import { getBaseUrl } from '@plone/volto/helpers';
+// import { Transforms } from 'slate';
+// import { IMAGE } from 'volto-slate/constants';
+// import { jsx } from 'slate-hyperscript';
+// import { getBaseUrl } from '@plone/volto/helpers';
 import { v4 as uuid } from 'uuid';
 import { createSlateTableBlock } from 'volto-slate/utils';
 import { deserialize } from 'volto-slate/editor/deserialize';
@@ -48,12 +48,12 @@ export const deserializeTableTag = (editor, el) => {
     rows.push(row);
   });
 
-  console.log('TABLE', rows);
+  // console.log('TABLE', rows);
 
   // TODO: get the correct index here
 
-  const { onChangeBlock, onAddBlock } = editor.getBlockProps();
-  createSlateTableBlock(rows, 0, { onChangeBlock, onAddBlock });
+  // const { onChangeBlock, onAddBlock } = editor.getBlockProps();
+  // createSlateTableBlock(rows, 0, { onChangeBlock, onAddBlock });
 
   // const attrs = { type: IMAGE };
 

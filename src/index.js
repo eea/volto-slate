@@ -1,6 +1,3 @@
-// TODO: we could decorate the editor with these methods, instead of having
-// them here separate.
-
 import codeSVG from '@plone/volto/icons/code.svg';
 
 import { slate_block_selections, upload_content } from './reducers';
@@ -30,18 +27,16 @@ import {
   breakList,
 } from './TextBlock/extensions';
 
-import Edit from './Table/Edit';
-import View from './Table/View';
+import { TableEdit, TableView } from './Table';
 
 const applyConfig = (config) => {
-  // TODO: update metadata:
   config.blocks.blocksConfig.slateTable = {
     id: 'slateTable',
     title: 'Slate Table',
     icon: codeSVG,
     group: 'text',
-    view: View,
-    edit: Edit,
+    view: TableView,
+    edit: TableEdit,
     restricted: false,
     mostUsed: true,
     blockHasOwnFocusManagement: true,
@@ -71,6 +66,7 @@ const applyConfig = (config) => {
       view: [],
     },
     blockHasValue: (data) => {
+      // TODO: this should be handled better
       return !!data.plaintext;
     },
   };

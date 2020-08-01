@@ -44,11 +44,11 @@ class Cell extends Component {
   constructor(props) {
     super(props);
 
-    if (!__SERVER__) {
-      this.state = {
-        selected: this.props.selected,
-      };
-    }
+    this.state = {
+      selected: this.props.selected,
+    };
+    // if (!__SERVER__) {
+    // }
   }
 
   /**
@@ -109,9 +109,9 @@ class Cell extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
-    if (__SERVER__) {
-      return <div />;
-    }
+    // if (__SERVER__) {
+    //   return <div />;
+    // }
 
     // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
     return (

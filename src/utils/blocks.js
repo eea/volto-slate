@@ -1,11 +1,6 @@
 import { Editor, Transforms } from 'slate';
 import { settings } from '~/config';
-import {
-  // createSlateBlock,
-  // setEditorContent,
-  // nanoid,
-  deconstructToVoltoBlocks,
-} from 'volto-slate/utils';
+import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
 export function createEmptyParagraph() {
   // TODO: rename to createEmptyBlock

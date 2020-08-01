@@ -19,6 +19,7 @@ export function backspaceInList({ editor, event }) {
     Transforms.setNodes(editor, { type: slate.defaultBlockType });
 
     console.log('backspace deconstruct');
+    // TODO: rewrite to benefit from FormContext and Form promises
     deconstructToVoltoBlocks(editor).then(() => {
       const props = editor.getBlockProps();
       // Unfortunately, until Volto's on* methods don't have Promise support,

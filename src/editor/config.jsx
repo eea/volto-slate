@@ -112,7 +112,7 @@ export const listTypes = ['ul', 'ol'];
 export const listItemType = 'li';
 export const defaultBlockType = 'p';
 
-// default rendered elements
+// Default rendered elements
 export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
@@ -144,6 +144,8 @@ export const defaultValue = () => {
 
 // HTML deserialization (html -> slate data conversion)
 // These are used in clipboard paste handling
+// Any tag that is not listed here (or added by a plugin) will be stripped
+// (its children will be rendered, though)
 export const htmlTagsToSlate = {
   BODY: bodyTagDeserializer,
   H1: blockTagDeserializer('h1'),
@@ -156,7 +158,6 @@ export const htmlTagsToSlate = {
   BLOCKQUOTE: blockTagDeserializer('blockquote'),
   PRE: preTagDeserializer,
 
-  // TextBlock overrides these deserializers for better integration
   OL: blockTagDeserializer('ol'),
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
@@ -167,21 +168,19 @@ export const htmlTagsToSlate = {
   EM: inlineTagDeserializer({ italic: true }),
   I: inlineTagDeserializer({ italic: true }),
   S: inlineTagDeserializer({ strikethrough: true }),
+  SPAN: spanDeserializer,
+  STRONG: inlineTagDeserializer({ bold: true }),
   SUB: inlineTagDeserializer({ sub: true }),
   SUP: inlineTagDeserializer({ sup: true }),
-  STRONG: inlineTagDeserializer({ bold: true }),
   U: inlineTagDeserializer({ underline: true }),
-  SPAN: spanDeserializer,
-
-  // OL: listElementToSlateDeserializer('ol'),
-  // UL: listElementToSlateDeserializer('ul'),
-  // LI: () => ({ type: 'li' }),
-  // PRE: () => ({ type: 'code' }),
 };
 
-// types to decorate as highlight in the editor. See the Footnote plugin for
-// an example.
+// Adds "highlight" decoratation in the editor. Used by `highlightByType`
+// See the Footnote plugin for an example.
 export const nodeTypesToHighlight = [];
 
-// decorator functions. Signature: ([node, path], ranges) => ranges
+// "Runtime" decorator functions. These are transient decorations that are
+// applied in the editor. They are not persisted in the final value, so they
+// are useful for example to highlight search results or a certain type of node
+// Signature: ([node, path], ranges) => ranges
 export const runtimeDecorators = [highlightByType];

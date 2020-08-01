@@ -1,5 +1,5 @@
 import React from 'react';
-import './public.less';
+import './less/public.less';
 
 export const FootnoteElement = ({ attributes, children, element, mode }) => {
   const { data = {} } = element;

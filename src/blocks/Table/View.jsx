@@ -7,10 +7,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { map } from 'lodash';
-import TextBlockView from '../TextBlock/TextBlockView';
+import TextBlockView from 'volto-slate/blocks/Text/TextBlockView';
 import { Node } from 'slate';
 
-import { settings } from '~/config';
+// import { settings } from '~/config';
 
 /**
  * View table block class.

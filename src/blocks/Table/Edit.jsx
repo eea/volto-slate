@@ -11,7 +11,7 @@ import { Portal } from 'react-portal';
 import cx from 'classnames';
 import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
 
-import Cell from 'volto-slate/Table/Cell';
+import Cell from './Cell';
 import { Field, Icon } from '@plone/volto/components';
 
 import rowSVG from '@plone/volto/icons/row.svg';
@@ -509,10 +509,6 @@ class Edit extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
-    if (__SERVER__) {
-      return <div />;
-    }
-
     return (
       // TODO: use slate-table instead of table, but first copy the CSS styles to the new name
       <div className={cx('block table', { selected: this.props.selected })}>

@@ -7,7 +7,7 @@ import installVoltoProposals from './futurevolto/config';
 import * as slateConfig from './editor/config';
 import installDefaultPlugins from './editor/plugins';
 
-import { TextBlockView, TextBlockEdit } from './TextBlock';
+import { TextBlockView, TextBlockEdit } from './blocks/Text';
 import {
   goDown,
   goUp,
@@ -18,16 +18,16 @@ import {
   softBreak,
   moveListItemDown,
   moveListItemUp,
-} from './TextBlock/keyboard';
+} from './blocks/Text/keyboard';
 import { withDeleteSelectionOnEnter } from './editor/extensions';
 import {
   withInsertData,
   withSplitBlocksOnBreak,
   withDeserializers,
   breakList,
-} from './TextBlock/extensions';
+} from './blocks/Text/extensions';
 
-import { TableEdit, TableView } from './Table';
+import { TableEdit, TableView } from './blocks/Table';
 
 const applyConfig = (config) => {
   config.blocks.blocksConfig.slateTable = {
@@ -88,7 +88,7 @@ const applyConfig = (config) => {
     // following handler
     textblockKeyboardHandlers: {
       Backspace: [
-        backspaceInList,
+        backspaceInList, // Backspace in list item lifts node and breaks Volto blocks
         joinWithPreviousBlock, // Backspace at beginning of block joins with previous block
       ],
       Delete: [

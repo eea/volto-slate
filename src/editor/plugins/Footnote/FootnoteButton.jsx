@@ -17,9 +17,7 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from 'volto-slate/constants';
 
-// import { nanoid } from 'volto-slate/utils';
-
-import './editor.less';
+import './less/editor.less';
 
 export const wrapFootnote = (editor, data) => {
   if (isActiveFootnote(editor)) {

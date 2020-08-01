@@ -3,6 +3,7 @@ import installFootnote from './Footnote';
 import installImage from './Image';
 import installLinkPlugin from './Link';
 import installMarkdown from './Markdown';
+import installTablePaste from './TablePaste';
 
 export default function install(config) {
   return [
@@ -11,5 +12,6 @@ export default function install(config) {
     installFootnote,
     installMarkdown,
     installImage,
+    installTablePaste,
   ].reduce((acc, apply) => apply(acc), config);
 }

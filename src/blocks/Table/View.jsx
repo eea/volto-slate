@@ -7,8 +7,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
 import { map } from 'lodash';
-import TextBlockView from 'volto-slate/blocks/Text/TextBlockView';
-import { Node } from 'slate';
+import { serializeNodes } from 'volto-slate/editor/render';
+import { Editor } from 'slate';
 
 // import { settings } from '~/config';
 
@@ -37,11 +37,9 @@ const View = ({ data }) => (
                   as={cell.type === 'header' ? 'th' : 'td'}
                 >
                   {/* TODO: below use blockHasValue from the Slate volto addon block's metadata */}
-                  {cell.value && Node.string(cell.value[0]).length > 0 ? (
-                    <TextBlockView data={{ value: cell.value }} />
-                  ) : (
-                    '\u00A0'
-                  )}
+                  {cell.value && Editor.string(cell.value).length > 0
+                    ? serializeNodes(cell.value)
+                    : '\u00A0'}
                 </Table.Cell>
               ))}
             </Table.Row>

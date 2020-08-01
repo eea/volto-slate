@@ -48,7 +48,7 @@ export const deserializeTableTag = (editor, el) => {
     rows.push(row);
   });
 
-  // console.log('TABLE', rows);
+  console.log('TABLE', rows);
 
   // TODO: get the correct index here
 

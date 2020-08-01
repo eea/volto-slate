@@ -28,7 +28,7 @@ export default (config) => {
   return config;
 };
 
-export function asDefaultBlock(config) {
+export function asDefault(config) {
   config.settings.defaultBlockType = 'slate';
 
   config.blocks.blocksConfig.text.restricted = true;

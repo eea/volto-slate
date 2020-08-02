@@ -18,6 +18,11 @@ export const insertData = (editor) => {
     // console.log('text', text);
     const html = data.getData('text/html');
 
+    // editor.htmlTagsToSlate = {
+    //   ...editor.htmlTagsToSlate,
+    //   IMG: deserializeImageTag,
+    // };
+
     if (html) {
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
@@ -33,31 +38,16 @@ export const insertData = (editor) => {
         fragment = fragment.map((b) =>
           Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
         );
-        console.log('removed nodes', fragment);
+        console.log('Pasting in empty block:', fragment);
       }
 
       // TODO: use Editor.isEmpty(editor, editor);
-
-      // const isTextFragment =
-      //   Array.isArray(fragment) &&
-      //   fragment.length === 1 &&
-      //   (Editor.isInline(fragment[0]) || Text.isText(fragment[0]));
 
       // TODO: insertNodes works a lot better then insertFragment (needs less cleanup)
       // but insertFragment is more reliable to get content inserted
       // We can't afford to insert a fragment, we want Slate to clean up
       // Editor.insertFragment(editor, fragment);
       // Transforms.insertFragment(editor, fragment);
-
-      // if (isEmpty && !isTextFragment) {
-      //   console.log(
-      //     'deletenodes',
-      //     isTextFragment,
-      //     fragment,
-      //     Editor.isInline(fragment[0]),
-      //   );
-      //   // Transforms.removeNodes(editor);
-      // }
 
       Transforms.insertNodes(editor, fragment);
       Transforms.deselect(editor); // Solves a problem when pasting images

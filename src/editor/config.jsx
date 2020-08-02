@@ -113,6 +113,7 @@ export const listItemType = 'li';
 export const defaultBlockType = 'p';
 
 // Default rendered elements
+// TODO: expose the IDs in constants.js, for uniformity
 export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,

@@ -6,7 +6,7 @@ import {
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
-import { IMAGE } from 'volto-slate/constants';
+import { settings } from '~/config';
 
 function fromEntries(pairs) {
   const res = {};
@@ -105,15 +105,6 @@ export function createSlateTableBlock(
   });
 }
 
-export function syncCreateImageBlock(url) {
-  const id = uuid();
-  const block = {
-    '@type': 'image',
-    url,
-  };
-  return [id, block];
-}
-
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
   const { onSelectBlock } = blockProps;
@@ -164,6 +155,8 @@ export function deconstructToVoltoBlocks(editor) {
 
   console.log('editor.children', editor.children);
   const blockProps = editor.getBlockProps();
+  const { slate } = settings;
+  const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
     if (editor.children.length === 1) {
@@ -177,32 +170,19 @@ export function deconstructToVoltoBlocks(editor) {
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
 
     const { index } = blockProps;
-    const blocks = [];
+    let blocks = [];
 
     for (const [, path] of Node.children(editor, [])) {
       const pathRef = Editor.pathRef(editor, path);
-      const images = [];
 
-      // Discover and emit images as separate Volto image blocks
-      const imageNodes = Array.from(
-        Editor.nodes(editor, {
-          at: path,
-          match: (node) => node.type === IMAGE,
-        }),
-      );
-      imageNodes.forEach(([el, path]) => {
-        images.push(el);
-        Transforms.removeNodes(editor, { at: path });
-      });
-
+      // extra nodes are always extracted after the text node
+      let extras = voltoBlockEmiters.map((emit) => emit(editor, path)).flat(1);
       const [childNode] = Editor.node(editor, pathRef.current);
 
       if (childNode && !Editor.isEmpty(editor, childNode))
         blocks.push(syncCreateSlateBlock([childNode]));
 
-      images.forEach((el) => {
-        blocks.push(syncCreateImageBlock(el.src));
-      });
+      blocks = [...blocks, ...extras];
     }
 
     const blockids = blocks.map((b) => b[0]);

@@ -66,7 +66,10 @@ export default (config) => {
     // Used by deconstructToVoltoBlocks to transform tags such as <img> to a Volto image block
     // These emiters receive (editor, path), emit [blockid, blockoptions] and
     // are allowed to change the editor contents (for the given path)
-    voltoBlockEmiters: [extractImages],
+    voltoBlockEmiters: [
+      ...(config.settings.slate.voltoBlockEmiters || []),
+      extractImages,
+    ],
 
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };

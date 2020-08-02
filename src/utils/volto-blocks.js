@@ -153,12 +153,13 @@ export function deconstructToVoltoBlocks(editor) {
   // For the Volto blocks manipulation we do low-level changes to the context
   // form state, as that ensures a better performance (no un-needed UI updates)
 
-  console.log('editor.children', editor.children);
   const blockProps = editor.getBlockProps();
   const { slate } = settings;
   const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
+    console.log('editor', editor);
+    if (!editor?.children) return;
     if (editor.children.length === 1) {
       return resolve([blockProps.block]);
     }
@@ -172,16 +173,22 @@ export function deconstructToVoltoBlocks(editor) {
     const { index } = blockProps;
     let blocks = [];
 
-    for (const [, path] of Node.children(editor, [])) {
-      const pathRef = Editor.pathRef(editor, path);
+    const pathRefs = Array.from(Node.children(editor, [])).map(([, path]) =>
+      Editor.pathRef(editor, path),
+    );
 
+    for (const pathRef of pathRefs) {
       // extra nodes are always extracted after the text node
-      let extras = voltoBlockEmiters.map((emit) => emit(editor, path)).flat(1);
-      const [childNode] = Editor.node(editor, pathRef.current);
+      let extras = voltoBlockEmiters
+        .map((emit) => emit(editor, pathRef))
+        .flat(1);
 
-      if (childNode && !Editor.isEmpty(editor, childNode))
-        blocks.push(syncCreateSlateBlock([childNode]));
-
+      // The node might have been replaced with a Volto block
+      if (pathRef.current) {
+        const [childNode] = Editor.node(editor, pathRef.current);
+        if (childNode && !Editor.isEmpty(editor, childNode))
+          blocks.push(syncCreateSlateBlock([childNode]));
+      }
       blocks = [...blocks, ...extras];
     }
 
@@ -218,69 +225,3 @@ export function deconstructToVoltoBlocks(editor) {
     setContextData(data).then(() => resolve(blockids));
   });
 }
-
-// import { v4 as uuid } from 'uuid';
-// import { Transforms } from 'slate';
-// import { IMAGE } from 'volto-slate/constants';
-// import { jsx } from 'slate-hyperscript';
-// import { getBaseUrl } from '@plone/volto/helpers';
-// import { createSlateTableBlock } from 'volto-slate/utils';
-// export const deserializeTableTag = (editor, el) => {
-//   if (el.localName !== 'table') {
-//     return null;
-//   }
-//
-//   let rows = [];
-//
-//   el.querySelectorAll('tr').forEach((val, idx) => {
-//     let row = { key: uuid(), cells: [] };
-//     val.childNodes.forEach((val2, idx2) => {
-//       let ds = deserialize(editor, val2);
-//
-//       function dsx(ds) {
-//         return Array.isArray(ds)
-//           ? ds.map((x) => {
-//               if (typeof x === 'string') {
-//                 return { type: 'p', children: [{ text: x }] };
-//               }
-//               return dsx(x);
-//             })
-//           : ds;
-//       }
-//       ds = dsx(ds);
-//
-//       if (val2.localName === 'th') {
-//         row.cells.push({
-//           key: uuid(),
-//           type: 'header',
-//           value: ds,
-//         });
-//       } else if (val2.localName === 'td') {
-//         row.cells.push({
-//           key: uuid(),
-//           type: 'data',
-//           value: ds,
-//         });
-//       }
-//     });
-//
-//     rows.push(row);
-//   });
-//
-//   console.log('TABLE', rows);
-//
-//   // TODO: get the correct index here
-//
-//   // const { onChangeBlock, onAddBlock } = editor.getBlockProps();
-//   // createSlateTableBlock(rows, 0, { onChangeBlock, onAddBlock });
-//
-//   // const attrs = { type: IMAGE };
-//
-//   // for (const name of el.getAttributeNames()) {
-//   //   attrs[name] = el.getAttribute(name);
-//   // }
-//
-//   // return jsx('text', {}, '');
-//   // return [jsx('element', attrs, [{ text: '' }]), jsx('text', {}, '')];
-//   return null; // [jsx('element', attrs, [{ text: '' }])];
-// };

@@ -1,8 +1,16 @@
 import codeSVG from '@plone/volto/icons/code.svg';
 import TableEdit from './Edit';
 import TableView from './View';
+import { extractTables } from './deconstruct';
 
 export default function install(config) {
+  config.settings.slate = {
+    ...config.settings.slate,
+    voltoBlockEmiters: [
+      ...(config.settings.slate.voltoBlockEmiters || []),
+      extractTables,
+    ],
+  };
   config.blocks.blocksConfig.slateTable = {
     id: 'slateTable',
     title: 'Slate Table',

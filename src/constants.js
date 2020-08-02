@@ -5,6 +5,7 @@ export const UPLOAD_CONTENT = 'UPLOAD_CONTENT';
 export const IMAGE = 'img';
 export const FOOTNOTE = 'footnote';
 export const LINK = 'a';
+
 export const TABLE = 'table';
 export const THEAD = 'thead';
 export const TBODY = 'tbody';

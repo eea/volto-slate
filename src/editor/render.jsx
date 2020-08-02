@@ -6,12 +6,12 @@ import { settings } from '~/config';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = (props) => {
-  const { element } = props; // attributes, children,
-  const { elements } = settings.slate;
+export const Element = ({ element, ...rest }) => {
+  const { slate } = settings;
+  const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  return <El {...props} />;
+  return <El element={element} {...rest} />;
 };
 
 export const Leaf = ({ attributes, leaf, children, mode }) => {

@@ -12,10 +12,13 @@ import { settings } from '~/config';
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection } from 'volto-slate/utils';
 
+import { FootnoteToolbar } from './ui/FootnoteToolbar';
+
 // import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
 
 import './less/editor.less';
+import FootnoteContext from './ui/FootnoteContext';
 
 const SlateEditor = ({
   selected,
@@ -35,6 +38,30 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
+
+  const [showForm, setShowForm] = React.useState(false);
+  const [selection, setSelection] = React.useState(null);
+  const [formData, setFormData] = React.useState({});
+  const [footnoteContext, setFootnoteContext] = React.useState({
+    getShowForm: () => {
+      return showForm || false;
+    },
+    getSelection: () => {
+      return selection || null;
+    },
+    getFormData: () => {
+      return formData || {};
+    },
+    setShowForm: (val) => {
+      setShowForm(val);
+    },
+    setSelection: (val) => {
+      setSelection(val);
+    },
+    setFormData: (val) => {
+      setFormData(val);
+    },
+  });
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -96,17 +123,22 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
+  // TODO: in Footnotes block and toolbar buttons, support Footnotes in tables
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
+      {/* <SidebarFootnoteForm showForm={showForm} /> */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        <SlateToolbar
-          selected={selected}
-          showToolbar={showToolbar}
-          setShowToolbar={setShowToolbar}
-        />
+        <FootnoteContext.Provider value={footnoteContext}>
+          <FootnoteToolbar selected={selected} />
+          <SlateToolbar
+            selected={selected}
+            showToolbar={showToolbar}
+            setShowToolbar={setShowToolbar}
+          />
+        </FootnoteContext.Provider>
         <Editable
           readOnly={!selected}
           placeholder={placeholder}

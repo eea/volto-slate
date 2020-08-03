@@ -17,7 +17,10 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from 'volto-slate/constants';
 
+// import { SidebarFootnoteForm } from './SidebarFootnoteForm';
+
 import './less/editor.less';
+import FootnoteContext from '../../ui/FootnoteContext';
 
 export const wrapFootnote = (editor, data) => {
   if (isActiveFootnote(editor)) {
@@ -45,9 +48,9 @@ function insertFootnote(editor, data) {
   }
 }
 
-function unwrapFootnote(editor) {
+export const unwrapFootnote = (editor) => {
   Transforms.unwrapNodes(editor, { match: (n) => n.type === FOOTNOTE });
-}
+};
 
 export const isActiveFootnote = (editor) => {
   const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
@@ -62,89 +65,100 @@ export const getActiveFootnote = (editor) => {
 
 const FootnoteButton = () => {
   const editor = useSlate();
-  const [showForm, setShowForm] = React.useState(false);
-  const [selection, setSelection] = React.useState(null);
-  const [formData, setFormdata] = React.useState({});
+  const isFootnote = isActiveFootnote(editor);
+
+  const footnoteRef = React.useRef(null);
+  // const footnote = React.useContext(FootnoteContext);
+
+  // TODO: use a new component: SidebarFootnoteForm
 
   const submitHandler = React.useCallback(
     (formData) => {
       // TODO: have an algorithm that decides which one is used
-      const { footnote } = formData;
-      if (footnote) {
-        Transforms.select(editor, selection);
+      const { localFootnote } = formData;
+      if (localFootnote) {
+        Transforms.select(editor, footnoteRef.current.selection);
         insertFootnote(editor, { ...formData });
       } else {
         unwrapFootnote(editor);
       }
     },
-    [editor, selection],
+    [editor, footnoteRef],
   );
 
-  const isFootnote = isActiveFootnote(editor);
-
   return (
-    <>
-      <SidebarPopup open={showForm}>
-        <InlineForm
-          schema={FootnoteSchema}
-          title={FootnoteSchema.title}
-          icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
-          onChangeField={(id, value) => {
-            setFormdata({ ...formData, [id]: value });
-          }}
-          formData={formData}
-          headerActions={
-            <>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  submitHandler(formData);
-                  ReactEditor.focus(editor);
+    <FootnoteContext.Consumer>
+      {(footnote) => {
+        footnoteRef.current = footnote;
+        return (
+          <>
+            <SidebarPopup open={footnote.getShowForm()}>
+              <InlineForm
+                schema={FootnoteSchema}
+                title={FootnoteSchema.title}
+                icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
+                onChangeField={(id, value) => {
+                  footnote.setFormData({
+                    ...footnote.getFormData(),
+                    [id]: value,
+                  });
                 }}
-              >
-                <VoltoIcon size="24px" name={checkSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  unwrapFootnote(editor);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={formatClearSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={clearSVG} />
-              </button>
-            </>
-          }
-        />
-      </SidebarPopup>
-      <ToolbarButton
-        active={isFootnote}
-        onMouseDown={() => {
-          console.log(editor);
-          if (!showForm) {
-            setSelection(editor.selection);
+                formData={footnote.getFormData()}
+                headerActions={
+                  <>
+                    <button
+                      onClick={() => {
+                        footnote.setShowForm(false);
+                        submitHandler(footnote.getFormData());
+                        ReactEditor.focus(editor);
+                      }}
+                    >
+                      <VoltoIcon size="24px" name={checkSVG} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        footnote.setShowForm(false);
+                        unwrapFootnote(editor);
+                        ReactEditor.focus(editor);
+                      }}
+                    >
+                      <VoltoIcon size="24px" name={formatClearSVG} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        footnote.setShowForm(false);
+                        ReactEditor.focus(editor);
+                      }}
+                    >
+                      <VoltoIcon size="24px" name={clearSVG} />
+                    </button>
+                  </>
+                }
+              />
+            </SidebarPopup>
+            <ToolbarButton
+              active={isFootnote}
+              onMouseDown={() => {
+                console.log(editor);
+                if (!footnote.getShowForm()) {
+                  footnote.setSelection(editor.selection);
 
-            const note = getActiveFootnote(editor);
-            if (note) {
-              const [node] = note;
-              const { data } = node;
-              setFormdata(data);
-            }
+                  const note = getActiveFootnote(editor);
+                  if (note) {
+                    const [node] = note;
+                    const { data } = node;
+                    footnote.setFormData(data);
+                  }
 
-            setShowForm(true);
-          }
-        }}
-        icon={tagSVG}
-      />
-    </>
+                  footnote.setShowForm(true);
+                }
+              }}
+              icon={tagSVG}
+            />
+          </>
+        );
+      }}
+    </FootnoteContext.Consumer>
   );
 };
 

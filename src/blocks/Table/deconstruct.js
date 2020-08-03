@@ -2,11 +2,13 @@ import { v4 as uuid } from 'uuid';
 import { Editor, Transforms } from 'slate';
 import { TABLE, TD } from 'volto-slate/constants';
 
-export function syncCreateTableBlock(content) {
+export function syncCreateTableBlock(rows) {
   const id = uuid();
   const block = {
     '@type': 'slateTable',
-    ...content,
+    table: {
+      rows,
+    },
   };
   return [id, block];
 }
@@ -28,9 +30,56 @@ export const extractTables = (editor, pathRef) => {
   return tables.map((el) => syncCreateTableBlock(el));
 };
 
+function collectRowsFrom(x) {
+  let rows = [];
+  x.children.forEach((y) => {
+    if (y.type === 'tr') {
+      let row = { key: uuid(), cells: [] };
+
+      y.children.forEach((z) => {
+        let val = JSON.parse(JSON.stringify(z.children));
+        if (z.type === 'td') {
+          row.cells.push({
+            key: uuid(),
+            type: 'data',
+            value: val,
+          });
+        } else if (z.type === 'th') {
+          row.cells.push({
+            key: uuid(),
+            type: 'header',
+            value: val,
+          });
+        }
+      });
+
+      rows.push(row);
+    }
+  });
+  return rows;
+}
+
 function extractVoltoTable(el) {
-  console.log('table', el);
-  return null;
+  let thead = [],
+    tfoot = [],
+    tbody = [];
+  el.children.forEach((x) => {
+    if (x.type === 'thead') {
+      // not supported by View fully, so prepend this to tbody below
+      thead = collectRowsFrom(x);
+    } else if (x.type === 'tbody') {
+      tbody = collectRowsFrom(x);
+    } else if (x.type === 'tfoot') {
+      // not supported by View fully, so append this to tbody below
+      tfoot = collectRowsFrom(x);
+    }
+  });
+
+  const rows = [...thead, ...tbody, ...tfoot];
+
+  // console.log('SLATE:', el);
+  // console.log('VOLTO:', rows);
+  return rows;
 }
 
 // import { v4 as uuid } from 'uuid';

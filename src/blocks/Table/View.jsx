@@ -40,7 +40,7 @@ const View = ({ data }) => {
                       ? serializeNodes(cell.value)
                       : '\u00A0'}
 
-                    {/* TODO: below use blockHasValue from the Slate volto addon block's metadata */}
+                    {/* TODO: above use blockHasValue from the Slate Volto addon block's metadata */}
                   </Table.Cell>
                 ))}
               </Table.Row>

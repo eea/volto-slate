@@ -42,26 +42,29 @@ const SlateEditor = ({
   const [showForm, setShowForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
   const [formData, setFormData] = React.useState({});
-  const [footnoteContext, setFootnoteContext] = React.useState({
-    getShowForm: () => {
-      return showForm || false;
-    },
-    getSelection: () => {
-      return selection || null;
-    },
-    getFormData: () => {
-      return formData || {};
-    },
-    setShowForm: (val) => {
-      setShowForm(val);
-    },
-    setSelection: (val) => {
-      setSelection(val);
-    },
-    setFormData: (val) => {
-      setFormData(val);
-    },
-  });
+  const footnoteContext = React.useMemo(
+    () => ({
+      getShowForm: () => {
+        return showForm || false;
+      },
+      getSelection: () => {
+        return selection || null;
+      },
+      getFormData: () => {
+        return formData || {};
+      },
+      setShowForm: (val) => {
+        setShowForm(val);
+      },
+      setSelection: (val) => {
+        setSelection(val);
+      },
+      setFormData: (val) => {
+        setFormData(val);
+      },
+    }),
+    [showForm, selection, formData, setShowForm, setSelection, setFormData],
+  );
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {

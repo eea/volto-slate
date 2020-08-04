@@ -75,9 +75,9 @@ const FootnoteButton = () => {
   const submitHandler = React.useCallback(
     (formData) => {
       // TODO: have an algorithm that decides which one is used
-      const { localFootnote } = formData;
+      const { footnote: localFootnote } = formData;
       if (localFootnote) {
-        Transforms.select(editor, footnoteRef.current.selection);
+        Transforms.select(editor, footnoteRef.current.getSelection());
         insertFootnote(editor, { ...formData });
       } else {
         unwrapFootnote(editor);

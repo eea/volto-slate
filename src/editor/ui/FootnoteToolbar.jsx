@@ -32,8 +32,6 @@ export const FootnoteToolbar = ({ selected }) => {
   const editor = useEditor();
   const isFootnote = isActiveFootnote(editor);
 
-  // const footnote = React.useContext(FootnoteContext);
-
   return (
     selected &&
     isFootnote && (

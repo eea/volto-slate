@@ -12,6 +12,7 @@ import {
   isActiveFootnote,
   unwrapFootnote,
   getActiveFootnote,
+  handleFootnoteButtonClick,
 } from '../plugins/Footnote/FootnoteButton';
 import { useEditor } from 'slate-react';
 import FootnoteContext from './FootnoteContext';
@@ -45,18 +46,7 @@ export const FootnoteToolbar = ({ selected }) => {
                   basic
                   aria-label={intl.formatMessage(messages.edit)}
                   onClick={() => {
-                    if (!footnote.getShowForm()) {
-                      footnote.setSelection(editor.selection);
-
-                      const note = getActiveFootnote(editor);
-                      if (note) {
-                        const [node] = note;
-                        const { data } = node;
-                        footnote.setFormData(data);
-                      }
-
-                      footnote.setShowForm(true);
-                    }
+                    handleFootnoteButtonClick(editor, footnote);
                   }}
                 >
                   <Icon name={editingSVG} size="24px" />

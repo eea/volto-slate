@@ -63,6 +63,23 @@ export const getActiveFootnote = (editor) => {
   return note;
 };
 
+export const handleFootnoteButtonClick = (editor, footnote) => {
+  if (!footnote.getShowForm()) {
+    footnote.setSelection(editor.selection);
+
+    const note = getActiveFootnote(editor);
+    if (note) {
+      const [node] = note;
+      const { data } = node;
+      footnote.setFormData(data);
+    } else {
+      footnote.setFormData({});
+    }
+
+    footnote.setShowForm(true);
+  }
+};
+
 const FootnoteButton = () => {
   const editor = useSlate();
   const isFootnote = isActiveFootnote(editor);
@@ -139,19 +156,7 @@ const FootnoteButton = () => {
             <ToolbarButton
               active={isFootnote}
               onMouseDown={() => {
-                console.log(editor);
-                if (!footnote.getShowForm()) {
-                  footnote.setSelection(editor.selection);
-
-                  const note = getActiveFootnote(editor);
-                  if (note) {
-                    const [node] = note;
-                    const { data } = node;
-                    footnote.setFormData(data);
-                  }
-
-                  footnote.setShowForm(true);
-                }
+                handleFootnoteButtonClick(editor, footnote);
               }}
               icon={tagSVG}
             />

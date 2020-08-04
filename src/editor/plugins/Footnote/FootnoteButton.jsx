@@ -66,7 +66,7 @@ export const getActiveFootnote = (editor) => {
 export const updateFootnotesContextFromActiveFootnote = (
   editor,
   ctx,
-  saveSelection = true,
+  { saveSelection = true, clearIfNoActiveFootnote = true },
 ) => {
   if (saveSelection) {
     ctx.setSelection(editor.selection);
@@ -89,7 +89,7 @@ export const updateFootnotesContextFromActiveFootnote = (
     console.log('R is ', r);
 
     ctx.setFormData(r);
-  } else {
+  } else if (clearIfNoActiveFootnote) {
     ctx.setFormData({});
   }
 };
@@ -100,7 +100,9 @@ export const handleFootnoteButtonClick = (
   saveSelection = true,
 ) => {
   if (!footnote.getShowForm()) {
-    updateFootnotesContextFromActiveFootnote(editor, footnote, saveSelection);
+    updateFootnotesContextFromActiveFootnote(editor, footnote, {
+      saveSelection,
+    });
 
     footnote.setShowForm(true);
   }
@@ -108,7 +110,11 @@ export const handleFootnoteButtonClick = (
 
 const FootnoteButton = () => {
   const editor = useSlate();
+
+  // The following line of code is needed so that on any change of the context, the FootnoteButton is rerendered.
+  // eslint-disable-next-line no-unused-vars
   const footnoteCtx = React.useContext(FootnoteContext);
+
   const isFootnote = isActiveFootnote(editor);
 
   const footnoteRef = React.useRef(null);

@@ -118,6 +118,7 @@ const SlateEditor = ({
         setShowForm(val);
       },
       setSelection: (val) => {
+        console.log('save selection to', val);
         setSelection(val);
       },
       setFormData: (val) => {
@@ -136,11 +137,10 @@ const SlateEditor = ({
       onChange(ev);
 
       if (footnoteContext.getShowForm()) {
-        updateFootnotesContextFromActiveFootnote(
-          editor,
-          footnoteContext,
-          false,
-        );
+        updateFootnotesContextFromActiveFootnote(editor, footnoteContext, {
+          saveSelection: false,
+          // clearIfNoActiveFootnote: false,
+        });
       }
     },
     [editor, footnoteContext, onChange],

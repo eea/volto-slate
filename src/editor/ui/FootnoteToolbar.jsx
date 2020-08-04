@@ -35,6 +35,10 @@ export const FootnoteToolbar = ({ selected }) => {
   const editor = useEditor();
   const isFootnote = isActiveFootnote(editor);
 
+  // The following line of code is needed so that on any change of the context, the FootnoteButton is rerendered.
+  // eslint-disable-next-line no-unused-vars
+  const footnoteCtx = React.useContext(FootnoteContext);
+
   return (
     selected &&
     (editor.selection

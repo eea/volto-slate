@@ -17,6 +17,8 @@ import {
 import { useEditor } from 'slate-react';
 import FootnoteContext from './FootnoteContext';
 
+import { Range } from 'slate';
+
 const messages = defineMessages({
   edit: {
     id: 'Edit footnote',
@@ -35,6 +37,10 @@ export const FootnoteToolbar = ({ selected }) => {
 
   return (
     selected &&
+    (editor.selection
+      ? // shows the toolbar just when the selection is and is collapsed:
+        editor.selection && Range.isCollapsed(editor.selection)
+      : true) &&
     isFootnote && (
       <FootnoteContext.Consumer>
         {(footnote) => {

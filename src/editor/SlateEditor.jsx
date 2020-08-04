@@ -19,6 +19,7 @@ import { FootnoteToolbar } from './ui/FootnoteToolbar';
 
 import './less/editor.less';
 import FootnoteContext from './ui/FootnoteContext';
+import { updateFootnotesContextFromActiveFootnote } from './plugins/Footnote/FootnoteButton';
 
 const SlateEditor = ({
   selected,
@@ -38,33 +39,6 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-
-  const [showForm, setShowForm] = React.useState(false);
-  const [selection, setSelection] = React.useState(null);
-  const [formData, setFormData] = React.useState({});
-  const footnoteContext = React.useMemo(
-    () => ({
-      getShowForm: () => {
-        return showForm || false;
-      },
-      getSelection: () => {
-        return selection || null;
-      },
-      getFormData: () => {
-        return formData || {};
-      },
-      setShowForm: (val) => {
-        setShowForm(val);
-      },
-      setSelection: (val) => {
-        setSelection(val);
-      },
-      setFormData: (val) => {
-        setFormData(val);
-      },
-    }),
-    [showForm, selection, formData, setShowForm, setSelection, setFormData],
-  );
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -126,6 +100,52 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
+  const [showForm, setShowForm] = React.useState(false);
+  const [selection, setSelection] = React.useState(null);
+  const [formData, setFormData] = React.useState({});
+  const footnoteContext = React.useMemo(
+    () => ({
+      getShowForm: () => {
+        return showForm || false;
+      },
+      getSelection: () => {
+        return selection || null;
+      },
+      getFormData: () => {
+        return formData || {};
+      },
+      setShowForm: (val) => {
+        setShowForm(val);
+      },
+      setSelection: (val) => {
+        setSelection(val);
+      },
+      setFormData: (val) => {
+        setFormData(val);
+      },
+    }),
+    [showForm, selection, formData],
+  );
+
+  const handleChange = React.useCallback(
+    (ev) => {
+      // footnoteContext.setSelection(
+      //   JSON.parse(JSON.stringify(editor.selection)),
+      // );
+      // TODO: somehow filter to do this only if the selection changed
+      onChange(ev);
+
+      if (footnoteContext.getShowForm()) {
+        updateFootnotesContextFromActiveFootnote(
+          editor,
+          footnoteContext,
+          false,
+        );
+      }
+    },
+    [editor, footnoteContext, onChange],
+  );
+
   // TODO: in Footnotes block and toolbar buttons, support Footnotes in tables
   return (
     <div
@@ -133,7 +153,11 @@ const SlateEditor = ({
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       {/* <SidebarFootnoteForm showForm={showForm} /> */}
-      <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+      <Slate
+        editor={editor}
+        value={value || initialValue}
+        onChange={handleChange}
+      >
         <FootnoteContext.Provider value={footnoteContext}>
           <FootnoteToolbar selected={selected} />
           <SlateToolbar

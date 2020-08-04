@@ -45,7 +45,7 @@ export const FootnoteToolbar = ({ selected }) => {
                   icon
                   basic
                   aria-label={intl.formatMessage(messages.edit)}
-                  onClick={() => {
+                  onMouseDown={() => {
                     handleFootnoteButtonClick(editor, footnote);
                   }}
                 >
@@ -57,7 +57,7 @@ export const FootnoteToolbar = ({ selected }) => {
                   icon
                   basic
                   aria-label={intl.formatMessage(messages.delete)}
-                  onClick={() => {
+                  onMouseDown={() => {
                     unwrapFootnote(editor);
                   }}
                 >

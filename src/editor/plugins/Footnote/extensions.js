@@ -17,6 +17,7 @@ export const withFootnote = (editor) => {
         {
           data: {
             uid: nanoid(5),
+            footnote: node.data?.footnote,
           },
         },
         {

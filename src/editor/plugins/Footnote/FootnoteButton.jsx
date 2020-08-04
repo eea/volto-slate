@@ -35,7 +35,7 @@ export const wrapFootnote = (editor, data) => {
   };
 
   if (isCollapsed) {
-    Transforms.insertNodes(editor, footnote);
+    Transforms.insertNodes(editor, { ...footnote, children: [{ text: '' }] });
   } else {
     Transforms.wrapNodes(editor, footnote, { split: true });
     Transforms.collapse(editor, { edge: 'end' });
@@ -63,18 +63,44 @@ export const getActiveFootnote = (editor) => {
   return note;
 };
 
-export const handleFootnoteButtonClick = (editor, footnote) => {
-  if (!footnote.getShowForm()) {
-    footnote.setSelection(editor.selection);
+export const updateFootnotesContextFromActiveFootnote = (
+  editor,
+  ctx,
+  saveSelection = true,
+) => {
+  if (saveSelection) {
+    ctx.setSelection(editor.selection);
+  }
 
-    const note = getActiveFootnote(editor);
-    if (note) {
-      const [node] = note;
-      const { data } = node;
-      footnote.setFormData(data);
-    } else {
-      footnote.setFormData({});
-    }
+  const note = getActiveFootnote(editor);
+  // debugger;
+  if (note) {
+    const [node] = note;
+    const { data, children } = node;
+
+    const r = {
+      ...data,
+      // ...JSON.parse(JSON.stringify(footnote.getFormData())),
+      // ...JSON.parse(
+      //   JSON.stringify(data),
+      // footnote: children?.[0]?.text,
+    };
+
+    console.log('R is ', r);
+
+    ctx.setFormData(r);
+  } else {
+    ctx.setFormData({});
+  }
+};
+
+export const handleFootnoteButtonClick = (
+  editor,
+  footnote,
+  saveSelection = true,
+) => {
+  if (!footnote.getShowForm()) {
+    updateFootnotesContextFromActiveFootnote(editor, footnote, saveSelection);
 
     footnote.setShowForm(true);
   }
@@ -82,10 +108,10 @@ export const handleFootnoteButtonClick = (editor, footnote) => {
 
 const FootnoteButton = () => {
   const editor = useSlate();
+  const footnoteCtx = React.useContext(FootnoteContext);
   const isFootnote = isActiveFootnote(editor);
 
   const footnoteRef = React.useRef(null);
-  // const footnote = React.useContext(FootnoteContext);
 
   // TODO: use a new component: SidebarFootnoteForm
 
@@ -94,8 +120,13 @@ const FootnoteButton = () => {
       // TODO: have an algorithm that decides which one is used
       const { footnote: localFootnote } = formData;
       if (localFootnote) {
-        Transforms.select(editor, footnoteRef.current.getSelection());
-        insertFootnote(editor, { ...formData });
+        const sel = footnoteRef.current.getSelection();
+        if (Range.isRange(sel)) {
+          Transforms.select(editor, sel);
+          insertFootnote(editor, { ...formData });
+        } else {
+          Transforms.deselect(editor);
+        }
       } else {
         unwrapFootnote(editor);
       }
@@ -106,6 +137,10 @@ const FootnoteButton = () => {
   return (
     <FootnoteContext.Consumer>
       {(footnote) => {
+        // if (footnote !== footnoteRef.current) {
+        //   console.log('footnote context changed !');
+        // }
+        // console.log('selection', footnote.getSelection());
         footnoteRef.current = footnote;
         return (
           <>

@@ -35,7 +35,6 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-  const [showPluginToolbar, setShowPluginToolbar] = useState(false);
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -48,8 +47,6 @@ const SlateEditor = ({
   // extensions need an updated state (for example to insert updated
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
-
-  editor.showPluginToolbar = showPluginToolbar;
 
   const initial_selection = React.useRef();
 
@@ -99,55 +96,6 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  // const [showForm, setShowForm] = React.useState(false);
-  // const [selection, setSelection] = React.useState(null);
-  // const [formData, setFormData] = React.useState({});
-  // const footnoteContext = React.useMemo(
-  //   () => ({
-  //     getShowForm: () => {
-  //       return showForm || false;
-  //     },
-  //     getSelection: () => {
-  //       return selection || null;
-  //     },
-  //     getFormData: () => {
-  //       return formData || {};
-  //     },
-  //     setShowForm: (val) => {
-  //       setShowForm(val);
-  //     },
-  //     setSelection: (val) => {
-  //       console.log('save selection to', val);
-  //       setSelection(val);
-  //     },
-  //     setFormData: (val) => {
-  //       setFormData(val);
-  //     },
-  //   }),
-  //   [showForm, selection, formData],
-  // );
-
-  // const handleChange = React.useCallback(
-  //   (ev) => {
-  //     // footnoteContext.setSelection(
-  //     //   JSON.parse(JSON.stringify(editor.selection)),
-  //     // );
-  //     // TODO: somehow filter to do this only if the selection changed
-  //     onChange(ev);
-  //
-  //     // if (footnoteContext.getShowForm()) {
-  //     //   updateFootnotesContextFromActiveFootnote(editor, footnoteContext, {
-  //     //     saveSelection: false,
-  //     //     // clearIfNoActiveFootnote: false,
-  //     //   });
-  //     // }
-  //   },
-  //   [editor, footnoteContext, onChange],
-  // );
-
-  const pluginToolbarRef = React.useRef();
-  editor.pluginToolbarRef = pluginToolbarRef;
-
   const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
   editor.setPluginToolbar = setPluginToolbar;
 
@@ -160,7 +108,7 @@ const SlateEditor = ({
       {/* <SidebarFootnoteForm showForm={showForm} /> */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         {PluginToolbarChildren && (
-          <PluginToolbar selected={selected} ref={pluginToolbarRef}>
+          <PluginToolbar selected={selected}>
             {PluginToolbarChildren}
           </PluginToolbar>
         )}

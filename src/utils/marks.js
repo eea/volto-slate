@@ -1,4 +1,4 @@
-import { Editor } from 'slate';
+import { Editor, Transforms, Range } from 'slate';
 
 export function isMarkActive(editor, format) {
   // TODO: this implementation is not ok. LibreOffice Writer only shows
@@ -22,12 +22,42 @@ export function isMarkActive(editor, format) {
   return marks ? marks[format] === true : false;
 }
 
+function addMark(editor, key, value) {
+  const { selection } = editor;
+
+  if (selection) {
+    if (Range.isExpanded(selection)) {
+      Transforms.setNodes(
+        editor,
+        { [key]: value },
+        { match: Text.isText, split: true },
+      );
+    } else {
+      const marks = {
+        ...(Editor.marks(editor) || {}),
+        [key]: value,
+      };
+
+      editor.marks = marks;
+      editor.onChange();
+    }
+  }
+}
+
+function isSelectionInline(editor) {
+  return Editor.isInline(editor, Editor.node(editor, editor.selection));
+}
+
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
 
   if (isActive) {
     Editor.removeMark(editor, format);
   } else {
-    Editor.addMark(editor, format, true);
+    // don't apply marks inside inlines (such as footnote) because
+    // that splits the footnote into multiple footnotes
+    if (isSelectionInline(editor)) {
+      addMark(editor, format, true);
+    }
   }
 }

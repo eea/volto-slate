@@ -139,7 +139,7 @@ const SlateEditor = ({
       if (footnoteContext.getShowForm()) {
         updateFootnotesContextFromActiveFootnote(editor, footnoteContext, {
           saveSelection: false,
-          // clearIfNoActiveFootnote: false,
+          clearIfNoActiveFootnote: true,
         });
       }
     },

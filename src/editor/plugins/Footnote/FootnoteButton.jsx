@@ -89,7 +89,7 @@ export const updateFootnotesContextFromActiveFootnote = (
     console.log('R is ', r);
 
     ctx.setFormData(r);
-  } else if (clearIfNoActiveFootnote) {
+  } else if (editor.selection && clearIfNoActiveFootnote) {
     ctx.setFormData({});
   }
 };

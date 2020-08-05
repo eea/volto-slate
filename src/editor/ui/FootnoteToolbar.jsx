@@ -15,7 +15,7 @@ import {
   handleFootnoteButtonClick,
 } from '../plugins/Footnote/FootnoteButton';
 import { useEditor } from 'slate-react';
-import FootnoteContext from './FootnoteContext';
+// import FootnoteContext from './FootnoteContext';
 
 import { Range } from 'slate';
 
@@ -49,7 +49,7 @@ export const FootnoteToolbar = ({ selected }) => {
       <FootnoteContext.Consumer>
         {(footnote) => {
           return (
-            <div className="toolbar">
+            <div className="toolbar" id="plugin-toolbar">
               <Button.Group>
                 <Button
                   icon

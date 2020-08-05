@@ -8,3 +8,5 @@ export Separator from './Separator';
 export SlateToolbar from './SlateToolbar';
 export Toolbar from './Toolbar';
 export ToolbarButton from './ToolbarButton';
+export PluginToolbar from './PluginToolbar';
+export PluginToolbarPortal from './PluginToolbarPortal';

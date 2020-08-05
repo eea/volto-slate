@@ -64,7 +64,6 @@ const SlateEditor = ({
       // Don't remove it, unless this test passes:
       // - with the Slate block unselected, click in the block.
       // - Hit backspace. If it deletes, then the test passes
-
       fixSelection(editor);
 
       if (defaultSelection) {
@@ -99,13 +98,11 @@ const SlateEditor = ({
   const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
   editor.setPluginToolbar = setPluginToolbar;
 
-  // TODO: in Footnotes block and toolbar buttons, support Footnotes in tables
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
-      {/* <SidebarFootnoteForm showForm={showForm} /> */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         {PluginToolbarChildren && (
           <PluginToolbar selected={selected}>

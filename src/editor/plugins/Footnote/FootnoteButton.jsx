@@ -84,11 +84,15 @@ export const getActiveFootnote = (editor) => {
 
 export const updateFootnotesContextFromActiveFootnote = (
   editor,
-  ctx,
-  { saveSelection = true, clearIfNoActiveFootnote = true },
+  {
+    setFormData,
+    setSelection,
+    saveSelection = true,
+    clearIfNoActiveFootnote = true,
+  },
 ) => {
   if (saveSelection) {
-    ctx.setSelection(editor.selection);
+    setSelection(editor.selection);
   }
 
   const note = getActiveFootnote(editor);
@@ -107,9 +111,9 @@ export const updateFootnotesContextFromActiveFootnote = (
 
     // console.log('R is ', r);
 
-    ctx.setFormData(r);
+    setFormData(r);
   } else if (editor.selection && clearIfNoActiveFootnote) {
-    ctx.setFormData({});
+    setFormData({});
   }
 };
 
@@ -122,7 +126,7 @@ export const updateFootnotesContextFromActiveFootnote = (
 //     updateFootnotesContextFromActiveFootnote(editor, footnote, {
 //       saveSelection,
 //     });
-//
+
 //     footnote.setShowForm(true);
 //   }
 // };
@@ -157,7 +161,7 @@ const FootnoteButton = () => {
 
   const [showEditForm, setShowEditForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
-  const [formData, setFormdata] = React.useState({});
+  const [formData, setFormData] = React.useState({});
 
   // TODO: use a new component: SidebarFootnoteForm
 
@@ -166,7 +170,7 @@ const FootnoteButton = () => {
       // TODO: have an algorithm that decides which one is used
       if (formData.footnote) {
         // const sel = footnoteRef.current.getSelection();
-        const sel = editor.selection; // should we save selection?
+        const sel = selection; // should we save selection?
         if (Range.isRange(sel)) {
           Transforms.select(editor, sel);
           insertFootnote(editor, { ...formData });
@@ -177,7 +181,7 @@ const FootnoteButton = () => {
         unwrapFootnote(editor);
       }
     },
-    [editor], // , footnoteRef
+    [editor, selection], // , footnoteRef
   );
 
   const PluginToolbar = React.useCallback(
@@ -188,7 +192,16 @@ const FootnoteButton = () => {
             icon
             basic
             aria-label={intl.formatMessage(messages.edit)}
-            onMouseDown={() => {}}
+            onMouseDown={() => {
+              if (!showEditForm) {
+                updateFootnotesContextFromActiveFootnote(editor, {
+                  setSelection,
+                  setFormData,
+                });
+
+                setShowEditForm(true);
+              }
+            }}
           >
             <Icon name={editingSVG} size="18px" />
           </Button>
@@ -207,12 +220,12 @@ const FootnoteButton = () => {
         </Button.Group>
       </>
     ),
-    [editor, intl],
+    [editor, intl, showEditForm],
   );
 
   const footnote = getActiveFootnote(editor);
 
-  const { setPluginToolbar, setShowPluginToolbar } = editor;
+  const { setPluginToolbar } = editor;
 
   React.useEffect(() => {
     if (isFootnote && !isEqual(footnote, footnoteRef.current)) {
@@ -228,68 +241,69 @@ const FootnoteButton = () => {
       footnoteRef.current = null;
       setPluginToolbar(null);
     }
-  }, [
-    PluginToolbar,
-    footnote,
-    isFootnote,
-    setPluginToolbar,
-    setShowPluginToolbar,
-  ]);
+  }, [PluginToolbar, footnote, isFootnote, setPluginToolbar]);
 
   // handleFootnoteButtonClick(editor, footnote);
   // handleFootnoteButtonClick(editor, footnote);
 
   return (
     <>
-      {/* <SidebarPopup selected={showEditForm()}> */}
-      {/*   <InlineForm */}
-      {/*     schema={FootnoteSchema} */}
-      {/*     title={FootnoteSchema.title} */}
-      {/*     icon={<VoltoIcon size="24px" name={briefcaseSVG} />} */}
-      {/*     onChangeField={(id, value) => { */}
-      {/*       footnote.setFormData({ */}
-      {/*         ...footnote.getFormData(), */}
-      {/*         [id]: value, */}
-      {/*       }); */}
-      {/*     }} */}
-      {/*     formData={footnote.getFormData()} */}
-      {/*     headerActions={ */}
-      {/*       <> */}
-      {/*         <button */}
-      {/*           onClick={() => { */}
-      {/*             footnote.setShowForm(false); */}
-      {/*             submitHandler(footnote.getFormData()); */}
-      {/*             ReactEditor.focus(editor); */}
-      {/*           }} */}
-      {/*         > */}
-      {/*           <VoltoIcon size="24px" name={checkSVG} /> */}
-      {/*         </button> */}
-      {/*         <button */}
-      {/*           onClick={() => { */}
-      {/*             footnote.setShowForm(false); */}
-      {/*             unwrapFootnote(editor); */}
-      {/*             ReactEditor.focus(editor); */}
-      {/*           }} */}
-      {/*         > */}
-      {/*           <VoltoIcon size="24px" name={formatClearSVG} /> */}
-      {/*         </button> */}
-      {/*         <button */}
-      {/*           onClick={() => { */}
-      {/*             footnote.setShowForm(false); */}
-      {/*             ReactEditor.focus(editor); */}
-      {/*           }} */}
-      {/*         > */}
-      {/*           <VoltoIcon size="24px" name={clearSVG} /> */}
-      {/*         </button> */}
-      {/*       </> */}
-      {/*     } */}
-      {/*   /> */}
-      {/* </SidebarPopup> */}
+      <SidebarPopup open={showEditForm}>
+        <InlineForm
+          schema={FootnoteSchema}
+          title={FootnoteSchema.title}
+          icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
+          onChangeField={(id, value) => {
+            setFormData({
+              ...formData,
+              [id]: value,
+            });
+          }}
+          formData={formData}
+          headerActions={
+            <>
+              <button
+                onClick={() => {
+                  setShowEditForm(false);
+                  submitHandler(formData);
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <VoltoIcon size="24px" name={checkSVG} />
+              </button>
+              <button
+                onClick={() => {
+                  setShowEditForm(false);
+                  unwrapFootnote(editor);
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <VoltoIcon size="24px" name={formatClearSVG} />
+              </button>
+              <button
+                onClick={() => {
+                  setShowEditForm(false);
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <VoltoIcon size="24px" name={clearSVG} />
+              </button>
+            </>
+          }
+        />
+      </SidebarPopup>
 
       <ToolbarButton
         active={isFootnote}
         onMouseDown={() => {
-          // console.log(editor.showPluginToolbar);
+          if (!showEditForm) {
+            updateFootnotesContextFromActiveFootnote(editor, {
+              setSelection,
+              setFormData,
+            });
+
+            setShowEditForm(true);
+          }
         }}
         icon={tagSVG}
       />

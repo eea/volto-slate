@@ -54,7 +54,7 @@ const SlateEditor = ({
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
-  editor.showPluginToolbar = false;
+  editor.showPluginToolbar = showPluginToolbar;
 
   const initial_selection = React.useRef();
 

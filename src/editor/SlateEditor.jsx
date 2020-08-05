@@ -12,13 +12,8 @@ import { settings } from '~/config';
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection } from 'volto-slate/utils';
 
-// import { FootnoteToolbar } from './ui/FootnoteToolbar';
-
 // import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
-
-// import FootnoteContext from './ui/FootnoteContext';
-// import { updateFootnotesContextFromActiveFootnote } from './plugins/Footnote/FootnoteButton';
 
 import './less/editor.less';
 
@@ -152,11 +147,9 @@ const SlateEditor = ({
 
   const pluginToolbarRef = React.useRef();
   editor.pluginToolbarRef = pluginToolbarRef;
-  // editor.setShowPluginToolbar = setShowPluginToolbar;
 
   const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
   editor.setPluginToolbar = setPluginToolbar;
-  // console.log('show', PluginToolbarChildren);
 
   // TODO: in Footnotes block and toolbar buttons, support Footnotes in tables
   return (

@@ -1,6 +1,5 @@
 import { Button } from 'semantic-ui-react';
 import React from 'react';
-import { Portal } from 'react-dom';
 import { useSlate } from 'slate-react';
 import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
@@ -23,10 +22,6 @@ import clearSVG from '@plone/volto/icons/clear.svg';
 import editingSVG from '@plone/volto/icons/editing.svg';
 
 import { isEqual } from 'lodash';
-
-// import { PluginSidebarPortal } from 'volto-slate/editor/ui';
-// import FootnoteContext from '../../ui/FootnoteContext';
-// import { SidebarFootnoteForm } from './SidebarFootnoteForm';
 
 import './less/editor.less';
 
@@ -86,13 +81,13 @@ export const updateFootnotesContextFromActiveFootnote = (
   editor,
   {
     setFormData,
-    setSelection,
+    setAndSaveSelection,
     saveSelection = true,
     clearIfNoActiveFootnote = true,
   },
 ) => {
   if (saveSelection) {
-    setSelection(editor.selection);
+    setAndSaveSelection(editor.selection);
   }
 
   const note = getActiveFootnote(editor);
@@ -131,29 +126,9 @@ export const updateFootnotesContextFromActiveFootnote = (
 //   }
 // };
 
-// const PluginSidebar = ({ children, selected }) => {
-//   return (
-//     <>
-//       {selected && (
-//         <Portal
-//           node={__CLIENT__ && document.getElementById('slate-plugin-sidebar')}
-//         >
-//           {children}
-//         </Portal>
-//       )}
-//     </>
-//   );
-// };
-
-// export default PluginSidebar;
-
 const FootnoteButton = () => {
   const editor = useSlate();
   const intl = useIntl();
-
-  // The following line of code is needed so that on any change of the context, the FootnoteButton is rerendered.
-  // eslint-disable-next-line no-unused-vars
-  // const footnoteCtx = React.useContext(FootnoteContext);
 
   const isFootnote = isActiveFootnote(editor);
 
@@ -163,7 +138,10 @@ const FootnoteButton = () => {
   const [selection, setSelection] = React.useState(null);
   const [formData, setFormData] = React.useState({});
 
-  // TODO: use a new component: SidebarFootnoteForm
+  const setAndSaveSelection = React.useCallback((sel) => {
+    setSelection(sel);
+    setShowEditForm(false);
+  }, []);
 
   const submitHandler = React.useCallback(
     (formData) => {
@@ -173,7 +151,7 @@ const FootnoteButton = () => {
         const sel = selection; // should we save selection?
         if (Range.isRange(sel)) {
           Transforms.select(editor, sel);
-          insertFootnote(editor, { ...formData });
+          insertFootnote(editor, { ...formData });;
         } else {
           Transforms.deselect(editor);
         }
@@ -181,7 +159,7 @@ const FootnoteButton = () => {
         unwrapFootnote(editor);
       }
     },
-    [editor, selection], // , footnoteRef
+    [editor, selection],
   );
 
   const PluginToolbar = React.useCallback(
@@ -195,11 +173,13 @@ const FootnoteButton = () => {
             onMouseDown={() => {
               if (!showEditForm) {
                 updateFootnotesContextFromActiveFootnote(editor, {
-                  setSelection,
+                  // setAndSaveSelection: setSelection,
+                  setAndSaveSelection,
                   setFormData,
                 });
 
                 setShowEditForm(true);
+                // ReactEditor.focus(editor);
               }
             }}
           >
@@ -213,6 +193,7 @@ const FootnoteButton = () => {
             aria-label={intl.formatMessage(messages.delete)}
             onMouseDown={() => {
               unwrapFootnote(editor);
+              ReactEditor.focus(editor);
             }}
           >
             <Icon name={clearSVG} size="18px" />
@@ -220,7 +201,7 @@ const FootnoteButton = () => {
         </Button.Group>
       </>
     ),
-    [editor, intl, showEditForm],
+    [editor, intl, setAndSaveSelection, showEditForm],
   );
 
   const footnote = getActiveFootnote(editor);
@@ -231,20 +212,13 @@ const FootnoteButton = () => {
     if (isFootnote && !isEqual(footnote, footnoteRef.current)) {
       footnoteRef.current = footnote;
       if (footnoteRef.current) {
-        // setShowPluginToolbar(true);
         setPluginToolbar(PluginToolbar);
       }
-      // else {
-      //   setPluginToolbar(null);
-      // }
     } else if (!isFootnote) {
       footnoteRef.current = null;
       setPluginToolbar(null);
     }
   }, [PluginToolbar, footnote, isFootnote, setPluginToolbar]);
-
-  // handleFootnoteButtonClick(editor, footnote);
-  // handleFootnoteButtonClick(editor, footnote);
 
   return (
     <>
@@ -274,15 +248,6 @@ const FootnoteButton = () => {
               <button
                 onClick={() => {
                   setShowEditForm(false);
-                  unwrapFootnote(editor);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={formatClearSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowEditForm(false);
                   ReactEditor.focus(editor);
                 }}
               >
@@ -295,13 +260,25 @@ const FootnoteButton = () => {
 
       <ToolbarButton
         active={isFootnote}
+        disabled={isFootnote}
         onMouseDown={() => {
-          if (!showEditForm) {
-            updateFootnotesContextFromActiveFootnote(editor, {
-              setSelection,
-              setFormData,
-            });
-
+          const note = getActiveFootnote(editor);
+          // debugger;
+          if (note) {
+            //   const [node] = note;
+            //   const { data, children } = node;
+            //   const r = {
+            //     ...data,
+            //     // ...JSON.parse(JSON.stringify(footnote.getFormData())),
+            //     // ...JSON.parse(
+            //     //   JSON.stringify(data),
+            //     // footnote: children?.[0]?.text,
+            // };
+            // console.log('R is ', r);
+            //   setFormData(r);
+          } else {
+            insertFootnote(editor, {});
+            setFormData({});
             setShowEditForm(true);
           }
         }}

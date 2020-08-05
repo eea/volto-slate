@@ -8,7 +8,7 @@ import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 import { Icon as VoltoIcon } from '@plone/volto/components';
 import tagSVG from '@plone/volto/icons/tag.svg';
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
-import formatClearSVG from '@plone/volto/icons/format-clear.svg';
+// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
 import { Icon } from '@plone/volto/components';
 
 import InlineForm from 'volto-slate/futurevolto/InlineForm';
@@ -20,8 +20,9 @@ import { useIntl, defineMessages } from 'react-intl';
 import checkSVG from '@plone/volto/icons/check.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
 import editingSVG from '@plone/volto/icons/editing.svg';
+import usePluginToolbar from 'volto-slate/editor/usePluginToolbar';
 
-import { isEqual } from 'lodash';
+// import { isEqual } from 'lodash';
 
 import './less/editor.less';
 
@@ -132,8 +133,6 @@ const FootnoteButton = () => {
 
   const isFootnote = isActiveFootnote(editor);
 
-  const footnoteRef = React.useRef(null);
-
   const [showEditForm, setShowEditForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
   const [formData, setFormData] = React.useState({});
@@ -151,7 +150,7 @@ const FootnoteButton = () => {
         const sel = selection; // should we save selection?
         if (Range.isRange(sel)) {
           Transforms.select(editor, sel);
-          insertFootnote(editor, { ...formData });;
+          insertFootnote(editor, { ...formData });
         } else {
           Transforms.deselect(editor);
         }
@@ -204,21 +203,7 @@ const FootnoteButton = () => {
     [editor, intl, setAndSaveSelection, showEditForm],
   );
 
-  const footnote = getActiveFootnote(editor);
-
-  const { setPluginToolbar } = editor;
-
-  React.useEffect(() => {
-    if (isFootnote && !isEqual(footnote, footnoteRef.current)) {
-      footnoteRef.current = footnote;
-      if (footnoteRef.current) {
-        setPluginToolbar(PluginToolbar);
-      }
-    } else if (!isFootnote) {
-      footnoteRef.current = null;
-      setPluginToolbar(null);
-    }
-  }, [PluginToolbar, footnote, isFootnote, setPluginToolbar]);
+  usePluginToolbar(editor, isActiveFootnote, getActiveFootnote, PluginToolbar);
 
   return (
     <>

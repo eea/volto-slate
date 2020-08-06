@@ -4,8 +4,8 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { FOOTNOTE } from 'volto-slate/constants';
 import './less/public.less';
+import { settings } from '~/config';
 
 const getBlocks = (properties) => {
   const blocksFieldName = getBlocksFieldname(properties);
@@ -18,10 +18,11 @@ const getBlocks = (properties) => {
 const FootnotesBlockView = (props) => {
   const { data, properties } = props;
   const { title } = data;
+  const { footnotes } = settings;
 
   // console.log(properties);
   const blocks = getBlocks(properties);
-  const footnotes = [];
+  const notes = [];
   // TODO: slice the blocks according to existing footnote listing blocks.
   // A footnote listing block should reset the counter of the footnotes above it
   // If so, then it should only include the footnotes between the last footnotes listing block and this block
@@ -31,8 +32,8 @@ const FootnotesBlockView = (props) => {
       if (!value) return;
 
       Array.from(Node.elements(value[0])).forEach(([node]) => {
-        if (node.type === FOOTNOTE) {
-          footnotes.push(node);
+        if (footnotes.includes(node.type)) {
+          notes.push(node);
         }
       });
     });
@@ -40,9 +41,9 @@ const FootnotesBlockView = (props) => {
   return (
     <div className="footnotes-listing-block">
       <h3>{title}</h3>
-      {footnotes && (
+      {notes && (
         <ol>
-          {footnotes.map(({ data }) => {
+          {notes.map(({ data }) => {
             const { uid, footnote } = data;
             return (
               <li key={uid} id={`footnote-${uid}`}>

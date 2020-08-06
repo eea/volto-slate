@@ -24,12 +24,12 @@ const SlateEditor = ({
   placeholder,
   onKeyDown,
   properties,
-  defaultSelection,
+  defaultSelection, // TODO: use useSelector
   extensions,
   renderExtensions = [],
   testingEditorRef,
-  onFocus,
-  onBlur,
+  // onFocus,
+  // onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -49,6 +49,15 @@ const SlateEditor = ({
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
   const initial_selection = React.useRef();
+  const [savedSelection, setSavedSelection] = React.useState();
+  const selection = JSON.stringify(editor?.selection || {});
+  //
+  React.useEffect(() => {
+    if (selected && selection && JSON.parse(selection).anchor) {
+      setSavedSelection(selection);
+      console.log('saving', selection);
+    }
+  }, [selection, selected]);
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -58,6 +67,7 @@ const SlateEditor = ({
    */
   React.useLayoutEffect(() => {
     if (selected) {
+      console.log('focusing');
       ReactEditor.focus(editor);
 
       // This makes the Backspace key work properly in block.
@@ -65,6 +75,7 @@ const SlateEditor = ({
       // - with the Slate block unselected, click in the block.
       // - Hit backspace. If it deletes, then the test passes
       fixSelection(editor);
+      setSavedSelection(JSON.stringify(editor.selection));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
@@ -120,8 +131,6 @@ const SlateEditor = ({
           renderElement={Element}
           renderLeaf={Leaf}
           decorate={multiDecorate}
-          onFocus={onFocus}
-          onBlur={onBlur}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //
@@ -141,6 +150,7 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
+        {/* {savedSelection} */}
       </Slate>
     </div>
   );

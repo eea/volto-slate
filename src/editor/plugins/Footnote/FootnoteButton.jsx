@@ -1,30 +1,34 @@
-import { Button } from 'semantic-ui-react';
 import React from 'react';
+import { useIntl, defineMessages } from 'react-intl';
+
+import { Button } from 'semantic-ui-react';
+
 import { useSlate } from 'slate-react';
 import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 
 import { Icon as VoltoIcon } from '@plone/volto/components';
-import tagSVG from '@plone/volto/icons/tag.svg';
-import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
-// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
 import { Icon } from '@plone/volto/components';
 
-import InlineForm from 'volto-slate/futurevolto/InlineForm';
-
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { FootnoteSchema } from './schema';
 import { FOOTNOTE } from 'volto-slate/constants';
-import { useIntl, defineMessages } from 'react-intl';
+import usePluginToolbar from 'volto-slate/editor/usePluginToolbar';
+
+import InlineForm from 'volto-slate/futurevolto/InlineForm';
+import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+
+import { FootnoteSchema } from './schema';
+
 import checkSVG from '@plone/volto/icons/check.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
 import editingSVG from '@plone/volto/icons/editing.svg';
-import usePluginToolbar from 'volto-slate/editor/usePluginToolbar';
-
-// import { isEqual } from 'lodash';
+import tagSVG from '@plone/volto/icons/tag.svg';
+import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 
 import './less/editor.less';
+
+// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
+// import { isEqual } from 'lodash';
 
 const messages = defineMessages({
   edit: {
@@ -53,7 +57,7 @@ export const wrapFootnote = (editor, data) => {
     Transforms.insertNodes(editor, { ...footnote, children: [{ text: '' }] });
   } else {
     Transforms.wrapNodes(editor, footnote, { split: true });
-    Transforms.collapse(editor, { edge: 'end' });
+    // Transforms.collapse(editor, { edge: 'end' });
   }
 };
 
@@ -78,55 +82,6 @@ export const getActiveFootnote = (editor) => {
   return node;
 };
 
-export const updateFootnotesContextFromActiveFootnote = (
-  editor,
-  {
-    setFormData,
-    setAndSaveSelection,
-    saveSelection = true,
-    clearIfNoActiveFootnote = true,
-  },
-) => {
-  if (saveSelection) {
-    setAndSaveSelection(editor.selection);
-  }
-
-  const note = getActiveFootnote(editor);
-  // debugger;
-  if (note) {
-    const [node] = note;
-    const { data, children } = node;
-
-    const r = {
-      ...data,
-      // ...JSON.parse(JSON.stringify(footnote.getFormData())),
-      // ...JSON.parse(
-      //   JSON.stringify(data),
-      // footnote: children?.[0]?.text,
-    };
-
-    // console.log('R is ', r);
-
-    setFormData(r);
-  } else if (editor.selection && clearIfNoActiveFootnote) {
-    setFormData({});
-  }
-};
-
-// export const handleFootnoteButtonClick = (
-//   editor,
-//   footnote,
-//   saveSelection = true,
-// ) => {
-//   if (!footnote.getShowForm()) {
-//     updateFootnotesContextFromActiveFootnote(editor, footnote, {
-//       saveSelection,
-//     });
-
-//     footnote.setShowForm(true);
-//   }
-// };
-
 const FootnoteButton = () => {
   const editor = useSlate();
   const intl = useIntl();
@@ -146,7 +101,6 @@ const FootnoteButton = () => {
     (formData) => {
       // TODO: have an algorithm that decides which one is used
       if (formData.footnote) {
-        // const sel = footnoteRef.current.getSelection();
         const sel = selection; // should we save selection?
         if (Range.isRange(sel)) {
           Transforms.select(editor, sel);
@@ -171,21 +125,19 @@ const FootnoteButton = () => {
             aria-label={intl.formatMessage(messages.edit)}
             onMouseDown={() => {
               if (!showEditForm) {
-                updateFootnotesContextFromActiveFootnote(editor, {
-                  // setAndSaveSelection: setSelection,
-                  setAndSaveSelection,
-                  setFormData,
-                });
-
                 setShowEditForm(true);
+
+                // updateFootnotesContextFromActiveFootnote(editor, {
+                //   // setAndSaveSelection: setSelection,
+                //   setAndSaveSelection,
+                //   setFormData,
+                // });
                 // ReactEditor.focus(editor);
               }
             }}
           >
             <Icon name={editingSVG} size="18px" />
           </Button>
-        </Button.Group>
-        <Button.Group>
           <Button
             icon
             basic
@@ -247,24 +199,11 @@ const FootnoteButton = () => {
         active={isFootnote}
         disabled={isFootnote}
         onMouseDown={() => {
+          setShowEditForm(true);
           const note = getActiveFootnote(editor);
-          // debugger;
-          if (note) {
-            //   const [node] = note;
-            //   const { data, children } = node;
-            //   const r = {
-            //     ...data,
-            //     // ...JSON.parse(JSON.stringify(footnote.getFormData())),
-            //     // ...JSON.parse(
-            //     //   JSON.stringify(data),
-            //     // footnote: children?.[0]?.text,
-            // };
-            // console.log('R is ', r);
-            //   setFormData(r);
-          } else {
+          if (!note) {
             insertFootnote(editor, {});
             setFormData({});
-            setShowEditForm(true);
           }
         }}
         icon={tagSVG}
@@ -274,3 +213,63 @@ const FootnoteButton = () => {
 };
 
 export default FootnoteButton;
+
+//   const [node] = note;
+//   const { data, children } = node;
+//   const r = {
+//     ...data,
+//     // ...JSON.parse(JSON.stringify(footnote.getFormData())),
+//     // ...JSON.parse(
+//     //   JSON.stringify(data),
+//     // footnote: children?.[0]?.text,
+// };
+// console.log('R is ', r);
+//   setFormData(r);
+// export const updateFootnotesContextFromActiveFootnote = (
+//   editor,
+//   {
+//     setFormData,
+//     setAndSaveSelection,
+//     saveSelection = true,
+//     clearIfNoActiveFootnote = true,
+//   },
+// ) => {
+//   if (saveSelection) {
+//     setAndSaveSelection(editor.selection);
+//   }
+//
+//   const note = getActiveFootnote(editor);
+//   // debugger;
+//   if (note) {
+//     const [node] = note;
+//     const { data, children } = node;
+//
+//     const r = {
+//       ...data,
+//       // ...JSON.parse(JSON.stringify(footnote.getFormData())),
+//       // ...JSON.parse(
+//       //   JSON.stringify(data),
+//       // footnote: children?.[0]?.text,
+//     };
+//
+//     // console.log('R is ', r);
+//
+//     setFormData(r);
+//   } else if (editor.selection && clearIfNoActiveFootnote) {
+//     setFormData({});
+//   }
+// };
+
+// export const handleFootnoteButtonClick = (
+//   editor,
+//   footnote,
+//   saveSelection = true,
+// ) => {
+//   if (!footnote.getShowForm()) {
+//     updateFootnotesContextFromActiveFootnote(editor, footnote, {
+//       saveSelection,
+//     });
+
+//     footnote.setShowForm(true);
+//   }
+// };

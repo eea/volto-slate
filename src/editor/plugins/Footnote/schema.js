@@ -4,14 +4,19 @@ export const FootnoteSchema = {
     {
       id: 'default',
       title: 'Default',
-      fields: ['footnote'],
+      fields: ['footnoteTitle'],
+      // fields: ['footnote', 'footnoteLink'],
     },
   ],
   properties: {
-    footnote: {
+    footnoteTitle: {
       title: 'Reference text',
       widget: 'textarea',
     },
+    // footnoteLink: {
+    //   title: 'Reference link',
+    //   widget: 'textarea',
+    // },
   },
   required: ['footnote'],
 };

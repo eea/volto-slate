@@ -1,9 +1,9 @@
-import React from 'react';
-import { Node } from 'slate';
 import {
   getBlocksFieldname,
-  getBlocksLayoutFieldname,
+  getBlocksLayoutFieldname
 } from '@plone/volto/helpers';
+import React from 'react';
+import { Node } from 'slate';
 import { FOOTNOTE } from './constants';
 
 const getBlocks = (properties) => {
@@ -35,17 +35,39 @@ const FootnotesBlockView = (props) => {
         }
       });
     });
+  const makeFootnote = (footnote) => {
+    const free = footnote.replace('<?xml version="1.0"?>', '');
+
+    return free;
+  };
 
   return (
     <div className="footnotes-listing-block">
-      <h3>{title}</h3>
+      <h3>References:{title}</h3>
       {footnotes && (
         <ol>
           {footnotes.map(({ data }) => {
             const { uid, footnote } = data;
             return (
               <li key={uid} id={`footnote-${uid}`}>
-                {footnote}
+                {/* {makeFootnote(footnote, uid)} */}
+
+                {/* {footnoteLink ? (
+                  <a href={footnoteLink} aria-label={footnoteLink}>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: makeFootnote(footnote),
+                      }}
+                    />
+                  </a>
+                ) : (
+                  footnote
+                )} */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: makeFootnote(footnote),
+                  }}
+                />
                 <a href={`#ref-${uid}`} aria-label="Back to content">
                   ↵
                 </a>

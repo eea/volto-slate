@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 
 const SidebarPopup = (props, ref) => {
   const { children, open } = props;
+
   return open
     ? ReactDOM.createPortal(
         <aside

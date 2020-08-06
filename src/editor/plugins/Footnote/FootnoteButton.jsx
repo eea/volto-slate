@@ -1,25 +1,37 @@
+import tagSVG from '@plone/volto/icons/tag.svg';
 import React from 'react';
-import { useSlate } from 'slate-react';
 import { Editor, Range, Transforms } from 'slate';
-import { ReactEditor } from 'slate-react';
-
-import { Icon as VoltoIcon } from '@plone/volto/components';
-import superindexSVG from '@plone/volto/icons/superindex.svg';
-import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
-import formatClearSVG from '@plone/volto/icons/format-clear.svg';
-import checkSVG from '@plone/volto/icons/check.svg';
-import clearSVG from '@plone/volto/icons/clear.svg';
-
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
-import InlineForm from 'volto-slate/futurevolto/InlineForm';
-
+import { ReactEditor, useSlate } from 'slate-react';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { FootnoteSchema } from './schema';
-import { FOOTNOTE } from './constants';
-
+import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+import ZoteroDataWrapper from 'volto-slate/futurevolto/ZoteroDataWrapper';
 import { nanoid } from 'volto-slate/utils';
-
+import { FOOTNOTE } from './constants';
 import './editor.less';
+import { FootnoteSchema } from './schema';
+
+// import AccordionWidget from 'volto-slate/futurevolto/AccordionWidget';
+// import FootList from 'volto-slate/futurevolto/FootList';
+
+// import { useSlate } from 'slate-react';
+// import { Editor, Range, Transforms } from 'slate';
+// import { ReactEditor } from 'slate-react';
+
+// import { Icon as VoltoIcon } from '@plone/volto/components';
+// import superindexSVG from '@plone/volto/icons/superindex.svg';
+// import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
+// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
+// import checkSVG from '@plone/volto/icons/check.svg';
+// import clearSVG from '@plone/volto/icons/clear.svg';
+
+// import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+// import InlineForm from 'volto-slate/futurevolto/InlineForm';
+
+// import { ToolbarButton } from 'volto-slate/editor/ui';
+// import { FootnoteSchema } from './schema';
+// import { FOOTNOTE } from './constants';
+
+// import { nanoid } from 'volto-slate/utils';
 
 export const wrapFootnote = (editor, data) => {
   if (isActiveFootnote(editor)) {
@@ -32,6 +44,8 @@ export const wrapFootnote = (editor, data) => {
     type: FOOTNOTE,
     data,
   };
+
+  console.log('data', data);
 
   if (isCollapsed) {
     Transforms.insertNodes(editor, footnote);
@@ -72,6 +86,8 @@ const FootnoteButton = () => {
     (formData) => {
       // TODO: have an algorithm that decides which one is used
       const { footnote } = formData;
+      console.log('formData', formData);
+      console.log('footnote', footnote);
       if (footnote) {
         Transforms.select(editor, selection);
         insertFootnote(editor, { ...formData, uid: nanoid(5) });
@@ -84,47 +100,30 @@ const FootnoteButton = () => {
 
   const isFootnote = isActiveFootnote(editor);
 
+  console.log('formData', formData);
+
   return (
     <>
       <SidebarPopup open={showForm}>
-        <InlineForm
+        <ZoteroDataWrapper
           schema={FootnoteSchema}
           title={FootnoteSchema.title}
-          icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
-          onChangeField={(id, value) => {
-            setFormdata({ ...formData, [id]: value });
-          }}
           formData={formData}
-          headerActions={
-            <>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  submitHandler(formData);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={checkSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  unwrapFootnote(editor);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={formatClearSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={clearSVG} />
-              </button>
-            </>
-          }
+          onChangeField={setFormdata}
+          submitHandler={(newFormData) => {
+            setShowForm(false);
+            submitHandler(newFormData);
+            ReactEditor.focus(editor);
+          }}
+          clearHandler={() => {
+            setShowForm(false);
+            unwrapFootnote(editor);
+            ReactEditor.focus(editor);
+          }}
+          hideHandler={() => {
+            setShowForm(false);
+            ReactEditor.focus(editor);
+          }}
         />
       </SidebarPopup>
       <ToolbarButton
@@ -143,7 +142,7 @@ const FootnoteButton = () => {
             setShowForm(true);
           }
         }}
-        icon={superindexSVG}
+        icon={tagSVG}
       />
     </>
   );

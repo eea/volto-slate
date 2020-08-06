@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import { defineMessages, injectIntl } from 'react-intl';
-import React from 'react';
-import { keys, map } from 'lodash';
 import { Field } from '@plone/volto/components';
-import { Segment, Message } from 'semantic-ui-react';
+import { keys, map } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { defineMessages, injectIntl } from 'react-intl';
+import { Message, Segment } from 'semantic-ui-react';
 
 const messages = defineMessages({
   editValues: {
@@ -37,8 +37,10 @@ const InlineForm = ({
   const _ = intl.formatMessage;
   const defaultFieldset = schema.fieldsets.find((o) => o.id === 'default');
   const other = schema.fieldsets.filter((o) => o.id !== 'default');
+  // console.log('###schema', schema);
+  // console.log('###formData', formData);
   return (
-    <Segment.Group raised className="form">
+    <Segment.Group className="form">
       <header className="header pulled">
         {icon}
         <h2>{title || _(messages.editValues)}</h2>

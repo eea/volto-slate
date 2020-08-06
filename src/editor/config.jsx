@@ -1,20 +1,17 @@
-import React from 'react';
-
 import boldIcon from '@plone/volto/icons/bold.svg';
 import codeIcon from '@plone/volto/icons/code.svg';
 import headingIcon from '@plone/volto/icons/heading.svg';
 import italicIcon from '@plone/volto/icons/italic.svg';
 import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
 import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
+import strikethroughIcon from '@plone/volto/icons/strickthrough.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
-import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
-
+import React from 'react';
 import { createEmptyParagraph } from 'volto-slate/utils';
-
-import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType } from './decorate';
 import { withDeleteSelectionOnEnter, withNodeIds } from './extensions';
+import { BlockButton, Expando, MarkButton, Separator } from './ui';
 
 // Registry of available buttons
 export const buttons = {

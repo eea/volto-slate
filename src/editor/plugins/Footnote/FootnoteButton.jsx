@@ -92,10 +92,10 @@ const FootnoteButton = () => {
   const [selection, setSelection] = React.useState(null);
   const [formData, setFormData] = React.useState({});
 
-  const setAndSaveSelection = React.useCallback((sel) => {
-    setSelection(sel);
-    setShowEditForm(false);
-  }, []);
+  // const setAndSaveSelection = React.useCallback((sel) => {
+  //   setSelection(sel);
+  //   setShowEditForm(false);
+  // }, []);
 
   const submitHandler = React.useCallback(
     (formData) => {
@@ -152,7 +152,7 @@ const FootnoteButton = () => {
         </Button.Group>
       </>
     ),
-    [editor, intl, setAndSaveSelection, showEditForm],
+    [editor, intl, showEditForm],
   );
 
   usePluginToolbar(editor, isActiveFootnote, getActiveFootnote, PluginToolbar);

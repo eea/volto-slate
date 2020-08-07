@@ -48,14 +48,28 @@ const SlateEditor = ({
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
+  // Allow plugins to set content for a mini toolbar. The mini toolbar appears
+  // only if this content is set, so set content to null if you want toolbar to
+  // dissappear
+  const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
+  editor.setPluginToolbar = setPluginToolbar;
+
+  // Save a copy of the selection in the editor. Sometimes the editor loses its
+  // selection (because it is tied to DOM events). For example, if I'm in the
+  // editor and I open a popup dialog with text inputs, the Slate editor loses
+  // its selection, but I want to keep that selection because my operations
+  // should apply to it).
+
+  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
   const [savedSelection, setSavedSelection] = React.useState();
-  const selection = JSON.stringify(editor?.selection || {});
-  //
+  editor.setSavedSelection = setSavedSelection;
+  editor.savedSelection = savedSelection;
+
   React.useEffect(() => {
     if (selected && selection && JSON.parse(selection).anchor) {
       setSavedSelection(selection);
-      console.log('saving', selection);
+      // console.log('saving', selection);
     }
   }, [selection, selected]);
 
@@ -106,9 +120,6 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
-  editor.setPluginToolbar = setPluginToolbar;
-
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
@@ -128,8 +139,8 @@ const SlateEditor = ({
         <Editable
           readOnly={!selected}
           placeholder={placeholder}
-          renderElement={Element}
-          renderLeaf={Leaf}
+          renderElement={(props) => <Element {...props} />}
+          renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
           onKeyDown={(event) => {
             // let wasHotkey = false;
@@ -150,7 +161,8 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
-        {/* {savedSelection} */}
+        <div>{savedSelection}</div>
+        <div>{JSON.stringify(editor.selection)}</div>
       </Slate>
     </div>
   );

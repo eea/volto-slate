@@ -21,6 +21,7 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
     return leaf[name] ? leafs[name]({ children: acc }) : acc;
   }, children);
 
+  // console.log('leaf', leaf);
   const klass =
     mode !== 'view' && leaf.highlight
       ? `highlight-${leaf.highlightType}`

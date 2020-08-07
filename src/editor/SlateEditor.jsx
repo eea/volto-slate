@@ -69,7 +69,6 @@ const SlateEditor = ({
   React.useEffect(() => {
     if (selected && selection && JSON.parse(selection).anchor) {
       setSavedSelection(selection);
-      // console.log('saving', selection);
     }
   }, [selection, selected]);
 
@@ -81,7 +80,6 @@ const SlateEditor = ({
    */
   React.useLayoutEffect(() => {
     if (selected) {
-      console.log('focusing');
       ReactEditor.focus(editor);
 
       // This makes the Backspace key work properly in block.

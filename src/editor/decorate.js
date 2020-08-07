@@ -24,23 +24,15 @@ export function HighlightSelection([node, path], ranges) {
   const editor = useSlate();
   const blockProps = editor.getBlockProps();
   const { selected } = blockProps;
-  // console.log(selected, editor.selection, editor.savedSelection);
   if (selected && !editor.selection && editor.savedSelection) {
     const newSelection = JSON.parse(editor.savedSelection);
-    console.log(
-      path,
-      newSelection.anchor.path,
-      path === newSelection.anchor.path,
-    );
-    if (path === newSelection.anchor.path) {
+    if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
       const range = {
         ...newSelection,
         highlight: true,
-        highlightType: 'selection',
+        isSelection: true,
       };
       ranges.push(range);
-      console.log(node, path);
-      console.log('pushed', range);
     }
   }
   return ranges;

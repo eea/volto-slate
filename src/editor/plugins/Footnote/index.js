@@ -20,6 +20,8 @@ export default (config) => {
     'footnote',
   ];
 
+  // slate.miniToolbarPlugins = [...slate.miniToolbarPlugins, FootnoteToolbar];
+
   slate.nodeTypesToHighlight.push(FOOTNOTE);
 
   return config;

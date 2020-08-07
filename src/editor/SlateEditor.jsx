@@ -28,8 +28,6 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
-  // onFocus,
-  // onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -51,8 +49,24 @@ const SlateEditor = ({
   // Allow plugins to set content for a mini toolbar. The mini toolbar appears
   // only if this content is set, so set content to null if you want toolbar to
   // dissappear
-  const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
-  editor.setPluginToolbar = setPluginToolbar;
+  // const [miniTooolbarPlugin, setPluginToolbar] = React.useState(null);
+  // editor.setPluginToolbar = setPluginToolbar;
+  const [PluginToolbarChildren, setPluginToolbarChildren] = React.useState(
+    null,
+  );
+
+  // Plugin Hooks are callables that are executed on useEffect. They can
+  // set the PluginToolbarChildren. This allows "loading" the hooks from the
+  // Toolbar Buttons and they become sensitive to the editor state and
+  // contents, to allow on-demand display of the mini toolbar.
+  const [pluginHooks, setPluginHooks] = React.useState({});
+
+  editor.addPluginHook = React.useCallback(
+    (name, hook) => {
+      setPluginHooks({ ...pluginHooks, [name]: hook });
+    },
+    [pluginHooks],
+  );
 
   // Save a copy of the selection in the editor. Sometimes the editor loses its
   // selection (because it is tied to DOM events). For example, if I'm in the
@@ -70,7 +84,12 @@ const SlateEditor = ({
     if (selected && selection && JSON.parse(selection).anchor) {
       setSavedSelection(selection);
     }
-  }, [selection, selected]);
+
+    const Toolbar = Object.values(pluginHooks)
+      .map((hook) => hook(editor))
+      .filter((f) => !!f);
+    setPluginToolbarChildren(Toolbar.map((h) => h(editor)));
+  }, [selection, selected, editor, pluginHooks]);
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -102,6 +121,7 @@ const SlateEditor = ({
 
   const initialValue = slate.defaultValue();
 
+  // Decorations (such as higlighting node types, selection, etc).
   const { runtimeDecorators = [] } = slate;
 
   const multiDecorate = React.useCallback(
@@ -124,16 +144,21 @@ const SlateEditor = ({
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {PluginToolbarChildren && (
+        {(PluginToolbarChildren || []).length > 0 ? (
           <PluginToolbar selected={selected}>
             {PluginToolbarChildren}
           </PluginToolbar>
+        ) : (
+          ''
         )}
-        <SlateToolbar
-          selected={selected}
-          showToolbar={showToolbar}
-          setShowToolbar={setShowToolbar}
-        />
+
+        {!(!PluginToolbarChildren || []).length && (
+          <SlateToolbar
+            selected={selected}
+            showToolbar={showToolbar}
+            setShowToolbar={setShowToolbar}
+          />
+        )}
         <Editable
           readOnly={!selected}
           placeholder={placeholder}
@@ -159,8 +184,8 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
-        <div>{savedSelection}</div>
-        <div>{JSON.stringify(editor.selection)}</div>
+        {/* <div>{savedSelection}</div> */}
+        {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>
   );

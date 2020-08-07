@@ -185,3 +185,6 @@ export const nodeTypesToHighlight = [];
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
 export const runtimeDecorators = [HighlightSelection, highlightByType];
+
+// Components that render the mini toolbar
+// export const miniToolbarPlugins = [];

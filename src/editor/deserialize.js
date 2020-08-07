@@ -1,5 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 // import { settings } from '~/config';
+import { Node } from 'slate';
 
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
@@ -47,6 +48,23 @@ export const deserializeChildren = (parent, editor) =>
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   return jsx('element', { type: tagname }, deserializeChildren(el, editor));
+};
+
+export const liTagDeserializer = () => (editor, el) => {
+  const l = el.childNodes.length;
+  if (l < 1) {
+    throw new Error('Attempt to deserialize a <li> without children.');
+  } else if (l > 1) {
+    console.warn(
+      'Deserializing a <li> with more than one child, ignoring the children after the first one.',
+    );
+  }
+
+  return jsx(
+    'element',
+    { type: 'li' },
+    deserializeChildren(el.children[0], editor),
+  );
 };
 
 export const bodyTagDeserializer = (editor, el) => {

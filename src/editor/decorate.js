@@ -22,7 +22,12 @@ export const highlightByType = ([node, path], ranges) => {
 
 export function HighlightSelection([node, path], ranges) {
   const editor = useSlate();
+
+  if (!editor.getBlockProps) return ranges;
   const blockProps = editor.getBlockProps();
+
+  // This is a hack, selected exists only in Volto blocks
+  // TODO: make it right
   const { selected } = blockProps;
   if (selected && !editor.selection && editor.savedSelection) {
     const newSelection = JSON.parse(editor.savedSelection);

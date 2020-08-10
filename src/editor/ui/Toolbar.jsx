@@ -4,9 +4,6 @@ import { Portal } from 'react-portal';
 import Separator from './Separator';
 import BasicToolbar from './BasicToolbar';
 
-// import { ReactEditor, useSlate } from 'slate-react';
-// import { Editor, Range } from 'slate';
-
 const Toolbar = ({ toggleButton, children }) => {
   const ref = useRef();
   // const editor = useSlate();
@@ -16,7 +13,7 @@ const Toolbar = ({ toggleButton, children }) => {
     // const { selection } = editor;
 
     if (
-      children.length === 0
+      (children || []).length === 0
       // !selection ||
       // !ReactEditor.isFocused(editor) ||
       // Range.isCollapsed(selection) ||
@@ -42,8 +39,12 @@ const Toolbar = ({ toggleButton, children }) => {
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
-        <Separator />
-        {toggleButton}
+        {toggleButton && (
+          <>
+            <Separator />
+            {toggleButton}
+          </>
+        )}
       </BasicToolbar>
     </Portal>
   );

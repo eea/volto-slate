@@ -6,19 +6,14 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
-import { SlateToolbar, PluginToolbar } from './ui';
+import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { fixSelection } from 'volto-slate/utils';
-
-// import { FootnoteToolbar } from './ui/FootnoteToolbar';
+import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
 // import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
-
-// import FootnoteContext from './ui/FootnoteContext';
-// import { updateFootnotesContextFromActiveFootnote } from './plugins/Footnote/FootnoteButton';
 
 import './less/editor.less';
 
@@ -40,7 +35,7 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-  const [showPluginToolbar, setShowPluginToolbar] = useState(false);
+  // const [showPluginToolbar, setShowPluginToolbar] = useState(false);
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -54,9 +49,23 @@ const SlateEditor = ({
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
-  editor.showPluginToolbar = false;
+  // Save a copy of the selection in the editor. Sometimes the editor loses its
+  // selection (because it is tied to DOM events). For example, if I'm in the
+  // editor and I open a popup dialog with text inputs, the Slate editor loses
+  // its selection, but I want to keep that selection because my operations
+  // should apply to it).
 
+  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
+  const [savedSelection, setSavedSelection] = React.useState();
+  editor.setSavedSelection = setSavedSelection;
+  editor.savedSelection = savedSelection;
+
+  React.useEffect(() => {
+    if (selected && selection && JSON.parse(selection).anchor) {
+      setSavedSelection(selection);
+    }
+  }, [selection, selected, editor]);
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -74,6 +83,7 @@ const SlateEditor = ({
       // - Hit backspace. If it deletes, then the test passes
 
       fixSelection(editor);
+      setSavedSelection(JSON.stringify(editor.selection));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
@@ -104,78 +114,28 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  // const [showForm, setShowForm] = React.useState(false);
-  // const [selection, setSelection] = React.useState(null);
-  // const [formData, setFormData] = React.useState({});
-  // const footnoteContext = React.useMemo(
-  //   () => ({
-  //     getShowForm: () => {
-  //       return showForm || false;
-  //     },
-  //     getSelection: () => {
-  //       return selection || null;
-  //     },
-  //     getFormData: () => {
-  //       return formData || {};
-  //     },
-  //     setShowForm: (val) => {
-  //       setShowForm(val);
-  //     },
-  //     setSelection: (val) => {
-  //       console.log('save selection to', val);
-  //       setSelection(val);
-  //     },
-  //     setFormData: (val) => {
-  //       setFormData(val);
-  //     },
-  //   }),
-  //   [showForm, selection, formData],
-  // );
-
-  // const handleChange = React.useCallback(
-  //   (ev) => {
-  //     // footnoteContext.setSelection(
-  //     //   JSON.parse(JSON.stringify(editor.selection)),
-  //     // );
-  //     // TODO: somehow filter to do this only if the selection changed
-  //     onChange(ev);
-  //
-  //     // if (footnoteContext.getShowForm()) {
-  //     //   updateFootnotesContextFromActiveFootnote(editor, footnoteContext, {
-  //     //     saveSelection: false,
-  //     //     // clearIfNoActiveFootnote: false,
-  //     //   });
-  //     // }
-  //   },
-  //   [editor, footnoteContext, onChange],
-  // );
-
-  const pluginToolbarRef = React.useRef();
-  editor.pluginToolbarRef = pluginToolbarRef;
-  // editor.setShowPluginToolbar = setShowPluginToolbar;
-
-  const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
-  editor.setPluginToolbar = setPluginToolbar;
-  // console.log('show', PluginToolbarChildren);
-
-  // TODO: in Footnotes block and toolbar buttons, support Footnotes in tables
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
-      {/* <SidebarFootnoteForm showForm={showForm} /> */}
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {PluginToolbarChildren && (
-          <PluginToolbar selected={selected} ref={pluginToolbarRef}>
-            {PluginToolbarChildren}
-          </PluginToolbar>
+        {selected ? (
+          hasRangeSelection(editor) ? (
+            <SlateToolbar
+              selected={selected}
+              showToolbar={showToolbar}
+              setShowToolbar={setShowToolbar}
+            />
+          ) : (
+            <SlateContextToolbar
+              editor={editor}
+              plugins={slate.contextToolbarButtons}
+            />
+          )
+        ) : (
+          ''
         )}
-        <SlateToolbar
-          selected={selected}
-          showToolbar={showToolbar}
-          setShowToolbar={setShowToolbar}
-        />
         <Editable
           readOnly={!selected}
           placeholder={placeholder}
@@ -203,6 +163,8 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
+        {/* <div>{savedSelection}</div> */}
+        {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>
   );

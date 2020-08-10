@@ -1,3 +1,11 @@
+/**
+ * This is the main toolbar, which:
+ *
+ * - appears only when a range selection exists
+ * - can be toggled between expanded and hovering state
+ *
+ */
+
 import React from 'react';
 import cx from 'classnames';
 
@@ -10,9 +18,10 @@ import ToolbarButton from './ToolbarButton';
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
-  const { selected, showToolbar, setShowToolbar } = props;
+  const { selected, showToolbar } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
+
   return (
     <>
       {!showToolbar && (
@@ -20,7 +29,7 @@ const SlateToolbar = (props) => {
           toggleButton={
             <ToolbarButton
               onMouseDown={(event) => {
-                setShowToolbar(!showToolbar);
+                // setShowToolbar(!showToolbar);
                 event.preventDefault();
               }}
               icon={toggleIcon}
@@ -43,7 +52,7 @@ const SlateToolbar = (props) => {
             toggleButton={
               <ToolbarButton
                 onMouseDown={(event) => {
-                  setShowToolbar(!showToolbar);
+                  // setShowToolbar(!showToolbar);
                   event.preventDefault();
                 }}
                 icon={toggleIcon}

@@ -74,9 +74,17 @@ export const defaultToolbarButtons = [
   'bulleted-list',
 ];
 
-export let toolbarButtons = [...defaultToolbarButtons];
+export const toolbarButtons = [...defaultToolbarButtons];
 
-export let expandedToolbarButtons = [...defaultToolbarButtons];
+export const expandedToolbarButtons = [...defaultToolbarButtons];
+
+// These components are rendered in the toolbar on demand, as configured by plugins.
+// They are rendered as "context" buttons, when there is no selection
+// Each one is a function (editor) => (<Component/> or null)
+// It is important to be able to tell if a plugin would return something
+// because we don't want to render the toolbar at all if there's no children
+// (due to CSS reasons).
+export const contextToolbarButtons = [];
 
 // The slate editor is "decorated" with the capabilities from this list.
 // While Slate calls them plugins, we use "extension" to avoid confusion.

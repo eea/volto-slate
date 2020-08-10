@@ -160,14 +160,9 @@ const SlateEditor = ({
           }}
         />
         {slate.persistentHelpers.map((Helper, i) => {
-          return (
-            <div>
-              {i}
-              <Helper />
-            </div>
-          );
+          return <Helper key={i} />;
         })}
-        <div>{JSON.stringify(savedSelection)}</div>
+        {/* <div>{JSON.stringify(savedSelection)}</div> */}
         {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>

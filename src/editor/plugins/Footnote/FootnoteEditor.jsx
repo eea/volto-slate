@@ -34,9 +34,10 @@ export default (props) => {
       footnoteRef.current = footnoteNode;
       setFormData(footnoteNode.data || {});
     } else if (!isFootnote) {
+      // if (footnoteRef.current) dispatch({ type: FOOTNOTE_EDITOR, show: false });
       footnoteRef.current = null;
     }
-  }, [footnoteNode, isFootnote]);
+  }, [footnoteNode, isFootnote, dispatch]);
 
   const saveDataToEditor = React.useCallback(
     (formData) => {

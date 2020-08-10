@@ -4,7 +4,6 @@ import { Portal } from 'react-portal';
 // TODO: add CSS transition on display
 
 const SidebarPopup = ({ children, open }, ref) => {
-  console.log('sidebar', open);
   return open ? (
     <Portal>
       <aside

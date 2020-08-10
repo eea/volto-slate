@@ -24,10 +24,9 @@ const SlateToolbar = (props) => {
 
   function renderButton(name, index) {
     const Btn = buttons[name];
-    // console.log('render', name, index, Btn);
+    // using also name because some buttons can be like "Separator"
     return <Btn key={`${name}-${index}`} />;
   }
-  console.log('rerender');
 
   return (
     <>

@@ -1,18 +1,11 @@
 import React from 'react';
 import editingSVG from '@plone/volto/icons/editing.svg';
 import { useIntl, defineMessages } from 'react-intl';
-import {
-  isActiveFootnote,
-  unwrapFootnote,
-  // getActiveFootnote,
-  // insertFootnote,
-} from './utils';
+import { isActiveFootnote, unwrapFootnote } from './utils';
 import clearSVG from '@plone/volto/icons/delete.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-// import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
-// import FootnoteEditor from './FootnoteEditor';
 import { FOOTNOTE_EDITOR } from './constants';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const messages = defineMessages({
   edit: {
@@ -26,26 +19,24 @@ const messages = defineMessages({
 });
 
 export default (editor) => {
+  // There's no variable number of hooks here, because we don't return a valid
+  // react component by returning null. Unfortunately there's no other way to
+  // avoid rendering all components and toggle the context toolbar
   if (!isActiveFootnote(editor)) {
     return null;
   }
   const intl = useIntl();
-  // const [showEditForm, setShowEditForm] = React.useState(false);
-  // {showEditForm && (
-  //   <SidebarPopup open={true}>
-  //     <FootnoteEditor showEditor={setShowEditForm} />
-  //   </SidebarPopup>
-  // )}
   const dispatch = useDispatch();
+  const showEditor = useSelector((state) => state['footnote_editor']?.show);
 
   return (
     <React.Fragment key="footnote">
       <ToolbarButton
         icon={editingSVG}
+        active={showEditor}
         aria-label={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
           dispatch({ type: FOOTNOTE_EDITOR, show: true });
-          // setShowEditForm(true);
         }}
       />
       <ToolbarButton

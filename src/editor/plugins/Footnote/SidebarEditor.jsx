@@ -5,16 +5,23 @@
  */
 import React from 'react';
 import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import FootnoteEditor from './FootnoteEditor';
 import { getActiveFootnote } from './utils';
 import { useSlate } from 'slate-react';
+import { FOOTNOTE_EDITOR } from './constants';
 
 const SidebarEditor = (props) => {
   const showEditor = useSelector((state) => state['footnote_editor']?.show);
   const editor = useSlate();
+  const dispatch = useDispatch();
 
-  const active = getActiveFootnote(editor);
+  const active = !!getActiveFootnote(editor);
+
+  React.useEffect(() => {
+    if (!active) dispatch({ type: FOOTNOTE_EDITOR, show: false });
+  }, [active, dispatch]);
+
   return showEditor && active ? (
     <SidebarPopup open={true}>
       <FootnoteEditor />

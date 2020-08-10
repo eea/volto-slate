@@ -1,27 +1,26 @@
 import React, { useRef, useEffect } from 'react';
-import { ReactEditor, useSlate } from 'slate-react';
-import { Editor, Range } from 'slate';
 import { Portal } from 'react-portal';
 
 import Separator from './Separator';
-import ToolbarButton from './ToolbarButton';
 import BasicToolbar from './BasicToolbar';
 
-import toggleIcon from '@plone/volto/icons/freedom.svg';
+// import { ReactEditor, useSlate } from 'slate-react';
+// import { Editor, Range } from 'slate';
 
-const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
+const Toolbar = ({ toggleButton, children }) => {
   const ref = useRef();
-  const editor = useSlate();
+  // const editor = useSlate();
 
   useEffect(() => {
     const el = ref.current;
-    const { selection } = editor;
+    // const { selection } = editor;
 
     if (
-      !selection ||
-      !ReactEditor.isFocused(editor) ||
-      Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === ''
+      children.length === 0
+      // !selection ||
+      // !ReactEditor.isFocused(editor) ||
+      // Range.isCollapsed(selection) ||
+      // Editor.string(editor, selection) === ''
     ) {
       el.removeAttribute('style');
       return;
@@ -44,14 +43,7 @@ const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
         <Separator />
-        <ToolbarButton
-          onMouseDown={(event) => {
-            onToggle();
-            event.preventDefault();
-          }}
-          icon={toggleIcon}
-          active={mainToolbarShown}
-        />
+        {toggleButton}
       </BasicToolbar>
     </Portal>
   );

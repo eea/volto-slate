@@ -214,6 +214,9 @@ const FootnoteButton = () => {
 
   const { setPluginToolbar, setShowPluginToolbar } = editor;
 
+  // const setToolbar = useToolbar(editor);
+  // setToolbar(PluginToolbar);
+
   React.useEffect(() => {
     if (isFootnote && !isEqual(footnote, footnoteRef.current)) {
       footnoteRef.current = footnote;

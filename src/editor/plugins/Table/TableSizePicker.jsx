@@ -63,9 +63,7 @@ export const TableSizePicker = ({
     rows.push(createRow(i));
   }
 
-  const zoomFactor = 1.5;
-
-  // console.log('rowCount', rowCount, 'columnCount', columnCount);
+  const zoomFactor = 1;
 
   return (
     <table

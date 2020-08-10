@@ -16,11 +16,14 @@ const SlateToolbar = (props) => {
           onToggle={() => setShowToolbar(!showToolbar)}
           mainToolbarShown={showToolbar}
         >
-          {toolbarButtons?.map((name, i) => (
-            <React.Fragment key={`${name}-${i}`}>
-              {buttons[name]()}
-            </React.Fragment>
-          ))}
+          {toolbarButtons?.map((name, i) => {
+            const TheButton = buttons[name];
+            return (
+              <React.Fragment key={`${name}-${i}`}>
+                <TheButton />
+              </React.Fragment>
+            );
+          })}
         </Toolbar>
       )}
       <div
@@ -31,11 +34,14 @@ const SlateToolbar = (props) => {
             onToggle={() => setShowToolbar(!showToolbar)}
             mainToolbarShown={showToolbar}
           >
-            {expandedToolbarButtons?.map((name, i) => (
-              <React.Fragment key={`${name}-${i}`}>
-                {buttons[name]()}
-              </React.Fragment>
-            ))}
+            {expandedToolbarButtons?.map((name, i) => {
+              const TheButton = buttons[name];
+              return (
+                <React.Fragment key={`${name}-${i}`}>
+                  <TheButton />
+                </React.Fragment>
+              );
+            })}
           </ExpandedToolbar>
         )}
       </div>

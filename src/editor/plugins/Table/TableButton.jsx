@@ -30,6 +30,11 @@ const TableButton = () => {
           <ToolbarButton
             className="slate-table-dropdown-button"
             onClick={() => {
+              setRowCount(defaultRowCount);
+              setColumnCount(defaultColumnCount);
+              setActiveRow(1);
+              setActiveColumn(1);
+
               setDropdownOpen(!dropdownOpen);
             }}
             icon={tableSVG}
@@ -38,12 +43,6 @@ const TableButton = () => {
       >
         <Dropdown.Menu
           className="slate-table-dropdown-menu"
-          onMouseLeave={() => {
-            setRowCount(defaultRowCount);
-            setColumnCount(defaultColumnCount);
-            setActiveRow(1);
-            setActiveColumn(1);
-          }}
         >
           <TableContainer
             rowCount={rowCount}

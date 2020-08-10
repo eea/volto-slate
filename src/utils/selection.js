@@ -155,23 +155,19 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
   );
 }
 
+/**
+ * Returns true if editor contains a range selection
+ *
+ * @param {} editor
+ */
 export function hasRangeSelection(editor) {
   const { savedSelection } = editor;
-  const selection = savedSelection
-    ? JSON.parse(savedSelection)
-    : editor.selection;
+  const selection = savedSelection || editor.selection;
 
   return (
     ReactEditor.isFocused(editor) &&
     selection &&
     !Range.isCollapsed(selection) &&
-    Editor.string(editor, editor.selection) !== ''
+    Editor.string(editor, selection) !== ''
   );
-
-  // return !(
-  //   !selection ||
-  //   !ReactEditor.isFocused(editor) ||
-  //   Range.isCollapsed(editor.selection) ||
-  //   Editor.string(editor, editor.selection) === ''
-  // );
 }

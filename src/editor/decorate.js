@@ -20,6 +20,15 @@ export const highlightByType = ([node, path], ranges) => {
   return ranges;
 };
 
+/**
+ * HighlightSelection.
+ *
+ * A runtime decorator that decorates the saved selection, when the editor is
+ * is no longer active
+ *
+ * @param {}
+ * @param {} ranges
+ */
 export function HighlightSelection([node, path], ranges) {
   const editor = useSlate();
 
@@ -30,7 +39,7 @@ export function HighlightSelection([node, path], ranges) {
   // TODO: make it right
   const { selected } = blockProps;
   if (selected && !editor.selection && editor.savedSelection) {
-    const newSelection = JSON.parse(editor.savedSelection);
+    const newSelection = editor.savedSelection;
     if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
       const range = {
         ...newSelection,

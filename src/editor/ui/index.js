@@ -9,3 +9,4 @@ export SlateToolbar from './SlateToolbar';
 export Toolbar from './Toolbar';
 export ToolbarButton from './ToolbarButton';
 export SlateContextToolbar from './SlateContextToolbar';
+export SidebarEditor from './SidebarEditor';

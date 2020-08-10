@@ -112,18 +112,6 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  //        hasRangeSelection(editor) ? (
-  //          <SlateToolbar
-  //            selected={selected}
-  //            showToolbar={showToolbar}
-  //            setShowToolbar={setShowToolbar}
-  //          />
-  //        ) : (
-  //          <SlateContextToolbar
-  //            editor={editor}
-  //            plugins={slate.contextToolbarButtons}
-  //          />
-
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
@@ -131,17 +119,18 @@ const SlateEditor = ({
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
         {selected ? (
-          <>
+          hasRangeSelection(editor) ? (
             <SlateToolbar
               selected={selected}
               showToolbar={showToolbar}
               setShowToolbar={setShowToolbar}
             />
+          ) : (
             <SlateContextToolbar
               editor={editor}
               plugins={slate.contextToolbarButtons}
             />
-          </>
+          )
         ) : (
           ''
         )}
@@ -170,6 +159,14 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
+        {slate.persistentHelpers.map((Helper, i) => {
+          return (
+            <div>
+              {i}
+              <Helper />
+            </div>
+          );
+        })}
         <div>{JSON.stringify(savedSelection)}</div>
         {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>

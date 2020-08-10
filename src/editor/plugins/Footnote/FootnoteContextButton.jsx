@@ -9,8 +9,10 @@ import {
 } from './utils';
 import clearSVG from '@plone/volto/icons/delete.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
-import FootnoteEditor from './FootnoteEditor';
+// import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+// import FootnoteEditor from './FootnoteEditor';
+import { FOOTNOTE_EDITOR } from './constants';
+import { useDispatch } from 'react-redux';
 
 const messages = defineMessages({
   edit: {
@@ -28,20 +30,22 @@ export default (editor) => {
     return null;
   }
   const intl = useIntl();
-  const [showEditForm, setShowEditForm] = React.useState(false);
+  // const [showEditForm, setShowEditForm] = React.useState(false);
+  // {showEditForm && (
+  //   <SidebarPopup open={true}>
+  //     <FootnoteEditor showEditor={setShowEditForm} />
+  //   </SidebarPopup>
+  // )}
+  const dispatch = useDispatch();
 
   return (
     <React.Fragment key="footnote">
-      {showEditForm && (
-        <SidebarPopup open={true}>
-          <FootnoteEditor showEditor={setShowEditForm} />
-        </SidebarPopup>
-      )}
       <ToolbarButton
         icon={editingSVG}
         aria-label={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
-          setShowEditForm(true);
+          dispatch({ type: FOOTNOTE_EDITOR, show: true });
+          // setShowEditForm(true);
         }}
       />
       <ToolbarButton

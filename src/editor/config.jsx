@@ -86,6 +86,10 @@ export const expandedToolbarButtons = [...defaultToolbarButtons];
 // (due to CSS reasons).
 export const contextToolbarButtons = [];
 
+// A set of components that are always rendered, unlike the button variety.
+// They make it possible to orchestrate form-based editing of components
+export const persistentHelpers = [];
+
 // The slate editor is "decorated" with the capabilities from this list.
 // While Slate calls them plugins, we use "extension" to avoid confusion.
 // A Volto Slate editor plugins adds more functionality: buttons, new elements,

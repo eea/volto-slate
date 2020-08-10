@@ -5,11 +5,7 @@ export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 
-    // if (!editor.selection) {
-    //   Transforms.select(editor, selection);
-    // }
-    // console.log('selection', JSON.stringify(selection));
-    // const selPathRef = Editor.pathRef(editor, selection.anchor.path);
+    const selPathRef = Editor.pathRef(editor, selection.anchor.path);
 
     const res = Array.from(
       Editor.nodes(editor, {
@@ -37,8 +33,10 @@ export function insertFootnote(editor, data) {
         { split: true, at: selection },
       );
     }
-    // Transforms.select(editor, selPathRef.current);
-    // Transforms.collapse(editor, { edge: 'end' });
+    if (data) {
+      Transforms.select(editor, selPathRef.current);
+      Transforms.collapse(editor); // TODO; collapse to original offset
+    }
   }
 }
 export const unwrapFootnote = (editor) => {

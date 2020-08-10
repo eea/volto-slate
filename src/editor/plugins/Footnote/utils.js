@@ -3,8 +3,9 @@ import { FOOTNOTE } from 'volto-slate/constants';
 
 export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
-    const { savedSelection: j_s } = editor;
-    const selection = JSON.parse(j_s);
+    // const { savedSelection: j_s } = editor;
+    // const selection = JSON.parse(j_s);
+    const selection = editor.savedSelection;
 
     if (!editor.selection) {
       Transforms.select(editor, selection);
@@ -34,9 +35,7 @@ export function insertFootnote(editor, data) {
   }
 }
 export const unwrapFootnote = (editor) => {
-  const selection =
-    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
-    editor.selection;
+  const selection = editor.selection || editor.savedSelection;
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,
@@ -44,9 +43,7 @@ export const unwrapFootnote = (editor) => {
 };
 
 export const isActiveFootnote = (editor) => {
-  const selection =
-    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
-    editor.selection;
+  const selection = editor.selection || editor.savedSelection;
   const [note] = Editor.nodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,
@@ -56,9 +53,7 @@ export const isActiveFootnote = (editor) => {
 };
 
 export const getActiveFootnote = (editor) => {
-  const selection =
-    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
-    editor.selection;
+  const selection = editor.selection || editor.savedSelection;
   const [node] = Editor.nodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,

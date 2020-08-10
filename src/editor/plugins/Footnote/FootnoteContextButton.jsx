@@ -47,6 +47,7 @@ export default (editor) => {
       <ToolbarButton
         icon={clearSVG}
         aria-label={intl.formatMessage(messages.delete)}
+        alt={intl.formatMessage(messages.delete)}
         onMouseDown={() => {
           unwrapFootnote(editor);
         }}

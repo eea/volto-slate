@@ -61,7 +61,7 @@ const SlateEditor = ({
 
   React.useEffect(() => {
     if (selected && selection && JSON.parse(selection).anchor) {
-      setSavedSelection(selection);
+      setSavedSelection(JSON.parse(selection));
     }
   }, [selection, selected, editor]);
 
@@ -80,7 +80,7 @@ const SlateEditor = ({
       // - with the Slate block unselected, click in the block.
       // - Hit backspace. If it deletes, then the test passes
       fixSelection(editor);
-      setSavedSelection(JSON.stringify(editor.selection));
+      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {

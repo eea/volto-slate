@@ -1,6 +1,7 @@
 import { castArray } from 'lodash';
 import { Editor, Transforms, Range, Node } from 'slate';
 import { settings } from '~/config';
+import { ReactEditor } from 'slate-react';
 
 /**
  * Get the nodes with a type included in `types` in the selection (from root to leaf).
@@ -152,4 +153,25 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
         : editor.selection.anchor,
     ),
   );
+}
+
+export function hasRangeSelection(editor) {
+  const { savedSelection } = editor;
+  const selection = savedSelection
+    ? JSON.parse(savedSelection)
+    : editor.selection;
+
+  return (
+    ReactEditor.isFocused(editor) &&
+    selection &&
+    !Range.isCollapsed(selection) &&
+    Editor.string(editor, editor.selection) !== ''
+  );
+
+  // return !(
+  //   !selection ||
+  //   !ReactEditor.isFocused(editor) ||
+  //   Range.isCollapsed(editor.selection) ||
+  //   Editor.string(editor, editor.selection) === ''
+  // );
 }

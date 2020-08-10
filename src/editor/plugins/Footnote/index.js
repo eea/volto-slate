@@ -4,6 +4,7 @@ import React from 'react';
 
 import { FootnoteElement } from './render';
 import FootnoteButton from './FootnoteButton';
+import FootnoteContextButton from './FootnoteContextButton';
 import { withFootnote } from './extensions';
 import { FOOTNOTE } from 'volto-slate/constants';
 
@@ -20,7 +21,7 @@ export default (config) => {
     'footnote',
   ];
 
-  // slate.miniToolbarPlugins = [...slate.miniToolbarPlugins, FootnoteToolbar];
+  slate.contextToolbarButtons.push(FootnoteContextButton);
 
   slate.nodeTypesToHighlight.push(FOOTNOTE);
 

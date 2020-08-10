@@ -6,11 +6,11 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
-import { SlateToolbar, PluginToolbar } from './ui';
+import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { fixSelection } from 'volto-slate/utils';
+import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
 // import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
@@ -33,6 +33,7 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
+  // const [showPluginToolbar, setShowPluginToolbar] = useState(false);
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -45,28 +46,6 @@ const SlateEditor = ({
   // extensions need an updated state (for example to insert updated
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
-
-  // Allow plugins to set content for a mini toolbar. The mini toolbar appears
-  // only if this content is set, so set content to null if you want toolbar to
-  // dissappear
-  // const [miniTooolbarPlugin, setPluginToolbar] = React.useState(null);
-  // editor.setPluginToolbar = setPluginToolbar;
-  const [PluginToolbarChildren, setPluginToolbarChildren] = React.useState(
-    null,
-  );
-
-  // Plugin Hooks are callables that are executed on useEffect. They can
-  // set the PluginToolbarChildren. This allows "loading" the hooks from the
-  // Toolbar Buttons and they become sensitive to the editor state and
-  // contents, to allow on-demand display of the mini toolbar.
-  const [pluginHooks, setPluginHooks] = React.useState({});
-
-  editor.addPluginHook = React.useCallback(
-    (name, hook) => {
-      setPluginHooks({ ...pluginHooks, [name]: hook });
-    },
-    [pluginHooks],
-  );
 
   // Save a copy of the selection in the editor. Sometimes the editor loses its
   // selection (because it is tied to DOM events). For example, if I'm in the
@@ -84,12 +63,7 @@ const SlateEditor = ({
     if (selected && selection && JSON.parse(selection).anchor) {
       setSavedSelection(selection);
     }
-
-    const Toolbar = Object.values(pluginHooks)
-      .map((hook) => hook(editor))
-      .filter((f) => !!f);
-    setPluginToolbarChildren(Toolbar.map((h) => h(editor)));
-  }, [selection, selected, editor, pluginHooks]);
+  }, [selection, selected, editor]);
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -144,20 +118,21 @@ const SlateEditor = ({
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {(PluginToolbarChildren || []).length > 0 ? (
-          <PluginToolbar selected={selected}>
-            {PluginToolbarChildren}
-          </PluginToolbar>
+        {selected ? (
+          hasRangeSelection(editor) ? (
+            <SlateToolbar
+              selected={selected}
+              showToolbar={showToolbar}
+              setShowToolbar={setShowToolbar}
+            />
+          ) : (
+            <SlateContextToolbar
+              editor={editor}
+              plugins={slate.contextToolbarButtons}
+            />
+          )
         ) : (
           ''
-        )}
-
-        {!(!PluginToolbarChildren || []).length && (
-          <SlateToolbar
-            selected={selected}
-            showToolbar={showToolbar}
-            setShowToolbar={setShowToolbar}
-          />
         )}
         <Editable
           readOnly={!selected}

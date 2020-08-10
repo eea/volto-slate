@@ -1,4 +1,4 @@
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms } from 'slate'; // Range,
 import { FOOTNOTE } from 'volto-slate/constants';
 
 export function insertFootnote(editor, data) {
@@ -33,18 +33,35 @@ export function insertFootnote(editor, data) {
     }
   }
 }
-
 export const unwrapFootnote = (editor) => {
-  Transforms.unwrapNodes(editor, { match: (n) => n.type === FOOTNOTE });
+  const selection =
+    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
+    editor.selection;
+  Transforms.unwrapNodes(editor, {
+    match: (n) => n.type === FOOTNOTE,
+    at: selection,
+  });
 };
 
 export const isActiveFootnote = (editor) => {
-  const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
+  const selection =
+    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
+    editor.selection;
+  const [note] = Editor.nodes(editor, {
+    match: (n) => n.type === FOOTNOTE,
+    at: selection,
+  });
 
   return !!note;
 };
 
 export const getActiveFootnote = (editor) => {
-  const [node] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
+  const selection =
+    (editor.savedSelection && JSON.parse(editor.savedSelection)) ||
+    editor.selection;
+  const [node] = Editor.nodes(editor, {
+    match: (n) => n.type === FOOTNOTE,
+    at: selection,
+  });
   return node;
 };

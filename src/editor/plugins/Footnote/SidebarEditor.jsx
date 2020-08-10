@@ -1,3 +1,8 @@
+/**
+ * A small wrapper around FootnoteEditor. Its purpose it to allow for clearer
+ * code, otherwise it would mix too many hooks and it's not possible to render
+ * a variable number of hooks in a component
+ */
 import React from 'react';
 import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 import { useSelector } from 'react-redux';

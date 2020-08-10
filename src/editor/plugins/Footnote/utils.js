@@ -3,18 +3,19 @@ import { FOOTNOTE } from 'volto-slate/constants';
 
 export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
-    // const { savedSelection: j_s } = editor;
-    // const selection = JSON.parse(j_s);
     const selection = editor.savedSelection;
 
-    if (!editor.selection) {
-      Transforms.select(editor, selection);
-    }
+    // if (!editor.selection) {
+    //   Transforms.select(editor, selection);
+    // }
+    // console.log('selection', JSON.stringify(selection));
+    // const selPathRef = Editor.pathRef(editor, selection.anchor.path);
 
     const res = Array.from(
       Editor.nodes(editor, {
         match: (n) => n.type === FOOTNOTE,
         mode: 'highest',
+        at: selection,
       }),
     );
 
@@ -30,8 +31,14 @@ export function insertFootnote(editor, data) {
       );
       // Transforms.collapse(editor, { edge: 'end' });
     } else {
-      Transforms.wrapNodes(editor, { type: FOOTNOTE, data }, { split: true });
+      Transforms.wrapNodes(
+        editor,
+        { type: FOOTNOTE, data },
+        { split: true, at: selection },
+      );
     }
+    // Transforms.select(editor, selPathRef.current);
+    // Transforms.collapse(editor, { edge: 'end' });
   }
 }
 export const unwrapFootnote = (editor) => {

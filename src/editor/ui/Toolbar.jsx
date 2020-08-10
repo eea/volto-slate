@@ -1,24 +1,24 @@
 import React, { useRef, useEffect } from 'react';
 import { Portal } from 'react-portal';
+import { useSlate } from 'slate-react';
 
 import Separator from './Separator';
 import BasicToolbar from './BasicToolbar';
 
 const Toolbar = ({ toggleButton, children }) => {
   const ref = useRef();
-  // const editor = useSlate();
+  const editor = useSlate();
 
   useEffect(() => {
     const el = ref.current;
-    // const { selection } = editor;
 
-    if (
-      (children || []).length === 0
-      // !selection ||
-      // !ReactEditor.isFocused(editor) ||
-      // Range.isCollapsed(selection) ||
-      // Editor.string(editor, selection) === ''
-    ) {
+    if ((children || []).length === 0) {
+      el.removeAttribute('style');
+      return;
+    }
+
+    const { selection } = editor;
+    if (!selection) {
       el.removeAttribute('style');
       return;
     }

@@ -22,6 +22,13 @@ const SlateToolbar = (props) => {
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
+  function renderButton(name, index) {
+    const Btn = buttons[name];
+    // console.log('render', name, index, Btn);
+    return <Btn key={`${name}-${index}`} />;
+  }
+  console.log('rerender');
+
   return (
     <>
       {!showToolbar && (
@@ -37,11 +44,7 @@ const SlateToolbar = (props) => {
             />
           }
         >
-          {toolbarButtons?.map((name, i) => (
-            <React.Fragment key={`${name}-${i}`}>
-              {buttons[name]()}
-            </React.Fragment>
-          ))}
+          {toolbarButtons?.map(renderButton)}
         </Toolbar>
       )}
       <div
@@ -60,11 +63,7 @@ const SlateToolbar = (props) => {
               />
             }
           >
-            {expandedToolbarButtons?.map((name, i) => (
-              <React.Fragment key={`${name}-${i}`}>
-                {buttons[name]()}
-              </React.Fragment>
-            ))}
+            {expandedToolbarButtons?.map(renderButton)}
           </ExpandedToolbar>
         )}
       </div>

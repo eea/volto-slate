@@ -18,8 +18,13 @@ import {
 export default (props) => {
   const { showEditor } = props;
   const editor = useSlate();
+  const active = getActiveFootnote(editor);
+  if (!active) {
+    console.log('hiding');
+    return '';
+  }
+  const [footnoteNode] = active;
   const footnoteRef = React.useRef(null);
-  const [footnoteNode] = getActiveFootnote(editor);
   const isFootnote = isActiveFootnote(editor);
   const [formData, setFormData] = React.useState({});
 
@@ -43,6 +48,8 @@ export default (props) => {
     },
     [editor],
   );
+
+  console.log('footnoteeditor', formData);
 
   return (
     <InlineForm

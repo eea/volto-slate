@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from './Table';
+import TableSizePicker from './TableSizePicker';
 
 export const TableContainer = ({
   rowCount,
@@ -17,7 +17,7 @@ export const TableContainer = ({
 
   return (
     <div style={{ padding: '1rem' }}>
-      <Table
+      <TableSizePicker
         activeRow={activeRowState}
         activeColumn={activeColumnState}
         rowCount={rowCount}

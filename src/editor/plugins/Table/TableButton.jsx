@@ -6,6 +6,7 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 
 import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
+import './less/table.less';
 
 const TableButton = () => {
   // const editor = useSlate();

@@ -1,7 +1,7 @@
 import React from 'react';
 import TableCell from './TableCell';
 
-export const Table = ({
+export const TableSizePicker = ({
   rowCount,
   columnCount,
   activeRow,
@@ -77,4 +77,4 @@ export const Table = ({
   );
 };
 
-export default Table;
+export default TableSizePicker;

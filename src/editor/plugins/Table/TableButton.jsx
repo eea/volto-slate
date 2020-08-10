@@ -22,18 +22,28 @@ const TableButton = () => {
   const [rowCount, setRowCount] = React.useState(defaultRowCount);
   const [columnCount, setColumnCount] = React.useState(defaultColumnCount);
 
+  const resetState = React.useCallback(() => {
+    setRowCount(defaultRowCount);
+    setColumnCount(defaultColumnCount);
+    setActiveRow(1);
+    setActiveColumn(1);
+  }, []);
+
   return (
     <>
       <Dropdown
         open={dropdownOpen}
+        onClose={() => {
+          resetState();
+          setDropdownOpen(false);
+        }}
         trigger={
           <ToolbarButton
             className="slate-table-dropdown-button"
             onClick={() => {
-              setRowCount(defaultRowCount);
-              setColumnCount(defaultColumnCount);
-              setActiveRow(1);
-              setActiveColumn(1);
+              if (dropdownOpen) {
+                resetState();
+              }
 
               setDropdownOpen(!dropdownOpen);
             }}
@@ -41,9 +51,7 @@ const TableButton = () => {
           ></ToolbarButton>
         }
       >
-        <Dropdown.Menu
-          className="slate-table-dropdown-menu"
-        >
+        <Dropdown.Menu className="slate-table-dropdown-menu">
           <TableContainer
             rowCount={rowCount}
             columnCount={columnCount}

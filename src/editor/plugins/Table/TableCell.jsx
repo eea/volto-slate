@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 
 export const TableCell = ({
   active,
@@ -33,9 +34,7 @@ export const TableCell = ({
     <td
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{
-        backgroundColor: active ? 'blue' : 'transparent',
-      }}
+      className={cx({ active })}
     >
       <button onClick={handleClick} style={{ opacity: 0 }}></button>
     </td>

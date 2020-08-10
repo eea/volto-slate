@@ -79,6 +79,7 @@ const TableButton = () => {
             }}
             onCellMouseLeave={({ row, column }) => {}}
             onCellClick={({ row, column }) => {
+              // TODO: implement this
               alert(`row: ${row}\ncolumn: ${column}`);
             }}
           />

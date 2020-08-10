@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { highlightByType, HighlightSelection } from './decorate';
+import { HighlightByType, HighlightSelection } from './decorate';
 import {
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -196,7 +196,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [HighlightSelection, highlightByType];
-
-// Components that render the mini toolbar
-// export const miniToolbarPlugins = [];
+export const runtimeDecorators = [HighlightSelection, HighlightByType];

@@ -1,20 +1,25 @@
 import { Node } from 'slate';
+import { ReactEditor, useSlate } from 'slate-react';
 
 import { settings } from '~/config';
-import { useSlate } from 'slate-react';
 
-export const highlightByType = ([node, path], ranges) => {
+export const HighlightByType = ([node, path], ranges) => {
+  const editor = useSlate();
   const { slate } = settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
+    const [found] = Node.texts(editor, { from: path, to: path });
+    const visualSelectionRanges = HighlightSelection(found, ranges);
     const text = Node.string(node) || '';
-    ranges.push({
+    const range = {
       anchor: { path, offset: 0 },
       focus: { path, offset: text.length },
       highlight: true,
-      highlightType: node.type,
-    });
+      highlightType: visualSelectionRanges.length === 0 ? node.type : null,
+      isSelection: visualSelectionRanges.length > 0,
+    };
+    return [range];
   }
 
   return ranges;
@@ -32,12 +37,14 @@ export const highlightByType = ([node, path], ranges) => {
 export function HighlightSelection([node, path], ranges) {
   const editor = useSlate();
 
-  if (!editor.getBlockProps) return ranges;
-  const blockProps = editor.getBlockProps();
+  let selected = ReactEditor.isFocused(editor);
 
-  // This is a hack, selected exists only in Volto blocks
-  // TODO: make it right
-  const { selected } = blockProps;
+  // Compatibility with Volto blocks
+  if (editor.getBlockProps) {
+    const blockProps = editor.getBlockProps();
+    selected = blockProps.selected;
+  }
+
   if (selected && !editor.selection && editor.savedSelection) {
     const newSelection = editor.savedSelection;
     if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {

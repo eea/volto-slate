@@ -1,15 +1,16 @@
 import React from 'react';
-// import { useSlate } from 'slate-react';
+import { useSlate } from 'slate-react';
 import { Dropdown } from 'semantic-ui-react';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-// import { isLinkActive, insertLink, unwrapLink } from './utils';
+import { v4 as uuid } from 'uuid';
 
+import { createSlateTableBlock } from 'volto-slate/utils';
 import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
 
 const TableButton = () => {
-  // const editor = useSlate();
+  const editor = useSlate();
 
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
@@ -28,6 +29,30 @@ const TableButton = () => {
     setActiveRow(1);
     setActiveColumn(1);
   }, []);
+
+  const createEmptyCell = React.useCallback(() => {
+    return {
+      key: uuid(),
+      type: 'data',
+      value: [{ type: 'p', children: [{ text: '' }] }],
+    };
+  }, []);
+
+  const createEmptyRow = React.useCallback(
+    (cellCount) => {
+      const cells = [];
+
+      for (let i = 0; i < cellCount; ++i) {
+        cells.push(createEmptyCell());
+      }
+
+      return {
+        key: uuid(),
+        cells,
+      };
+    },
+    [createEmptyCell],
+  );
 
   return (
     <>
@@ -78,9 +103,25 @@ const TableButton = () => {
               }
             }}
             onCellMouseLeave={({ row, column }) => {}}
+            // `row` and `column` below are 1-based indices
             onCellClick={({ row, column }) => {
-              // TODO: implement this
-              alert(`row: ${row}\ncolumn: ${column}`);
+              const {
+                onChangeBlock,
+                onAddBlock,
+                index,
+              } = editor.getBlockProps();
+
+              const rows = [];
+              for (let i = 0; i < row; ++i) {
+                rows.push(createEmptyRow(column));
+              }
+
+              createSlateTableBlock(rows, index, {
+                onChangeBlock,
+                onAddBlock,
+              }).then(() => {
+                // TODO: focus the new Slate Table block
+              });
             }}
           />
         </Dropdown.Menu>

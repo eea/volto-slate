@@ -96,10 +96,13 @@ export function createSlateTableBlock(
 ) {
   const block = {
     '@type': 'slateTable',
-    rows,
+    table: {
+      rows,
+    },
   };
   return new Promise((resolve) => {
     onAddBlock('slateTable', index + 1).then((id) => {
+      console.log('slateTable block:', block);
       onChangeBlock(id, block).then(resolve(id));
     });
   });

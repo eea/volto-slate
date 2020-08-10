@@ -17,6 +17,7 @@ import { createEmptyParagraph } from 'volto-slate/utils';
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
 import { highlightByType, HighlightSelection } from './decorate';
 import {
+  withBreakInList,
   withDeleteSelectionOnEnter,
   withDeserializers,
   insertData,
@@ -98,6 +99,7 @@ export const contextToolbarButtons = [];
 // extensions to the end of this list, to rely on default behavior implemented
 // here.
 export const extensions = [
+  withBreakInList,
   withDeleteSelectionOnEnter,
   withDeserializers,
   insertData,

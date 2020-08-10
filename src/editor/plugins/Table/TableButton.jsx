@@ -13,6 +13,15 @@ const TableButton = () => {
 
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
+  const [activeRow, setActiveRow] = React.useState(1);
+  const [activeColumn, setActiveColumn] = React.useState(1);
+
+  const defaultRowCount = 5;
+  const defaultColumnCount = 5;
+
+  const [rowCount, setRowCount] = React.useState(defaultRowCount);
+  const [columnCount, setColumnCount] = React.useState(defaultColumnCount);
+
   return (
     <>
       <Dropdown
@@ -27,14 +36,41 @@ const TableButton = () => {
           ></ToolbarButton>
         }
       >
-        <Dropdown.Menu className="slate-table-dropdown-menu">
+        <Dropdown.Menu
+          className="slate-table-dropdown-menu"
+          onMouseLeave={() => {
+            setRowCount(defaultRowCount);
+            setColumnCount(defaultColumnCount);
+            setActiveRow(1);
+            setActiveColumn(1);
+          }}
+        >
           <TableContainer
-            rowCount={5}
-            columnCount={5}
-            activeColumn={1}
-            activeRow={1}
-            onCellMouseEnter={() => {}}
-            onCellMouseLeave={() => {}}
+            rowCount={rowCount}
+            columnCount={columnCount}
+            activeColumn={activeColumn}
+            activeRow={activeRow}
+            onCellMouseEnter={({ row, column }) => {
+              if (row > rowCount - 1) {
+                setRowCount(row + 1);
+              } else if (row < rowCount - 1) {
+                setRowCount(defaultRowCount);
+              }
+
+              if (column > columnCount - 1) {
+                setColumnCount(column + 1);
+              } else if (column < columnCount - 1) {
+                setColumnCount(defaultColumnCount);
+              }
+
+              if (row !== activeRow) {
+                setActiveRow(row);
+              }
+              if (column !== activeColumn) {
+                setActiveColumn(column);
+              }
+            }}
+            onCellMouseLeave={({ row, column }) => {}}
             onCellClick={({ row, column }) => {
               alert(`row: ${row}\ncolumn: ${column}`);
             }}

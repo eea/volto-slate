@@ -65,11 +65,13 @@ export const TableSizePicker = ({
 
   const zoomFactor = 1.5;
 
+  // console.log('rowCount', rowCount, 'columnCount', columnCount);
+
   return (
     <table
       style={{
-        width: `${rowCount * zoomFactor}rem`,
-        height: `${columnCount * zoomFactor}rem`,
+        width: `${columnCount * zoomFactor}rem`,
+        height: `${rowCount * zoomFactor}rem`,
       }}
     >
       {rows}

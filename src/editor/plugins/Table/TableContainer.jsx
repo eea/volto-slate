@@ -10,23 +10,16 @@ export const TableContainer = ({
   onCellMouseEnter,
   onCellMouseLeave,
 }) => {
-  const [activeRowState, setActiveRowState] = React.useState(activeRow);
-  const [activeColumnState, setActiveColumnState] = React.useState(
-    activeColumn,
-  );
-
   return (
     <div style={{ padding: '1rem' }}>
       <TableSizePicker
-        activeRow={activeRowState}
-        activeColumn={activeColumnState}
+        activeRow={activeRow}
+        activeColumn={activeColumn}
         rowCount={rowCount}
         columnCount={columnCount}
         onCellClick={onCellClick}
         onCellMouseEnter={({ row, column }) => {
           onCellMouseEnter({ row, column });
-          setActiveRowState(row);
-          setActiveColumnState(column);
         }}
         onCellMouseLeave={onCellMouseLeave}
       />
@@ -35,7 +28,7 @@ export const TableContainer = ({
           textAlign: 'center',
         }}
       >
-        {activeColumnState || 1} &times; {activeRowState || 1}
+        {activeColumn || 1} &times; {activeRow || 1}
       </p>
     </div>
   );

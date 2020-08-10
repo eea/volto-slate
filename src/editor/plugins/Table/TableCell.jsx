@@ -36,7 +36,7 @@ export const TableCell = ({
       onMouseLeave={handleMouseLeave}
       className={cx({ active })}
     >
-      <button onClick={handleClick} style={{ opacity: 0 }}></button>
+      <button onClick={handleClick}></button>
     </td>
   );
 };

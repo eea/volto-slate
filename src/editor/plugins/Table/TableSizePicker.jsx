@@ -35,10 +35,13 @@ export const TableSizePicker = ({
     (rowIndex) => {
       const arr = [];
       for (let i = 0; i < columnCount; ++i) {
+        const columnIndex = i + 1;
+
         arr.push(
           <TableCell
+            key={columnIndex}
             row={rowIndex + 1}
-            column={i + 1}
+            column={columnIndex}
             active={rowIndex + 1 <= activeRow && i + 1 <= activeColumn}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
@@ -46,7 +49,7 @@ export const TableSizePicker = ({
           ></TableCell>,
         );
       }
-      return <tr>{arr}</tr>;
+      return <tr key={rowIndex}>{arr}</tr>;
     },
     [
       activeColumn,
@@ -72,7 +75,7 @@ export const TableSizePicker = ({
         height: `${rowCount * zoomFactor}rem`,
       }}
     >
-      {rows}
+      <tbody>{rows}</tbody>
     </table>
   );
 };

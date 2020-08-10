@@ -102,7 +102,6 @@ export function createSlateTableBlock(
   };
   return new Promise((resolve) => {
     onAddBlock('slateTable', index + 1).then((id) => {
-      console.log('slateTable block:', block);
       onChangeBlock(id, block).then(resolve(id));
     });
   });

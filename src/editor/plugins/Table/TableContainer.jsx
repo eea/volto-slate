@@ -18,6 +18,8 @@ export const TableContainer = ({
   return (
     <div style={{ padding: '1rem' }}>
       <Table
+        activeRow={activeRowState}
+        activeColumn={activeColumnState}
         rowCount={rowCount}
         columnCount={columnCount}
         onCellClick={onCellClick}

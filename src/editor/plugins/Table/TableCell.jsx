@@ -30,7 +30,13 @@ export const TableCell = ({
   );
 
   return (
-    <td onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <td
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        backgroundColor: active ? 'blue' : 'transparent',
+      }}
+    >
       <button onClick={handleClick} style={{ opacity: 0 }}></button>
     </td>
   );

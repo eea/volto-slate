@@ -41,6 +41,8 @@ const TableButton = () => {
           <TableContainer
             rowCount={5}
             columnCount={5}
+            activeColumn={1}
+            activeRow={1}
             onCellMouseEnter={() => {}}
             onCellMouseLeave={() => {}}
             onCellClick={({ row, column }) => {

@@ -39,6 +39,7 @@ export const Table = ({
           <TableCell
             row={rowIndex + 1}
             column={i + 1}
+            active={rowIndex + 1 <= activeRow && i + 1 <= activeColumn}
             onClick={handleClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -47,7 +48,14 @@ export const Table = ({
       }
       return <tr>{arr}</tr>;
     },
-    [columnCount, handleClick, handleMouseEnter, handleMouseLeave],
+    [
+      activeColumn,
+      activeRow,
+      columnCount,
+      handleClick,
+      handleMouseEnter,
+      handleMouseLeave,
+    ],
   );
 
   const rows = [];

@@ -109,6 +109,9 @@ const TableButton = () => {
                 onChangeBlock,
                 onAddBlock,
                 index,
+                onFocusNextBlock,
+                block,
+                blockNode,
               } = editor.getBlockProps();
 
               const rows = [];
@@ -120,7 +123,8 @@ const TableButton = () => {
                 onChangeBlock,
                 onAddBlock,
               }).then(() => {
-                // TODO: focus the new Slate Table block
+                // blockNode is a ref
+                onFocusNextBlock(block, blockNode.current);
               });
             }}
           />

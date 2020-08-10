@@ -1,5 +1,6 @@
 import React from 'react';
 import { TABLE, THEAD, TFOOT, TBODY, TR, TD, TH } from 'volto-slate/constants';
+import './less/table.less';
 
 export const tableElements = {
   [TABLE]: ({ attributes, children }) => (

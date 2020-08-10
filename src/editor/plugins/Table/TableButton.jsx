@@ -20,25 +20,14 @@ const TableButton = () => {
         trigger={
           <ToolbarButton
             className="slate-table-dropdown-button"
-            onMouseEnter={() => {
-              setDropdownOpen(true);
-            }}
-            onMouseLeave={(e) => {
-              setDropdownOpen(false);
+            onClick={() => {
+              setDropdownOpen(!dropdownOpen);
             }}
             icon={tableSVG}
           ></ToolbarButton>
         }
       >
-        <Dropdown.Menu
-          className="slate-table-dropdown-menu"
-          onMouseEnter={() => {
-            setDropdownOpen(true);
-          }}
-          onMouseLeave={() => {
-            setDropdownOpen(false);
-          }}
-        >
+        <Dropdown.Menu className="slate-table-dropdown-menu">
           <TableContainer
             rowCount={5}
             columnCount={5}

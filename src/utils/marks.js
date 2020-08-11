@@ -45,6 +45,7 @@ function addMark(editor, key, value) {
 }
 
 function isSelectionInline(editor) {
+  // console.log('selection', editor.savedSelection);
   const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
   return Text.isText(node) || Editor.isInline(editor, node);
 }
@@ -52,6 +53,7 @@ function isSelectionInline(editor) {
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
 
+  // debugger;
   if (isActive) {
     Editor.removeMark(editor, format);
   } else {

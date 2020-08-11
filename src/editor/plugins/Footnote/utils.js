@@ -43,8 +43,7 @@ export function insertFootnote(editor, data) {
 }
 export const unwrapFootnote = (editor) => {
   const selection = editor.selection || editor.savedSelection;
-  const selPathRef = Editor.pathRef(editor, selection.anchor.path);
-  Transforms.select(editor, selPathRef.current);
+  Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,

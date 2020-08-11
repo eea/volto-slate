@@ -52,6 +52,8 @@ export const insertData = (editor) => {
       Transforms.insertNodes(editor, fragment);
       Transforms.deselect(editor); // Solves a problem when pasting images
 
+      console.log('AFTER TABLE PASTE', editor.children);
+
       return;
     }
 

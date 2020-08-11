@@ -26,7 +26,7 @@ import {
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
-  spanDeserializer,
+  spanTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -176,6 +176,8 @@ export const htmlTagsToSlate = {
   LI: blockTagDeserializer('li'),
 
   // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
+  // TODO: include <b> but identify if is Google Docs <b>
+  // B: bTagDeserializer,
   CODE: inlineTagDeserializer({ code: true }),
   DEL: inlineTagDeserializer({ strikethrough: true }),
   EM: inlineTagDeserializer({ italic: true }),

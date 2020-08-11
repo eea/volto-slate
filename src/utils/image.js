@@ -16,7 +16,7 @@ export function srcToDataUri(url, callback) {
     callback(null, dataUri);
   };
 
-  img.onerror = () => {
+  img.ononerror = () => {
     callback(new Error('Failed to load image.'));
   };
 

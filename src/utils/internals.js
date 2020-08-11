@@ -1,7 +1,7 @@
 export const isPointAtRoot = (point) => point.path.length === 2;
 
 /*
- * Returns true if cursor is at root block level (not in inner node child)
+ * Returns true if cursor is at block level (not in inner node child)
  *
  * TODO: confirm this description
  */

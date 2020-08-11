@@ -12,6 +12,7 @@ import { useSlate } from 'slate-react';
 import { FOOTNOTE_EDITOR } from './constants';
 
 const SidebarEditor = (props) => {
+  console.log('render');
   const showEditor = useSelector((state) => state['footnote_editor']?.show);
   const editor = useSlate();
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const SidebarEditor = (props) => {
   React.useEffect(() => {
     if (!active) dispatch({ type: FOOTNOTE_EDITOR, show: false });
   }, [active, dispatch]);
+
+  console.log('show', showEditor);
 
   return showEditor && active ? (
     <SidebarPopup open={true}>

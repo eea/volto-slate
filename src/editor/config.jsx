@@ -88,7 +88,7 @@ export const contextToolbarButtons = [];
 
 // A set of components that are always rendered, unlike the button variety.
 // They make it possible to orchestrate form-based editing of components
-export const persistentHelpers = [];
+export const contextWrappers = [];
 
 // The slate editor is "decorated" with the capabilities from this list.
 // While Slate calls them plugins, we use "extension" to avoid confusion.

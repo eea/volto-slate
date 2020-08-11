@@ -29,7 +29,7 @@ export default (config) => {
   ];
 
   slate.contextToolbarButtons.push(FootnoteContextButton);
-  slate.persistentHelpers.push(SidebarEditor);
+  slate.contextWrappers.push(SidebarEditor);
 
   slate.nodeTypesToHighlight.push(FOOTNOTE);
 

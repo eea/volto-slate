@@ -111,58 +111,112 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
+  const DefaultEditor = (props) => (
+    <>
+      {selected ? (
+        hasRangeSelection(editor) ? (
+          <SlateToolbar
+            selected={selected}
+            showToolbar={showToolbar}
+            setShowToolbar={setShowToolbar}
+          />
+        ) : (
+          <SlateContextToolbar
+            editor={editor}
+            plugins={slate.contextToolbarButtons}
+          />
+        )
+      ) : (
+        ''
+      )}
+      <Editable
+        readOnly={!selected}
+        placeholder={placeholder}
+        renderElement={(props) => <Element {...props} />}
+        renderLeaf={(props) => <Leaf {...props} />}
+        decorate={multiDecorate}
+        onKeyDown={(event) => {
+          // let wasHotkey = false;
+          //
+          // for (const hotkey in slate.hotkeys) {
+          //   if (isHotkey(hotkey, event)) {
+          //     event.preventDefault();
+          //     const mark = slate.hotkeys[hotkey];
+          //     toggleMark(editor, mark);
+          //     wasHotkey = true;
+          //   }
+          // }
+          //
+          // if (wasHotkey) {
+          //   return;
+          // }
+          onKeyDown && onKeyDown({ editor, event });
+        }}
+      />
+      <div>{JSON.stringify(savedSelection)}</div>
+      <div>{JSON.stringify(editor.selection)}</div>
+    </>
+  );
+
+  // const DefaultEditor = (
+  //   <>
+  //     {selected ? (
+  //       hasRangeSelection(editor) ? (
+  //         <SlateToolbar
+  //           selected={selected}
+  //           showToolbar={showToolbar}
+  //           setShowToolbar={setShowToolbar}
+  //         />
+  //       ) : (
+  //         <SlateContextToolbar
+  //           editor={editor}
+  //           plugins={slate.contextToolbarButtons}
+  //         />
+  //       )
+  //     ) : (
+  //       ''
+  //     )}
+  //     <Editable
+  //       readOnly={!selected}
+  //       placeholder={placeholder}
+  //       renderElement={(props) => <Element {...props} />}
+  //       renderLeaf={(props) => <Leaf {...props} />}
+  //       decorate={multiDecorate}
+  //       onKeyDown={(event) => {
+  //         // let wasHotkey = false;
+  //         //
+  //         // for (const hotkey in slate.hotkeys) {
+  //         //   if (isHotkey(hotkey, event)) {
+  //         //     event.preventDefault();
+  //         //     const mark = slate.hotkeys[hotkey];
+  //         //     toggleMark(editor, mark);
+  //         //     wasHotkey = true;
+  //         //   }
+  //         // }
+  //         //
+  //         // if (wasHotkey) {
+  //         //   return;
+  //         // }
+  //         onKeyDown && onKeyDown({ editor, event });
+  //       }}
+  //     />
+  //     <div>{JSON.stringify(savedSelection)}</div>
+  //     <div>{JSON.stringify(editor.selection)}</div>
+  //   </>
+  // );
+
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {selected ? (
-          hasRangeSelection(editor) ? (
-            <SlateToolbar
-              selected={selected}
-              showToolbar={showToolbar}
-              setShowToolbar={setShowToolbar}
-            />
-          ) : (
-            <SlateContextToolbar
-              editor={editor}
-              plugins={slate.contextToolbarButtons}
-            />
-          )
-        ) : (
-          ''
-        )}
-        <Editable
-          readOnly={!selected}
-          placeholder={placeholder}
-          renderElement={(props) => <Element {...props} />}
-          renderLeaf={(props) => <Leaf {...props} />}
-          decorate={multiDecorate}
-          onKeyDown={(event) => {
-            // let wasHotkey = false;
-            //
-            // for (const hotkey in slate.hotkeys) {
-            //   if (isHotkey(hotkey, event)) {
-            //     event.preventDefault();
-            //     const mark = slate.hotkeys[hotkey];
-            //     toggleMark(editor, mark);
-            //     wasHotkey = true;
-            //   }
-            // }
-            //
-            // if (wasHotkey) {
-            //   return;
-            // }
-
-            onKeyDown && onKeyDown({ editor, event });
-          }}
-        />
-        {slate.persistentHelpers.map((Helper, i) => {
-          return <Helper key={i} />;
-        })}
-        {/* <div>{JSON.stringify(savedSelection)}</div> */}
-        {/* <div>{JSON.stringify(editor.selection)}</div> */}
+        {
+          (slate.contextWrappers.reduce((acc, Helper, i) => {
+            return <Helper key={i}>{acc}</Helper>;
+          }),
+          (<DefaultEditor />))
+        }
       </Slate>
     </div>
   );

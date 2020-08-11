@@ -7,6 +7,7 @@ import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
 import { Editor, Transforms } from 'slate';
+import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
 const TableButton = () => {
   const editor = useSlate();
@@ -56,15 +57,6 @@ const TableButton = () => {
    */
   const insertEmptyTable = React.useCallback(
     ({ row, column }) => {
-      // const {
-      //   onChangeBlock,
-      //   onAddBlock,
-      //   index,
-      //   onFocusNextBlock,
-      //   block,
-      //   blockNode,
-      // } = editor.getBlockProps();
-
       const rows = [createEmptyRow(column, true)];
       for (let i = 0; i < row - 1; ++i) {
         rows.push(createEmptyRow(column));
@@ -84,16 +76,7 @@ const TableButton = () => {
         at: Editor.end(editor, []),
       });
 
-      // TODO: I think we should focus on the newly created Slate Table Block, like in the line below from the place we call deconstruct to Volto blocks:
-      // onFocusNextBlock(block, blockNode.current);
-
-      // createSlateTableBlock(table, index, {
-      //   onChangeBlock,
-      //   onAddBlock,
-      // }).then(() => {
-      // blockNode is a ref
-      // onFocusNextBlock(block, blockNode.current);
-      // });
+      deconstructToVoltoBlocks(editor);
     },
     [createEmptyRow, editor],
   );

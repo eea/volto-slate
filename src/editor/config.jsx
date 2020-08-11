@@ -183,7 +183,7 @@ export const htmlTagsToSlate = {
   EM: inlineTagDeserializer({ italic: true }),
   I: inlineTagDeserializer({ italic: true }),
   S: inlineTagDeserializer({ strikethrough: true }),
-  SPAN: spanDeserializer,
+  SPAN: spanTagDeserializer,
   STRONG: inlineTagDeserializer({ bold: true }),
   SUB: inlineTagDeserializer({ sub: true }),
   SUP: inlineTagDeserializer({ sup: true }),

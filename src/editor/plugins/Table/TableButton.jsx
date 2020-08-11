@@ -30,20 +30,20 @@ const TableButton = () => {
     setActiveColumn(1);
   }, []);
 
-  const createEmptyCell = React.useCallback(() => {
+  const createEmptyCell = React.useCallback((formatAsColumnHeaders = false) => {
     return {
       key: uuid(),
-      type: 'data',
+      type: formatAsColumnHeaders ? 'header' : 'data',
       value: [{ type: 'p', children: [{ text: '' }] }],
     };
   }, []);
 
   const createEmptyRow = React.useCallback(
-    (cellCount) => {
+    (cellCount, formatAsColumnHeaders = false) => {
       const cells = [];
 
       for (let i = 0; i < cellCount; ++i) {
-        cells.push(createEmptyCell());
+        cells.push(createEmptyCell(formatAsColumnHeaders));
       }
 
       return {
@@ -114,8 +114,9 @@ const TableButton = () => {
                 blockNode,
               } = editor.getBlockProps();
 
-              const rows = [];
-              for (let i = 0; i < row; ++i) {
+              const rows = [createEmptyRow(column, true)];
+
+              for (let i = 0; i < row - 1; ++i) {
                 rows.push(createEmptyRow(column));
               }
 

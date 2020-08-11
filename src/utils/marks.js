@@ -66,6 +66,10 @@ export function toggleMark(editor, format) {
   }
 }
 
+/*
+ * Replaces inline text elements with a wrapper result
+ *
+ */
 export function wrapInlineMarkupText(children, wrapper) {
   if (typeof children === 'string') return wrapper(children);
 

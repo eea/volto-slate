@@ -24,6 +24,10 @@ const Toolbar = ({ toggleButton, children }) => {
     }
 
     const domSelection = window.getSelection();
+    if (domSelection.rangeCount < 1) {
+      el.removeAttribute('style');
+      return;
+    }
     const domRange = domSelection.getRangeAt(0);
     const rect = domRange.getBoundingClientRect();
 

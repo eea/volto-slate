@@ -1,10 +1,14 @@
 {
   "name": "volto-slate",
-  "version": "1.0.0",
+  "version": "0.4.1",
   "description": "Slate.js integration with Volto",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "prettier:fix": "./node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
+    "lint:fix": "./node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'"
   },
   "author": "Tiberiu Ichim",
   "license": "ISC",
@@ -18,9 +22,11 @@
     "slate-history": "^0.58.3",
     "slate-hyperscript": "^0.58.3",
     "slate-plain-serializer": "0.7.13",
-    "slate-react": "^0.58.3"
+    "slate-react": "^0.58.3",
+    "weak-key": "^1.0.2"
   },
   "devDependencies": {
+    "babel-plugin-istanbul": "6.0.0",
     "eslint": "7.3.1",
     "eslint-plugin-react": "^7.20.3",
     "prettier": "2.0.5"

@@ -1,8 +1,9 @@
 import { Editor, Transforms, Range } from 'slate';
-import { LINK } from './constants';
+import { LINK } from 'volto-slate/constants';
 
 export const isLinkActive = (editor) => {
   const [link] = Editor.nodes(editor, { match: (n) => n.type === LINK });
+
   return !!link;
 };
 

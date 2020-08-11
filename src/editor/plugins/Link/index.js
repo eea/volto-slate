@@ -1,26 +1,24 @@
-import LinkButton from './LinkButton';
 import React from 'react';
-import { withLinks } from './decorators';
+
+import LinkButton from './LinkButton';
+import { withLinks } from './extensions';
 import { LinkElement } from './render';
+import { LINK } from 'volto-slate/constants';
+import { linkDeserializer } from './deserialize';
 
 export default function install(config) {
-  const slate = config.settings.slate || {};
-  config.settings.slate = slate;
+  const { slate } = config.settings;
 
-  slate.availableButtons.link = (props) => <LinkButton {...props} />;
+  slate.elements[LINK] = LinkElement;
+  slate.extensions = [...(slate.extensions || []), withLinks];
 
-  slate.decorators = [...(slate.decorators || []), withLinks];
-
-  slate.elements = {
-    ...slate.elements,
-    link: LinkElement,
-  };
-
+  slate.buttons.link = (props) => <LinkButton {...props} />;
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'link'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),
     'link',
   ];
 
+  slate.htmlTagsToSlate.A = linkDeserializer;
   return config;
 }

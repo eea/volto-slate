@@ -1,4 +1,11 @@
-import './less/editor.less';
+import * as slateConfig from './config';
+import installDefaultPlugins from './plugins';
+export SlateEditor from './SlateEditor';
 
-import SlateEditor from './components/SlateEditor';
-export default SlateEditor;
+export default (config) => {
+  config.settings.slate = {
+    ...slateConfig,
+  };
+  config = installDefaultPlugins(config);
+  return config;
+};

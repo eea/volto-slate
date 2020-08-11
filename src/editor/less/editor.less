@@ -15,28 +15,107 @@
 
     top: -10000px;
     left: -10000px;
-    background-color: #fff;
-    border-radius: 0.1rem;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
-    opacity: 0;
-    transition: opacity 0.5s;
 
     max-width: 100vw;
-    overflow: auto;
+    opacity: 0;
+    transition: opacity 0.5s;
   }
 
-  .ui.button:not(.icon) > .icon:not(.button):not(.dropdown) {
-    // TODO: is it possible to not use !important here and override button.less?
-    margin: auto auto auto auto !important;
+  .toolbar-wrapper.active {
+    margin-bottom: 0.6em;
   }
 
-  .ui.button:last-child {
-    // TODO: is it possible to not use !important here and override button.less?
-    margin-right: 0 !important;
-  }
-
-  .block p {
+  .slate-editor p {
+    /* In editor the <p> are wrapped in weird markup */
     margin-bottom: 0 !important;
+  }
+
+  .slate-toolbar {
+    display: flex;
+    box-sizing: border-box;
+    padding: 3px;
+    border: none;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: normal;
+
+    .expando {
+      flex-grow: 1;
+      background-color: #fff;
+    }
+
+    .toolbar-separator {
+      display: inline-block;
+      height: 32px;
+      border-right: 1px solid #ddd;
+      margin: 0 0.5rem;
+    }
+
+    .toolbar-separator + .button-wrapper {
+      margin-left: 0px;
+    }
+
+    .button-wrapper {
+      display: inline-block;
+      margin-left: 3px;
+
+      .ui.tiny.compact.icon.toggle.button {
+        width: 32px;
+        height: 32px;
+        box-sizing: border-box;
+        padding: 4px !important;
+        border: 0;
+        background: rgba(255, 255, 255, 0.975);
+        border-radius: 1px;
+        color: @brown;
+        font-size: 18px;
+        vertical-align: bottom;
+
+        & > svg {
+          fill: #888;
+        }
+
+        &:hover,
+        &:focus {
+          background: #f3f3f3;
+          outline: 0; /* reset for :focus */
+        }
+
+        &.active {
+          // TODO: stop using !important, use smth better
+          background: #efefef !important;
+          border-radius: 3px;
+          box-shadow: inset 0 0 0 1px @blue !important;
+          color: @blue !important;
+
+          & > svg {
+            fill: #444;
+          }
+        }
+      }
+    }
+
+    .ui.buttons {
+      width: 100%;
+    }
+
+    .ui.button:not(.icon) > .icon:not(.button):not(.dropdown) {
+      // TODO: is it possible to not use !important here and override button.less?
+      margin: auto auto auto auto !important;
+    }
+
+    .ui.button:last-child {
+      // TODO: is it possible to not use !important here and override button.less?
+      margin-right: 0 !important;
+    }
+  }
+
+  .highlight-selection {
+    background-color: pink;
+    color: white;
   }
 }
 

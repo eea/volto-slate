@@ -96,7 +96,9 @@ export function createSlateTableBlock(
 ) {
   const block = {
     '@type': 'slateTable',
-    rows,
+    table: {
+      rows,
+    },
   };
   return new Promise((resolve) => {
     onAddBlock('slateTable', index + 1).then((id) => {

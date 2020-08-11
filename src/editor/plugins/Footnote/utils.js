@@ -3,18 +3,15 @@ import { FOOTNOTE } from 'volto-slate/constants';
 
 export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
-    // const { savedSelection: j_s } = editor;
-    // const selection = JSON.parse(j_s);
     const selection = editor.savedSelection;
 
-    if (!editor.selection) {
-      Transforms.select(editor, selection);
-    }
+    const selPathRef = Editor.pathRef(editor, selection.anchor.path);
 
     const res = Array.from(
       Editor.nodes(editor, {
         match: (n) => n.type === FOOTNOTE,
         mode: 'highest',
+        at: selection,
       }),
     );
 
@@ -30,12 +27,23 @@ export function insertFootnote(editor, data) {
       );
       // Transforms.collapse(editor, { edge: 'end' });
     } else {
-      Transforms.wrapNodes(editor, { type: FOOTNOTE, data }, { split: true });
+      Transforms.wrapNodes(
+        editor,
+        { type: FOOTNOTE, data },
+        { split: true, at: selection },
+      );
+    }
+
+    if (data) {
+      // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
+      Transforms.select(editor, selPathRef.current);
+      Transforms.collapse(editor); // TODO; collapse to original offset
     }
   }
 }
 export const unwrapFootnote = (editor) => {
   const selection = editor.selection || editor.savedSelection;
+  Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,

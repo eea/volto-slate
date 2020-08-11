@@ -18,9 +18,15 @@ import ToolbarButton from './ToolbarButton';
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
-  const { selected, showToolbar } = props;
+  const { selected, showToolbar, setShowToolbar } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
+
+  function renderButton(name, index) {
+    const Btn = buttons[name];
+    // using also name because some buttons can be like "Separator"
+    return <Btn key={`${name}-${index}`} />;
+  }
 
   return (
     <>
@@ -29,7 +35,7 @@ const SlateToolbar = (props) => {
           toggleButton={
             <ToolbarButton
               onMouseDown={(event) => {
-                // setShowToolbar(!showToolbar);
+                setShowToolbar(!showToolbar);
                 event.preventDefault();
               }}
               icon={toggleIcon}
@@ -37,11 +43,7 @@ const SlateToolbar = (props) => {
             />
           }
         >
-          {toolbarButtons?.map((name, i) => (
-            <React.Fragment key={`${name}-${i}`}>
-              {buttons[name]()}
-            </React.Fragment>
-          ))}
+          {toolbarButtons?.map(renderButton)}
         </Toolbar>
       )}
       <div
@@ -52,7 +54,7 @@ const SlateToolbar = (props) => {
             toggleButton={
               <ToolbarButton
                 onMouseDown={(event) => {
-                  // setShowToolbar(!showToolbar);
+                  setShowToolbar(!showToolbar);
                   event.preventDefault();
                 }}
                 icon={toggleIcon}
@@ -60,11 +62,7 @@ const SlateToolbar = (props) => {
               />
             }
           >
-            {expandedToolbarButtons?.map((name, i) => (
-              <React.Fragment key={`${name}-${i}`}>
-                {buttons[name]()}
-              </React.Fragment>
-            ))}
+            {expandedToolbarButtons?.map(renderButton)}
           </ExpandedToolbar>
         )}
       </div>

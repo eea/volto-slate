@@ -1,36 +1,33 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 
 import tagSVG from '@plone/volto/icons/tag.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import { isActiveFootnote, insertFootnote } from './utils';
-import FootnoteEditor from './FootnoteEditor';
+import { hasRangeSelection } from 'volto-slate/utils';
+import { FOOTNOTE_EDITOR } from './constants';
+
+import { useDispatch } from 'react-redux';
 
 import './less/editor.less';
 
 const FootnoteButton = () => {
   const editor = useSlate();
   const isFootnote = isActiveFootnote(editor);
-
-  const [showEditForm, setShowEditForm] = React.useState(false);
+  const dispatch = useDispatch();
 
   return (
     <>
-      {showEditForm && (
-        <SidebarPopup open={true}>
-          <FootnoteEditor showEditor={setShowEditForm} />
-        </SidebarPopup>
+      {hasRangeSelection(editor) && (
+        <ToolbarButton
+          active={isFootnote}
+          onMouseDown={() => {
+            dispatch({ type: FOOTNOTE_EDITOR, show: true });
+            if (!isFootnote) insertFootnote(editor, {});
+          }}
+          icon={tagSVG}
+        />
       )}
-
-      <ToolbarButton
-        active={isFootnote}
-        onMouseDown={() => {
-          if (!isActiveFootnote) insertFootnote(editor, {});
-          setShowEditForm(true);
-        }}
-        icon={tagSVG}
-      />
     </>
   );
 };

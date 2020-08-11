@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { highlightByType, HighlightSelection } from './decorate';
+import { HighlightByType, HighlightSelection } from './decorate';
 import {
   withBreakInList,
   withDeleteSelectionOnEnter,
@@ -86,6 +86,10 @@ export const expandedToolbarButtons = [...defaultToolbarButtons];
 // because we don't want to render the toolbar at all if there's no children
 // (due to CSS reasons).
 export const contextToolbarButtons = [];
+
+// A set of components that are always rendered, unlike the button variety.
+// They make it possible to orchestrate form-based editing of components
+export const persistentHelpers = [];
 
 // The slate editor is "decorated" with the capabilities from this list.
 // While Slate calls them plugins, we use "extension" to avoid confusion.
@@ -194,7 +198,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [HighlightSelection, highlightByType];
-
-// Components that render the mini toolbar
-// export const miniToolbarPlugins = [];
+export const runtimeDecorators = [HighlightSelection, HighlightByType];

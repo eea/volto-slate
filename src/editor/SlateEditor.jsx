@@ -33,7 +33,6 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-  // const [showPluginToolbar, setShowPluginToolbar] = useState(false);
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -159,7 +158,10 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
-        {/* <div>{savedSelection}</div> */}
+        {slate.persistentHelpers.map((Helper, i) => {
+          return <Helper key={i} />;
+        })}
+        {/* <div>{JSON.stringify(savedSelection)}</div> */}
         {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>

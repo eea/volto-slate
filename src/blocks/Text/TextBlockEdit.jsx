@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import { readAsDataURL } from 'promise-file-reader';
 
@@ -51,30 +51,19 @@ const TextBlockEdit = (props) => {
 
   const prevReq = React.useRef(null);
 
-  // let timeoutTillRerender = null;
-  // React.useEffect(() => {
-  //   return () => {
-  //     if (timeoutTillRerender) {
-  //       clearTimeout(timeoutTillRerender);
-  //     }
-  //   };
-  // });
-  //
   const formContext = useFormStateContext();
 
-  const dispatch = useDispatch(); // just in case is needed in extensions
   const withBlockProperties = React.useCallback(
     (editor) => {
       editor.getBlockProps = () => {
         return {
           ...props,
-          dispatch,
         };
       };
       editor.formContext = formContext;
       return editor;
     },
-    [props, dispatch, formContext],
+    [props, formContext],
   );
 
   const onDrop = React.useCallback(
@@ -179,15 +168,11 @@ const TextBlockEdit = (props) => {
             value={value}
             block={block}
             onChange={(value, selection) => {
-              // without using setTimeout, the user types characters on the right side of the text cursor
-              // timeoutTillRerender = setTimeout(() => {
-              //   saveSlateBlockSelection(block, selection);
-              // });
-
               onChangeBlock(block, {
                 ...data,
                 value,
                 plaintext: serializeNodesToText(value || []),
+                // TODO: also add html serialized value
               });
             }}
             onKeyDown={handleKey}

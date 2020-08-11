@@ -1,10 +1,10 @@
-# Note!
-
-For maximum compatibility you should use this for Volto: `https://github.com/eea/volto/tree/modern_kitchen_sink`
-
 # volto-slate
 
 An alternative text editor for Volto, capable of completely replacing the default richtext editor while offering enhanced functionality and behavior.
+
+## Note!
+
+For maximum compatibility you should use this for Volto: `https://github.com/eea/volto/tree/modern_kitchen_sink`
 
 ## Why
 
@@ -12,8 +12,8 @@ Some of the main reasons that drove us to create volto-slate:
 
 - Volto's draftjs implementation depends on draft-js-plugins, a third-party project that introduces its own set of bugs and maintanance issues
 - Slate has a modern, developer-friendly api that makes developing plugins something easy to do. Getting the editor in a plugin is as easy as `const editor = useSlate()`, overriding core functionality is something that's built in as pluggable, directly in Slate.
-- Volto dependends on redraft for final output, which introduces its own bugs and issues. While it is nice to have view-mode components, this is something that volto-slate implements as well
-- Because Slate's internal storage uses a tree modeled on the DOM pattern, its final rendered output is very clean
+- Volto's draft based implementation depends on Redraft for its final output, which comes with its own bugs and issues. While it is nice to have view-mode components, this is something that volto-slate implements just as well.
+- Because Slate's internal storage uses a tree modeled on the DOM pattern, its final rendered output is very clean.
 
 ## Features
 

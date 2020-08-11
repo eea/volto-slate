@@ -1,27 +1,50 @@
 import { getCurrentListItem, isCursorInList } from '../../utils/lists';
-import { P } from '../../constants';
-import { Node, Editor } from 'slate';
+import { P, LISTITEM } from '../../constants';
+import { Node, Editor, Element } from 'slate';
 import { Transforms, Range } from 'slate';
 
 const isInsideListAndInsideP = (editor) => {
+  const ancestors = Array.from(Editor.levels(editor, { at: editor.selection }));
+
+  const relevantAnc = ancestors.filter(([node, path]) => {
+    if (Element.isElement(node) && node.type === P) {
+      return true;
+    }
+    return false;
+  });
+
+  const relAncCount = relevantAnc.length;
+
   if (isCursorInList(editor)) {
-    if (
-      Array.from(Node.ancestors(editor, [])).filter((anc) => {
-        if (Element.isElement(anc) && anc.type === P) {
-          return true;
-        }
-        return false;
-      }).length >= 1
-    ) {
+    if (relAncCount >= 1) {
       return true;
     }
   }
   return false;
 };
 
+const getNodeInSelection = (editor) => {
+  return Editor.above(editor, {
+    at: editor.selection,
+  });
+};
+
 const whileSelectionOfTypeLiftNodes = (editor, type) => {
-  while (Editor.node(editor, editor.selection)[0].type === type) {
-    Transforms.liftNodes(editor, { at: editor.selection });
+  while (true) {
+    const [firstNodeInSelection] = getNodeInSelection(editor);
+    const matches = Node.matches(firstNodeInSelection, { type });
+
+    if (!matches) {
+      break;
+    }
+
+    // const [lastNodeInSelection] = getNodeInSelection(editor);
+    Transforms.liftNodes(
+      editor,
+      firstNodeInSelection /* lastNodeInSelection */,
+    );
+    Transforms.setNodes(editor, { type: LISTITEM });
+    // Transforms.liftNodes(editor, Editor.last(editor, editor.selection)[0]);
   }
 };
 
@@ -30,11 +53,15 @@ export const withBreakInList = (editor) => {
   const { insertBreak } = editor;
 
   editor.insertBreak = () => {
-    // if (isInsideListAndInsideP(editor)) {
-    //   whileSelectionOfTypeLiftNodes(editor, P);
-    // }
+    const r = insertBreak();
 
-    return insertBreak();
+    const ii = isInsideListAndInsideP(editor);
+
+    if (ii) {
+      whileSelectionOfTypeLiftNodes(editor, P);
+    }
+
+    return r;
   };
 
   return editor;

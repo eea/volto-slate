@@ -18,7 +18,7 @@ import ToolbarButton from './ToolbarButton';
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
-  const { selected, showToolbar } = props;
+  const { selected, showToolbar, setShowToolbar } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
@@ -35,7 +35,7 @@ const SlateToolbar = (props) => {
           toggleButton={
             <ToolbarButton
               onMouseDown={(event) => {
-                // setShowToolbar(!showToolbar);
+                setShowToolbar(!showToolbar);
                 event.preventDefault();
               }}
               icon={toggleIcon}
@@ -54,7 +54,7 @@ const SlateToolbar = (props) => {
             toggleButton={
               <ToolbarButton
                 onMouseDown={(event) => {
-                  // setShowToolbar(!showToolbar);
+                  setShowToolbar(!showToolbar);
                   event.preventDefault();
                 }}
                 icon={toggleIcon}

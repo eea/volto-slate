@@ -16,7 +16,7 @@ const SidebarEditor = (props) => {
   const editor = useSlate();
   const dispatch = useDispatch();
 
-  const active = !!getActiveFootnote(editor);
+  const active = getActiveFootnote(editor);
 
   React.useEffect(() => {
     if (!active) dispatch({ type: FOOTNOTE_EDITOR, show: false });

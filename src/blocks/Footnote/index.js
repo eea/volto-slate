@@ -2,6 +2,7 @@ import codeSVG from '@plone/volto/icons/code.svg';
 
 import FootnotesBlockView from './FootnotesBlockView';
 import FootnotesBlockEdit from './FootnotesBlockEdit';
+import { FOOTNOTE } from 'volto-slate/constants';
 
 export default function install(config) {
   config.blocks.blocksConfig.slateFootnotes = {
@@ -20,5 +21,7 @@ export default function install(config) {
       view: [],
     },
   };
+
+  config.settings.footnotes = [...(config.settings.footnotes || []), FOOTNOTE];
   return config;
 }

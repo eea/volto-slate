@@ -1,4 +1,4 @@
-import { Editor, Transforms, Range } from 'slate';
+import { Editor, Transforms, Range, Text } from 'slate';
 
 export function isMarkActive(editor, format) {
   // TODO: this implementation is not ok. LibreOffice Writer only shows
@@ -45,12 +45,15 @@ function addMark(editor, key, value) {
 }
 
 function isSelectionInline(editor) {
-  return Editor.isInline(editor, Editor.node(editor, editor.selection));
+  // console.log('selection', editor.savedSelection);
+  const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
+  return Text.isText(node) || Editor.isInline(editor, node);
 }
 
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
 
+  // debugger;
   if (isActive) {
     Editor.removeMark(editor, format);
   } else {

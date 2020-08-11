@@ -12,7 +12,6 @@ export const fixSelection = (editor) => {
     if (sel) {
       const s = ReactEditor.toSlateRange(editor, sel);
       editor.selection = s;
-      console.log('fixing selection', s);
     }
 
     // TODO: in unit tests (jsdom) sel is null

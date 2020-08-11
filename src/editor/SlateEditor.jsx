@@ -6,11 +6,11 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
-import { SlateToolbar, PluginToolbar } from './ui';
+import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { fixSelection } from 'volto-slate/utils';
+import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
 // import isHotkey from 'is-hotkey';
 // import { toggleMark } from './utils';
@@ -24,12 +24,10 @@ const SlateEditor = ({
   placeholder,
   onKeyDown,
   properties,
-  defaultSelection,
+  defaultSelection, // TODO: use useSelector
   extensions,
   renderExtensions = [],
   testingEditorRef,
-  onFocus,
-  onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -48,7 +46,23 @@ const SlateEditor = ({
   // blockProps) then we need to always wrap the editor with them
   editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
 
+  // Save a copy of the selection in the editor. Sometimes the editor loses its
+  // selection (because it is tied to DOM events). For example, if I'm in the
+  // editor and I open a popup dialog with text inputs, the Slate editor loses
+  // its selection, but I want to keep that selection because my operations
+  // should apply to it).
+
+  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
+  const [savedSelection, setSavedSelection] = React.useState();
+  editor.setSavedSelection = setSavedSelection;
+  editor.savedSelection = savedSelection;
+
+  React.useEffect(() => {
+    if (selected && selection && JSON.parse(selection).anchor) {
+      setSavedSelection(JSON.parse(selection));
+    }
+  }, [selection, selected, editor]);
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -65,6 +79,7 @@ const SlateEditor = ({
       // - with the Slate block unselected, click in the block.
       // - Hit backspace. If it deletes, then the test passes
       fixSelection(editor);
+      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
@@ -79,6 +94,7 @@ const SlateEditor = ({
 
   const initialValue = slate.defaultValue();
 
+  // Decorations (such as higlighting node types, selection, etc).
   const { runtimeDecorators = [] } = slate;
 
   const multiDecorate = React.useCallback(
@@ -95,33 +111,34 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  const [PluginToolbarChildren, setPluginToolbar] = React.useState(null);
-  editor.setPluginToolbar = setPluginToolbar;
-
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
       <Slate editor={editor} value={value || initialValue} onChange={onChange}>
-        {PluginToolbarChildren && (
-          <PluginToolbar selected={selected}>
-            {PluginToolbarChildren}
-          </PluginToolbar>
+        {selected ? (
+          hasRangeSelection(editor) ? (
+            <SlateToolbar
+              selected={selected}
+              showToolbar={showToolbar}
+              setShowToolbar={setShowToolbar}
+            />
+          ) : (
+            <SlateContextToolbar
+              editor={editor}
+              plugins={slate.contextToolbarButtons}
+            />
+          )
+        ) : (
+          ''
         )}
-        <SlateToolbar
-          selected={selected}
-          showToolbar={showToolbar}
-          setShowToolbar={setShowToolbar}
-        />
         <Editable
           readOnly={!selected}
           placeholder={placeholder}
-          renderElement={Element}
-          renderLeaf={Leaf}
+          renderElement={(props) => <Element {...props} />}
+          renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
-          onFocus={onFocus}
-          onBlur={onBlur}
           onKeyDown={(event) => {
             // let wasHotkey = false;
             //
@@ -141,6 +158,11 @@ const SlateEditor = ({
             onKeyDown && onKeyDown({ editor, event });
           }}
         />
+        {slate.persistentHelpers.map((Helper, i) => {
+          return <Helper key={i} />;
+        })}
+        {/* <div>{JSON.stringify(savedSelection)}</div> */}
+        {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>
   );

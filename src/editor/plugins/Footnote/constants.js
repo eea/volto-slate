@@ -1,0 +1,1 @@
+export const FOOTNOTE_EDITOR = 'FOOTNOTE_EDITOR';

@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { highlightByType } from './decorate';
+import { HighlightByType, HighlightSelection } from './decorate';
 import {
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -74,9 +74,21 @@ export const defaultToolbarButtons = [
   'bulleted-list',
 ];
 
-export let toolbarButtons = [...defaultToolbarButtons];
+export const toolbarButtons = [...defaultToolbarButtons];
 
-export let expandedToolbarButtons = [...defaultToolbarButtons];
+export const expandedToolbarButtons = [...defaultToolbarButtons];
+
+// These components are rendered in the toolbar on demand, as configured by plugins.
+// They are rendered as "context" buttons, when there is no selection
+// Each one is a function (editor) => (<Component/> or null)
+// It is important to be able to tell if a plugin would return something
+// because we don't want to render the toolbar at all if there's no children
+// (due to CSS reasons).
+export const contextToolbarButtons = [];
+
+// A set of components that are always rendered, unlike the button variety.
+// They make it possible to orchestrate form-based editing of components
+export const persistentHelpers = [];
 
 // The slate editor is "decorated" with the capabilities from this list.
 // While Slate calls them plugins, we use "extension" to avoid confusion.
@@ -184,4 +196,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [highlightByType];
+export const runtimeDecorators = [HighlightSelection, HighlightByType];

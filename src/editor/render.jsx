@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
+import cx from 'classnames';
 
 import { settings } from '~/config';
 
@@ -21,10 +22,10 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
     return leaf[name] ? leafs[name]({ children: acc }) : acc;
   }, children);
 
-  const klass =
-    mode !== 'view' && leaf.highlight
-      ? `highlight-${leaf.highlightType}`
-      : null;
+  const klass = cx({
+    [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
+    'highlight-selection': mode !== 'view' && leaf.isSelection,
+  });
 
   return mode === 'view' ? (
     typeof children === 'string' ? (

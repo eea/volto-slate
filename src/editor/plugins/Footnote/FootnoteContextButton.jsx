@@ -19,17 +19,11 @@ const messages = defineMessages({
 });
 
 export default (editor) => {
-  // There's no variable number of hooks here, because we don't return a valid
-  // react component by returning null. Unfortunately there's no other way to
-  // avoid rendering all components and toggle the context toolbar
-  if (!isActiveFootnote(editor)) {
-    return null;
-  }
   const intl = useIntl();
   const dispatch = useDispatch();
   const showEditor = useSelector((state) => state['footnote_editor']?.show);
 
-  return (
+  return isActiveFootnote(editor) ? (
     <React.Fragment key="footnote">
       <ToolbarButton
         icon={editingSVG}
@@ -48,5 +42,7 @@ export default (editor) => {
         }}
       />
     </React.Fragment>
+  ) : (
+    ''
   );
 };

@@ -50,6 +50,54 @@ const TableButton = () => {
     [createEmptyCell],
   );
 
+  /**
+   * @param {number} row Number of rows for the new empty table.
+   * @param {number} column Number of columns for the new empty table.
+   */
+  const insertEmptyTable = React.useCallback(
+    ({ row, column }) => {
+      // const {
+      //   onChangeBlock,
+      //   onAddBlock,
+      //   index,
+      //   onFocusNextBlock,
+      //   block,
+      //   blockNode,
+      // } = editor.getBlockProps();
+
+      const rows = [createEmptyRow(column, true)];
+      for (let i = 0; i < row - 1; ++i) {
+        rows.push(createEmptyRow(column));
+      }
+
+      const table = {
+        type: 'table',
+        children: [
+          {
+            type: 'tbody',
+            children: rows,
+          },
+        ],
+      };
+
+      Transforms.insertNodes(editor, [table], {
+        at: Editor.end(editor, []),
+      });
+
+      // TODO: I think we should focus on the newly created Slate Table Block, like in the line below from the place we call deconstruct to Volto blocks:
+      // onFocusNextBlock(block, blockNode.current);
+
+      // createSlateTableBlock(table, index, {
+      //   onChangeBlock,
+      //   onAddBlock,
+      // }).then(() => {
+      // blockNode is a ref
+      // onFocusNextBlock(block, blockNode.current);
+      // });
+    },
+    [createEmptyRow, editor],
+  );
+
   return (
     <>
       <Dropdown
@@ -101,44 +149,7 @@ const TableButton = () => {
             onCellMouseLeave={({ row, column }) => {}}
             // `row` and `column` below are 1-based indices
             onCellClick={({ row, column }) => {
-              // const {
-              //   onChangeBlock,
-              //   onAddBlock,
-              //   index,
-              //   onFocusNextBlock,
-              //   block,
-              //   blockNode,
-              // } = editor.getBlockProps();
-
-              const rows = [createEmptyRow(column, true)];
-              for (let i = 0; i < row - 1; ++i) {
-                rows.push(createEmptyRow(column));
-              }
-
-              const table = {
-                type: 'table',
-                children: [
-                  {
-                    type: 'tbody',
-                    children: rows,
-                  },
-                ],
-              };
-
-              Transforms.insertNodes(editor, [table], {
-                at: Editor.end(editor, []),
-              });
-
-              // TODO: I think we should focus on the newly created Slate Table Block, like in the line below from the place we call deconstruct to Volto blocks:
-              // onFocusNextBlock(block, blockNode.current);
-
-              // createSlateTableBlock(table, index, {
-              //   onChangeBlock,
-              //   onAddBlock,
-              // }).then(() => {
-              // blockNode is a ref
-              // onFocusNextBlock(block, blockNode.current);
-              // });
+              insertEmptyTable({ row, column });
             }}
           />
         </Dropdown.Menu>

@@ -44,6 +44,7 @@ export default (props) => {
       if (formData.footnote) {
         insertFootnote(editor, formData);
       } else {
+        console.log('unwrapping');
         unwrapFootnote(editor);
       }
     },

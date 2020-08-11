@@ -26,33 +26,62 @@ export function isCursorAtListBlockStart(editor) {
     const { anchor } = editor.selection;
     return anchor.offset > 0
       ? false
-      : anchor.path.length === 3 &&
+      : anchor.path.length >= 3 &&
           anchor.path.reduce((acc, x) => acc + x, 0) === 0;
   }
 }
 
+/**
+ * @param {Path} path
+ */
 const getPreviousSiblingPath = function (path) {
-  // Doesn't raise an error if no previous sibling exists
-  const last = path[path.length - 1];
-
-  if (last <= 0) {
+  try {
+    return Path.previous(path);
+  } catch (ex) {
     return null;
   }
-
-  return path.slice(0, -1).concat(last - 1);
 };
 
-export function mergeWithPreviousList(editor, listPath) {
+/**
+ * @param {Path} path
+ */
+const getNextSiblingPath = function (path) {
+  try {
+    return Path.next(path);
+  } catch (ex) {
+    return null;
+  }
+};
+
+const isListNode = (editor, node) => {
   const { slate } = settings;
+  return slate.listTypes.includes(node.type);
+};
+
+const matchAnyOf = (...nodes) => (node) => {
+  for (let i = 0; i < nodes.length; ++i) {
+    if (nodes[i] === node) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * @param {Editor} editor
+ * @param {Path} listPath The path to the list node which has a list before with which it should be merged by this function.
+ */
+export function mergeWithPreviousList(editor, listPath) {
   const prevSiblingPath = getPreviousSiblingPath(listPath);
   const [currentList] = Editor.node(editor, listPath);
+
   if (prevSiblingPath) {
     const [prevSibling] = Editor.node(editor, prevSiblingPath);
 
-    if (slate.listTypes.includes(prevSibling.type)) {
+    if (isListNode(prevSibling)) {
       Transforms.mergeNodes(editor, {
         // match: (node) => slate.listTypes.includes(node.type),
-        match: (node) => node === prevSibling || node === currentList,
+        match: matchAnyOf(prevSibling, currentList),
         mode: 'highest',
         at: listPath,
       });
@@ -60,20 +89,20 @@ export function mergeWithPreviousList(editor, listPath) {
   }
 }
 
+/**
+ * @param {Editor} editor
+ * @param {Path} listPath The path to the list node which has a list after with which it should be merged by this function.
+ */
 export function mergeWithNextList(editor, listPath) {
-  const { slate } = settings;
+  const nextSiblingPath = getNextSiblingPath(listPath);
   const [currentList] = Editor.node(editor, listPath);
-  const [parent] = Editor.parent(editor, listPath);
 
-  if (parent.children.length - 1 > listPath[listPath.length - 1]) {
-    const nextSiblingPath = Path.next(listPath);
+  if (nextSiblingPath) {
     const [nextSibling] = Editor.node(editor, nextSiblingPath);
 
-    if (slate.listTypes.includes(nextSibling.type)) {
+    if (isListNode(nextSibling)) {
       Transforms.mergeNodes(editor, {
-        match: (node) => {
-          return node === currentList || node === nextSibling;
-        },
+        match: matchAnyOf(currentList, nextSibling),
         at: nextSiblingPath,
         mode: 'highest',
       });
@@ -81,11 +110,19 @@ export function mergeWithNextList(editor, listPath) {
   }
 }
 
-export function getCurrentListItem(editor) {
+const matchByType = (type) => (n) => {
+  return n.type === type;
+};
+
+const matchListItem = () => (n) => {
   const { slate } = settings;
+  return matchByType(slate.listItemType)(n);
+};
+
+export function getCurrentListItem(editor) {
   const [match] = Editor.nodes(editor, {
-    at: editor.selection.anchor.path,
-    match: (n) => n.type === slate.listItemType,
+    at: Range.start(editor.selection).path,
+    match: matchListItem(),
     mode: 'lowest',
   });
   return match;

@@ -41,11 +41,9 @@ export function getSelectionNodesArrayByType(editor, types, options = {}) {
 }
 
 /**
- * getMaxRange.
+ * @summary Returns the smallest range that contains the block at path [0] which in most cases should be the only block in case of Volto Slate Text block (paragraph, heading etc.).
  *
- * @param {} editor
- *
- * TODO: is [0] ok as a path?
+ * @param {Editor} editor
  */
 export function getMaxRange(editor) {
   const maxRange = {

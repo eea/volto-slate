@@ -36,7 +36,6 @@ export function insertFootnote(editor, data) {
 
     if (data) {
       // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
-      console.log('data', data);
       Transforms.select(editor, selPathRef.current);
       Transforms.collapse(editor); // TODO; collapse to original offset
     }

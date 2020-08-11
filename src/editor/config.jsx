@@ -196,4 +196,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [HighlightByType]; // HighlightSelection, HighlightByType];
+export const runtimeDecorators = [HighlightSelection, HighlightByType];

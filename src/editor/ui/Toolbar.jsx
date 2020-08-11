@@ -24,6 +24,8 @@ const Toolbar = ({ toggleButton, children }) => {
     }
 
     const domSelection = window.getSelection();
+    // See
+    // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
     if (domSelection.rangeCount < 1) {
       el.removeAttribute('style');
       return;

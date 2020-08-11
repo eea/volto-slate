@@ -1,3 +1,4 @@
+import React from 'react';
 import { Editor, Transforms, Range, Text } from 'slate';
 
 export function isMarkActive(editor, format) {
@@ -62,5 +63,31 @@ export function toggleMark(editor, format) {
     if (isSelectionInline(editor)) {
       addMark(editor, format, true);
     }
+  }
+}
+
+export function wrapInlineMarkupText(children, wrapper) {
+  if (typeof children === 'string') return wrapper(children);
+
+  // TODO: find the deepest child that needs to be replaced.
+  // TODO: note: this might trigger warnings about keys
+  if (Array.isArray(children)) {
+    return children.map((child, index) => {
+      if (typeof child === 'string') {
+        return wrapper(children);
+      } else {
+        return React.cloneElement(
+          child,
+          child.props,
+          wrapInlineMarkupText(child.props.children, wrapper),
+        );
+      }
+    });
+  } else {
+    return React.cloneElement(
+      children,
+      children.props,
+      wrapInlineMarkupText(children.props.children, wrapper),
+    );
   }
 }

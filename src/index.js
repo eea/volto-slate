@@ -14,8 +14,6 @@ export default (config) => {
     installTextBlock,
     installTableBlock,
     installFootnoteBlock,
-    installTitleBlock,
-    installDescriptionBlock,
     installVoltoProposals,
   ].reduce((acc, apply) => apply(acc), config);
 
@@ -38,6 +36,10 @@ export function asDefault(config) {
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
 
-  // TODO: handle title and description blocks
+  config = [installTitleBlock, installDescriptionBlock].reduce(
+    (acc, apply) => apply(acc),
+    config,
+  );
+
   return config;
 }

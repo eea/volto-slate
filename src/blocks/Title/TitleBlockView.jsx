@@ -11,8 +11,8 @@ import PropTypes from 'prop-types';
  * @class View
  * @extends Component
  */
-const TitleBlockView = ({ properties, className }) => (
-  <h1 className={className}>{properties.title}</h1>
+const TitleBlockView = ({ properties, className, formFieldName }) => (
+  <h1 className={className}>{properties[formFieldName] || ''}</h1>
 );
 
 /**
@@ -23,6 +23,7 @@ const TitleBlockView = ({ properties, className }) => (
 TitleBlockView.propTypes = {
   properties: PropTypes.objectOf(PropTypes.any).isRequired,
   className: PropTypes.string.isRequired,
+  formFieldName: PropTypes.string.isRequired,
 };
 
 export default TitleBlockView;

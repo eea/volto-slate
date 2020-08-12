@@ -4,15 +4,21 @@
  */
 
 import React, { useContext, useCallback, useMemo } from 'react';
-import { Editor, createEditor } from 'slate';
+import { Editor, createEditor, Node } from 'slate';
 import { ReactEditor, Editable, Slate, withReact } from 'slate-react';
 import { fixSelection } from 'volto-slate/utils';
 import PropTypes from 'prop-types';
 import { defineMessages, useIntl } from 'react-intl';
 import { settings } from '~/config';
 import { FormStateContext } from '@plone/volto/components/manage/Form/FormContext';
+import { P } from '../../constants';
+import cx from 'classnames';
 
 const messages = defineMessages({
+  description: {
+    id: 'Add a description…',
+    defaultMessage: 'Add a description…',
+  },
   title: {
     id: 'Type the title…',
     defaultMessage: 'Type the title…',
@@ -25,6 +31,7 @@ const messages = defineMessages({
  * @extends Component
  */
 export const TitleBlockEdit = ({
+  onDeleteBlock,
   selected,
   index,
   onChangeField,
@@ -35,13 +42,31 @@ export const TitleBlockEdit = ({
   block,
   blockNode,
   className,
+  formFieldName,
 }) => {
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
   const handleChange = useCallback(() => {
-    onChangeField('title', Editor.string(editor, []));
-  }, [editor, onChangeField]);
+    onChangeField(formFieldName, Editor.string(editor, []));
+  }, [editor, formFieldName, onChangeField]);
+  const TitleOrDescription = useMemo(() => {
+    let TitleOrDescription;
+    if (formFieldName === 'title') {
+      TitleOrDescription = React.forwardRef(({ children, ...rest }, ref) => (
+        <h1 {...rest} ref={ref}>
+          {children}
+        </h1>
+      ));
+    } else {
+      TitleOrDescription = React.forwardRef(({ children, ...rest }, ref) => (
+        <div {...rest} ref={ref}>
+          {children}
+        </div>
+      ));
+    }
+    return TitleOrDescription;
+  }, [formFieldName]);
 
   // TODO: move the code below, copied from SlateEditor component, into a custom hook that is called from both places
   React.useLayoutEffect(() => {
@@ -58,10 +83,17 @@ export const TitleBlockEdit = ({
       onChange={handleChange}
       value={[
         {
-          type: 'p',
-          children: [{ text: formContext.contextData?.formData?.title || '' }],
+          type: P,
+          children: [
+            { text: formContext.contextData?.formData?.[formFieldName] || '' },
+          ],
         },
       ]}
+      className={cx({
+        block: formFieldName === 'description',
+        description: formFieldName === 'description',
+        selected: formFieldName === 'description' && selected,
+      })}
     >
       <Editable
         onKeyDown={(ev) => {
@@ -77,13 +109,22 @@ export const TitleBlockEdit = ({
             ev.preventDefault();
             onFocusNextBlock(block, blockNode.current);
           }
+
+          if (
+            ev.key === 'Backspace' &&
+            formFieldName === 'description' &&
+            Node.string(editor).length === 0
+          ) {
+            ev.preventDefault();
+            onDeleteBlock(block, true);
+          }
         }}
-        placeholder={intl.formatMessage(messages.title)}
+        placeholder={intl.formatMessage(messages[formFieldName]) || ''}
         renderElement={({ attributes, children, element }) => {
           return (
-            <h1 {...attributes} className={className}>
+            <TitleOrDescription {...attributes} className={className}>
               {children}
-            </h1>
+            </TitleOrDescription>
           );
         }}
         onFocus={() => {
@@ -100,12 +141,13 @@ TitleBlockEdit.propTypes = {
   index: PropTypes.number.isRequired,
   onChangeField: PropTypes.func.isRequired,
   onSelectBlock: PropTypes.func.isRequired,
-  onDeleteBlock: PropTypes.func.isRequired,
+  onDeleteBlock: PropTypes.func,
   onAddBlock: PropTypes.func.isRequired,
   onFocusPreviousBlock: PropTypes.func.isRequired,
   onFocusNextBlock: PropTypes.func.isRequired,
   block: PropTypes.string.isRequired,
   className: PropTypes.string.isRequired,
+  formFieldName: PropTypes.string.isRequired,
 };
 
 export default TitleBlockEdit;

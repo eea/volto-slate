@@ -109,15 +109,6 @@ export const TitleBlockEdit = ({
             ev.preventDefault();
             onFocusNextBlock(block, blockNode.current);
           }
-
-          if (
-            ev.key === 'Backspace' &&
-            formFieldName === 'description' &&
-            Node.string(editor).length === 0
-          ) {
-            ev.preventDefault();
-            onDeleteBlock(block, true);
-          }
         }}
         placeholder={intl.formatMessage(messages[formFieldName]) || ''}
         renderElement={({ attributes, children, element }) => {

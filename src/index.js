@@ -4,6 +4,7 @@ import installSlate from './editor';
 import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
 import installFootnoteBlock from './blocks/Footnote';
+import installTitleBlock from './blocks/Title';
 import installVoltoProposals from './futurevolto';
 
 export default (config) => {
@@ -12,6 +13,7 @@ export default (config) => {
     installTextBlock,
     installTableBlock,
     installFootnoteBlock,
+    installTitleBlock,
     installVoltoProposals,
   ].reduce((acc, apply) => apply(acc), config);
 

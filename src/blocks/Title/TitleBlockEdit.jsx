@@ -44,36 +44,13 @@ export const TitleBlockEdit = ({
   }, [editor, onChangeField]);
 
   // TODO: move the code below, copied from SlateEditor component, into a custom hook that is called from both places
-  /*
-   * We 'restore' the selection because we manipulate it in several cases:
-   * - when blocks are artificially joined, we set the selection at junction
-   * - when moving up, we set it at end of previous blok
-   * - when moving down, we set it at beginning of next block
-   */
   React.useLayoutEffect(() => {
     if (selected) {
       ReactEditor.focus(editor);
-
-      // This makes the Backspace key work properly in block.
-      // Don't remove it, unless this test passes:
-      // - with the Slate block unselected, click in the block.
-      // - Hit backspace. If it deletes, then the test passes
       fixSelection(editor);
-
-      // if (defaultSelection) {
-      //   if (initial_selection.current !== defaultSelection) {
-      //     initial_selection.current = defaultSelection;
-      //     setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-      //   }
-      //   return () => ReactEditor.blur(editor);
-      // }
     }
     return () => ReactEditor.blur(editor);
   }, [editor, selected]);
-
-  if (__SERVER__) {
-    return <div />;
-  }
 
   return (
     <Slate

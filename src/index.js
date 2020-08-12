@@ -5,6 +5,7 @@ import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
 import installFootnoteBlock from './blocks/Footnote';
 import installTitleBlock from './blocks/Title';
+import installDescriptionBlock from './blocks/Description';
 import installVoltoProposals from './futurevolto';
 
 export default (config) => {
@@ -14,6 +15,7 @@ export default (config) => {
     installTableBlock,
     installFootnoteBlock,
     installTitleBlock,
+    installDescriptionBlock,
     installVoltoProposals,
   ].reduce((acc, apply) => apply(acc), config);
 

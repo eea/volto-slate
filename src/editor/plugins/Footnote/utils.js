@@ -41,6 +41,7 @@ export function insertFootnote(editor, data) {
     }
   }
 }
+
 export const unwrapFootnote = (editor) => {
   const selection = editor.selection || editor.savedSelection;
   Transforms.select(editor, selection);

@@ -39,6 +39,7 @@ const Object = ({ schema, value, onChange, errors = {}, id, ...props }) => {
           render: () => <Tab.Pane>{renderFieldSet(fieldset)}</Tab.Pane>,
         };
       })}
+      menu={{ secondary: true }}
     />
   );
 };

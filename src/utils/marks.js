@@ -31,7 +31,13 @@ function addMark(editor, key, value) {
       Transforms.setNodes(
         editor,
         { [key]: value },
-        { match: Text.isText, split: true },
+        {
+          match: (node) => {
+            // console.log('node', node);
+            return Text.isText(node) || editor.isVoid(node);
+          },
+          split: true,
+        },
       );
     } else {
       const marks = {
@@ -46,15 +52,13 @@ function addMark(editor, key, value) {
 }
 
 function isSelectionInline(editor) {
-  // console.log('selection', editor.savedSelection);
   const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
-  return Text.isText(node) || Editor.isInline(editor, node);
+  return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
 }
 
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
 
-  // debugger;
   if (isActive) {
     Editor.removeMark(editor, format);
   } else {
@@ -95,3 +99,16 @@ export function wrapInlineMarkupText(children, wrapper) {
     );
   }
 }
+
+// for (const [node, path] of Editor.nodes(editor, {
+//   match: (node) => editor.isVoid(node),
+// })) {
+//   const children = [];
+//   for (const child of node.children || []) {
+//     children.push({
+//       ...child,
+//       [key]: value,
+//     });
+//   }
+//   // Transforms.
+// }

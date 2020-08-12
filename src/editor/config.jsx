@@ -78,12 +78,11 @@ export const toolbarButtons = [...defaultToolbarButtons];
 
 export const expandedToolbarButtons = [...defaultToolbarButtons];
 
-// These components are rendered in the toolbar on demand, as configured by plugins.
-// They are rendered as "context" buttons, when there is no selection
-// Each one is a function (editor) => (<Component/> or null)
-// It is important to be able to tell if a plugin would return something
-// because we don't want to render the toolbar at all if there's no children
-// (due to CSS reasons).
+// These components are rendered in the toolbar on demand, as configured by
+// plugins.  They are rendered as "context" buttons, when there is no selection
+// Each one is a function (editor) => (<Component/> or null). It is important
+// to be able to tell if a plugin would return something because we don't want
+// to render the toolbar at all if there's no children (due to CSS reasons).
 export const contextToolbarButtons = [];
 
 // A set of components that are always rendered, unlike the button variety.
@@ -190,7 +189,7 @@ export const htmlTagsToSlate = {
   U: inlineTagDeserializer({ underline: true }),
 };
 
-// Adds "highlight" decoratation in the editor. Used by `highlightByType`
+// Adds "highlight" decoration in the editor. Used by `highlightByType`
 // See the Footnote plugin for an example.
 export const nodeTypesToHighlight = [];
 

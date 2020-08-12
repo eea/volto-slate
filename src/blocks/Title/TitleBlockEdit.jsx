@@ -18,7 +18,9 @@ import {
   Slate,
   withReact,
   useEditor,
+  useFocused,
 } from 'slate-react';
+import cx from 'classnames';
 
 import PropTypes from 'prop-types';
 import { defineMessages, useIntl } from 'react-intl';
@@ -50,6 +52,7 @@ export const TitleBlockEdit = ({
   blockNode,
 }) => {
   const editor = useMemo(() => withReact(createEditor()), []);
+  // const focused = useFocused();
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
   useEffect(() => {
@@ -70,6 +73,8 @@ export const TitleBlockEdit = ({
     return <div />;
   }
 
+  console.log('SELECTED ?', selected);
+
   return (
     <Slate
       editor={editor}
@@ -82,16 +87,17 @@ export const TitleBlockEdit = ({
       ]}
     >
       <Editable
+        // className={cx({ selected: true })}
         onKeyDown={(ev) => {
           if (ev.key === 'Return' || ev.key === 'Enter') {
             ev.preventDefault();
             onAddBlock(settings.defaultBlockType, index + 1).then((id) => {
-              onSelectBlock(id);
+              // the selection is changed automatically to the new block by onAddBlock
             });
-          } else if (ev.key === 'Up') {
+          } else if (ev.key === 'ArrowUp') {
             ev.preventDefault();
             onFocusPreviousBlock(block, blockNode.current);
-          } else if (ev.key === 'Down') {
+          } else if (ev.key === 'ArrowDown') {
             ev.preventDefault();
             onFocusNextBlock(block, blockNode.current);
           }

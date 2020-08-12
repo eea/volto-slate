@@ -1,5 +1,5 @@
 /**
- * View title block.
+ * View title/description block.
  * @module volto-slate/blocks/Title/TitleBlockView
  */
 
@@ -11,8 +11,8 @@ import PropTypes from 'prop-types';
  * @class View
  * @extends Component
  */
-const TitleBlockView = ({ properties }) => (
-  <h1 className="documentFirstHeading">{properties.title}</h1>
+const TitleBlockView = ({ properties, className }) => (
+  <h1 className={className}>{properties.title}</h1>
 );
 
 /**
@@ -22,6 +22,7 @@ const TitleBlockView = ({ properties }) => (
  */
 TitleBlockView.propTypes = {
   properties: PropTypes.objectOf(PropTypes.any).isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 export default TitleBlockView;

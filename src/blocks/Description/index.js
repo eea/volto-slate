@@ -1,15 +1,15 @@
 import React from 'react';
-import titleSVG from '@plone/volto/icons/text.svg';
-import TitleBlockView from './TitleBlockView';
-import TitleBlockEdit from './TitleBlockEdit';
+import descriptionSVG from '@plone/volto/icons/description.svg';
+import TitleBlockView from '../Title/TitleBlockView';
+import TitleBlockEdit from '../Title/TitleBlockEdit';
 
 export default (config) => {
-  const className = 'documentFirstHeading';
+  const className = 'documentDescription';
 
-  config.blocks.blocksConfig.title = {
-    id: 'title',
-    title: 'Title',
-    icon: titleSVG,
+  config.blocks.blocksConfig.description = {
+    id: 'description',
+    title: 'Description',
+    icon: descriptionSVG,
     group: 'text',
     view: (props) => <TitleBlockView {...props} className={className} />,
     edit: (props) => <TitleBlockEdit {...props} className={className} />,

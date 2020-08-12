@@ -1,5 +1,5 @@
 /**
- * Edit title block.
+ * Edit title/description block.
  * @module volto-slate/blocks/Title/TitleBlockEdit
  */
 
@@ -34,6 +34,7 @@ export const TitleBlockEdit = ({
   onFocusNextBlock,
   block,
   blockNode,
+  className,
 }) => {
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
@@ -103,7 +104,7 @@ export const TitleBlockEdit = ({
         placeholder={intl.formatMessage(messages.title)}
         renderElement={({ attributes, children, element }) => {
           return (
-            <h1 {...attributes} className="documentFirstHeading">
+            <h1 {...attributes} className={className}>
               {children}
             </h1>
           );
@@ -127,6 +128,7 @@ TitleBlockEdit.propTypes = {
   onFocusPreviousBlock: PropTypes.func.isRequired,
   onFocusNextBlock: PropTypes.func.isRequired,
   block: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
 };
 
 export default TitleBlockEdit;

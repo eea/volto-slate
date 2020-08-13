@@ -4,7 +4,7 @@
  */
 
 import React, { useContext, useCallback, useMemo } from 'react';
-import { Editor, createEditor, Node } from 'slate';
+import { Editor, createEditor, Node, Range } from 'slate';
 import { ReactEditor, Editable, Slate, withReact } from 'slate-react';
 import { fixSelection } from 'volto-slate/utils';
 import PropTypes from 'prop-types';
@@ -47,9 +47,32 @@ export const TitleBlockEdit = ({
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
+
+  const clone = useCallback((o) => {
+    return JSON.parse(JSON.stringify(o));
+  }, []);
+
+  const [prevSelection, setPrevSelection] = React.useState(
+    clone(editor.selection),
+  );
+
   const handleChange = useCallback(() => {
-    onChangeField(formFieldName, Editor.string(editor, []));
-  }, [editor, formFieldName, onChangeField]);
+    const o = clone(editor.selection);
+    const prevO = clone(prevSelection);
+
+    setPrevSelection(o);
+
+    if (
+      // editor.selection != null &&
+      o &&
+      Range.isExpanded(o) &&
+      JSON.stringify(o) !== JSON.stringify(prevO)
+    ) {
+      onChangeField(formFieldName, Editor.string(editor, []));
+    } else {
+      console.log('avoided');
+    }
+  }, [clone, editor, formFieldName, onChangeField, prevSelection]);
   const TitleOrDescription = useMemo(() => {
     let TitleOrDescription;
     if (formFieldName === 'title') {

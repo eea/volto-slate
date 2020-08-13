@@ -20,10 +20,6 @@ import { FormStateContext } from '@plone/volto/components/manage/Form/FormContex
 import { P } from '../../constants';
 import cx from 'classnames';
 
-const clone = (o) => {
-  return JSON.parse(JSON.stringify(o));
-};
-
 const messages = defineMessages({
   description: {
     id: 'Add a description…',
@@ -34,8 +30,6 @@ const messages = defineMessages({
     defaultMessage: 'Type the title…',
   },
 });
-
-let theTitleBlockEdits = {};
 
 /**
  * Edit title block component.
@@ -55,38 +49,20 @@ export const TitleBlockEdit = ({
   blockNode,
   className,
   formFieldName,
+  ...props
 }) => {
+  console.log('props', props);
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
   const focused = useFocused();
-  // React.useEffect(() => {
-  //   theTitleBlockEdits[block] = editor.selection;
-  // }, [block, editor]);
+  const value = formContext.contextData?.formData?.[formFieldName] || '';
   const handleChange = useCallback(() => {
-    const o = clone(editor.selection);
-    const prevO = clone(theTitleBlockEdits[block] || '');
-
-    // the previous selection and the current selection are
-    // the same so the selection has not been changed, so the content
-    // is the one that changed, so we must call onChangeField
-    if (
-      // editor.selection != null &&
-      // o &&
-      // Range.isExpanded(o) &&
-      JSON.stringify(o) === JSON.stringify(prevO)
-    ) {
-      // console.log({
-      //   prev: theTitleBlockEdits[block],
-      //   crt: editor.selection,
-      //   col: editor.selection && Range.isCollapsed(editor.selection),
-      // });
-      onChangeField(formFieldName, Editor.string(editor, []));
-    } else {
-      // here the selection is the one that changed
-      theTitleBlockEdits[block] = o;
+    const currentValue = Editor.string(editor, []);
+    if (currentValue !== value) {
+      onChangeField(formFieldName, currentValue);
     }
-  }, [block, editor, formFieldName, onChangeField]);
+  }, [editor, formFieldName, onChangeField, value]);
 
   const TitleOrDescription = useMemo(() => {
     let TitleOrDescription;
@@ -107,13 +83,13 @@ export const TitleBlockEdit = ({
   }, [formFieldName]);
 
   // TODO: move the code below, copied from SlateEditor component, into a custom hook that is called from both places
-  React.useLayoutEffect(() => {
-    if (selected || focused) {
-      ReactEditor.focus(editor);
-      // fixSelection(editor);
-    }
-    // return () => ReactEditor.blur(editor);
-  }, [editor, focused, selected]);
+  // React.useLayoutEffect(() => {
+  //   if (selected || focused) {
+  //     // ReactEditor.focus(editor);
+  //     // fixSelection(editor);
+  //   }
+  //   // return () => ReactEditor.blur(editor);
+  // }, [editor, focused, selected]);
 
   return (
     <Slate
@@ -133,36 +109,35 @@ export const TitleBlockEdit = ({
         selected: formFieldName === 'description' && selected,
       })}
     >
-      <Editable
-        onKeyDown={(ev) => {
-          if (ev.key === 'Return' || ev.key === 'Enter') {
-            ev.preventDefault();
-            onAddBlock(settings.defaultBlockType, index + 1).then((id) => {
-              // the selection is changed automatically to the new block by onAddBlock
-            });
-          } else if (ev.key === 'ArrowUp') {
-            ev.preventDefault();
-            onFocusPreviousBlock(block, blockNode.current);
-          } else if (ev.key === 'ArrowDown') {
-            ev.preventDefault();
-            onFocusNextBlock(block, blockNode.current);
-          }
-        }}
-        placeholder={intl.formatMessage(messages[formFieldName]) || ''}
-        renderElement={({ attributes, children, element }) => {
-          return (
-            <TitleOrDescription {...attributes} className={className}>
-              {children}
-            </TitleOrDescription>
-          );
-        }}
-        onFocus={() => {
-          onSelectBlock(block);
-        }}
-      ></Editable>
+      <TitleOrDescription className={className}>
+        <Editable
+          onKeyDown={(ev) => {
+            if (ev.key === 'Return' || ev.key === 'Enter') {
+              ev.preventDefault();
+              onAddBlock(settings.defaultBlockType, index + 1).then((id) => {
+                // the selection is changed automatically to the new block by onAddBlock
+              });
+            } else if (ev.key === 'ArrowUp') {
+              ev.preventDefault();
+              onFocusPreviousBlock(block, blockNode.current);
+            } else if (ev.key === 'ArrowDown') {
+              ev.preventDefault();
+              onFocusNextBlock(block, blockNode.current);
+            }
+          }}
+          placeholder={intl.formatMessage(messages[formFieldName]) || ''}
+          onFocus={() => {
+            // onSelectBlock(block);
+          }}
+        ></Editable>
+      </TitleOrDescription>
     </Slate>
   );
 };
+
+//        renderElement={({ attributes, children, element }) => {
+//          return children;
+//        }}
 
 TitleBlockEdit.propTypes = {
   // properties: PropTypes.objectOf(PropTypes.any).isRequired,

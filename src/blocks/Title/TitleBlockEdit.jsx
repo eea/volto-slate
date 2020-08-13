@@ -49,13 +49,10 @@ export const TitleBlockEdit = ({
   blockNode,
   className,
   formFieldName,
-  ...props
 }) => {
-  console.log('props', props);
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
-  const focused = useFocused();
   const value = formContext.contextData?.formData?.[formFieldName] || '';
   const handleChange = useCallback(() => {
     const currentValue = Editor.string(editor, []);
@@ -83,13 +80,13 @@ export const TitleBlockEdit = ({
   }, [formFieldName]);
 
   // TODO: move the code below, copied from SlateEditor component, into a custom hook that is called from both places
-  // React.useLayoutEffect(() => {
-  //   if (selected || focused) {
-  //     // ReactEditor.focus(editor);
-  //     // fixSelection(editor);
-  //   }
-  //   // return () => ReactEditor.blur(editor);
-  // }, [editor, focused, selected]);
+  React.useLayoutEffect(() => {
+    if (selected) {
+      ReactEditor.focus(editor);
+      fixSelection(editor);
+    }
+    return () => ReactEditor.blur(editor);
+  }, [editor, selected]);
 
   return (
     <Slate
@@ -109,35 +106,36 @@ export const TitleBlockEdit = ({
         selected: formFieldName === 'description' && selected,
       })}
     >
-      <TitleOrDescription className={className}>
-        <Editable
-          onKeyDown={(ev) => {
-            if (ev.key === 'Return' || ev.key === 'Enter') {
-              ev.preventDefault();
-              onAddBlock(settings.defaultBlockType, index + 1).then((id) => {
-                // the selection is changed automatically to the new block by onAddBlock
-              });
-            } else if (ev.key === 'ArrowUp') {
-              ev.preventDefault();
-              onFocusPreviousBlock(block, blockNode.current);
-            } else if (ev.key === 'ArrowDown') {
-              ev.preventDefault();
-              onFocusNextBlock(block, blockNode.current);
-            }
-          }}
-          placeholder={intl.formatMessage(messages[formFieldName]) || ''}
-          onFocus={() => {
-            // onSelectBlock(block);
-          }}
-        ></Editable>
-      </TitleOrDescription>
+      <Editable
+        onKeyDown={(ev) => {
+          if (ev.key === 'Return' || ev.key === 'Enter') {
+            ev.preventDefault();
+            onAddBlock(settings.defaultBlockType, index + 1).then((id) => {
+              // the selection is changed automatically to the new block by onAddBlock
+            });
+          } else if (ev.key === 'ArrowUp') {
+            ev.preventDefault();
+            onFocusPreviousBlock(block, blockNode.current);
+          } else if (ev.key === 'ArrowDown') {
+            ev.preventDefault();
+            onFocusNextBlock(block, blockNode.current);
+          }
+        }}
+        placeholder={intl.formatMessage(messages[formFieldName]) || ''}
+        renderElement={({ attributes, children, element }) => {
+          return (
+            <TitleOrDescription {...attributes} className={className}>
+              {children}
+            </TitleOrDescription>
+          );
+        }}
+        onFocus={() => {
+          onSelectBlock(block);
+        }}
+      ></Editable>
     </Slate>
   );
 };
-
-//        renderElement={({ attributes, children, element }) => {
-//          return children;
-//        }}
 
 TitleBlockEdit.propTypes = {
   // properties: PropTypes.objectOf(PropTypes.any).isRequired,

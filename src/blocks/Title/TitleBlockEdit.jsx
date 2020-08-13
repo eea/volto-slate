@@ -5,7 +5,13 @@
 
 import React, { useContext, useCallback, useMemo } from 'react';
 import { Editor, createEditor, Node, Range } from 'slate';
-import { ReactEditor, Editable, Slate, withReact } from 'slate-react';
+import {
+  ReactEditor,
+  Editable,
+  Slate,
+  withReact,
+  useFocused,
+} from 'slate-react';
 import { fixSelection } from 'volto-slate/utils';
 import PropTypes from 'prop-types';
 import { defineMessages, useIntl } from 'react-intl';
@@ -53,45 +59,32 @@ export const TitleBlockEdit = ({
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
-  // const firstRender = useMemo(() => {
-  //   return true;
-  // }, []);
-  // // let firstRender = ;
-
-  React.useEffect(() => {
-    // if (firstRender) {
-    theTitleBlockEdits[block] = editor.selection;
-    // that.prevSelection = clone(editor.selection);
-    //   setFirstRender(false);
-    // }
-  }, [block, editor]);
-
-  // const [prevSelection, setPrevSelection] = React.useState(
-  //   clone(editor.selection),
-  // );
-
+  const focused = useFocused();
+  // React.useEffect(() => {
+  //   theTitleBlockEdits[block] = editor.selection;
+  // }, [block, editor]);
   const handleChange = useCallback(() => {
     const o = clone(editor.selection);
-    const prevO = clone(theTitleBlockEdits[block]);
+    const prevO = clone(theTitleBlockEdits[block] || '');
 
+    // the previous selection and the current selection are
+    // the same so the selection has not been changed, so the content
+    // is the one that changed, so we must call onChangeField
     if (
       // editor.selection != null &&
       // o &&
       // Range.isExpanded(o) &&
-      JSON.stringify(o) !== JSON.stringify(prevO)
+      JSON.stringify(o) === JSON.stringify(prevO)
     ) {
-      console.log({
-        prev: theTitleBlockEdits[block],
-        crt: editor.selection,
-        col: editor.selection && Range.isCollapsed(editor.selection),
-      });
-      setTimeout(() => {
-        // even after a second, this call clears the selection:
-        onChangeField(formFieldName, Editor.string(editor, []));
-      }, 1000);
-      theTitleBlockEdits[block] = o;
+      // console.log({
+      //   prev: theTitleBlockEdits[block],
+      //   crt: editor.selection,
+      //   col: editor.selection && Range.isCollapsed(editor.selection),
+      // });
+      onChangeField(formFieldName, Editor.string(editor, []));
     } else {
-      console.log('avoided');
+      // here the selection is the one that changed
+      theTitleBlockEdits[block] = o;
     }
   }, [block, editor, formFieldName, onChangeField]);
 
@@ -115,12 +108,12 @@ export const TitleBlockEdit = ({
 
   // TODO: move the code below, copied from SlateEditor component, into a custom hook that is called from both places
   React.useLayoutEffect(() => {
-    if (selected) {
+    if (selected || focused) {
       ReactEditor.focus(editor);
-      fixSelection(editor);
+      // fixSelection(editor);
     }
-    return () => ReactEditor.blur(editor);
-  }, [editor, selected]);
+    // return () => ReactEditor.blur(editor);
+  }, [editor, focused, selected]);
 
   return (
     <Slate

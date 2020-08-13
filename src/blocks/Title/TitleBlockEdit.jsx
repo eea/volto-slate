@@ -14,6 +14,10 @@ import { FormStateContext } from '@plone/volto/components/manage/Form/FormContex
 import { P } from '../../constants';
 import cx from 'classnames';
 
+const clone = (o) => {
+  return JSON.parse(JSON.stringify(o));
+};
+
 const messages = defineMessages({
   description: {
     id: 'Add a description…',
@@ -48,10 +52,6 @@ export const TitleBlockEdit = ({
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
 
-  const clone = useCallback((o) => {
-    return JSON.parse(JSON.stringify(o));
-  }, []);
-
   const [prevSelection, setPrevSelection] = React.useState(
     clone(editor.selection),
   );
@@ -72,7 +72,7 @@ export const TitleBlockEdit = ({
     } else {
       console.log('avoided');
     }
-  }, [clone, editor, formFieldName, onChangeField, prevSelection]);
+  }, [editor, formFieldName, onChangeField, prevSelection]);
   const TitleOrDescription = useMemo(() => {
     let TitleOrDescription;
     if (formFieldName === 'title') {

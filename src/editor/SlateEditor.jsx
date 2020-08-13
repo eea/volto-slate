@@ -111,12 +111,26 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
+  const j_value = JSON.stringify(value);
+  const handleChange = React.useCallback(
+    (newValue) => {
+      if (JSON.stringify(newValue) !== j_value) {
+        onChange(newValue);
+      }
+    },
+    [j_value, onChange],
+  );
+
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
-      <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+      <Slate
+        editor={editor}
+        value={value || initialValue}
+        onChange={handleChange}
+      >
         {selected ? (
           hasRangeSelection(editor) ? (
             <SlateToolbar

@@ -29,6 +29,8 @@ const messages = defineMessages({
   },
 });
 
+let theTitleBlockEdits = {};
+
 /**
  * Edit title block component.
  * @class TitleBlockEdit
@@ -51,28 +53,48 @@ export const TitleBlockEdit = ({
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
   const formContext = useContext(FormStateContext);
+  // const firstRender = useMemo(() => {
+  //   return true;
+  // }, []);
+  // // let firstRender = ;
 
-  const [prevSelection, setPrevSelection] = React.useState(
-    clone(editor.selection),
-  );
+  React.useEffect(() => {
+    // if (firstRender) {
+    theTitleBlockEdits[block] = editor.selection;
+    // that.prevSelection = clone(editor.selection);
+    //   setFirstRender(false);
+    // }
+  }, [block, editor]);
+
+  // const [prevSelection, setPrevSelection] = React.useState(
+  //   clone(editor.selection),
+  // );
 
   const handleChange = useCallback(() => {
     const o = clone(editor.selection);
-    const prevO = clone(prevSelection);
-
-    setPrevSelection(o);
+    const prevO = clone(theTitleBlockEdits[block]);
 
     if (
       // editor.selection != null &&
-      o &&
-      Range.isExpanded(o) &&
+      // o &&
+      // Range.isExpanded(o) &&
       JSON.stringify(o) !== JSON.stringify(prevO)
     ) {
-      onChangeField(formFieldName, Editor.string(editor, []));
+      console.log({
+        prev: theTitleBlockEdits[block],
+        crt: editor.selection,
+        col: editor.selection && Range.isCollapsed(editor.selection),
+      });
+      setTimeout(() => {
+        // even after a second, this call clears the selection:
+        onChangeField(formFieldName, Editor.string(editor, []));
+      }, 1000);
+      theTitleBlockEdits[block] = o;
     } else {
       console.log('avoided');
     }
-  }, [editor, formFieldName, onChangeField, prevSelection]);
+  }, [block, editor, formFieldName, onChangeField]);
+
   const TitleOrDescription = useMemo(() => {
     let TitleOrDescription;
     if (formFieldName === 'title') {

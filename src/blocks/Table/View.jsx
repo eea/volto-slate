@@ -10,6 +10,9 @@ import { map } from 'lodash';
 import { serializeNodes } from 'volto-slate/editor/render';
 import { Node } from 'slate';
 
+// TODO: loading LESS files with `volto-slate/...` paths does not work currently
+import '../../editor/plugins/Table/less/public.less';
+
 /**
  * View table block class.
  * @class View

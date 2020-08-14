@@ -19,7 +19,9 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
-    return leaf[name] ? leafs[name]({ children: acc }) : acc;
+    return Object.keys(leaf).includes(name)
+      ? leafs[name]({ children: acc })
+      : acc;
   }, children);
 
   const klass = cx({

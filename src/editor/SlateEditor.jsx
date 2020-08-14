@@ -100,11 +100,11 @@ const SlateEditor = ({
   const multiDecorate = React.useCallback(
     ([node, path]) => {
       return runtimeDecorators.reduce(
-        (acc, deco) => deco([node, path], acc),
+        (acc, deco) => deco(editor, [node, path], acc),
         [],
       );
     },
-    [runtimeDecorators],
+    [editor, runtimeDecorators],
   );
 
   if (testingEditorRef) {

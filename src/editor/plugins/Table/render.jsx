@@ -3,7 +3,9 @@ import { TABLE, THEAD, TFOOT, TBODY, TR, TD, TH } from 'volto-slate/constants';
 
 export const tableElements = {
   [TABLE]: ({ attributes, children }) => (
-    <table {...attributes}>{children}</table>
+    <table {...attributes} className="slate-table">
+      {children}
+    </table>
   ),
   [THEAD]: ({ attributes, children }) => (
     <thead {...attributes}>{children}</thead>

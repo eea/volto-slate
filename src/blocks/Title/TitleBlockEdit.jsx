@@ -132,6 +132,9 @@ export const TitleBlockEdit = ({
         onFocus={() => {
           onSelectBlock(block);
         }}
+        onClick={(ev) => {
+          ev.stopPropagation();
+        }}
       ></Editable>
     </Slate>
   );

@@ -171,6 +171,7 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
+          {...rest}
         />
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;

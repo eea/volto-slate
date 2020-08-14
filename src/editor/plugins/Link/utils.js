@@ -2,26 +2,39 @@ import { Editor, Transforms, Range } from 'slate';
 import { LINK } from 'volto-slate/constants';
 
 export const getActiveLink = (editor) => {
-  const [node] = Editor.nodes(editor, { match: (n) => n.type === LINK });
+  const selection = editor.selection || editor.savedSelection;
+  const [node] = Editor.nodes(editor, {
+    match: (n) => n.type === LINK,
+    at: selection,
+  });
   return node;
 };
 
-export const isLinkActive = (editor) => {
-  const [link] = Editor.nodes(editor, { match: (n) => n.type === LINK });
+export const isActiveLink = (editor) => {
+  const selection = editor.selection || editor.savedSelection;
+  const [link] = Editor.nodes(editor, {
+    match: (n) => n.type === LINK,
+    at: selection,
+  });
 
   return !!link;
 };
 
 export const unwrapLink = (editor) => {
-  Transforms.unwrapNodes(editor, { match: (n) => n.type === LINK });
+  const selection = editor.selection || editor.savedSelection;
+  Transforms.select(editor, selection);
+  Transforms.unwrapNodes(editor, {
+    match: (n) => n.type === LINK,
+    at: selection,
+  });
 };
 
 export const wrapLink = (editor, url, data) => {
-  if (isLinkActive(editor)) {
+  if (isActiveLink(editor)) {
     unwrapLink(editor);
   }
 
-  const { selection } = editor;
+  const selection = editor.selection || editor.savedSelection;
   const isCollapsed = selection && Range.isCollapsed(selection);
   const link = {
     type: LINK,
@@ -39,7 +52,8 @@ export const wrapLink = (editor, url, data) => {
 };
 
 export const insertLink = (editor, url, data) => {
-  if (editor.selection) {
+  const selection = editor.selection || editor.savedSelection;
+  if (selection) {
     wrapLink(editor, url, data);
   }
 };

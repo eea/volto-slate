@@ -41,7 +41,7 @@ export const LinkSchema = {
 };
 
 const LinkEditSchema = {
-  title: 'Edit link',
+  title: 'Insert link',
   fieldsets: [
     {
       id: 'default',

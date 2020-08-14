@@ -48,13 +48,15 @@ function _highlightSelection(editor, [node, path], ranges) {
 }
 
 /**
- * HighlightSelection.
+ * @function HighlightSelection
  *
- * A runtime decorator that decorates the saved selection, when the editor is
- * is no longer active
+ * @summary A runtime decorator that decorates the saved selection, when the editor is
+ * is no longer active.
  *
- * @param {}
- * @param {} ranges
+ * @param {Editor} editor The editor on which to apply the decorator.
+ * @param {Node} node
+ * @param {Path} path
+ * @param {Array} ranges
  */
 export function HighlightSelection(editor, [node, path], ranges) {
   return _highlightSelection(editor, [node, path], ranges);

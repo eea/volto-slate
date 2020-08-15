@@ -51,10 +51,10 @@ function addMark(editor, key, value) {
   }
 }
 
-function isSelectionInline(editor) {
-  const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
-  return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
-}
+// function isSelectionInline(editor) {
+//   const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
+//   return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
+// }
 
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);

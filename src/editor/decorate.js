@@ -15,7 +15,6 @@ export const highlightByType = (editor, [node, path], ranges) => {
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
-    console.log(node, path);
     const [found] = Node.texts(editor, { from: path, to: path });
     const visualSelectionRanges = highlightSelection(editor, found, ranges);
     const text = Node.string(node) || '';

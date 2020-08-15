@@ -15,8 +15,9 @@ export const Element = ({ element, ...rest }) => {
   return <El element={element} {...rest} />;
 };
 
-export const Leaf = ({ attributes, leaf, children, mode }) => {
+export const Leaf = ({ attributes, leaf, children, mode, text, ...rest }) => {
   let { leafs } = settings.slate;
+  console.log('rest', rest);
 
   children = Object.keys(leafs).reduce((acc, name) => {
     return Object.keys(leaf).includes(name)
@@ -59,37 +60,38 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
 
 export const serializeNodes = (nodes) => {
   let index = 0;
+  const editor = { children: nodes };
 
-  const _serializeNodes = (nodes) =>
-    (nodes || []).map((node, i) => {
+  const _serializeNodes = (nodes) => {
+    return (nodes || []).map(([node, path], i) => {
       const id = index++;
 
-      if (Text.isText(node)) {
-        return (
-          <Leaf
-            leaf={node}
-            text={node}
-            attributes={{ 'data-slate-leaf': true }}
-            mode="view"
-            key={id}
-          >
-            {node.text}
-          </Leaf>
-        );
-      }
-      return (
+      return Text.isText(node) ? (
+        <Leaf
+          editor={editor}
+          path={path}
+          leaf={node}
+          text={node}
+          attributes={{ 'data-slate-leaf': true }}
+          mode="view"
+          key={id}
+        >
+          {node.text}
+        </Leaf>
+      ) : (
         <Element
           element={node}
           attributes={{ 'data-slate-node': 'element', ref: null }}
           mode="view"
           key={id}
         >
-          {_serializeNodes(node.children)}
+          {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>
       );
     });
+  };
 
-  return _serializeNodes(nodes);
+  return _serializeNodes(Array.from(Node.children(editor, [])));
 };
 
 export const serializeNodesToText = (nodes) => {

@@ -64,9 +64,10 @@ export function toggleMark(editor, format) {
   } else {
     // don't apply marks inside inlines (such as footnote) because
     // that splits the footnote into multiple footnotes
-    if (isSelectionInline(editor)) {
-      addMark(editor, format, true);
-    }
+    addMark(editor, format, true);
+    // if (isSelectionInline(editor)) {
+    //   addMark(editor, format, true);
+    // }
   }
 }
 

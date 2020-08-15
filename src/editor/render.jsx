@@ -21,8 +21,8 @@ export const Leaf = ({
   children,
   mode,
   text,
-  path,
-  editor,
+  // path,
+  // editor,
 }) => {
   let { leafs } = settings.slate;
 

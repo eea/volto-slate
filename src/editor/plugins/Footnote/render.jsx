@@ -16,7 +16,7 @@ export const FootnoteElement = ({ attributes, children, element, mode }) => {
           {children}
         </a>
       ) : (
-        <span {...attributes} className="footnote">
+        <span {...attributes} className="footnote footnote-edit-node">
           {children}
         </span>
       )}

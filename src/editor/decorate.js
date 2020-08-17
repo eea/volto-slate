@@ -3,13 +3,20 @@ import { ReactEditor } from 'slate-react';
 
 import { settings } from '~/config';
 
-export const HighlightByType = (editor, [node, path], ranges) => {
+/**
+ * highlightByType.
+ *
+ * @param {} editor
+ * @param {} node, path
+ * @param {} ranges
+ */
+export const highlightByType = (editor, [node, path], ranges) => {
   const { slate } = settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
     const [found] = Node.texts(editor, { from: path, to: path });
-    const visualSelectionRanges = _highlightSelection(editor, found, ranges);
+    const visualSelectionRanges = highlightSelection(editor, found, ranges);
     const text = Node.string(node) || '';
     const range = {
       anchor: { path, offset: 0 },
@@ -24,7 +31,18 @@ export const HighlightByType = (editor, [node, path], ranges) => {
   return ranges;
 };
 
-function _highlightSelection(editor, [node, path], ranges) {
+/**
+ * @function highlightSelection
+ *
+ * @summary A runtime decorator that decorates the saved selection, when the editor is
+ * is no longer active.
+ *
+ * @param {Editor} editor The editor on which to apply the decorator.
+ * @param {Node} node
+ * @param {Path} path
+ * @param {Array} ranges
+ */
+export function highlightSelection(editor, [node, path], ranges) {
   let selected = ReactEditor.isFocused(editor);
 
   // Compatibility with Volto blocks
@@ -45,17 +63,4 @@ function _highlightSelection(editor, [node, path], ranges) {
     }
   }
   return ranges;
-}
-
-/**
- * HighlightSelection.
- *
- * A runtime decorator that decorates the saved selection, when the editor is
- * is no longer active
- *
- * @param {}
- * @param {} ranges
- */
-export function HighlightSelection(editor, [node, path], ranges) {
-  return _highlightSelection(editor, [node, path], ranges);
 }

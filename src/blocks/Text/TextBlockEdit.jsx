@@ -175,6 +175,14 @@ const TextBlockEdit = (props) => {
                 // TODO: also add html serialized value
               });
             }}
+            onClick={(ev) => {
+              // this is needed so that the click event does
+              // not bubble up to the Blocks/Block/Edit.jsx component
+              // which attempts to focus the TextBlockEdit on
+              // click and this behavior breaks user selection, e.g.
+              // when clicking once a selected word
+              ev.stopPropagation();
+            }}
             onKeyDown={handleKey}
             selected={selected}
             placeholder={data.placeholder || 'Enter some rich text…'}

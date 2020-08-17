@@ -1,7 +1,12 @@
-import { Editor, Text, Transforms } from 'slate';
+import { Editor, Text, Transforms, Block } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import { settings } from '~/config';
 
+/**
+ * @param {Text} textNode The (leaf) Text node to wrap.
+ *
+ * @returns {Block} A Slate block node, of the default block type configured in the Slate settings, containing the given Text node.
+ */
 function createBlock(textNode) {
   return {
     type: settings.slate.defaultBlockType,
@@ -9,6 +14,11 @@ function createBlock(textNode) {
   };
 }
 
+/**
+ * @summary Inserts in the given editor the feature of being able to paste HTML content in it.
+ *
+ * @param {Editor} editor A Slate editor object.
+ */
 export const insertData = (editor) => {
   const { insertData } = editor;
 

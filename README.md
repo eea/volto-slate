@@ -75,4 +75,4 @@ Some of the main reasons that drove us to create volto-slate:
 ![19. The content rendered to the end-user](/docs/source/images/19.gif)
 
 ## Credit
-A lot of inspiration from the great [Slate Plugins repository](https://github.com/udecode/slate-plugins/), especially the list element and the autoformat handlers.
+A lot of inspiration from the great [Slate Plugins repository](https://github.com/udecode/slate-plugins/), especially the autoformat handlers.

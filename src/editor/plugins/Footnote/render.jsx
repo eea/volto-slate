@@ -1,5 +1,7 @@
 import React from 'react';
-import './public.less';
+import { Popup } from 'semantic-ui-react';
+
+import './less/public.less';
 
 export const FootnoteElement = ({ attributes, children, element, mode }) => {
   const { data = {} } = element;
@@ -16,9 +18,16 @@ export const FootnoteElement = ({ attributes, children, element, mode }) => {
           {children}
         </a>
       ) : (
-        <span {...attributes} className="footnote">
-          {children}
-        </span>
+        <Popup
+          content={data.footnote}
+          header="Footnote"
+          position="bottom left"
+          trigger={
+            <span {...attributes} className="footnote footnote-edit-node">
+              {children}
+            </span>
+          }
+        />
       )}
     </>
   );

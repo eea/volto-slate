@@ -1,10 +1,11 @@
-import { toggleList, unwrapList, getActiveEntry } from 'volto-slate/utils';
+import { toggleList, unwrapList } from './utils';
+import { isBlockActive } from 'volto-slate/utils';
 
 export const localToggleList = (editor, format) => {
   toggleList(editor, {
     typeList: format,
-    isBulletedActive: !!getActiveEntry(editor, 'bulleted-list'),
-    isNumberedActive: !!getActiveEntry(editor, 'numbered-list'),
+    isBulletedActive: !!isBlockActive(editor, 'bulleted-list'),
+    isNumberedActive: !!isBlockActive(editor, 'numbered-list'),
   });
 };
 

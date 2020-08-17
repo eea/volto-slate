@@ -1,33 +1,35 @@
 import React, { useRef, useEffect } from 'react';
-import { ReactEditor, useSlate } from 'slate-react';
-import { Editor, Range } from 'slate';
 import { Portal } from 'react-portal';
+import { useSlate } from 'slate-react';
 
 import Separator from './Separator';
-import ToolbarButton from './ToolbarButton';
 import BasicToolbar from './BasicToolbar';
 
-import toggleIcon from '@plone/volto/icons/freedom.svg';
-
-const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
+const Toolbar = ({ toggleButton, children }) => {
   const ref = useRef();
   const editor = useSlate();
 
   useEffect(() => {
     const el = ref.current;
-    const { selection } = editor;
 
-    if (
-      !selection ||
-      !ReactEditor.isFocused(editor) ||
-      Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === ''
-    ) {
+    if ((children || []).length === 0) {
+      el.removeAttribute('style');
+      return;
+    }
+
+    const { selection } = editor;
+    if (!selection) {
       el.removeAttribute('style');
       return;
     }
 
     const domSelection = window.getSelection();
+    // See
+    // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
+    if (domSelection.rangeCount < 1) {
+      el.removeAttribute('style');
+      return;
+    }
     const domRange = domSelection.getRangeAt(0);
     const rect = domRange.getBoundingClientRect();
 
@@ -43,15 +45,12 @@ const Toolbar = ({ mainToolbarShown, onToggle, children }) => {
     <Portal>
       <BasicToolbar className="slate-inline-toolbar" ref={ref}>
         {children}
-        <Separator />
-        <ToolbarButton
-          onMouseDown={(event) => {
-            onToggle();
-            event.preventDefault();
-          }}
-          icon={toggleIcon}
-          active={mainToolbarShown}
-        />
+        {toggleButton && (
+          <>
+            <Separator />
+            {toggleButton}
+          </>
+        )}
       </BasicToolbar>
     </Portal>
   );

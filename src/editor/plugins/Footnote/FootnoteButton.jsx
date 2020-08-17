@@ -1,152 +1,33 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { Editor, Range, Transforms } from 'slate';
-import { ReactEditor } from 'slate-react';
 
-import { Icon as VoltoIcon } from '@plone/volto/components';
-import superindexSVG from '@plone/volto/icons/superindex.svg';
-import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
-import formatClearSVG from '@plone/volto/icons/format-clear.svg';
-import checkSVG from '@plone/volto/icons/check.svg';
-import clearSVG from '@plone/volto/icons/clear.svg';
-
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
-import InlineForm from 'volto-slate/futurevolto/InlineForm';
-
+import tagSVG from '@plone/volto/icons/tag.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { FootnoteSchema } from './schema';
-import { FOOTNOTE } from './constants';
+import { isActiveFootnote, insertFootnote } from './utils';
+import { hasRangeSelection } from 'volto-slate/utils';
+import { FOOTNOTE_EDITOR } from './constants';
 
-import { footnoteKeyGen } from './utils';
+import { useDispatch } from 'react-redux';
 
-import './editor.less';
-
-export const wrapFootnote = (editor, data) => {
-  if (isActiveFootnote(editor)) {
-    unwrapFootnote(editor);
-  }
-
-  const { selection } = editor;
-  const isCollapsed = selection && Range.isCollapsed(selection);
-  const footnote = {
-    type: FOOTNOTE,
-    data,
-  };
-
-  if (isCollapsed) {
-    Transforms.insertNodes(editor, footnote);
-  } else {
-    Transforms.wrapNodes(editor, footnote, { split: true });
-    Transforms.collapse(editor, { edge: 'end' });
-  }
-};
-
-function insertFootnote(editor, data) {
-  if (editor.selection) {
-    wrapFootnote(editor, data);
-  }
-}
-
-function unwrapFootnote(editor) {
-  Transforms.unwrapNodes(editor, { match: (n) => n.type === FOOTNOTE });
-}
-
-export const isActiveFootnote = (editor) => {
-  const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
-  // console.log('links', Array.from(links));
-  // return Array.from(links).length === 1;
-
-  return !!note;
-};
-
-export const getActiveFootnote = (editor) => {
-  const [note] = Editor.nodes(editor, { match: (n) => n.type === FOOTNOTE });
-  return note;
-};
+import './less/editor.less';
 
 const FootnoteButton = () => {
   const editor = useSlate();
-  const [showForm, setShowForm] = React.useState(false);
-  const [selection, setSelection] = React.useState(null);
-  const [formData, setFormdata] = React.useState({});
-
-  const submitHandler = React.useCallback(
-    (formData) => {
-      // TODO: have an algorithm that decides which one is used
-      const { footnote } = formData;
-      if (footnote) {
-        Transforms.select(editor, selection);
-        insertFootnote(editor, { ...formData, uid: footnoteKeyGen() });
-      } else {
-        unwrapFootnote(editor);
-      }
-    },
-    [editor, selection],
-  );
-
   const isFootnote = isActiveFootnote(editor);
+  const dispatch = useDispatch();
 
   return (
     <>
-      <SidebarPopup open={showForm}>
-        <InlineForm
-          schema={FootnoteSchema}
-          title={FootnoteSchema.title}
-          icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
-          onChangeField={(id, value) => {
-            setFormdata({ ...formData, [id]: value });
+      {hasRangeSelection(editor) && (
+        <ToolbarButton
+          active={isFootnote}
+          onMouseDown={() => {
+            dispatch({ type: FOOTNOTE_EDITOR, show: true });
+            if (!isFootnote) insertFootnote(editor, {});
           }}
-          formData={formData}
-          headerActions={
-            <>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  submitHandler(formData);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={checkSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  unwrapFootnote(editor);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={formatClearSVG} />
-              </button>
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  ReactEditor.focus(editor);
-                }}
-              >
-                <VoltoIcon size="24px" name={clearSVG} />
-              </button>
-            </>
-          }
+          icon={tagSVG}
         />
-      </SidebarPopup>
-      <ToolbarButton
-        active={isFootnote}
-        onMouseDown={() => {
-          if (!showForm) {
-            setSelection(editor.selection);
-
-            const note = getActiveFootnote(editor);
-            if (note) {
-              const [node] = note;
-              const { data } = node;
-              setFormdata(data);
-            }
-
-            setShowForm(true);
-          }
-        }}
-        icon={superindexSVG}
-      />
+      )}
     </>
   );
 };

@@ -1,8 +1,8 @@
 {
   "name": "volto-slate",
-  "version": "1.0.0",
+  "version": "0.4.1",
   "description": "Slate.js integration with Volto",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",

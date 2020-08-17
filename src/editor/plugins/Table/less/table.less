@@ -1,0 +1,29 @@
+@brown: #826A6A;
+
+.slate-table-dropdown-button {
+
+}
+
+.slate-table-dropdown-menu {
+  p {
+    font-size: small;
+    margin-top: 1rem;
+  }
+
+  td {
+    border: 0.1rem solid #bbbbbb55;
+    border-radius: 0.1rem;
+    cursor: pointer;
+
+    & > button {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    &.active {
+      background-color: @brown;
+    }
+  }
+}

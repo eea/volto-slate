@@ -1,48 +1,24 @@
-import codeSVG from '@plone/volto/icons/code.svg';
+import { slate_block_selections, upload_content } from './reducers';
 
-import { slate_block_selections } from './reducers';
+import installSlate from './editor';
+import installTextBlock from './blocks/Text';
+import installTableBlock from './blocks/Table';
+import installFootnoteBlock from './blocks/Footnote';
+import installVoltoProposals from './futurevolto';
 
-import installVoltoProposals from './futurevolto/config';
-
-import * as slateConfig from './editor/config';
-import installDefaultPlugins from './editor/plugins';
-
-import { TextBlockView, TextBlockEdit } from './TextBlock';
-import withDeserializeHtml from './TextBlock/extensions/withDeserializeHtml';
-
-const applyConfig = (config) => {
-  config.blocks.blocksConfig.slate = {
-    id: 'slate',
-    title: 'Slate',
-    icon: codeSVG,
-    group: 'text',
-    view: TextBlockView,
-    edit: TextBlockEdit,
-    restricted: false,
-    mostUsed: true,
-    blockHasOwnFocusManagement: true,
-    sidebarTab: 1,
-    security: {
-      addPermission: [],
-      view: [],
-    },
-    blockHasValue: (data) => {
-      return !!data.plaintext;
-    },
-  };
-
-  config.settings.defaultBlockType = 'slate';
-  config.settings.slate = {
-    textblockExtensions: [withDeserializeHtml],
-    ...slateConfig,
-  };
-
-  installDefaultPlugins(config);
-  installVoltoProposals(config);
+export default (config) => {
+  config = [
+    installSlate,
+    installTextBlock,
+    installTableBlock,
+    installFootnoteBlock,
+    installVoltoProposals,
+  ].reduce((acc, apply) => apply(acc), config);
 
   config.addonReducers = {
     ...config.addonReducers,
     slate_block_selections,
+    upload_content,
   };
 
   config.views = {
@@ -52,4 +28,12 @@ const applyConfig = (config) => {
   return config;
 };
 
-export default applyConfig;
+export function asDefault(config) {
+  config.settings.defaultBlockType = 'slate';
+
+  config.blocks.blocksConfig.text.restricted = true;
+  config.blocks.blocksConfig.table.restricted = true;
+
+  // TODO: handle title and description blocks
+  return config;
+}

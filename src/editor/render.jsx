@@ -1,33 +1,63 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Node } from 'slate';
+import { Node, Text } from 'slate';
+import cx from 'classnames';
+
 import { settings } from '~/config';
-import { Text as SlateText } from 'slate';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = (props) => {
-  const { element } = props; // attributes, children,
-  const { elements } = settings.slate;
+export const Element = ({ element, ...rest }) => {
+  const { slate } = settings;
+  const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  return <El {...props} />;
+  return <El element={element} {...rest} />;
 };
 
-export const Leaf = ({ attributes, leaf, children, mode }) => {
+export const Leaf = ({
+  attributes,
+  leaf,
+  children,
+  mode,
+  text,
+  // path,
+  // editor,
+}) => {
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
-    return leaf[name] ? leafs[name]({ children: acc }) : acc;
+    return Object.keys(leaf).includes(name)
+      ? leafs[name]({ children: acc })
+      : acc;
   }, children);
 
-  const klass =
-    mode !== 'view' && leaf.highlight
-      ? `highlight-${leaf.highlightType}`
-      : null;
+  const klass = cx({
+    [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
+    'highlight-selection': mode !== 'view' && leaf.isSelection,
+  });
 
   return mode === 'view' ? (
-    children
+    typeof children === 'string' ? (
+      children.split('\n').map((t, i) => {
+        // Softbreak support. Should do a plugin
+        return (
+          <React.Fragment key={`${i}`}>
+            {children.indexOf('\n') > -1 &&
+            children.split('\n').length - 1 > i ? (
+              <>
+                {t}
+                <br />
+              </>
+            ) : (
+              t
+            )}
+          </React.Fragment>
+        );
+      })
+    ) : (
+      children
+    )
   ) : (
     <span {...attributes} className={klass}>
       {children}
@@ -35,25 +65,43 @@ export const Leaf = ({ attributes, leaf, children, mode }) => {
   );
 };
 
-export const serializeNodes = (nodes) =>
-  (nodes || []).map((node) => {
-    if (SlateText.isText(node)) {
-      return Leaf({
-        leaf: node,
-        text: node,
-        children: node.text,
-        attributes: { 'data-slate-leaf': true },
-        mode: 'view',
-      });
-    }
+export const serializeNodes = (nodes) => {
+  // let index = 0;
+  const editor = { children: nodes || [] };
 
-    return Element({
-      element: node,
-      children: serializeNodes(node.children),
-      attributes: { 'data-slate-node': 'element', ref: null },
-      mode: 'view',
+  const _serializeNodes = (nodes) => {
+    return (nodes || []).map(([node, path], i) => {
+      // const id = index++;
+
+      return Text.isText(node) ? (
+        <Leaf
+          editor={editor}
+          path={path}
+          leaf={node}
+          text={node}
+          attributes={{ 'data-slate-leaf': true }}
+          mode="view"
+          key={path}
+        >
+          {node.text}
+        </Leaf>
+      ) : (
+        <Element
+          editor={editor}
+          path={path}
+          element={node}
+          attributes={{ 'data-slate-node': 'element', ref: null }}
+          mode="view"
+          key={path}
+        >
+          {_serializeNodes(Array.from(Node.children(editor, path)))}
+        </Element>
+      );
     });
-  });
+  };
+
+  return _serializeNodes(Array.from(Node.children(editor, [])));
+};
 
 export const serializeNodesToText = (nodes) => {
   return nodes.map((n) => Node.string(n)).join('\n');

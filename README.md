@@ -1,3 +1,7 @@
+# Note!
+
+For maximum compatibility you should use this for Volto: `https://github.com/eea/volto/tree/modern_kitchen_sink`
+
 # volto-slate
 
 An alternative text editor for Volto, capable of completely replacing the default richtext editor while offering enhanced functionality and behavior.

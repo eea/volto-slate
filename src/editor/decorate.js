@@ -1,20 +1,66 @@
 import { Node } from 'slate';
+import { ReactEditor } from 'slate-react';
 
 import { settings } from '~/config';
 
-export const highlightByType = ([node, path], ranges) => {
+/**
+ * highlightByType.
+ *
+ * @param {} editor
+ * @param {} node, path
+ * @param {} ranges
+ */
+export const highlightByType = (editor, [node, path], ranges) => {
   const { slate } = settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
+    const [found] = Node.texts(editor, { from: path, to: path });
+    const visualSelectionRanges = highlightSelection(editor, found, ranges);
     const text = Node.string(node) || '';
-    ranges.push({
+    const range = {
       anchor: { path, offset: 0 },
       focus: { path, offset: text.length },
       highlight: true,
-      highlightType: node.type,
-    });
+      highlightType: visualSelectionRanges.length === 0 ? node.type : null,
+      isSelection: visualSelectionRanges.length > 0,
+    };
+    return [range];
   }
 
   return ranges;
 };
+
+/**
+ * @function highlightSelection
+ *
+ * @summary A runtime decorator that decorates the saved selection, when the editor is
+ * is no longer active.
+ *
+ * @param {Editor} editor The editor on which to apply the decorator.
+ * @param {Node} node
+ * @param {Path} path
+ * @param {Array} ranges
+ */
+export function highlightSelection(editor, [node, path], ranges) {
+  let selected = ReactEditor.isFocused(editor);
+
+  // Compatibility with Volto blocks
+  if (editor.getBlockProps) {
+    const blockProps = editor.getBlockProps();
+    selected = blockProps.selected;
+  }
+
+  if (selected && !editor.selection && editor.savedSelection) {
+    const newSelection = editor.savedSelection;
+    if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
+      const range = {
+        ...newSelection,
+        highlight: true,
+        isSelection: true,
+      };
+      ranges.push(range);
+    }
+  }
+  return ranges;
+}

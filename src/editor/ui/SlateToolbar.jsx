@@ -1,26 +1,49 @@
+/**
+ * This is the main toolbar, which:
+ *
+ * - appears only when a range selection exists
+ * - can be toggled between expanded and hovering state
+ *
+ */
+
 import React from 'react';
 import cx from 'classnames';
 
+import toggleIcon from '@plone/volto/icons/freedom.svg';
+
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
+import ToolbarButton from './ToolbarButton';
+
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
   const { selected, showToolbar, setShowToolbar } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
+
+  function renderButton(name, index) {
+    const Btn = buttons[name];
+    // using also name because some buttons can be like "Separator"
+    return <Btn key={`${name}-${index}`} />;
+  }
+
   return (
     <>
       {!showToolbar && (
         <Toolbar
-          onToggle={() => setShowToolbar(!showToolbar)}
-          mainToolbarShown={showToolbar}
+          toggleButton={
+            <ToolbarButton
+              onMouseDown={(event) => {
+                setShowToolbar(!showToolbar);
+                event.preventDefault();
+              }}
+              icon={toggleIcon}
+              active={showToolbar}
+            />
+          }
         >
-          {toolbarButtons?.map((name, i) => (
-            <React.Fragment key={`${name}-${i}`}>
-              {buttons[name]()}
-            </React.Fragment>
-          ))}
+          {toolbarButtons?.map(renderButton)}
         </Toolbar>
       )}
       <div
@@ -28,14 +51,18 @@ const SlateToolbar = (props) => {
       >
         {selected && showToolbar && (
           <ExpandedToolbar
-            onToggle={() => setShowToolbar(!showToolbar)}
-            mainToolbarShown={showToolbar}
+            toggleButton={
+              <ToolbarButton
+                onMouseDown={(event) => {
+                  setShowToolbar(!showToolbar);
+                  event.preventDefault();
+                }}
+                icon={toggleIcon}
+                active={showToolbar}
+              />
+            }
           >
-            {expandedToolbarButtons?.map((name, i) => (
-              <React.Fragment key={`${name}-${i}`}>
-                {buttons[name]()}
-              </React.Fragment>
-            ))}
+            {expandedToolbarButtons?.map(renderButton)}
           </ExpandedToolbar>
         )}
       </div>

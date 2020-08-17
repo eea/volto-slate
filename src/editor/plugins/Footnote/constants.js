@@ -1,1 +1,1 @@
-export const FOOTNOTE = 'footnote';
+export const FOOTNOTE_EDITOR = 'FOOTNOTE_EDITOR';

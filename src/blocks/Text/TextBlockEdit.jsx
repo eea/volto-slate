@@ -176,7 +176,11 @@ const TextBlockEdit = (props) => {
               });
             }}
             onClick={(ev) => {
-              // TODO: explain why this is needed
+              // this is needed so that the click event does
+              // not bubble up to the Blocks/Block/Edit.jsx component
+              // which attempts to focus the TextBlockEdit on
+              // click and this behavior breaks user selection, e.g.
+              // when clicking once a selected word
               ev.stopPropagation();
             }}
             onKeyDown={handleKey}

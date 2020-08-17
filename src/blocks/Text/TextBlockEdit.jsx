@@ -20,7 +20,7 @@ import MarkdownIntroduction from './MarkdownIntroduction';
 
 import { handleKey } from './keyboard';
 import Dropzone from 'react-dropzone';
-import './less/editor.less';
+import './css/editor.css';
 import { createImageBlock } from 'volto-slate/utils';
 
 // TODO: refactor dropzone to separate component wrapper

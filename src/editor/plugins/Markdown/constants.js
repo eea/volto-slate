@@ -1,45 +1,59 @@
 import { toggleList, unwrapList } from './utils';
 import { isBlockActive } from 'volto-slate/utils';
+import { Editor } from 'slate';
 
+/**
+ * Uses the old toggleList function to toggle lists on or off or from a type to another.
+ * @param {Editor} editor The editor to which to apply the change.
+ * @param {string} format A list type.
+ */
 export const localToggleList = (editor, format) => {
   toggleList(editor, {
     typeList: format,
-    isBulletedActive: !!isBlockActive(editor, 'bulleted-list'),
-    isNumberedActive: !!isBlockActive(editor, 'numbered-list'),
+    isBulletedActive: !!isBlockActive(editor, 'ul'),
+    isNumberedActive: !!isBlockActive(editor, 'ol'),
   });
 };
 
+/**
+ * @summary Turns off any list type.
+ * @param {Editor} editor The editor to which to apply the change.
+ * @returns The result of the inner call to the function `unwrapList`.
+ */
 const preFormat = (editor) => {
   return unwrapList(editor, false, {
     unwrapFromList: false,
   });
 };
 
+/**
+ * The autoformat rules created by this plugin for the Markdown language.
+ */
 export const autoformatRules = [
   {
-    type: 'heading-two',
+    type: 'h2',
     markup: '#',
     // preFormat,
   },
   {
-    type: 'heading-three',
+    type: 'h3',
     markup: '##',
     // preFormat,
   },
   {
-    type: 'list-item',
+    type: 'li',
     markup: ['*', '-', '+'],
     preFormat,
     format: (editor) => {
-      localToggleList(editor, 'bulleted-list');
+      localToggleList(editor, 'ul');
     },
   },
   {
-    type: 'list-item',
+    type: 'li',
     markup: ['1.', '1)'],
     preFormat,
     format: (editor) => {
-      localToggleList(editor, 'numbered-list');
+      localToggleList(editor, 'ol');
     },
   },
   {

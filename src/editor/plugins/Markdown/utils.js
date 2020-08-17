@@ -4,6 +4,7 @@ import {
   selectAll,
   getSelectionNodesArrayByType,
 } from 'volto-slate/utils';
+import { P, LI, UL, OL } from 'volto-slate/constants';
 
 export function unwrapNodesByType(editor, types, options = {}) {
   Transforms.unwrapNodes(editor, {
@@ -15,12 +16,7 @@ export function unwrapNodesByType(editor, types, options = {}) {
 export function unwrapList(
   editor,
   willWrapAgain,
-  {
-    typeUl = 'bulleted-list',
-    typeOl = 'numbered-list',
-    typeLi = 'list-item',
-    unwrapFromList = false,
-  } = {},
+  { typeUl = UL, typeOl = OL, typeLi = LI, unwrapFromList = false } = {},
 ) {
   // TODO: toggling from one list type to another should keep the structure untouched
   if (
@@ -56,7 +52,7 @@ export function convertAllToParagraph(editor) {
     Transforms.removeNodes(editor, { at: [0 /* , i */] });
     Transforms.insertNodes(
       editor,
-      { type: 'paragraph', children: [{ text: '' }] },
+      { type: P, children: [{ text: '' }] },
       { at: [0] },
     );
     Transforms.insertFragment(editor, [...result], { at: [0] });
@@ -140,10 +136,10 @@ export function toggleList(
   editor,
   {
     typeList,
-    typeUl = 'bulleted-list',
-    typeOl = 'numbered-list',
-    typeLi = 'list-item',
-    typeP = 'paragraph',
+    typeUl = UL,
+    typeOl = OL,
+    typeLi = LI,
+    typeP = P,
     isBulletedActive = false,
     isNumberedActive = false,
   },
@@ -155,8 +151,8 @@ export function toggleList(
 
   // if (the list type/s are unset) {
 
-  const B = typeList === 'bulleted-list';
-  const N = typeList === 'numbered-list';
+  const B = typeList === UL;
+  const N = typeList === OL;
 
   if (N && !isBulletedActive && !isNumberedActive) {
     convertAllToParagraph(editor);

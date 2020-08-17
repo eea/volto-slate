@@ -1,6 +1,7 @@
 import { toggleList, unwrapList } from './utils';
 import { isBlockActive } from 'volto-slate/utils';
 import { Editor } from 'slate';
+import { UL, OL, LI } from 'volto-slate/constants';
 
 /**
  * Uses the old toggleList function to toggle lists on or off or from a type to another.
@@ -10,8 +11,8 @@ import { Editor } from 'slate';
 export const localToggleList = (editor, format) => {
   toggleList(editor, {
     typeList: format,
-    isBulletedActive: !!isBlockActive(editor, 'ul'),
-    isNumberedActive: !!isBlockActive(editor, 'ol'),
+    isBulletedActive: !!isBlockActive(editor, UL),
+    isNumberedActive: !!isBlockActive(editor, OL),
   });
 };
 
@@ -28,6 +29,9 @@ const preFormat = (editor) => {
 
 /**
  * The autoformat rules created by this plugin for the Markdown language.
+ *
+ * @todo Use constants instead of the remaining hard-coded types (h2, h3 etc.).
+ * @todo The lists created with the rules below can contain just one item, maybe because it is made to contain a paragraph that contains the actual content of the list item.
  */
 export const autoformatRules = [
   {
@@ -41,7 +45,7 @@ export const autoformatRules = [
     // preFormat,
   },
   {
-    type: 'li',
+    type: LI,
     markup: ['*', '-', '+'],
     preFormat,
     format: (editor) => {
@@ -49,7 +53,7 @@ export const autoformatRules = [
     },
   },
   {
-    type: 'li',
+    type: LI,
     markup: ['1.', '1)'],
     preFormat,
     format: (editor) => {

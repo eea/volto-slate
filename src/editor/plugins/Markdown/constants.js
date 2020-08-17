@@ -31,7 +31,6 @@ const preFormat = (editor) => {
  * The autoformat rules created by this plugin for the Markdown language.
  *
  * @todo Use constants instead of the remaining hard-coded types (h2, h3 etc.).
- * @todo The lists created with the rules below can contain just one item, maybe because it is made to contain a paragraph that contains the actual content of the list item.
  */
 export const autoformatRules = [
   {

@@ -2,12 +2,12 @@ import React from 'react';
 import { useSlate } from 'slate-react';
 import { Dropdown } from 'semantic-ui-react';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { v4 as uuid } from 'uuid';
 
-import { createSlateTableBlock } from 'volto-slate/utils';
 import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
+import { Editor, Transforms } from 'slate';
+import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
 const TableButton = () => {
   const editor = useSlate();
@@ -32,26 +32,53 @@ const TableButton = () => {
 
   const createEmptyCell = React.useCallback((formatAsColumnHeaders = false) => {
     return {
-      key: uuid(),
-      type: formatAsColumnHeaders ? 'header' : 'data',
-      value: [{ type: 'p', children: [{ text: '' }] }],
+      type: formatAsColumnHeaders ? 'th' : 'td',
+      children: [{ type: 'p', children: [{ text: '' }] }],
     };
   }, []);
 
   const createEmptyRow = React.useCallback(
     (cellCount, formatAsColumnHeaders = false) => {
-      const cells = [];
+      // should contain at least one <td> or it is not valid that children is empty
+      const row = { type: 'tr', children: [] };
 
       for (let i = 0; i < cellCount; ++i) {
-        cells.push(createEmptyCell(formatAsColumnHeaders));
+        row.children.push(createEmptyCell(formatAsColumnHeaders));
       }
 
-      return {
-        key: uuid(),
-        cells,
-      };
+      return row;
     },
     [createEmptyCell],
+  );
+
+  /**
+   * @param {number} row Number of rows for the new empty table.
+   * @param {number} column Number of columns for the new empty table.
+   */
+  const insertEmptyTable = React.useCallback(
+    ({ row, column }) => {
+      const rows = [createEmptyRow(column, true)];
+      for (let i = 0; i < row - 1; ++i) {
+        rows.push(createEmptyRow(column));
+      }
+
+      const table = {
+        type: 'table',
+        children: [
+          {
+            type: 'tbody',
+            children: rows,
+          },
+        ],
+      };
+
+      Transforms.insertNodes(editor, [table], {
+        at: Editor.end(editor, []),
+      });
+
+      deconstructToVoltoBlocks(editor);
+    },
+    [createEmptyRow, editor],
   );
 
   return (
@@ -105,28 +132,7 @@ const TableButton = () => {
             onCellMouseLeave={({ row, column }) => {}}
             // `row` and `column` below are 1-based indices
             onCellClick={({ row, column }) => {
-              const {
-                onChangeBlock,
-                onAddBlock,
-                index,
-                onFocusNextBlock,
-                block,
-                blockNode,
-              } = editor.getBlockProps();
-
-              const rows = [createEmptyRow(column, true)];
-
-              for (let i = 0; i < row - 1; ++i) {
-                rows.push(createEmptyRow(column));
-              }
-
-              createSlateTableBlock(rows, index, {
-                onChangeBlock,
-                onAddBlock,
-              }).then(() => {
-                // blockNode is a ref
-                onFocusNextBlock(block, blockNode.current);
-              });
+              insertEmptyTable({ row, column });
             }}
           />
         </Dropdown.Menu>

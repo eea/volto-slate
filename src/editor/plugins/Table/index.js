@@ -2,6 +2,7 @@ import React from 'react';
 import { withTable } from './extensions';
 import TableButton from './TableButton';
 import { tableElements } from './render';
+import './less/public.less';
 
 export default function install(config) {
   const { slate } = config.settings;

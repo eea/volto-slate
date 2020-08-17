@@ -52,44 +52,39 @@ export default (props) => {
   );
 
   return (
-    <SidebarPopup open={true}>
-      <InlineForm
-        schema={FootnoteSchema}
-        title={FootnoteSchema.title}
-        icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
-        onChangeField={(id, value) => {
-          setFormData({
-            ...formData,
-            [id]: value,
-          });
-        }}
-        formData={formData}
-        headerActions={
-          <>
-            <button
-              onClick={() => {
-                saveDataToEditor(formData);
-                dispatch({ type: FOOTNOTE_EDITOR, show: false });
-                ReactEditor.focus(editor);
-              }}
-            >
-              <VoltoIcon size="24px" name={checkSVG} />
-            </button>
-            <button
-              onClick={() => {
-                dispatch({ type: FOOTNOTE_EDITOR, show: false });
-                setFormData({});
-                ReactEditor.focus(editor);
-              }}
-            >
-              <VoltoIcon size="24px" name={clearSVG} />
-            </button>
-          </>
-        }
-      />
-    </SidebarPopup>
+    <InlineForm
+      schema={FootnoteSchema}
+      title={FootnoteSchema.title}
+      icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
+      onChangeField={(id, value) => {
+        setFormData({
+          ...formData,
+          [id]: value,
+        });
+      }}
+      formData={formData}
+      headerActions={
+        <>
+          <button
+            onClick={() => {
+              saveDataToEditor(formData);
+              dispatch({ type: FOOTNOTE_EDITOR, show: false });
+              ReactEditor.focus(editor);
+            }}
+          >
+            <VoltoIcon size="24px" name={checkSVG} />
+          </button>
+          <button
+            onClick={() => {
+              dispatch({ type: FOOTNOTE_EDITOR, show: false });
+              setFormData({});
+              ReactEditor.focus(editor);
+            }}
+          >
+            <VoltoIcon size="24px" name={clearSVG} />
+          </button>
+        </>
+      }
+    />
   );
 };
-
-// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
-// import { Editor, Range, Transforms } from 'slate';

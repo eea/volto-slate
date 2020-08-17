@@ -1,16 +1,22 @@
 import { Node } from 'slate';
-import { ReactEditor, useSlate } from 'slate-react';
+import { ReactEditor } from 'slate-react';
 
 import { settings } from '~/config';
 
-export const HighlightByType = ([node, path], ranges) => {
-  const editor = useSlate();
+/**
+ * highlightByType.
+ *
+ * @param {} editor
+ * @param {} node, path
+ * @param {} ranges
+ */
+export const highlightByType = (editor, [node, path], ranges) => {
   const { slate } = settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
     const [found] = Node.texts(editor, { from: path, to: path });
-    const visualSelectionRanges = HighlightSelection(found, ranges);
+    const visualSelectionRanges = highlightSelection(editor, found, ranges);
     const text = Node.string(node) || '';
     const range = {
       anchor: { path, offset: 0 },
@@ -26,17 +32,17 @@ export const HighlightByType = ([node, path], ranges) => {
 };
 
 /**
- * HighlightSelection.
+ * @function highlightSelection
  *
- * A runtime decorator that decorates the saved selection, when the editor is
- * is no longer active
+ * @summary A runtime decorator that decorates the saved selection, when the editor is
+ * is no longer active.
  *
- * @param {}
- * @param {} ranges
+ * @param {Editor} editor The editor on which to apply the decorator.
+ * @param {Node} node
+ * @param {Path} path
+ * @param {Array} ranges
  */
-export function HighlightSelection([node, path], ranges) {
-  const editor = useSlate();
-
+export function highlightSelection(editor, [node, path], ranges) {
   let selected = ReactEditor.isFocused(editor);
 
   // Compatibility with Volto blocks

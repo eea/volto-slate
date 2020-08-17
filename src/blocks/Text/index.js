@@ -21,6 +21,7 @@ import {
   breakList,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
+import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
 
 export TextBlockView from './TextBlockView';
 export TextBlockEdit from './TextBlockEdit';
@@ -64,11 +65,12 @@ export default (config) => {
     },
 
     // Used by deconstructToVoltoBlocks to transform tags such as <img> to a Volto image block
-    // These emiters receive (editor, path), emit [blockid, blockoptions] and
+    // These emiters receive (editor, pathRef), emit [blockid, blockoptions] and
     // are allowed to change the editor contents (for the given path)
     voltoBlockEmiters: [
       ...(config.settings.slate.voltoBlockEmiters || []),
       extractImages,
+      extractTables,
     ],
 
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?

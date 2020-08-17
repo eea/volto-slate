@@ -12,8 +12,8 @@ import { settings } from '~/config';
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
-// import isHotkey from 'is-hotkey';
-// import { toggleMark } from './utils';
+import isHotkey from 'is-hotkey';
+import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
@@ -154,20 +154,20 @@ const SlateEditor = ({
           renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
           onKeyDown={(event) => {
-            // let wasHotkey = false;
-            //
-            // for (const hotkey in slate.hotkeys) {
-            //   if (isHotkey(hotkey, event)) {
-            //     event.preventDefault();
-            //     const mark = slate.hotkeys[hotkey];
-            //     toggleMark(editor, mark);
-            //     wasHotkey = true;
-            //   }
-            // }
-            //
-            // if (wasHotkey) {
-            //   return;
-            // }
+            let wasHotkey = false;
+
+            for (const hotkey in slate.hotkeys) {
+              if (isHotkey(hotkey, event)) {
+                event.preventDefault();
+                const mark = slate.hotkeys[hotkey];
+                toggleMark(editor, mark);
+                wasHotkey = true;
+              }
+            }
+
+            if (wasHotkey) {
+              return;
+            }
 
             onKeyDown && onKeyDown({ editor, event });
           }}
@@ -175,8 +175,8 @@ const SlateEditor = ({
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;
         })}
-        <div>{JSON.stringify(savedSelection)}</div>
-        <div>{JSON.stringify(editor.selection)}</div>
+        {/* <div>{JSON.stringify(savedSelection)}</div> */}
+        {/* <div>{JSON.stringify(editor.selection)}</div> */}
       </Slate>
     </div>
   );

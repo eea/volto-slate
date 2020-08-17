@@ -128,10 +128,14 @@ export function textsMatch(a, b) {
   return true;
 }
 
-// toggle list type
-// preserves structure of list if going from a list type to another
-// TODO: need to redo this
-//
+/**
+ * @summary Toggles list type.
+ * @todo need to redo this
+ * @todo should preserve structure of list if going from a list type to another
+ * @todo allow nested lists, currently the Markdown plugin uses this function but crashes when making a UL in an OL's LI
+ * @param {Editor} editor
+ * @param {object} options
+ */
 export function toggleList(
   editor,
   {
@@ -177,16 +181,16 @@ export function toggleList(
   const willWrapAgain = !isBulletedActive;
   unwrapList(editor, willWrapAgain, { unwrapFromList: isBulletedActive });
 
+  // a new list is created and everything in the editor is put in it
   const list = { type: typeList, children: [] };
   Transforms.wrapNodes(editor, list);
 
+  // get all the selected paragraphs
   const nodes = getSelectionNodesArrayByType(editor, typeP);
 
-  const listItem = { type: typeLi, children: [] };
-
+  // for each paragraph
   for (const [, path] of nodes) {
-    Transforms.wrapNodes(editor, listItem, {
-      at: path,
-    });
+    // convert the paragraph to a list item
+    Transforms.setNodes(editor, { type: LI }, { at: path });
   }
 }

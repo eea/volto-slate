@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { HighlightByType, HighlightSelection } from './decorate';
+import { highlightByType, highlightSelection } from './decorate';
 import {
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -26,7 +26,7 @@ import {
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
-  spanDeserializer,
+  spanTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -78,12 +78,11 @@ export const toolbarButtons = [...defaultToolbarButtons];
 
 export const expandedToolbarButtons = [...defaultToolbarButtons];
 
-// These components are rendered in the toolbar on demand, as configured by plugins.
-// They are rendered as "context" buttons, when there is no selection
-// Each one is a function (editor) => (<Component/> or null)
-// It is important to be able to tell if a plugin would return something
-// because we don't want to render the toolbar at all if there's no children
-// (due to CSS reasons).
+// These components are rendered in the toolbar on demand, as configured by
+// plugins.  They are rendered as "context" buttons, when there is no selection
+// Each one is a function (editor) => (<Component/> or null). It is important
+// to be able to tell if a plugin would return something because we don't want
+// to render the toolbar at all if there's no children (due to CSS reasons).
 export const contextToolbarButtons = [];
 
 // A set of components that are always rendered, unlike the button variety.
@@ -176,19 +175,21 @@ export const htmlTagsToSlate = {
   LI: blockTagDeserializer('li'),
 
   // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
+  // TODO: include <b> but identify if is Google Docs <b>
+  // B: bTagDeserializer,
   CODE: inlineTagDeserializer({ code: true }),
   DEL: inlineTagDeserializer({ strikethrough: true }),
   EM: inlineTagDeserializer({ italic: true }),
   I: inlineTagDeserializer({ italic: true }),
   S: inlineTagDeserializer({ strikethrough: true }),
-  SPAN: spanDeserializer,
+  SPAN: spanTagDeserializer,
   STRONG: inlineTagDeserializer({ bold: true }),
   SUB: inlineTagDeserializer({ sub: true }),
   SUP: inlineTagDeserializer({ sup: true }),
   U: inlineTagDeserializer({ underline: true }),
 };
 
-// Adds "highlight" decoratation in the editor. Used by `highlightByType`
+// Adds "highlight" decoration in the editor. Used by `highlightByType`
 // See the Footnote plugin for an example.
 export const nodeTypesToHighlight = [];
 
@@ -196,4 +197,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [HighlightSelection, HighlightByType];
+export const runtimeDecorators = [highlightSelection]; // , highlightByType

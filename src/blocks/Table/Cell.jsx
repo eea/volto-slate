@@ -1,5 +1,5 @@
 /**
- * Edit text cell block.
+ * Editable table cell component.
  * @module volto-slate/Table/Cell
  */
 
@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { SlateEditor } from 'volto-slate/editor';
 
 /**
- * Edit text cell class.
+ * Editable table cell class.
  * @class Cell
  * @extends Component
  */
@@ -47,8 +47,6 @@ class Cell extends Component {
     this.state = {
       selected: this.props.selected,
     };
-    // if (!__SERVER__) {
-    // }
   }
 
   /**
@@ -61,10 +59,16 @@ class Cell extends Component {
       this.props.onSelectCell(this.props.row, this.props.cell);
   }
 
+  /**
+   * Handles the `onBlur` event received on the `SlateEditor` component.
+   */
   handleBlur() {
     this.setState({ selected: false });
   }
 
+  /**
+   * Handles the `onFocus` event received on the `SlateEditor` component.
+   */
   handleFocus() {
     this.setState({ selected: true }, () => {
       this.props.onSelectCell(this.props.row, this.props.cell);
@@ -97,6 +101,9 @@ class Cell extends Component {
     this.props.onChange(this.props.row, this.props.cell, [...val]);
   }
 
+  /**
+   * Handles the `onFocus` event received by the container `<div>` of the `SlateEditor`.
+   */
   handleContainerFocus() {
     this.setState({ selected: true }, () => {
       this.props.onSelectCell(this.props.row, this.props.cell);
@@ -107,13 +114,9 @@ class Cell extends Component {
    * Render method.
    * @method render
    * @returns {string} Markup for the component.
+   * @todo `Tab` works well to go through cells in the table, but `Shift-Tab` does nothing.
    */
   render() {
-    // if (__SERVER__) {
-    //   return <div />;
-    // }
-
-    // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
     return (
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */

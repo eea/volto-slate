@@ -51,10 +51,10 @@ function addMark(editor, key, value) {
   }
 }
 
-function isSelectionInline(editor) {
-  const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
-  return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
-}
+// function isSelectionInline(editor) {
+//   const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
+//   return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
+// }
 
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
@@ -64,9 +64,10 @@ export function toggleMark(editor, format) {
   } else {
     // don't apply marks inside inlines (such as footnote) because
     // that splits the footnote into multiple footnotes
-    if (isSelectionInline(editor)) {
-      addMark(editor, format, true);
-    }
+    addMark(editor, format, true);
+    // if (isSelectionInline(editor)) {
+    //   addMark(editor, format, true);
+    // }
   }
 }
 

@@ -12,8 +12,8 @@ import { settings } from '~/config';
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
-// import isHotkey from 'is-hotkey';
-// import { toggleMark } from './utils';
+import isHotkey from 'is-hotkey';
+import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
@@ -111,12 +111,26 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
+  const j_value = JSON.stringify(value);
+  const handleChange = React.useCallback(
+    (newValue) => {
+      if (JSON.stringify(newValue) !== j_value) {
+        onChange(newValue);
+      }
+    },
+    [j_value, onChange],
+  );
+
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
       className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
     >
-      <Slate editor={editor} value={value || initialValue} onChange={onChange}>
+      <Slate
+        editor={editor}
+        value={value || initialValue}
+        onChange={handleChange}
+      >
         {selected ? (
           hasRangeSelection(editor) ? (
             <SlateToolbar
@@ -140,20 +154,20 @@ const SlateEditor = ({
           renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
           onKeyDown={(event) => {
-            // let wasHotkey = false;
-            //
-            // for (const hotkey in slate.hotkeys) {
-            //   if (isHotkey(hotkey, event)) {
-            //     event.preventDefault();
-            //     const mark = slate.hotkeys[hotkey];
-            //     toggleMark(editor, mark);
-            //     wasHotkey = true;
-            //   }
-            // }
-            //
-            // if (wasHotkey) {
-            //   return;
-            // }
+            let wasHotkey = false;
+
+            for (const hotkey in slate.hotkeys) {
+              if (isHotkey(hotkey, event)) {
+                event.preventDefault();
+                const mark = slate.hotkeys[hotkey];
+                toggleMark(editor, mark);
+                wasHotkey = true;
+              }
+            }
+
+            if (wasHotkey) {
+              return;
+            }
 
             onKeyDown && onKeyDown({ editor, event });
           }}

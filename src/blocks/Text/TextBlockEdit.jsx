@@ -175,6 +175,10 @@ const TextBlockEdit = (props) => {
                 // TODO: also add html serialized value
               });
             }}
+            onClick={(ev) => {
+              // TODO: explain why this is needed
+              ev.stopPropagation();
+            }}
             onKeyDown={handleKey}
             selected={selected}
             placeholder={data.placeholder || 'Enter some rich text…'}

@@ -1,6 +1,6 @@
 /**
- * Edit text block.
- * @module components/manage/Blocks/Title/Edit
+ * Slate Table block editor.
+ * @module volto-slate/blocks/Table/Edit
  */
 
 import React, { Component } from 'react';
@@ -145,7 +145,7 @@ const messages = defineMessages({
 });
 
 /**
- * Edit component for the Slate Table block in Volto.
+ * Edit component for the Slate Table block type in Volto.
  * @class Edit
  * @extends Component
  */

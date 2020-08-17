@@ -1,6 +1,6 @@
 /**
  * Editable table cell component.
- * @module volto-slate/Table/Cell
+ * @module volto-slate/blocks/Table/Cell
  */
 
 import React, { Component } from 'react';

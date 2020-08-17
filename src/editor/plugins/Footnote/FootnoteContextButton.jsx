@@ -1,5 +1,5 @@
 import React from 'react';
-import editingSVG from '@plone/volto/icons/editing.svg';
+import editingSVG from '@plone/volto/icons/tag.svg';
 import { useIntl, defineMessages } from 'react-intl';
 import { isActiveFootnote, unwrapFootnote } from './utils';
 import clearSVG from '@plone/volto/icons/delete.svg';

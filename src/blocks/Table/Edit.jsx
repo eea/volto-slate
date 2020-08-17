@@ -18,12 +18,22 @@ import rowSVG from '@plone/volto/icons/row.svg';
 import colSVG from '@plone/volto/icons/column.svg';
 import deleteSVG from '@plone/volto/icons/delete.svg';
 
+/**
+ * Returns a random string of 32 digits.
+ */
 const getId = () => Math.floor(Math.random() * Math.pow(2, 24)).toString(32);
 
+/**
+ * @returns {object} An empty Slate paragraph (a simple Slate block node with type set to "p" and a `Text` child with an empty string).
+ */
 function getEmptyParagraph() {
   return [{ type: 'p', children: [{ text: '' }] }];
 }
 
+/**
+ * @param {string} type The type of the newly created cell: either 'header' or 'data'.
+ * @returns {object} A new cell object containing three properties: `key`, `type` and `value`.
+ */
 const emptyCell = (type) => ({
   key: getId(),
   type: type || 'data',

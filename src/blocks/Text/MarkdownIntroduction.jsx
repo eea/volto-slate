@@ -1,6 +1,10 @@
 import { Segment, List } from 'semantic-ui-react';
 import React from 'react';
 
+/**
+ * A component to be shown in the sidebar as a introduction to the Markdown support in the Slate-based Text block. It renders a header and a list and has no state.
+ * @param {object} props Can be an empty object (no props are used in this component).
+ */
 const MarkdownIntroduction = (props) => {
   return (
     <div>

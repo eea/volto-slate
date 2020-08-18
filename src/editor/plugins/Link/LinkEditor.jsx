@@ -45,10 +45,10 @@ export default (props) => {
     (formData) => {
       console.log('formData', formData);
 
-      // TODO: the selector for link target is broken
-      // TODO: the object browser widget is configured so that multiple objects can be selected, but a link has only one target (there is a setting of the object browser widget, some variable that begins its name with 'max')
       // TODO: the object selected as internal link is saved correctly but when the link edit form is loaded, its value is not set to the object browser widget
-      // TODO: the link edit form allows to set fields that cannot be working at the same time: enter an email address and an internal link and the internal link is working although maybe the last tab selected by the user is email
+
+      // TODO: not important: the selector for link target is broken
+      // TODO: not important: the link edit form allows to set fields that cannot be working at the same time: enter an email address and an internal link and the internal link is working although maybe the last tab selected by the user is email
 
       const data = { ...formData };
 

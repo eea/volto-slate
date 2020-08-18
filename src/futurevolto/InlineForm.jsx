@@ -69,24 +69,22 @@ const InlineForm = ({
       )}
 
       <div id={`blockform-fieldset-${defaultFieldset.id}`}>
-        <Segment className="attached">
-          {map(defaultFieldset.fields, (field, index) => (
-            <Field
-              {...schema.properties[field]}
-              id={field}
-              fieldSet={defaultFieldset.title.toLowerCase()}
-              focus={index === 0}
-              value={formData[field] || schema.properties[field].default}
-              required={schema.required.indexOf(field) !== -1}
-              onChange={(id, value) => {
-                onChangeField(id, value);
-              }}
-              key={field}
-              error={errors[field]}
-              block={block}
-            />
-          ))}
-        </Segment>
+        {map(defaultFieldset.fields, (field, index) => (
+          <Field
+            {...schema.properties[field]}
+            id={field}
+            fieldSet={defaultFieldset.title.toLowerCase()}
+            focus={index === 0}
+            value={formData[field] || schema.properties[field].default}
+            required={schema.required.indexOf(field) !== -1}
+            onChange={(id, value) => {
+              onChangeField(id, value);
+            }}
+            key={field}
+            error={errors[field]}
+            block={block}
+          />
+        ))}
       </div>
 
       {other.map((fieldset) => (

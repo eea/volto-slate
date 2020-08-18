@@ -222,7 +222,7 @@ export function increaseItemDepth(editor, event) {
 }
 
 /**
- * Indents current list item + plus siblings that come after it.
+ * [Not implemented] Indents current list item + plus siblings that come after it.
  * @param {Editor} editor
  * @param {Event} event
  */
@@ -231,7 +231,7 @@ export function increaseMultipleItemDepth(editor, event) {
 }
 
 /**
- * Un-indents current list item + plus siblings that come after it.
+ * [Not implemented] Un-indents current list item + plus siblings that come after it.
  * @param {Editor} editor
  * @param {Event} event
  */

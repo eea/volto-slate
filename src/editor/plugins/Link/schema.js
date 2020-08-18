@@ -23,6 +23,7 @@ export const LinkSchema = {
     internal_link: {
       widget: 'object_browser',
       title: 'Internal link',
+      default: [],
     },
     external_link: {
       title:

@@ -18,7 +18,7 @@ const Object = ({ schema, value, onChange, errors = {}, id, ...props }) => {
             id={field}
             fieldset={fieldset.title.toLowerCase()}
             focus={index === 0}
-            value={value?.[field]}
+            value={value?.[field] || schema.properties[field].default}
             required={schema.required.indexOf(field) !== -1}
             onChange={(field, fieldvalue) => {
               return onChange(id, { ...value, [field]: fieldvalue });

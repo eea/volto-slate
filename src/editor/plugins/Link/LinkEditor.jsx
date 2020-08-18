@@ -31,24 +31,48 @@ export default (props) => {
   const [linkNode] = active;
   const isLink = isActiveLink(editor);
 
+  const slateLinkDataToVoltoFormData = React.useCallback(
+    (fd) => {
+      // fd is the old formData
+      // ld is a part of the new link data
+      const ld = {};
+
+      if (fd.object) {
+        // internal link
+        ld.internal_link = [fd.object];
+      } else if (fd.email_address) {
+        // email link
+        ld.email_address = fd.email_address;
+        ld.email_subject = fd.email_subject;
+      } else if (linkNode.url) {
+        // external link
+        ld.external_link = linkNode.url;
+      } else {
+        // emptied form
+      }
+
+      return { link: ld, title: fd.title, target: fd.target };
+    },
+    [linkNode],
+  );
+
   const linkRef = React.useRef(null);
   React.useEffect(() => {
     if (isLink && !isEqual(linkNode, linkRef.current)) {
       linkRef.current = linkNode;
-      setFormData(linkNode.data || {});
+      setFormData(slateLinkDataToVoltoFormData(linkNode.data || {}));
     } else if (!isLink) {
       linkRef.current = null;
     }
-  }, [linkNode, isLink, dispatch]);
+  }, [linkNode, isLink, dispatch, slateLinkDataToVoltoFormData]);
 
   const saveDataToEditor = React.useCallback(
     (formData) => {
-      console.log('formData', formData);
-
-      // TODO: the object selected as internal link is saved correctly but when the link edit form is loaded, its value is not set to the object browser widget
-
+      // TODO: protect from inserting wrong URLs, also for security
+      // TODO: somehow store in the Slate doc just the @id and eventually UID, because the rest of the data associated to an @id can change, and also check if the (U)ID still exists when opening the link edit form with a preselected object in the object browser widget
       // TODO: not important: the selector for link target is broken
       // TODO: not important: the link edit form allows to set fields that cannot be working at the same time: enter an email address and an internal link and the internal link is working although maybe the last tab selected by the user is email
+      // TODO: write comments and doc comments
 
       const data = { ...formData };
 
@@ -63,14 +87,13 @@ export default (props) => {
 
       if (internalLink) {
         const { title } = data;
-        const { UID } = internalLink;
 
         insertLink(editor, internalLink['@id'], {
-          UID,
+          object: internalLink,
           title,
         });
       } else if (url) {
-        insertLink(editor, url, data);
+        insertLink(editor, url);
       } else if (emailAddress) {
         const emailData = {
           email_address: emailAddress,

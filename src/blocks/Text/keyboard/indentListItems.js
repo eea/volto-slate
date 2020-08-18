@@ -146,6 +146,8 @@ export function decreaseItemDepth(editor, event) {
     );
   }
 
+  listItemRef.unref();
+
   // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {
     deconstructToVoltoBlocks(editor).then((newIds) => {
@@ -157,41 +159,53 @@ export function decreaseItemDepth(editor, event) {
 }
 
 /**
- * increaseItemDepth.
+ * Increases the depth (indent level) of a single list item.
  *
- * Increases the depth of a single list item
- *
- * @param {} editor
- * @param {} event
+ * @param {Editor} editor
+ * @param {Event} event
  */
 export function increaseItemDepth(editor, event) {
   // test if there's a sibling ul element above (in this case we insert at end)
   // or below (then we insert at top)
 
+  // Get the current list item's path.
   const [, listItemPath] = getCurrentListItem(editor);
 
-  const [parentList] = Editor.parent(editor, listItemPath); // TODO: should look up a list
+  // Get the current list item's parent Node.
+  const [parentList] = Editor.parent(editor, listItemPath);
 
-  if (parentList.children.length === 1) {
-    // no previous or next sibling
+  const { slate } = settings;
+  const { type } = parentList;
+
+  // If the parent is not a list
+  if (!slate.listTypes.includes(type)) {
+    // Do not increase any indent level.
+    // And also, this situation shows that there is a LI inside something that is not a list, and this means that something broke the data in the Slate document.
+    // Maybe throw an exception?
+    return false; // false means that the event was not practically handled
+  }
+
+  /**
+   * Create a list of the same type as the parent list and put the specified list item in it, then put the new list inside the parent list.
+   */
+  function wrapListItem() {
     Transforms.wrapNodes(
       editor,
-      { type: parentList.type, children: [] },
+      { type: type, children: [] },
       {
         at: listItemPath,
       },
     );
+  }
+
+  // If the parent list is just below the Editor node
+  if (parentList.children.length === 1) {
+    // There should be just one block node inside the Editor node in volto-slate (what about table cells? currently they allow multiple paragraphs in them), so there should be no previous or next sibling.
+    wrapListItem();
     return true;
   }
 
-  const { type } = parentList;
-  Transforms.wrapNodes(
-    editor,
-    { type, children: [] },
-    {
-      at: listItemPath,
-    },
-  );
+  wrapListItem();
 
   // listItemPath was wrapped in a node, so it now points to a list
   const currentListRef = Editor.pathRef(editor, listItemPath);
@@ -201,6 +215,8 @@ export function increaseItemDepth(editor, event) {
 
   // Merge with any next <ul/ol> list
   mergeWithNextList(editor, currentListRef.current);
+
+  currentListRef.unref();
 
   return true;
 }

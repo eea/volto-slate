@@ -29,31 +29,55 @@ export const unwrapLink = (editor) => {
   });
 };
 
-export const wrapLink = (editor, url, data) => {
+export const insertLink = (editor, url, data) => {
+
   if (isActiveLink(editor)) {
     unwrapLink(editor);
   }
 
-  const selection = editor.selection || editor.savedSelection;
-  const isCollapsed = selection && Range.isCollapsed(selection);
-  const link = {
-    type: LINK,
-    url,
-    children: isCollapsed ? [{ text: url }] : [],
-    data,
-  };
+  if (editor.savedSelection) {
+    // wrapLink(editor, url, data);
 
-  if (isCollapsed) {
-    Transforms.insertNodes(editor, link);
-  } else {
-    Transforms.wrapNodes(editor, link, { split: true });
-    Transforms.collapse(editor, { edge: 'end' });
-  }
-};
+    const selection = editor.selection || editor.savedSelection;
+    const selPathRef = Editor.pathRef(editor, selection.anchor.path);
+    const isCollapsed = selection && Range.isCollapsed(selection);
 
-export const insertLink = (editor, url, data) => {
-  const selection = editor.selection || editor.savedSelection;
-  if (selection) {
-    wrapLink(editor, url, data);
+    const link = {
+      type: LINK,
+      url,
+      children: isCollapsed ? [{ text: url }] : [],
+      data,
+    };
+
+    const res = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => n.type === LINK,
+        mode: 'highest',
+        at: selection,
+      }),
+    );
+
+    if (res.length) {
+      const [, path] = res[0];
+      Transforms.setNodes(
+        editor,
+        { data },
+        {
+          at: path ? path : null,
+          match: path ? (n) => n.type === LINK : null,
+        },
+      );
+    } else {
+      Transforms.wrapNodes(
+        editor,
+        link,
+        { split: true, at: selection },
+      );
+    }
+
+    if (data) {
+      Transforms.select(editor, selPathRef.current);
+      Transforms.collapse(editor, { edge: 'end' });
+    }
   }
 };

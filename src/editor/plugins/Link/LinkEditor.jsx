@@ -51,6 +51,7 @@ export default (props) => {
       var url = formData?.link?.external_link;
       const data = {...formData};
       if (url) {
+        console.log('data:', formData);
         insertLink(editor, url, data);
       } else {
         unwrapLink(editor);

@@ -181,7 +181,7 @@ export function increaseItemDepth(editor, event) {
   if (!slate.listTypes.includes(type)) {
     // Do not increase any indent level.
     // And also, this situation shows that there is a LI inside something that is not a list, and this means that something broke the data in the Slate document.
-    // Maybe throw an exception?
+    // TODO: Maybe throw an exception?
     return false; // false means that the event was not practically handled
   }
 
@@ -221,12 +221,20 @@ export function increaseItemDepth(editor, event) {
   return true;
 }
 
+/**
+ * Indents current list item + plus siblings that come after it.
+ * @param {Editor} editor
+ * @param {Event} event
+ */
 export function increaseMultipleItemDepth(editor, event) {
-  // TODO: implement indenting current list item + plus siblings that come
-  // after it
+  // TODO: implement
 }
 
+/**
+ * Un-indents current list item + plus siblings that come after it.
+ * @param {Editor} editor
+ * @param {Event} event
+ */
 export function decreaseMultipleItemsDepth(editor, event) {
-  // TODO: implement un-indenting current list item + plus siblings that come
-  // after it
+  // TODO: implement
 }

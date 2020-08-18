@@ -62,6 +62,30 @@ export function indentListItems({ editor, event }) {
 }
 
 /**
+ * Handle the new Volto blocks created by `deconstructToVoltoBlocks`.
+ * @param {Editor} editor The Slate editor object as customized by the volto-slate addon.
+ * @param {string[]} newIds The IDs of the newly created Volto blocks.
+ */
+const handleNewVoltoBlocks = (editor, [newId1, newId2, newId3]) => {
+  // TODO: (done?) rewrite to benefit from FormContext and Form promises
+  let newId;
+  // If there is a 3rd new block
+  if (newId3) {
+    // Set it to be selected (focused) with the call below
+    newId = newId2;
+  } else {
+    // If there are just 1-2 new blocks
+    newId = newId1; // TODO: or newId2 in some situations?
+  }
+  // Get the Edit component's props as received from Volto the last time it was rendered.
+  const props = editor.getBlockProps();
+  // Unfortunately, until Volto's on* methods don't have Promise support,
+  // we have to use a setTimeout with a bigger value, to be able to
+  // properly select the proper block
+  setTimeout(() => props.onSelectBlock(newId), 10);
+};
+
+/**
  * @function decreaseItemDepth
  *
  * Decreases indent level of a single list item.
@@ -111,7 +135,7 @@ export function decreaseItemDepth(editor, event) {
   if (getCondition1()) mergeWithNextList(editor, getParent());
 
   if (parentListPath.length === 1) {
-    // Our parent is at root, unwrapping list item, user wants to break out
+    // Our parent is at root, just under the Editor, where just block nodes can be, and the user wants to break out so we unwrap the list item. Usually this means making the list item a `p` just below the Editor in the document tree, keeping its contents.
     Transforms.setNodes(
       editor,
       { type: slate.defaultBlockType },
@@ -124,10 +148,8 @@ export function decreaseItemDepth(editor, event) {
 
   // If we have more then one child in the editor root, break to volto blocks
   if (editor.children.length > 1) {
-    const blockProps = editor.getBlockProps();
-    console.log('indent deconstruct');
-    deconstructToVoltoBlocks(editor).then((newId) => {
-      setTimeout(() => blockProps.onSelectBlock(newId), 10);
+    deconstructToVoltoBlocks(editor).then((newIds) => {
+      handleNewVoltoBlocks(editor, newIds);
     });
   }
 

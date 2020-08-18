@@ -6,10 +6,10 @@ export const LinkElement = ({ attributes, children, element }) => {
   // TODO: handle anchor links (#something)
 
   let url;
-  if (element.data.UID) {
+  if (element.data?.UID) {
     // internal link
     url = element.url;
-  } else if (element.data.email_address) {
+  } else if (element.data?.email_address) {
     // email link
     url = element.url;
   } else {

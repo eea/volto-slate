@@ -17,12 +17,7 @@ import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 
 import { flattenToAppURL } from '@plone/volto/helpers';
 
-import {
-  unwrapLink,
-  insertLink,
-  isActiveLink,
-  getActiveLink,
-} from './utils';
+import { unwrapLink, insertLink, isActiveLink, getActiveLink } from './utils';
 
 import { LINK_EDITOR } from './constants';
 import { useDispatch } from 'react-redux';
@@ -48,11 +43,47 @@ export default (props) => {
 
   const saveDataToEditor = React.useCallback(
     (formData) => {
-      var url = formData?.link?.external_link;
-      const data = {...formData};
-      if (url) {
-        console.log('data:', formData);
+      console.log('formData', formData);
+
+      // TODO: the selector for link target is broken
+      // TODO: the object browser widget is configured so that multiple objects can be selected, but a link has only one target (there is a setting of the object browser widget, some variable that begins its name with 'max')
+      // TODO: the object selected as internal link is saved correctly but when the link edit form is loaded, its value is not set to the object browser widget
+      // TODO: the link edit form allows to set fields that cannot be working at the same time: enter an email address and an internal link and the internal link is working although maybe the last tab selected by the user is email
+
+      const data = { ...formData };
+
+      if (Object.keys(data).length === 0) {
+        unwrapLink(editor);
+        return;
+      }
+
+      const internalLink = data?.link?.internal_link?.[0];
+      const url = data?.link?.external_link;
+      const emailAddress = data?.link?.email_address;
+
+      if (internalLink) {
+        const { title } = data;
+        const { UID } = internalLink;
+
+        insertLink(editor, internalLink['@id'], {
+          UID,
+          title,
+        });
+      } else if (url) {
         insertLink(editor, url, data);
+      } else if (emailAddress) {
+        const emailData = {
+          email_address: emailAddress,
+          email_subject: data?.link.email_subject,
+        };
+        insertLink(
+          editor,
+          `mailto:${emailData.email_address}` +
+            (emailData.email_subject
+              ? `?subject=${emailData.email_subject}`
+              : ''),
+          emailData,
+        );
       } else {
         unwrapLink(editor);
       }

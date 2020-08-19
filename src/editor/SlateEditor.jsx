@@ -33,36 +33,33 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  const [gTimes, setGTimes] = React.useState(0);
+  const gRef = React.useRef(0);
+  const fRef = React.useRef(0);
 
-  const f = React.useCallback(
-    (editor) => {
-      // alert(gTimes);
-      console.log('f', gTimes);
-      ReactEditor.focus(editor);
-    },
-    [gTimes],
-  );
+  const f = React.useCallback((editor) => {
+    if (fRef.current <= 1) {
+      ++fRef.current;
+      return;
+    }
+    ReactEditor.focus(editor);
+  }, []);
 
-  const g = React.useCallback(
-    (editor) => {
-      if (gTimes <= 2) {
-        setGTimes(gTimes + 1);
-        return;
+  const g = React.useCallback((editor) => {
+    if (gRef.current <= 2) {
+      ++gRef.current;
+      return;
+    }
+    if (!editor.selection) {
+      const sel = window.getSelection();
+
+      if (sel && sel.rangeCount > 0) {
+        const s = ReactEditor.toSlateRange(editor, sel);
+        // Maybe do a comparison of s with editor.selection through Range.equals
+        // before giving a new reference to the editor.selection?
+        editor.selection = s;
       }
-      if (!editor.selection) {
-        const sel = window.getSelection();
-
-        if (sel && sel.rangeCount > 0) {
-          const s = ReactEditor.toSlateRange(editor, sel);
-          // Maybe do a comparison of s with editor.selection through Range.equals
-          // before giving a new reference to the editor.selection?
-          editor.selection = s;
-        }
-      }
-    },
-    [gTimes],
-  );
+    }
+  }, []);
 
   const [showToolbar, setShowToolbar] = useState(false);
 

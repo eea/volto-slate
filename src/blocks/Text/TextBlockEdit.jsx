@@ -14,10 +14,13 @@ import { settings } from '~/config';
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
+
 import ShortcutListing from './ShortcutListing';
+import MarkdownIntroduction from './MarkdownIntroduction';
+
 import { handleKey } from './keyboard';
 import Dropzone from 'react-dropzone';
-import './styles.css';
+import './css/editor.css';
 import { createImageBlock } from 'volto-slate/utils';
 
 // TODO: refactor dropzone to separate component wrapper
@@ -134,6 +137,7 @@ const TextBlockEdit = (props) => {
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
         <ShortcutListing />
+        <MarkdownIntroduction />
       </SidebarPortal>
 
       <Dropzone
@@ -176,7 +180,11 @@ const TextBlockEdit = (props) => {
               });
             }}
             onClick={(ev) => {
-              // TODO: explain why this is needed
+              // this is needed so that the click event does
+              // not bubble up to the Blocks/Block/Edit.jsx component
+              // which attempts to focus the TextBlockEdit on
+              // click and this behavior breaks user selection, e.g.
+              // when clicking once a selected word
               ev.stopPropagation();
             }}
             onKeyDown={handleKey}

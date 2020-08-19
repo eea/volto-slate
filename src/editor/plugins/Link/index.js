@@ -18,7 +18,7 @@ export default (config) => {
     link_editor,
   };
 
-  slate.buttons.link = (props) => <LinkButton {...props} />;
+  slate.buttons.link = (props) => <LinkButton {...props} title="Link"/>;
   slate.elements[LINK] = LinkElement;
 
   slate.extensions = [...(slate.extensions || []), withLink];

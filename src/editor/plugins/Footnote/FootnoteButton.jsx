@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 
 import './less/editor.less';
 
-const FootnoteButton = () => {
+const FootnoteButton = ({ ...props }) => {
   const editor = useSlate();
   const isFootnote = isActiveFootnote(editor);
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const FootnoteButton = () => {
     <>
       {hasRangeSelection(editor) && (
         <ToolbarButton
+          {...props}
           active={isFootnote}
           onMouseDown={() => {
             dispatch({ type: FOOTNOTE_EDITOR, show: true });

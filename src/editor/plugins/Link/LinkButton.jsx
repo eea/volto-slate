@@ -9,7 +9,7 @@ import { LINK_EDITOR } from './constants';
 
 import linkSVG from '@plone/volto/icons/link.svg';
 
-const LinkButton = () => {
+const LinkButton = ({ ...props }) => {
   const editor = useSlate();
   const isLink = isActiveLink(editor);
   const dispatch = useDispatch();
@@ -18,6 +18,7 @@ const LinkButton = () => {
     <>
       {hasRangeSelection(editor) && (
         <ToolbarButton
+          {...props}
           active={isLink}
           onMouseDown={() => {
             dispatch({ type: LINK_EDITOR, show: true });

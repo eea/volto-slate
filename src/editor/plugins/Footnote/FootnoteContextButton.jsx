@@ -1,5 +1,5 @@
 import React from 'react';
-import editingSVG from '@plone/volto/icons/editing.svg';
+import editingSVG from '@plone/volto/icons/tag.svg';
 import { useIntl, defineMessages } from 'react-intl';
 import { isActiveFootnote, unwrapFootnote } from './utils';
 import clearSVG from '@plone/volto/icons/delete.svg';
@@ -26,6 +26,7 @@ export default (editor) => {
   return isActiveFootnote(editor) ? (
     <React.Fragment key="footnote">
       <ToolbarButton
+        title={intl.formatMessage(messages.edit)}
         icon={editingSVG}
         active={showEditor}
         aria-label={intl.formatMessage(messages.edit)}
@@ -34,6 +35,7 @@ export default (editor) => {
         }}
       />
       <ToolbarButton
+        title={intl.formatMessage(messages.delete)}
         icon={clearSVG}
         aria-label={intl.formatMessage(messages.delete)}
         alt={intl.formatMessage(messages.delete)}

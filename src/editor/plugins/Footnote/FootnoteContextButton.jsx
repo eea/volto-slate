@@ -13,8 +13,8 @@ const messages = defineMessages({
     defaultMessage: 'Edit footnote',
   },
   delete: {
-    id: 'Delete footnote',
-    defaultMessage: 'Delete footnote',
+    id: 'Remove footnote',
+    defaultMessage: 'Remove footnote',
   },
 });
 

@@ -79,7 +79,7 @@ const SlateEditor = ({
     if (selected) {
       // With this focus call below, the DOM Selection is collapsed at the start of the block without known reason.
       // Without it, focusing the editor requires one click but the click's result is very accurate and nice. Is this focus call "too async" and breaks on its own the rest of the instructions below it?
-      ReactEditor.focus(editor);
+      // ReactEditor.focus(editor);
 
       // The DOM Selection here is existing, valid, and on offset 0, although it is wrong.
       console.log({
@@ -99,12 +99,17 @@ const SlateEditor = ({
         const sel = window.getSelection();
 
         if (sel && sel.rangeCount > 0) {
+          debugger;
           const s = ReactEditor.toSlateRange(editor, sel);
           // Maybe do a comparison of s with editor.selection through Range.equals
           // before giving a new reference to the editor.selection?
           editor.selection = s;
         }
-      } // else {
+      }
+
+      ReactEditor.focus(editor);
+
+      // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?
       // }
       // }
@@ -186,7 +191,8 @@ const SlateEditor = ({
         )}
         <Editable
           // Commented this out and the selection issue seems to be gone (Are there any regressions? maybe with the pink highlight of inactive selection? I do not know where to look for it.):
-          // readOnly={!selected}
+          // NOTE: We have a hard reason to keep this (TODO: Explain it here.):
+          readOnly={!selected}
           placeholder={placeholder}
           renderElement={(props) => <Element {...props} />}
           renderLeaf={(props) => <Leaf {...props} />}

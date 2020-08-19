@@ -81,7 +81,7 @@ const SlateEditor = ({
       // Without it, focusing the editor requires one click but the click's result is very accurate and nice. Is this focus call "too async" and breaks on its own the rest of the instructions below it?
       ReactEditor.focus(editor);
 
-      // The DOM Selection here is existing, valid, and on offset 0 although when it is wrong.
+      // The DOM Selection here is existing, valid, and on offset 0, although it is wrong.
       console.log({
         editor_sel: JSON.parse(JSON.stringify(editor.selection)),
         dom_sel: window.getSelection(),

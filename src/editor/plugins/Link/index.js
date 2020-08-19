@@ -12,7 +12,7 @@ export default function install(config) {
   slate.elements[LINK] = LinkElement;
   slate.extensions = [...(slate.extensions || []), withLinks];
 
-  slate.buttons.link = (props) => <LinkButton {...props} />;
+  slate.buttons.link = (props) => <LinkButton {...props} title="Link" />;
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'link'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),

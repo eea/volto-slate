@@ -9,7 +9,7 @@
 import React from 'react';
 import cx from 'classnames';
 
-import toggleIcon from '@plone/volto/icons/freedom.svg';
+import toggleIcon from '@plone/volto/icons/more.svg';
 
 import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
@@ -34,6 +34,7 @@ const SlateToolbar = (props) => {
         <Toolbar
           toggleButton={
             <ToolbarButton
+              title="More..."
               onMouseDown={(event) => {
                 setShowToolbar(!showToolbar);
                 event.preventDefault();
@@ -53,6 +54,7 @@ const SlateToolbar = (props) => {
           <ExpandedToolbar
             toggleButton={
               <ToolbarButton
+                title="Less..."
                 onMouseDown={(event) => {
                   setShowToolbar(!showToolbar);
                   event.preventDefault();

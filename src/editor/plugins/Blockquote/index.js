@@ -18,7 +18,7 @@ export default function install(config) {
   const { slate } = config.settings;
 
   slate.buttons['blockquote'] = (props) => (
-    <BlockButton format="blockquote" icon={quoteIcon} {...props} />
+    <BlockButton format="blockquote" icon={quoteIcon} title="Blockquote" {...props} />
   );
   slate.elements['blockquote'] = BlockquoteElement;
 

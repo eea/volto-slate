@@ -31,29 +31,64 @@ import {
 
 // Registry of available buttons
 export const buttons = {
-  bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
+  bold: (props) => (
+    <MarkButton title="Bold" format="bold" icon={boldIcon} {...props} />
+  ),
   italic: (props) => (
-    <MarkButton format="italic" icon={italicIcon} {...props} />
+    <MarkButton title="Italic" format="italic" icon={italicIcon} {...props} />
   ),
   underline: (props) => (
-    <MarkButton format="underline" icon={underlineIcon} {...props} />
+    <MarkButton
+      title="Underline"
+      format="underline"
+      icon={underlineIcon}
+      {...props}
+    />
   ),
   strikethrough: (props) => (
-    <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
+    <MarkButton
+      title="Strikethrough"
+      format="strikethrough"
+      icon={strikethroughIcon}
+      {...props}
+    />
   ),
-  sub: (props) => <MarkButton format="sub" icon={subindexIcon} {...props} />,
-  sup: (props) => <MarkButton format="sup" icon={superindexIcon} {...props} />,
-  code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
+  sub: (props) => (
+    <MarkButton title="Subscript" format="sub" icon={subindexIcon} {...props} />
+  ),
+  sup: (props) => (
+    <MarkButton
+      title="Superscript"
+      format="sup"
+      icon={superindexIcon}
+      {...props}
+    />
+  ),
+  code: (props) => (
+    <MarkButton title="Code" format="code" icon={codeIcon} {...props} />
+  ),
   'heading-two': (props) => (
-    <BlockButton format="h2" icon={headingIcon} {...props} />
+    <BlockButton title="Title" format="h2" icon={headingIcon} {...props} />
   ),
   'heading-three': (props) => (
-    <BlockButton format="h3" icon={subheadingIcon} {...props} />
+    <BlockButton
+      title="Subtitle"
+      format="h3"
+      icon={subheadingIcon}
+      {...props}
+    />
   ),
   'numbered-list': (props) => (
-    <BlockButton format="ol" icon={listNumberedIcon} {...props} />
+    <BlockButton
+      title="Numbered list"
+      format="ol"
+      icon={listNumberedIcon}
+      {...props}
+    />
   ),
-  'bulleted-list': (props) => <BlockButton format="ul" icon={listBulletIcon} />,
+  'bulleted-list': (props) => (
+    <BlockButton title="Bulleted list" format="ul" icon={listBulletIcon} />
+  ),
   separator: (props) => <Separator />,
   expando: (props) => <Expando />,
 };

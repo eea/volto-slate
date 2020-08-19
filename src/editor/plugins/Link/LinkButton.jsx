@@ -11,7 +11,7 @@ import LinkEditSchema from './schema';
 
 // TODO: reset fields in form when opening the form again
 
-const LinkButton = () => {
+const LinkButton = ({ ...props }) => {
   const editor = useSlate();
   const [showForm, setShowForm] = React.useState(false);
   const [selection, setSelection] = React.useState(null);
@@ -48,6 +48,7 @@ const LinkButton = () => {
         onCancel={() => setShowForm(false)}
       />
       <ToolbarButton
+        {...props}
         active={ila}
         onMouseDown={() => {
           if (

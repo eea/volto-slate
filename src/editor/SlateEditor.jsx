@@ -33,15 +33,20 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  const f = React.useCallback((editor) => {
-    ReactEditor.focus(editor);
-  }, []);
-
   const [gTimes, setGTimes] = React.useState(0);
+
+  const f = React.useCallback(
+    (editor) => {
+      // alert(gTimes);
+      console.log('f', gTimes);
+      ReactEditor.focus(editor);
+    },
+    [gTimes],
+  );
 
   const g = React.useCallback(
     (editor) => {
-      if (gTimes <= 1) {
+      if (gTimes <= 2) {
         setGTimes(gTimes + 1);
         return;
       }
@@ -149,7 +154,7 @@ const SlateEditor = ({
     }
     // Not useful:
     // return () => ReactEditor.blur(editor);
-  }, [editor, selected, defaultSelection]);
+  }, [editor, selected, defaultSelection, g, f]);
 
   const initialValue = slate.defaultValue();
 

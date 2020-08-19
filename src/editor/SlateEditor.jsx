@@ -18,6 +18,10 @@ import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
+// I use these maps instead of the useRef hook because they were being reset. If it is of interest, the useRef variant is the previous commit.
+const editorsG = {};
+const editorsF = {};
+
 const SlateEditor = ({
   selected,
   value,
@@ -33,20 +37,22 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  const gRef = React.useRef(0);
-  const fRef = React.useRef(0);
-
-  const f = React.useCallback((editor) => {
-    if (fRef.current <= 1) {
-      ++fRef.current;
+  // If I use useCallback or useMemo something does not work.
+  const f = (editor) => {
+    editorsF[this] = editorsF[this] || 0;
+    console.log('f', editorsF[this]);
+    if (editorsF[this] <= 1) {
+      ++editorsF[this];
       return;
     }
     ReactEditor.focus(editor);
-  }, []);
+  };
 
-  const g = React.useCallback((editor) => {
-    if (gRef.current <= 2) {
-      ++gRef.current;
+  const g = (editor) => {
+    editorsG[this] = editorsG[this] || 1;
+    console.log('g', editorsG[this]);
+    if (editorsG[this] <= 2) {
+      ++editorsG[this];
       return;
     }
     if (!editor.selection) {
@@ -59,7 +65,7 @@ const SlateEditor = ({
         editor.selection = s;
       }
     }
-  }, []);
+  };
 
   const [showToolbar, setShowToolbar] = useState(false);
 
@@ -126,8 +132,8 @@ const SlateEditor = ({
       // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
 
       g(editor);
-
       f(editor);
+
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?
       // }
@@ -137,7 +143,8 @@ const SlateEditor = ({
       // setTimeout(() => {
       // // put here the fixSelection call and what's below uncommented:
 
-      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+      // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
+      // setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {

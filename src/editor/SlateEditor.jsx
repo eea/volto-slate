@@ -18,23 +18,6 @@ import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
-const f = _.after(1, (editor) => {
-  ReactEditor.focus(editor);
-});
-
-const g = _.after(2, (editor) => {
-  if (!editor.selection) {
-    const sel = window.getSelection();
-
-    if (sel && sel.rangeCount > 0) {
-      const s = ReactEditor.toSlateRange(editor, sel);
-      // Maybe do a comparison of s with editor.selection through Range.equals
-      // before giving a new reference to the editor.selection?
-      editor.selection = s;
-    }
-  }
-});
-
 const SlateEditor = ({
   selected,
   value,
@@ -49,6 +32,32 @@ const SlateEditor = ({
   ...rest
 }) => {
   const { slate } = settings;
+
+  const f = React.useCallback((editor) => {
+    ReactEditor.focus(editor);
+  }, []);
+
+  const [gTimes, setGTimes] = React.useState(0);
+
+  const g = React.useCallback(
+    (editor) => {
+      if (gTimes <= 1) {
+        setGTimes(gTimes + 1);
+        return;
+      }
+      if (!editor.selection) {
+        const sel = window.getSelection();
+
+        if (sel && sel.rangeCount > 0) {
+          const s = ReactEditor.toSlateRange(editor, sel);
+          // Maybe do a comparison of s with editor.selection through Range.equals
+          // before giving a new reference to the editor.selection?
+          editor.selection = s;
+        }
+      }
+    },
+    [gTimes],
+  );
 
   const [showToolbar, setShowToolbar] = useState(false);
 

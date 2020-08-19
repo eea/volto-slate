@@ -1,11 +1,13 @@
 import React from 'react';
-import editingSVG from '@plone/volto/icons/editing.svg';
 import { useIntl, defineMessages } from 'react-intl';
-import { isActiveLink, unwrapLink } from './utils';
-import clearSVG from '@plone/volto/icons/delete.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
+import { isActiveLink, unwrapLink } from './utils';
+
 import { LINK_EDITOR } from './constants';
 import { useDispatch, useSelector } from 'react-redux';
+
+import editingSVG from '@plone/volto/icons/editing.svg';
+import clearSVG from '@plone/volto/icons/delete.svg';
 
 const messages = defineMessages({
   edit: {
@@ -28,6 +30,7 @@ export default (editor) => {
       <ToolbarButton
         icon={editingSVG}
         active={showEditor}
+        title={intl.formatMessage(messages.edit)}
         aria-label={intl.formatMessage(messages.edit)}
         alt={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
@@ -36,6 +39,7 @@ export default (editor) => {
       />
       <ToolbarButton
         icon={clearSVG}
+        title={intl.formatMessage(messages.delete)}
         aria-label={intl.formatMessage(messages.delete)}
         alt={intl.formatMessage(messages.delete)}
         onMouseDown={() => {

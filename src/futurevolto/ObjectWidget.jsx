@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field, Icon } from '@plone/volto/components';
-import { Accordion } from 'semantic-ui-react';
+import { Accordion, Segment } from 'semantic-ui-react';
 
 import upSVG from '@plone/volto/icons/up-key.svg';
 import downSVG from '@plone/volto/icons/down-key.svg';
@@ -63,9 +63,9 @@ const Object = ({ schema, value, onChange, errors = {}, id, ...props }) => {
             <Accordion.Content
               active={activeIndex === index}
             >
-              <div style={{ padding: '1em 0' }}>
+              <Segment className="form" style={{ paddingBottom: '1em' }}>
                 {renderFieldSet(fieldset)}
-              </div>
+              </Segment>
             </Accordion.Content>
           </React.Fragment>
         );

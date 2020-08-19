@@ -1,4 +1,5 @@
 import cx from 'classnames';
+import _ from 'lodash';
 import { createEditor, Transforms, Range } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -16,6 +17,23 @@ import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
+
+const f = _.after(1, (editor) => {
+  ReactEditor.focus(editor);
+});
+
+const g = _.after(2, (editor) => {
+  if (!editor.selection) {
+    const sel = window.getSelection();
+
+    if (sel && sel.rangeCount > 0) {
+      const s = ReactEditor.toSlateRange(editor, sel);
+      // Maybe do a comparison of s with editor.selection through Range.equals
+      // before giving a new reference to the editor.selection?
+      editor.selection = s;
+    }
+  }
+});
 
 const SlateEditor = ({
   selected,
@@ -95,20 +113,10 @@ const SlateEditor = ({
       // // - with the Slate block unselected, click in the block.
       // // - Hit backspace. If it deletes, then the test passes.
       // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
-      if (!editor.selection) {
-        const sel = window.getSelection();
 
-        if (sel && sel.rangeCount > 0) {
-          debugger;
-          const s = ReactEditor.toSlateRange(editor, sel);
-          // Maybe do a comparison of s with editor.selection through Range.equals
-          // before giving a new reference to the editor.selection?
-          editor.selection = s;
-        }
-      }
+      g(editor);
 
-      ReactEditor.focus(editor);
-
+      f(editor);
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?
       // }

@@ -33,42 +33,6 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  const gRef = React.useRef(3);
-  const fRef = React.useRef(3);
-
-  const f = React.useCallback((editor, ref) => {
-    console.log('f called', editor.children, ref.current);
-    if (ref.current <= 1) {
-      ++ref.current;
-      return;
-    }
-    // debugger;
-    ReactEditor.focus(editor);
-  }, []);
-
-  const g = React.useCallback((editor, ref) => {
-    if (ref.current <= 2) {
-      ++ref.current;
-      return;
-    }
-    if (!editor.selection) {
-      const sel = window.getSelection();
-
-      if (sel && sel.rangeCount > 0) {
-        let s;
-        // TODO: confirm or infirm that this try-catch is needed
-        try {
-          s = ReactEditor.toSlateRange(editor, sel);
-        } catch (ex) {
-          s = null;
-        }
-        // Maybe do a comparison of s with editor.selection through Range.equals
-        // before giving a new reference to the editor.selection?
-        editor.selection = s;
-      }
-    }
-  }, []);
-
   const [showToolbar, setShowToolbar] = useState(false);
 
   const defaultExtensions = slate.extensions;
@@ -122,27 +86,30 @@ const SlateEditor = ({
   React.useLayoutEffect(() => {
     // The code in this if should be executed only when the control should be focused and is not (selected && !ReactEditor.isFocused(editor)? Should this code in this if be executed always when the editor is selected? What deps should it have and why?
     if (selected) {
-      // With this focus call below, the DOM Selection is collapsed at the start of the block without known reason.
-      // Without it, focusing the editor requires one click but the click's result is very accurate and nice. Is this focus call "too async" and breaks on its own the rest of the instructions below it?
-      // ReactEditor.focus(editor);
-
-      // The DOM Selection here is existing, valid, and on offset 0, although it is wrong.
-      console.log({
-        editor_sel: JSON.parse(JSON.stringify(editor.selection)),
-        dom_sel: window.getSelection(),
-      });
-
-      // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does reach this point in code.
-
       // The if statement below is from the fixSelection from hacks.js
       // // This makes the Backspace key work properly in block.
       // // Don't remove it, unless this test passes:
       // // - with the Slate block unselected, click in the block.
       // // - Hit backspace. If it deletes, then the test passes.
-      // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
+      if (!editor.selection) {
+        const sel = window.getSelection();
 
-      g(editor, gRef);
-      f(editor, fRef);
+        if (sel && sel.rangeCount > 0) {
+          let s;
+          // We are using this try-catch to avoid https://github.com/ianstormtaylor/slate/issues/3834.
+          try {
+            s = ReactEditor.toSlateRange(editor, sel);
+          } catch (ex) {
+            s = null;
+          }
+          // Maybe do a comparison of s with editor.selection through Range.equals
+          // before giving a new reference to the editor.selection?
+          editor.selection = s;
+        }
+      }
+
+      // An idea would be to move this call to focus method above the if statement above:
+      ReactEditor.focus(editor);
 
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?
@@ -168,7 +135,7 @@ const SlateEditor = ({
     }
     // Not useful:
     // return () => ReactEditor.blur(editor);
-  }, [editor, selected, defaultSelection, g, f]);
+  }, [editor, selected, defaultSelection]);
 
   const initialValue = slate.defaultValue();
 

@@ -37,13 +37,18 @@ export const insertData = (editor) => {
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
       let body;
+      let fragment;
+      // If the second parameter passed to `deserialize()` is a `<table>` in a `<google-sheets-html-origin>` the return value is for sure an array with a Slate Node with type 'table'. If the same second parameter is a `<body>` the return value is for sure an array with a single `Node[]` (Slate fragment) in it.
       if (parsed.getElementsByTagName('google-sheets-html-origin').length > 0) {
         body = parsed.querySelector('google-sheets-html-origin > table');
+        // If the second parameter is a `<table>` in a `<google-sheets-html-origin>` the return value is for sure a Slate Node with type 'table'.
+        fragment = [deserialize(editor, body)[0]]; // we must convert it to an array
       } else {
         body = parsed.body;
+        // If the second parameter is a `<body>` the return value is for sure an array with a single `Node[]` (Slate fragment) in it.
+        fragment = deserialize(editor, body)[0]; // we don't have to convert it to an array
       }
 
-      let [fragment] = deserialize(editor, body);
       console.log('parsed', parsed, fragment);
 
       if (!Editor.string(editor, [])) {

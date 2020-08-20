@@ -51,12 +51,7 @@ function collectRowsFrom(fragment) {
       let row = { key: uuid(), cells: [] };
 
       y.children.forEach((z) => {
-        let val;
-        try {
-          val = JSON.parse(JSON.stringify(z.children));
-        } catch (ex) {
-          debugger;
-        }
+        const val = JSON.parse(JSON.stringify(z.children));
         if (z.type === TD) {
           row.cells.push({
             key: uuid(),

@@ -1,14 +1,27 @@
 import { jsx } from 'slate-hyperscript';
 // import { settings } from '~/config';
+import { Editor, Node } from 'slate';
 
+/**
+ * @summary Should be called with care since it can return many types of data: null, string, array, array of arrays, and even more depending on `htmlTagsToSlate` settings.
+ * @param {Editor} editor The Slate Editor into which to deserialize.
+ * @param {HTMLElement} el The HTML element to deserialize.
+ * @returns {Node[][] | Node[]} If the `el` is a `<table>` in a `<google-sheets-html-origin>` the return value is for sure an array with a Slate Node with type 'table'. If the `el` is a `<body>` the return value is for sure an array with a single `Node[]` (Slate fragment) in it.
+ */
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
   if (el.nodeType === 3) {
     // TEXT_NODE
+
+    // Trimming similar to how the browser does when displaying text nodes:
     const nv = el.nodeValue?.trim();
     const tc = el.textContent.trim();
-    return nv === '\n' ? null : tc;
+
+    // The old way of doing it, was not working with spaces in text nodes between table cells (td/th):
+    // return nv === '\n' ? null : tc;
+
+    return nv.length === 0 ? null : tc;
   } else if (el.nodeType !== 1) {
     // !== ELEMENT_NODE
     return null;
@@ -16,7 +29,7 @@ export const deserialize = (editor, el) => {
     return '\n';
   }
 
-  console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
+  // console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
 
   const { nodeName } = el;
 

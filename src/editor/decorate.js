@@ -1,4 +1,4 @@
-import { Node } from 'slate';
+import { Node, Range } from 'slate';
 import { ReactEditor } from 'slate-react';
 
 import { settings } from '~/config';
@@ -59,7 +59,9 @@ export function highlightSelection(editor, [node, path], ranges) {
         highlight: true,
         isSelection: true,
       };
-      ranges.push(range);
+      if (Range.isExpanded(range)) {
+        ranges.push(range);
+      }
     }
   }
   return ranges;

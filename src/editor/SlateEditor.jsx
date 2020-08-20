@@ -1,6 +1,5 @@
 import cx from 'classnames';
-import _ from 'lodash';
-import { createEditor, Transforms, Range } from 'slate';
+import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { useState } from 'react';
@@ -54,14 +53,14 @@ const SlateEditor = ({
   // should apply to it).
 
   const initial_selection = React.useRef();
-  const savedSelection = React.useRef();
   React.useEffect(() => {
+    let sel = editor.selection;
     editor.setSavedSelection = (val) => {
-      savedSelection.current = val;
+      sel = val;
     };
     Object.defineProperty(editor, 'savedSelection', {
       get: () => {
-        return savedSelection.current;
+        return sel;
       },
     });
   }, [editor]);
@@ -86,7 +85,7 @@ const SlateEditor = ({
   React.useLayoutEffect(() => {
     // The code in this if should be executed only when the control should be focused and is not (selected && !ReactEditor.isFocused(editor)? Should this code in this if be executed always when the editor is selected? What deps should it have and why?
     if (selected) {
-      // The if statement below is from the fixSelection from hacks.js
+      // The if statement below is from the fixSelection from hacks.js but with some necessary modifications.
       // // This makes the Backspace key work properly in block.
       // // Don't remove it, unless this test passes:
       // // - with the Slate block unselected, click in the block.

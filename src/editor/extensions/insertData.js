@@ -43,7 +43,7 @@ export const insertData = (editor) => {
         body = parsed.body;
       }
 
-      let fragment = deserialize(editor, body);
+      let [fragment] = deserialize(editor, body);
       console.log('parsed', parsed, fragment);
 
       if (!Editor.string(editor, [])) {

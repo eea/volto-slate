@@ -34,17 +34,22 @@ const SlateEditor = ({
 
   const [showToolbar, setShowToolbar] = useState(false);
 
+  const raw = React.useMemo(() => {
+    return withHistory(withReact(createEditor()));
+  }, []);
+
   const defaultExtensions = slate.extensions;
-  let editor = React.useMemo(() => {
-    const raw = withHistory(withReact(createEditor()));
+  const bareEditor = React.useMemo(() => {
     const plugins = [...defaultExtensions, ...extensions];
     return plugins.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultExtensions, extensions]);
+  }, [defaultExtensions, extensions, raw]);
 
   // renderExtensions is needed because the editor is memoized, so if these
   // extensions need an updated state (for example to insert updated
   // blockProps) then we need to always wrap the editor with them
-  editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
+  const editor = React.useMemo(() => {
+    return renderExtensions.reduce((acc, apply) => apply(acc), bareEditor);
+  }, [bareEditor, renderExtensions]);
 
   // Save a copy of the selection in the editor. Sometimes the editor loses its
   // selection (because it is tied to DOM events). For example, if I'm in the

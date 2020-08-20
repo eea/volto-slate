@@ -16,6 +16,7 @@ const ShortcutListing = (props) => {
             <List.Item key={shortcut}>{`${shortcut}: ${format}`}</List.Item>
           ))}
         </List>
+        <div>On Windows, the MOD key is Ctrl, on MacOSX it's Cmd.</div>
       </Segment>
     </div>
   );

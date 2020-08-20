@@ -175,6 +175,7 @@ export function deconstructToVoltoBlocks(editor) {
     const { index } = blockProps;
     let blocks = [];
 
+    // TODO: should use Editor.levels() instead of Node.children
     const pathRefs = Array.from(Node.children(editor, [])).map(([, path]) =>
       Editor.pathRef(editor, path),
     );

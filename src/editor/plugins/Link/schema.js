@@ -26,16 +26,16 @@ export const LinkSchema = {
       default: [],
     },
     external_link: {
-      title:
-        'External URL',
-      description: 'URL can be relative within this site or absolute if it starts with http:// or https://'
+      title: 'External URL',
+      description:
+        'URL can be relative within this site or absolute if it starts with http:// or https://',
     },
     email_address: {
       title: 'Email address',
     },
     email_subject: {
       title: 'Email subject',
-      description: 'Optional'
+      description: 'Optional',
     },
   },
   required: [],

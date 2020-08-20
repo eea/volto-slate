@@ -33,45 +33,41 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  const gRef = React.useRef(0);
-  const fRef = React.useRef(0);
+  const gRef = React.useRef(3);
+  const fRef = React.useRef(3);
 
-  const f = React.useCallback(
-    (editor) => {
-      if (fRef.current <= 1) {
-        ++fRef.current;
-        return;
-      }
-      ReactEditor.focus(editor);
-    },
-    [fRef],
-  );
+  const f = React.useCallback((editor, ref) => {
+    console.log('f called', editor.children, ref.current);
+    if (ref.current <= 1) {
+      ++ref.current;
+      return;
+    }
+    // debugger;
+    ReactEditor.focus(editor);
+  }, []);
 
-  const g = React.useCallback(
-    (editor) => {
-      if (gRef.current <= 2) {
-        ++gRef.current;
-        return;
-      }
-      if (!editor.selection) {
-        const sel = window.getSelection();
+  const g = React.useCallback((editor, ref) => {
+    if (ref.current <= 2) {
+      ++ref.current;
+      return;
+    }
+    if (!editor.selection) {
+      const sel = window.getSelection();
 
-        if (sel && sel.rangeCount > 0) {
-          let s;
-          // TODO: confirm or infirm that this try-catch is needed
-          try {
-            s = ReactEditor.toSlateRange(editor, sel);
-          } catch (ex) {
-            s = null;
-          }
-          // Maybe do a comparison of s with editor.selection through Range.equals
-          // before giving a new reference to the editor.selection?
-          editor.selection = s;
+      if (sel && sel.rangeCount > 0) {
+        let s;
+        // TODO: confirm or infirm that this try-catch is needed
+        try {
+          s = ReactEditor.toSlateRange(editor, sel);
+        } catch (ex) {
+          s = null;
         }
+        // Maybe do a comparison of s with editor.selection through Range.equals
+        // before giving a new reference to the editor.selection?
+        editor.selection = s;
       }
-    },
-    [gRef],
-  );
+    }
+  }, []);
 
   const [showToolbar, setShowToolbar] = useState(false);
 
@@ -145,8 +141,8 @@ const SlateEditor = ({
       // // - Hit backspace. If it deletes, then the test passes.
       // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
 
-      g(editor);
-      f(editor);
+      g(editor, gRef);
+      f(editor, fRef);
 
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?

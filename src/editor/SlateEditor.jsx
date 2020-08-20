@@ -18,10 +18,6 @@ import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
-// I use these maps instead of the useRef hook because they were being reset. If it is of interest, the useRef variant is the previous commit.
-const editorsG = {};
-const editorsF = {};
-
 const SlateEditor = ({
   selected,
   value,
@@ -37,40 +33,45 @@ const SlateEditor = ({
 }) => {
   const { slate } = settings;
 
-  // If I use useCallback or useMemo something does not work.
-  const f = (editor, editorsF) => {
-    editorsF[editor] = editorsF[editor] || 0;
-    console.log('f', editorsF[editor]);
-    if (editorsF[editor] <= 1) {
-      ++editorsF[editor];
-      return;
-    }
-    ReactEditor.focus(editor);
-  };
+  const gRef = React.useRef(0);
+  const fRef = React.useRef(0);
 
-  const g = (editor, editorsG) => {
-    editorsG[editor] = editorsG[editor] || 1;
-    console.log('g', editorsG[editor]);
-    if (editorsG[editor] <= 2) {
-      ++editorsG[editor];
-      return;
-    }
-    if (!editor.selection) {
-      const sel = window.getSelection();
-
-      if (sel && sel.rangeCount > 0) {
-        let s;
-        try {
-          s = ReactEditor.toSlateRange(editor, sel);
-        } catch (ex) {
-          s = null;
-        }
-        // Maybe do a comparison of s with editor.selection through Range.equals
-        // before giving a new reference to the editor.selection?
-        editor.selection = s;
+  const f = React.useCallback(
+    (editor) => {
+      if (fRef.current <= 1) {
+        ++fRef.current;
+        return;
       }
-    }
-  };
+      ReactEditor.focus(editor);
+    },
+    [fRef],
+  );
+
+  const g = React.useCallback(
+    (editor) => {
+      if (gRef.current <= 2) {
+        ++gRef.current;
+        return;
+      }
+      if (!editor.selection) {
+        const sel = window.getSelection();
+
+        if (sel && sel.rangeCount > 0) {
+          let s;
+          // TODO: confirm or infirm that this try-catch is needed
+          try {
+            s = ReactEditor.toSlateRange(editor, sel);
+          } catch (ex) {
+            s = null;
+          }
+          // Maybe do a comparison of s with editor.selection through Range.equals
+          // before giving a new reference to the editor.selection?
+          editor.selection = s;
+        }
+      }
+    },
+    [gRef],
+  );
 
   const [showToolbar, setShowToolbar] = useState(false);
 
@@ -92,18 +93,26 @@ const SlateEditor = ({
   // its selection, but I want to keep that selection because my operations
   // should apply to it).
 
-  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
-  const [savedSelection, setSavedSelection] = React.useState();
-  editor.setSavedSelection = setSavedSelection;
-  editor.savedSelection = savedSelection;
+  const savedSelection = React.useRef();
+  React.useEffect(() => {
+    editor.setSavedSelection = (val) => {
+      savedSelection.current = val;
+    };
+    Object.defineProperty(editor, 'savedSelection', {
+      get: () => {
+        return savedSelection.current;
+      },
+    });
+  }, [editor]);
 
+  const selection = JSON.stringify(editor?.selection || {});
   // This effect is useless since in the React.useLayoutEffect below we save the selection.
   // Update: it is still useful, w/o it the footnote edit form closes itself when receiving focus,
   // Why it is not a layout effect?
   React.useEffect(() => {
     if (selected && selection && JSON.parse(selection).anchor) {
-      setSavedSelection(JSON.parse(selection));
+      editor.setSavedSelection(JSON.parse(selection));
     }
   }, [selection, selected, editor]);
 
@@ -136,8 +145,8 @@ const SlateEditor = ({
       // // - Hit backspace. If it deletes, then the test passes.
       // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
 
-      g(editor, editorsG);
-      f(editor, editorsF);
+      g(editor);
+      f(editor);
 
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?
@@ -149,7 +158,7 @@ const SlateEditor = ({
       // // put here the fixSelection call and what's below uncommented:
 
       // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
-      // setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+      // editor.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {

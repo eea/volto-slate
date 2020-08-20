@@ -44,13 +44,19 @@ export const extractTables = (editor, pathRef) => {
  * @returns {Array} An array of rows in the format requested by `slateTable` blocks.
  */
 function collectRowsFrom(fragment) {
+  console.log('fragment', fragment);
   let rows = [];
   fragment.children.forEach((y) => {
     if (y.type === TR) {
       let row = { key: uuid(), cells: [] };
 
       y.children.forEach((z) => {
-        let val = JSON.parse(JSON.stringify(z.children));
+        let val;
+        try {
+          val = JSON.parse(JSON.stringify(z.children));
+        } catch (ex) {
+          debugger;
+        }
         if (z.type === TD) {
           row.cells.push({
             key: uuid(),

@@ -58,7 +58,10 @@ const SlateEditor = ({
   // should apply to it).
 
   const initial_selection = React.useRef();
+  // Execute this code only once (when the editor reference is changed):
   React.useEffect(() => {
+    // This is just a simple way to store the data.
+
     let sel = editor.selection;
     editor.setSavedSelection = (val) => {
       sel = val;

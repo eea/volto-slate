@@ -6,7 +6,9 @@ export const deserialize = (editor, el) => {
 
   if (el.nodeType === 3) {
     // TEXT_NODE
-    return el.nodeValue === '\n' ? null : el.textContent;
+    const nv = el.nodeValue?.trim();
+    const tc = el.textContent.trim();
+    return nv === '\n' ? null : tc;
   } else if (el.nodeType !== 1) {
     // !== ELEMENT_NODE
     return null;
@@ -14,7 +16,7 @@ export const deserialize = (editor, el) => {
     return '\n';
   }
 
-  // console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
+  console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
 
   const { nodeName } = el;
 

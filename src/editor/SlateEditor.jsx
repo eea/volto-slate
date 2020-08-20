@@ -38,28 +38,33 @@ const SlateEditor = ({
   const { slate } = settings;
 
   // If I use useCallback or useMemo something does not work.
-  const f = (editor) => {
-    editorsF[this] = editorsF[this] || 0;
-    console.log('f', editorsF[this]);
-    if (editorsF[this] <= 1) {
-      ++editorsF[this];
+  const f = (editor, editorsF) => {
+    editorsF[editor] = editorsF[editor] || 0;
+    console.log('f', editorsF[editor]);
+    if (editorsF[editor] <= 1) {
+      ++editorsF[editor];
       return;
     }
     ReactEditor.focus(editor);
   };
 
-  const g = (editor) => {
-    editorsG[this] = editorsG[this] || 1;
-    console.log('g', editorsG[this]);
-    if (editorsG[this] <= 2) {
-      ++editorsG[this];
+  const g = (editor, editorsG) => {
+    editorsG[editor] = editorsG[editor] || 1;
+    console.log('g', editorsG[editor]);
+    if (editorsG[editor] <= 2) {
+      ++editorsG[editor];
       return;
     }
     if (!editor.selection) {
       const sel = window.getSelection();
 
       if (sel && sel.rangeCount > 0) {
-        const s = ReactEditor.toSlateRange(editor, sel);
+        let s;
+        try {
+          s = ReactEditor.toSlateRange(editor, sel);
+        } catch (ex) {
+          s = null;
+        }
         // Maybe do a comparison of s with editor.selection through Range.equals
         // before giving a new reference to the editor.selection?
         editor.selection = s;
@@ -131,8 +136,8 @@ const SlateEditor = ({
       // // - Hit backspace. If it deletes, then the test passes.
       // the flow of the click that does not change the selection but sets the previous selection of the current Volto block does not enter this if branch below:
 
-      g(editor);
-      f(editor);
+      g(editor, editorsG);
+      f(editor, editorsF);
 
       // else {
       // here the old selection of the current Volto Slate Text block is in the editor.selection variable, we would change it but with what?

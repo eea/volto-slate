@@ -19,7 +19,7 @@ export const deserialize = (editor, el) => {
   const { nodeName } = el;
 
   if (htmlTagsToSlate[nodeName]) {
-    return htmlTagsToSlate[nodeName](editor, el);
+    return [htmlTagsToSlate[nodeName](editor, el)];
   }
 
   // fallback deserializer

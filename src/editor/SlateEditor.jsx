@@ -153,6 +153,7 @@ const SlateEditor = ({
           renderElement={(props) => <Element {...props} />}
           renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
+          spellcheck="false"
           onKeyDown={(event) => {
             let wasHotkey = false;
 

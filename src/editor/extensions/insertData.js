@@ -52,9 +52,11 @@ export const insertData = (editor) => {
         Transforms.removeNodes(editor);
 
         // Wrap the text nodes of the fragment in paragraphs
-        fragment = fragment.map((b) =>
-          Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-        );
+        fragment = Array.isArray(fragment)
+          ? fragment.map((b) =>
+              Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
+            )
+          : fragment;
         console.log('Pasting in empty block:', fragment);
       }
 

@@ -54,18 +54,12 @@ class Cell extends Component {
    * @method componentDidMount
    * @returns {undefined}
    */
-  componentDidMount() {
-    // this.state.selected &&
-    // this.props.onSelectCell(this.props.row, this.props.cell);
-  }
+  componentDidMount() {}
 
   /**
    * Handles the `onBlur` event received on the `SlateEditor` component.
    */
   handleBlur(ev) {
-    console.log('handleBlur');
-    // ev.stopPropagation();
-    // ev.preventDefault();
     this.setState({ selected: false });
   }
 
@@ -73,7 +67,6 @@ class Cell extends Component {
    * Handles the `onFocus` event received on the `SlateEditor` component.
    */
   handleFocus(ev) {
-    console.log('handleFocus', this.state.selected);
     ev.stopPropagation();
     ev.preventDefault();
     if (!this.state.selected) {
@@ -82,22 +75,6 @@ class Cell extends Component {
       });
     }
   }
-
-  /**
-   * Component will receive props
-   * @method componentWillReceiveProps
-   * @param {Object} nextProps Next properties
-   * @returns {undefined}
-   */
-  // UNSAFE_componentWillReceiveProps(nextProps) {
-  //   if (
-  //     nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
-  //     this.props.cell === 0 &&
-  //     this.props.row === 0
-  //   ) {
-  //     this.setState({ selected: this.props.selected });
-  //   }
-  // }
 
   /**
    * Change handler
@@ -113,7 +90,6 @@ class Cell extends Component {
    * Handles the `onFocus` event received by the container `<div>` of the `SlateEditor`.
    */
   handleContainerFocus(ev) {
-    console.log('handleContainerFocus', this.state.selected);
     ev.stopPropagation();
     ev.preventDefault();
     if (!this.state.selected) {
@@ -130,16 +106,10 @@ class Cell extends Component {
    * @todo `Tab` works well to go through cells in the table, but `Shift-Tab` does nothing.
    */
   render() {
-    // console.log('Cell state.selected', this.state.selected);
-
     return (
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-      <div
-        onFocus={this.handleContainerFocus.bind(this)}
-        // onBlur={this.handleBlur.bind(this)}
-        tabIndex={0}
-      >
+      <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
         <SlateEditor
           onChange={this.onChange.bind(this)}
           value={this.props.value}

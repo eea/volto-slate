@@ -163,46 +163,10 @@ export function hasRangeSelection(editor) {
   const { savedSelection } = editor;
   const selection = editor.selection || savedSelection;
 
-  // const rv =
-  //    &&
-  //   selection &&
-  //   Range.isExpanded(selection) &&
-  //   Editor.string(editor, selection) !== '';
-
-  // const isf = ReactEditor.isFocused(editor);
-  // const sel = selection;
-  // const rg = sel && Range.isExpanded(sel);
-  // const str = sel && Editor.string(editor, sel);
-  // const istr = str !== '';
-  // console.log('hasSelectionRange', rv);
-  // if (!rv) {
-  //   debugger;
-  // }
-
-  // console.log('hasRangeSelection', { isf, sel, rg, str, istr });
-
-  // try {
-  //   console.log(
-  //     'string is not empty: ',
-  //     Editor.string(editor, selection) !== '',
-  //   );
-  // } catch (ex) {
-  //   console.log('!!!', ex.toString(), editor.selection, savedSelection);
-  //   debugger;
-  //   return false;
-  // }
-
-  let rv;
-  // try {
-    rv =
-      ReactEditor.isFocused(editor) &&
-      selection &&
-      Range.isExpanded(selection) &&
-      Editor.string(editor, selection) !== '';
-  // } catch (ex) {
-  //   console.log('!!!', ex.toString(), editor.selection, savedSelection);
-  //   return false;
-  // }
-
-  return rv;
+  return (
+    ReactEditor.isFocused(editor) &&
+    selection &&
+    Range.isExpanded(selection) &&
+    Editor.string(editor, selection) !== ''
+  );
 }

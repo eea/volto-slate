@@ -129,7 +129,7 @@ class Cell extends Component {
         <SlateEditor
           onChange={this.onChange.bind(this)}
           value={this.props.value}
-          selected={this.state.selected}
+          selected={this.props.isTableBlockSelected && this.state.selected}
           onFocus={this.handleFocus.bind(this)}
           onBlur={this.handleBlur.bind(this)}
         />

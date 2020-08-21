@@ -55,8 +55,8 @@ class Cell extends Component {
    * @returns {undefined}
    */
   componentDidMount() {
-    this.state.selected &&
-      this.props.onSelectCell(this.props.row, this.props.cell);
+    // this.state.selected &&
+      // this.props.onSelectCell(this.props.row, this.props.cell);
   }
 
   /**

@@ -642,7 +642,7 @@ class Edit extends Component {
                         cell={cellIndex}
                         onSelectCell={this.onSelectCell}
                         selected={
-                          // false
+                          this.props.selected &&
                           rowIndex === this.state.selected.row &&
                           cellIndex === this.state.selected.cell
                         }

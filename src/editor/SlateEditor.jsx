@@ -30,6 +30,8 @@ const SlateEditor = ({
   testingEditorRef,
   onFocus,
   onBlur,
+  onFocusCapture,
+  onBlurCapture,
   ...rest
 }) => {
   const { slate } = settings;
@@ -227,6 +229,8 @@ const SlateEditor = ({
           }}
           onFocus={onFocus}
           onBlur={onBlur}
+          onFocusCapture={onFocusCapture}
+          onBlurCapture={onBlurCapture}
         />
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;

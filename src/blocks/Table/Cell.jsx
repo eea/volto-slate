@@ -45,7 +45,7 @@ class Cell extends Component {
     super(props);
 
     this.state = {
-      selected: this.props.isTableBlockSelected && this.state.selected,
+      selected: this.props.isTableBlockSelected && this.props.selected,
     };
   }
 
@@ -74,11 +74,13 @@ class Cell extends Component {
    */
   handleFocus(ev) {
     console.log('handleFocus', this.state.selected);
-    // ev.stopPropagation();
-    // ev.preventDefault();
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (!this.state.selected) {
+      this.setState({ selected: true }, () => {
+        this.props.onSelectCell(this.props.row, this.props.cell);
+      });
+    }
   }
 
   /**
@@ -134,7 +136,7 @@ class Cell extends Component {
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
       <div
-        onFocusCapture={this.handleContainerFocus.bind(this)}
+        onFocus={this.handleContainerFocus.bind(this)}
         // onBlur={this.handleBlur.bind(this)}
         tabIndex={0}
       >

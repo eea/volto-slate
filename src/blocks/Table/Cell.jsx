@@ -63,6 +63,7 @@ class Cell extends Component {
    * Handles the `onBlur` event received on the `SlateEditor` component.
    */
   handleBlur() {
+    console.log('handleBlur');
     this.setState({ selected: false });
   }
 
@@ -82,15 +83,15 @@ class Cell extends Component {
    * @param {Object} nextProps Next properties
    * @returns {undefined}
    */
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
-      this.props.cell === 0 &&
-      this.props.row === 0
-    ) {
-      this.setState({ selected: this.props.selected });
-    }
-  }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   if (
+  //     nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+  //     this.props.cell === 0 &&
+  //     this.props.row === 0
+  //   ) {
+  //     this.setState({ selected: this.props.selected });
+  //   }
+  // }
 
   /**
    * Change handler
@@ -119,7 +120,7 @@ class Cell extends Component {
    * @todo `Tab` works well to go through cells in the table, but `Shift-Tab` does nothing.
    */
   render() {
-    console.log('Cell state.selected', this.state.selected);
+    // console.log('Cell state.selected', this.state.selected);
 
     return (
       // The tabIndex is required for the keyboard navigation

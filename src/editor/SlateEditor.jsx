@@ -60,7 +60,8 @@ const SlateEditor = ({
   // its selection, but I want to keep that selection because my operations
   // should apply to it).
 
-  const initial_selection = React.useRef();
+  // This seems useless:
+  // const initial_selection = React.useRef();
 
   // We need to rerender on selection change so we make it a state.
   // The value of a new saved selection is available just after a rerender.
@@ -71,9 +72,12 @@ const SlateEditor = ({
     anchor: { offset: 0, path: [0, 0] },
     focus: { offset: 0, path: [0, 0] },
   } */);
-  editor.savedSelection = savedSelection;
-  editor.setSavedSelection = setSavedSelection;
-
+  React.useLayoutEffect(() => {
+    editor.savedSelection = savedSelection;
+  }, [editor, savedSelection]);
+  React.useLayoutEffect(() => {
+    editor.setSavedSelection = setSavedSelection;
+  }, [editor]);
   /*
    * We 'restore' the selection because we manipulate it in several cases:
    * - when blocks are artificially joined, we set the selection at junction
@@ -84,6 +88,7 @@ const SlateEditor = ({
   React.useLayoutEffect(() => {
     // The code in this if should be executed only when the control should be focused and is not (selected && !ReactEditor.isFocused(editor)? Should this code in this if be executed always when the editor is selected? What deps should it have and why?
     if (selected) {
+      // console.log('selected prop true and focusing editor');
       ReactEditor.focus(editor);
 
       // The if statement below is from the fixSelection from hacks.js but with some necessary modifications.
@@ -116,14 +121,15 @@ const SlateEditor = ({
       // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
       // editor.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
-      if (defaultSelection) {
-        if (initial_selection.current !== defaultSelection) {
-          initial_selection.current = defaultSelection;
-          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-        }
-        // Not useful:
-        // return () => ReactEditor.blur(editor);
-      }
+      // TODO: this seems useless and breaks other things:
+      // if (defaultSelection) {
+      //   if (initial_selection.current !== defaultSelection) {
+      //     initial_selection.current = defaultSelection;
+      //     setTimeout(() => Transforms.select(editor, defaultSelection), 0);
+      //   }
+      //   // Not useful:
+      //   // return () => ReactEditor.blur(editor);
+      // }
     }
     // Not useful:
     // return () => ReactEditor.blur(editor);

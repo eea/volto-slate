@@ -521,7 +521,7 @@ class Edit extends Component {
    */
   render() {
 
-    console.log('Table props.selected', this.props.selected);
+    // console.log('Table props.selected', this.props.selected);
 
     return (
       // TODO: use slate-table instead of table, but first copy the CSS styles to the new name

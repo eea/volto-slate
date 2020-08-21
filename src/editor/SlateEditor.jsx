@@ -83,7 +83,12 @@ const SlateEditor = ({
       // // Don't remove it, unless this test passes:
       // // - with the Slate block unselected, click in the block.
       // // - Hit backspace. If it deletes, then the test passes.
-      if (!editor.selection) {
+      // Use the second condition (isFocused(editor)) to make sure we
+      // are setting the selection on the correct editor. Otherwise we
+      // get error at clicking on another cell in a table when the previously
+      // focused cell had its selection larger than the contents of the
+      // newly focused cell so an error is thrown.
+      if (!editor.selection && ReactEditor.isFocused(editor)) {
         const sel = window.getSelection();
 
         if (sel && sel.rangeCount > 0) {

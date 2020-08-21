@@ -70,6 +70,7 @@ class Cell extends Component {
    * Handles the `onFocus` event received on the `SlateEditor` component.
    */
   handleFocus() {
+    console.log('handleFocus', this.state.selected);
     this.setState({ selected: true }, () => {
       this.props.onSelectCell(this.props.row, this.props.cell);
     });
@@ -105,6 +106,7 @@ class Cell extends Component {
    * Handles the `onFocus` event received by the container `<div>` of the `SlateEditor`.
    */
   handleContainerFocus() {
+    console.log('handleContainerFocus', this.state.selected);
     this.setState({ selected: true }, () => {
       this.props.onSelectCell(this.props.row, this.props.cell);
     });
@@ -117,6 +119,8 @@ class Cell extends Component {
    * @todo `Tab` works well to go through cells in the table, but `Shift-Tab` does nothing.
    */
   render() {
+    console.log('Cell state.selected', this.state.selected);
+
     return (
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */

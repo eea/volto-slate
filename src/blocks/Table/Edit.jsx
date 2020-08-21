@@ -520,6 +520,9 @@ class Edit extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
+
+    console.log('Table props.selected', this.props.selected);
+
     return (
       // TODO: use slate-table instead of table, but first copy the CSS styles to the new name
       <div className={cx('block table', { selected: this.props.selected })}>
@@ -639,6 +642,7 @@ class Edit extends Component {
                         cell={cellIndex}
                         onSelectCell={this.onSelectCell}
                         selected={
+                          // false
                           rowIndex === this.state.selected.row &&
                           cellIndex === this.state.selected.cell
                         }

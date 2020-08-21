@@ -28,23 +28,31 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
+  onFocus,
+  onBlur,
   ...rest
 }) => {
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
 
+  const raw = React.useMemo(() => {
+    return withHistory(withReact(createEditor()));
+  }, []);
+
   const defaultExtensions = slate.extensions;
-  let editor = React.useMemo(() => {
-    const raw = withHistory(withReact(createEditor()));
+
+  const bareEditor = React.useMemo(() => {
     const plugins = [...defaultExtensions, ...extensions];
     return plugins.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultExtensions, extensions]);
+  }, [defaultExtensions, extensions, raw]);
 
   // renderExtensions is needed because the editor is memoized, so if these
   // extensions need an updated state (for example to insert updated
   // blockProps) then we need to always wrap the editor with them
-  editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
+  const editor = React.useMemo(() => {
+    return renderExtensions.reduce((acc, apply) => apply(acc), bareEditor);
+  }, [bareEditor, renderExtensions]);
 
   // Save a copy of the selection in the editor. Sometimes the editor loses its
   // selection (because it is tied to DOM events). For example, if I'm in the
@@ -52,44 +60,64 @@ const SlateEditor = ({
   // its selection, but I want to keep that selection because my operations
   // should apply to it).
 
-  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
-  const [savedSelection, setSavedSelection] = React.useState();
-  editor.setSavedSelection = setSavedSelection;
-  editor.savedSelection = savedSelection;
 
-  React.useEffect(() => {
-    if (selected && selection && JSON.parse(selection).anchor) {
-      setSavedSelection(JSON.parse(selection));
-    }
-  }, [selection, selected, editor]);
+  // We need to rerender on selection change so we make it a state.
+  // The value of a new saved selection is available just after a rerender.
+  const [savedSelection, setSavedSelection] = React.useState(null);
+  editor.savedSelection = savedSelection;
+  editor.setSavedSelection = setSavedSelection;
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
    * - when blocks are artificially joined, we set the selection at junction
    * - when moving up, we set it at end of previous blok
    * - when moving down, we set it at beginning of next block
+   * Could some of the cases listed above be avoided by using Transforms.select?
    */
   React.useLayoutEffect(() => {
+    // The code in this if should be executed only when the control should be focused and is not (selected && !ReactEditor.isFocused(editor)? Should this code in this if be executed always when the editor is selected? What deps should it have and why?
     if (selected) {
+      // The if statement below is from the fixSelection from hacks.js but with some necessary modifications.
+      // // This makes the Backspace key work properly in block.
+      // // Don't remove it, unless this test passes:
+      // // - with the Slate block unselected, click in the block.
+      // // - Hit backspace. If it deletes, then the test passes.
+      if (!editor.selection) {
+        const sel = window.getSelection();
+
+        if (sel && sel.rangeCount > 0) {
+          let s;
+          // We are using this try-catch to avoid https://github.com/ianstormtaylor/slate/issues/3834.
+          try {
+            s = ReactEditor.toSlateRange(editor, sel);
+          } catch (ex) {
+            s = null;
+          }
+          // Maybe do a comparison of s with editor.selection through Range.equals
+          // before giving a new reference to the editor.selection?
+          editor.selection = s;
+        }
+      }
+
+      // An idea would be to move this call to focus method above the if statement above:
+
       ReactEditor.focus(editor);
 
-      // This makes the Backspace key work properly in block.
-      // Don't remove it, unless this test passes:
-      // - with the Slate block unselected, click in the block.
-      // - Hit backspace. If it deletes, then the test passes
-      fixSelection(editor);
-      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+      // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
+      // editor.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
       if (defaultSelection) {
         if (initial_selection.current !== defaultSelection) {
           initial_selection.current = defaultSelection;
           setTimeout(() => Transforms.select(editor, defaultSelection), 0);
         }
-        return () => ReactEditor.blur(editor);
+        // Not useful:
+        // return () => ReactEditor.blur(editor);
       }
     }
-    return () => ReactEditor.blur(editor);
+    // Not useful:
+    // return () => ReactEditor.blur(editor);
   }, [editor, selected, defaultSelection]);
 
   const initialValue = slate.defaultValue();
@@ -111,15 +139,24 @@ const SlateEditor = ({
     testingEditorRef.current = editor;
   }
 
-  const j_value = JSON.stringify(value);
+  // This useMemo is just an optimization.
+  const j_value = React.useMemo(() => {
+    return JSON.stringify(value);
+  }, [value]);
   const handleChange = React.useCallback(
     (newValue) => {
+      if (selected && editor.selection && editor.selection.anchor) {
+        editor.setSavedSelection(editor.selection);
+      }
       if (JSON.stringify(newValue) !== j_value) {
         onChange(newValue);
       }
     },
-    [j_value, onChange],
+    [editor, j_value, onChange, selected],
   );
+
+  // console.log('--------------------------------');
+  // console.log('Rendering SlateEditor, selected =', selected);
 
   return (
     <div
@@ -153,7 +190,8 @@ const SlateEditor = ({
           renderElement={(props) => <Element {...props} />}
           renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
-          spellcheck="false"
+          // TODO: maybe in future set spellCheck to true
+          spellCheck={false}
           onKeyDown={(event) => {
             let wasHotkey = false;
 
@@ -172,6 +210,8 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;

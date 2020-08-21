@@ -45,7 +45,7 @@ class Cell extends Component {
     super(props);
 
     this.state = {
-      selected: this.props.selected,
+      selected: this.props.isTableBlockSelected && this.state.selected,
     };
   }
 
@@ -56,22 +56,26 @@ class Cell extends Component {
    */
   componentDidMount() {
     // this.state.selected &&
-      // this.props.onSelectCell(this.props.row, this.props.cell);
+    // this.props.onSelectCell(this.props.row, this.props.cell);
   }
 
   /**
    * Handles the `onBlur` event received on the `SlateEditor` component.
    */
-  handleBlur() {
+  handleBlur(ev) {
     console.log('handleBlur');
+    // ev.stopPropagation();
+    // ev.preventDefault();
     this.setState({ selected: false });
   }
 
   /**
    * Handles the `onFocus` event received on the `SlateEditor` component.
    */
-  handleFocus() {
+  handleFocus(ev) {
     console.log('handleFocus', this.state.selected);
+    // ev.stopPropagation();
+    // ev.preventDefault();
     this.setState({ selected: true }, () => {
       this.props.onSelectCell(this.props.row, this.props.cell);
     });
@@ -106,11 +110,15 @@ class Cell extends Component {
   /**
    * Handles the `onFocus` event received by the container `<div>` of the `SlateEditor`.
    */
-  handleContainerFocus() {
+  handleContainerFocus(ev) {
     console.log('handleContainerFocus', this.state.selected);
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
+    ev.stopPropagation();
+    ev.preventDefault();
+    if (!this.state.selected) {
+      this.setState({ selected: true }, () => {
+        this.props.onSelectCell(this.props.row, this.props.cell);
+      });
+    }
   }
 
   /**
@@ -125,7 +133,11 @@ class Cell extends Component {
     return (
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-      <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
+      <div
+        onFocusCapture={this.handleContainerFocus.bind(this)}
+        // onBlur={this.handleBlur.bind(this)}
+        tabIndex={0}
+      >
         <SlateEditor
           onChange={this.onChange.bind(this)}
           value={this.props.value}

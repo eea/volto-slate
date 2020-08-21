@@ -204,7 +204,13 @@ const TextBlockEdit = (props) => {
         </Button>
       )}
       {addNewBlockOpened && (
-        <BlockChooser onMutateBlock={onMutateBlock} currentBlock={block} />
+        <BlockChooser
+          onMutateBlock={(...args) => {
+            onMutateBlock(...args);
+            setAddNewBlockOpened(false);
+          }}
+          currentBlock={block}
+        />
       )}
     </>
   );

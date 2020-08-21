@@ -64,7 +64,13 @@ const SlateEditor = ({
 
   // We need to rerender on selection change so we make it a state.
   // The value of a new saved selection is available just after a rerender.
-  const [savedSelection, setSavedSelection] = React.useState(null);
+  const [
+    savedSelection,
+    setSavedSelection,
+  ] = React.useState(/* {
+    anchor: { offset: 0, path: [0, 0] },
+    focus: { offset: 0, path: [0, 0] },
+  } */);
   editor.savedSelection = savedSelection;
   editor.setSavedSelection = setSavedSelection;
 
@@ -78,6 +84,8 @@ const SlateEditor = ({
   React.useLayoutEffect(() => {
     // The code in this if should be executed only when the control should be focused and is not (selected && !ReactEditor.isFocused(editor)? Should this code in this if be executed always when the editor is selected? What deps should it have and why?
     if (selected) {
+      ReactEditor.focus(editor);
+
       // The if statement below is from the fixSelection from hacks.js but with some necessary modifications.
       // // This makes the Backspace key work properly in block.
       // // Don't remove it, unless this test passes:
@@ -104,10 +112,6 @@ const SlateEditor = ({
           editor.selection = s;
         }
       }
-
-      // An idea would be to move this call to focus method above the if statement above:
-
-      ReactEditor.focus(editor);
 
       // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
       // editor.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));

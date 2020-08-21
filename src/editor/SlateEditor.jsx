@@ -62,8 +62,7 @@ const SlateEditor = ({
   // its selection, but I want to keep that selection because my operations
   // should apply to it).
 
-  // TODO: not working:
-  // const initial_selection = React.useRef();
+  const initial_selection = React.useRef();
 
   // We need to rerender on selection change so we make it a state.
   // The value of a new saved selection is available just after a rerender.
@@ -119,13 +118,12 @@ const SlateEditor = ({
       // This call would cause rerendering from layout effect hook which I think it is wrong but it also causes React error: "Error: Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.". Also, this is done, I think, above, in the React.useEffect call.
       // editor.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
-      // TODO: not working:
-      // if (defaultSelection) {
-      //   if (initial_selection.current !== defaultSelection) {
-      //     initial_selection.current = defaultSelection;
-      //     setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-      //   }
-      // }
+      if (defaultSelection) {
+        if (initial_selection.current !== defaultSelection) {
+          initial_selection.current = defaultSelection;
+          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
+        }
+      }
     }
   }, [editor, selected, defaultSelection]);
 

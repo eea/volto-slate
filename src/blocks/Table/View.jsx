@@ -1,6 +1,6 @@
 /**
- * View table block.
- * @module components/manage/Blocks/Table/View
+ * Slate Table block's View component.
+ * @module volto-slate/blocks/Table/View
  */
 
 import React from 'react';
@@ -14,9 +14,10 @@ import { Node } from 'slate';
 import '../../editor/plugins/Table/less/public.less';
 
 /**
- * View table block class.
+ * Slate Table block's View class.
  * @class View
  * @extends Component
+ * @param {object} data The table data to render as a table.
  */
 const View = ({ data }) => {
   return (

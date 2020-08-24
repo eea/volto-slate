@@ -80,6 +80,7 @@ function extractVoltoTable(el) {
   let thead = [],
     tfoot = [],
     tbody = [];
+
   el.children.forEach((fragment) => {
     if (fragment.type === THEAD) {
       // not supported by View fully, so prepend this to tbody below

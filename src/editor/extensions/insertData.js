@@ -1,7 +1,12 @@
-import { Editor, Text, Transforms } from 'slate';
+import { Editor, Text, Transforms, Block } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import { settings } from '~/config';
 
+/**
+ * @param {Text} textNode The (leaf) Text node to wrap.
+ *
+ * @returns {Block} A Slate block node, of the default block type configured in the Slate settings, containing the given Text node.
+ */
 function createBlock(textNode) {
   return {
     type: settings.slate.defaultBlockType,
@@ -9,6 +14,11 @@ function createBlock(textNode) {
   };
 }
 
+/**
+ * @summary Inserts in the given editor the feature of being able to paste HTML content in it.
+ *
+ * @param {Editor} editor A Slate editor object.
+ */
 export const insertData = (editor) => {
   const { insertData } = editor;
 
@@ -26,7 +36,14 @@ export const insertData = (editor) => {
     if (html) {
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
-      let fragment = deserialize(editor, parsed.body);
+      let body;
+      if (parsed.getElementsByTagName('google-sheets-html-origin').length > 0) {
+        body = parsed.querySelector('google-sheets-html-origin > table');
+      } else {
+        body = parsed.body;
+      }
+
+      let fragment = deserialize(editor, body);
       console.log('parsed', parsed, fragment);
 
       if (!Editor.string(editor, [])) {
@@ -35,9 +52,11 @@ export const insertData = (editor) => {
         Transforms.removeNodes(editor);
 
         // Wrap the text nodes of the fragment in paragraphs
-        fragment = fragment.map((b) =>
-          Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-        );
+        fragment = Array.isArray(fragment)
+          ? fragment.map((b) =>
+              Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
+            )
+          : fragment;
         console.log('Pasting in empty block:', fragment);
       }
 
@@ -52,7 +71,7 @@ export const insertData = (editor) => {
       Transforms.insertNodes(editor, fragment);
       Transforms.deselect(editor); // Solves a problem when pasting images
 
-      console.log('AFTER TABLE PASTE', editor.children);
+      // console.log('AFTER TABLE PASTE', editor.children);
 
       return;
     }

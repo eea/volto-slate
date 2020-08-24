@@ -9,7 +9,7 @@ import './less/table.less';
 import { Editor, Transforms } from 'slate';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
-const TableButton = () => {
+const TableButton = ({ ...props }) => {
   const editor = useSlate();
 
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -91,6 +91,7 @@ const TableButton = () => {
         }}
         trigger={
           <ToolbarButton
+            {...props}
             className="slate-table-dropdown-button"
             onClick={() => {
               if (dropdownOpen) {

@@ -1,7 +1,20 @@
 import { nestContent } from '@plone/volto/helpers';
 import { UPLOAD_CONTENT } from 'volto-slate/constants';
 
-// A custom version of Volto's createContent that can take an "origin" block id
+/**
+ * @summary Upload content function.
+ *
+ * @description A custom version of Volto's `createContent` that can take an `origin` block ID.
+ * There is an issue on making this a builtin variant of the Volto's `createContent` action: https://github.com/plone/volto/issues/1654.
+ *
+ * @param {string} url Parent URL.
+ * @param {Object|Array} content Content data.
+ * @param {string} origin The ID of the block into which the content should be uploaded.
+ *
+ * @todo Clarify if the parameter `origin` is optional or remove this TODO.
+ *
+ * @returns {Object} Upload content action.
+ */
 export function uploadContent(url, content, origin) {
   return {
     type: UPLOAD_CONTENT,

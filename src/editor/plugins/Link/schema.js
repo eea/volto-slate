@@ -23,23 +23,26 @@ export const LinkSchema = {
     internal_link: {
       widget: 'object_browser',
       title: 'Internal link',
+      default: [],
     },
     external_link: {
-      title:
-        'External URL (can be relative within this site or absolute if it starts with http:// or https://)',
+      title: 'External URL',
+      description:
+        'URL can be relative within this site or absolute if it starts with http:// or https://',
     },
     email_address: {
       title: 'Email address',
     },
     email_subject: {
-      title: 'Email subject (optional)',
+      title: 'Email subject',
+      description: 'Optional',
     },
   },
   required: [],
 };
 
 const LinkEditSchema = {
-  title: 'Edit link',
+  title: 'Insert link',
   fieldsets: [
     {
       id: 'default',

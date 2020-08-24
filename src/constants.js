@@ -13,3 +13,9 @@ export const TFOOT = 'tbody';
 export const TR = 'tr';
 export const TH = 'th';
 export const TD = 'td';
+
+export const P = 'p';
+
+export const LI = 'li';
+export const UL = 'ul';
+export const OL = 'ol';

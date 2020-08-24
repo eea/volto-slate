@@ -1,24 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import { readAsDataURL } from 'promise-file-reader';
+import Dropzone from 'react-dropzone';
+
+import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
+import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
-import { uploadContent } from 'volto-slate/actions';
-import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
-import addSVG from '@plone/volto/icons/circle-plus.svg';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import ShortcutListing from './ShortcutListing';
-import { handleKey } from './keyboard';
-import Dropzone from 'react-dropzone';
-import './styles.css';
 import { createImageBlock } from 'volto-slate/utils';
+import { uploadContent } from 'volto-slate/actions';
+
+import ShortcutListing from './ShortcutListing';
+import MarkdownIntroduction from './MarkdownIntroduction';
+import { handleKey } from './keyboard';
+
+import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
+import addSVG from '@plone/volto/icons/circle-plus.svg';
+
+import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
@@ -129,11 +135,20 @@ const TextBlockEdit = (props) => {
     onAddBlock,
   ]);
 
+  // const blockChooserRef = React.useRef();
+  const handleClickOutside = React.useCallback((e) => {
+    const blockChooser = document.querySelector('.blocks-chooser');
+    document.removeEventListener('mousedown', handleClickOutside, false);
+    if (doesNodeContainClick(blockChooser, e)) return;
+    setAddNewBlockOpened(false);
+  }, []);
+
   return (
     <>
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
         <ShortcutListing />
+        <MarkdownIntroduction />
       </SidebarPortal>
 
       <Dropzone
@@ -175,6 +190,14 @@ const TextBlockEdit = (props) => {
                 // TODO: also add html serialized value
               });
             }}
+            onClick={(ev) => {
+              // this is needed so that the click event does
+              // not bubble up to the Blocks/Block/Edit.jsx component
+              // which attempts to focus the TextBlockEdit on
+              // click and this behavior breaks user selection, e.g.
+              // when clicking once a selected word
+              ev.stopPropagation();
+            }}
             onKeyDown={handleKey}
             selected={selected}
             placeholder={data.placeholder || 'Enter some rich text…'}
@@ -185,14 +208,23 @@ const TextBlockEdit = (props) => {
         <Button
           basic
           icon
-          onClick={() => setAddNewBlockOpened(!addNewBlockOpened)}
+          onClick={() => {
+            document.addEventListener('mousedown', handleClickOutside, false);
+            setAddNewBlockOpened(!addNewBlockOpened);
+          }}
           className="block-add-button"
         >
           <Icon name={addSVG} className="block-add-button" size="24px" />
         </Button>
       )}
       {addNewBlockOpened && (
-        <BlockChooser onMutateBlock={onMutateBlock} currentBlock={block} />
+        <BlockChooser
+          onMutateBlock={(...args) => {
+            onMutateBlock(...args);
+            setAddNewBlockOpened(false);
+          }}
+          currentBlock={block}
+        />
       )}
     </>
   );

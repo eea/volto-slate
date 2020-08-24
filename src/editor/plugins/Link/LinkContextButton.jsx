@@ -1,46 +1,49 @@
 import React from 'react';
-import editingSVG from '@plone/volto/icons/tag.svg';
 import { useIntl, defineMessages } from 'react-intl';
-import { isActiveFootnote, unwrapFootnote } from './utils';
-import clearSVG from '@plone/volto/icons/delete.svg';
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { FOOTNOTE_EDITOR } from './constants';
+import { isActiveLink, unwrapLink } from './utils';
+
+import { LINK_EDITOR } from './constants';
 import { useDispatch, useSelector } from 'react-redux';
+
+import editingSVG from '@plone/volto/icons/editing.svg';
+import clearSVG from '@plone/volto/icons/delete.svg';
 
 const messages = defineMessages({
   edit: {
-    id: 'Edit footnote',
-    defaultMessage: 'Edit footnote',
+    id: 'Edit link',
+    defaultMessage: 'Edit link',
   },
   delete: {
-    id: 'Remove footnote',
-    defaultMessage: 'Remove footnote',
+    id: 'Delete link',
+    defaultMessage: 'Delete link',
   },
 });
 
 export default (editor) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const showEditor = useSelector((state) => state['footnote_editor']?.show);
+  const showEditor = useSelector((state) => state['link_editor']?.show);
 
-  return isActiveFootnote(editor) ? (
-    <React.Fragment key="footnote">
+  return isActiveLink(editor) ? (
+    <React.Fragment key="link">
       <ToolbarButton
-        title={intl.formatMessage(messages.edit)}
         icon={editingSVG}
         active={showEditor}
+        title={intl.formatMessage(messages.edit)}
         aria-label={intl.formatMessage(messages.edit)}
+        alt={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
-          dispatch({ type: FOOTNOTE_EDITOR, show: true });
+          dispatch({ type: LINK_EDITOR, show: true });
         }}
       />
       <ToolbarButton
-        title={intl.formatMessage(messages.delete)}
         icon={clearSVG}
+        title={intl.formatMessage(messages.delete)}
         aria-label={intl.formatMessage(messages.delete)}
         alt={intl.formatMessage(messages.delete)}
         onMouseDown={() => {
-          unwrapFootnote(editor);
+          unwrapLink(editor);
         }}
       />
     </React.Fragment>

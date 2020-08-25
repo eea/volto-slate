@@ -237,17 +237,19 @@ export const htmlTagsToSlate = {
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
-  B: bTagDeserializer,
+  // B: bTagDeserializer,
+  B: blockTagDeserializer('b'),
+  STRONG: blockTagDeserializer('strong'),
+  // STRONG: inlineTagDeserializer({ bold: true }),
   CODE: inlineTagDeserializer({ code: true }),
-  DEL: inlineTagDeserializer({ strikethrough: true }),
-  EM: inlineTagDeserializer({ italic: true }),
-  I: inlineTagDeserializer({ italic: true }),
-  S: inlineTagDeserializer({ strikethrough: true }),
+  DEL: blockTagDeserializer('s'),
+  EM: blockTagDeserializer('em'),
+  I: blockTagDeserializer('i'),
+  S: blockTagDeserializer('s'),
   SPAN: spanTagDeserializer,
-  STRONG: inlineTagDeserializer({ bold: true }),
-  SUB: inlineTagDeserializer({ sub: true }),
-  SUP: inlineTagDeserializer({ sup: true }),
-  U: inlineTagDeserializer({ underline: true }),
+  SUB: blockTagDeserializer('sub'),
+  SUP: blockTagDeserializer('sup'),
+  U: blockTagDeserializer('u'),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

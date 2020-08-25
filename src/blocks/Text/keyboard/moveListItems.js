@@ -43,9 +43,9 @@ export function moveListItemUp({ editor, event }) {
     //   leaf Text node
     // * 'highest' - take the root Editor node (if there is a selection, in case
     //   no `at` option is given)
-    // * 'lowest' - take the farthest-from-root selected leaf Text node (replace
-    //   the "leaf Text node" expressions in the above list with whatever
-    //   matching function you use)
+    // * 'lowest' - take the farthest-from-root selected leaf Text node
+    // (Replace the "leaf Text node" expressions in the above list with
+    // whatever matching function you use.)
     mode: 'lowest',
   });
 
@@ -71,27 +71,54 @@ export function moveListItemUp({ editor, event }) {
   return true;
 }
 
+/**
+ * Move down a list with with `Ctrl+Down`. (The Down key is supposed here to be
+ * pressed.)
+ * @param {Editor} Editor
+ * @param {KeyboardEvent} event
+ */
 export function moveListItemDown({ editor, event }) {
+  // If Ctrl is not pressed or the cursor is not in a list, do nothing.
   if (!event.ctrlKey) return;
   if (!isCursorInList(editor)) return false;
 
+  // Else
   const { slate } = settings;
 
+  // Take the Node in the selection that is LI and is farthest-from-root.
   const [match] = Editor.nodes(editor, {
+    // Explanation of the three modes:
+    // * 'all' - take all the nodes from the root Editor node to the selected
+    //   leaf Text node
+    // * 'highest' - take the root Editor node (if there is a selection, in case
+    //   no `at` option is given)
+    // * 'lowest' - take the farthest-from-root selected leaf Text node
+    // (Replace the "leaf Text node" expressions in the above list with
+    // whatever matching function you use.)
     match: (n) => n.type === slate.listItemType,
     reverse: true,
     mode: 'lowest',
   });
 
+  // Get the Path of the above-found Node.
   const [, at] = match;
+
+  // Get the Path that represents the next sibling node of the Path above.
   const to = Path.next(at);
 
+  // Prevent the default behavior of Slate, React and DOM and stop the
+  // propagation of this event.
   event.preventDefault();
   event.stopPropagation();
 
+  // If the Path does not exist, mark the event as handled and do nothing.
   if (!Node.has(editor, to)) return true;
 
+  // Move the Node in the selection that is LI and is farthest-from-root to the
+  // existing Path just after its current location, if there is a place for it
+  // at the same depth.
   Transforms.moveNodes(editor, { at, to });
 
+  // Mark the event as handled.
   return true;
 }

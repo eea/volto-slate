@@ -44,16 +44,25 @@ export const insertData = (editor) => {
 
       if (!Editor.string(editor, [])) {
         // Delete the empty placeholder paragraph, if we can
+
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          Transforms.insertFragment(editor, fragment);
+          return;
+        }
+
         Transforms.deselect(editor);
         Transforms.removeNodes(editor);
 
         // Wrap the text nodes of the fragment in paragraphs
-        fragment = Array.isArray(fragment)
-          ? fragment.map((b) =>
-              Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-            )
-          : fragment;
-        console.log('Pasting in empty block:', fragment);
+        // fragment = Array.isArray(fragment)
+        //   ? fragment.map((b) =>
+        //       Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
+        //     )
+        //   : fragment;
+        // console.log('Pasting in empty block:', fragment);
       }
 
       // TODO: use Editor.isEmpty(editor, editor);

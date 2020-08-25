@@ -14,12 +14,19 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 
 import { createEmptyParagraph } from 'volto-slate/utils';
 
-import { MarkButton, BlockButton, Separator, Expando } from './ui';
+import {
+  MarkButton,
+  MarkElementButton,
+  BlockButton,
+  Separator,
+  Expando,
+} from './ui';
 import { highlightSelection } from './decorate'; // highlightByType,
 import {
+  insertData,
+  isInline,
   withDeleteSelectionOnEnter,
   withDeserializers,
-  insertData,
 } from './extensions';
 import {
   inlineTagDeserializer,
@@ -33,7 +40,7 @@ import {
 // Registry of available buttons
 export const buttons = {
   bold: (props) => (
-    <MarkButton title="Bold" format="bold" icon={boldIcon} {...props} />
+    <MarkElementButton title="Bold" format="b" icon={boldIcon} {...props} />
   ),
   italic: (props) => (
     <MarkButton title="Italic" format="italic" icon={italicIcon} {...props} />
@@ -140,6 +147,7 @@ export const extensions = [
   withDeleteSelectionOnEnter,
   withDeserializers,
   insertData,
+  isInline,
 ];
 
 // Default hotkeys and the format they trigger
@@ -169,18 +177,37 @@ export const elements = {
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
   p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+
+  // While usual slate editor consider these to be Leafs, we treat them as
+  // inline elements because they can sometimes contain elements (ex:
+  // <b><a/></b>
+  em: ({ children }) => <em>{children}</em>,
+  i: ({ children }) => <i>{children}</i>,
+  b: ({ children }) => {
+    return <b>{children}</b>;
+  },
+  strong: ({ children }) => {
+    return <strong>{children}</strong>;
+  },
+  u: ({ children }) => <u>{children}</u>,
+  s: ({ children }) => <s>{children}</s>,
+  sub: ({ children }) => <sub>{children}</sub>,
+  sup: ({ children }) => <sup>{children}</sup>,
 };
+
+export const inlineElements = [
+  'em',
+  'i',
+  'b',
+  'strong',
+  'u',
+  's',
+  'sub',
+  'sup',
+];
 
 // Order of definition here is important (higher = inner element)
 export const leafs = {
-  italic: ({ children }) => <em>{children}</em>,
-  bold: ({ children }) => {
-    return <strong>{children}</strong>;
-  },
-  underline: ({ children }) => <u>{children}</u>,
-  strikethrough: ({ children }) => <s>{children}</s>,
-  sub: ({ children }) => <sub>{children}</sub>,
-  sup: ({ children }) => <sup>{children}</sup>,
   code: ({ children }) => {
     return <code>{children}</code>;
   },
@@ -210,17 +237,19 @@ export const htmlTagsToSlate = {
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
-  B: bTagDeserializer,
+  // B: bTagDeserializer,
+  B: blockTagDeserializer('b'),
+  STRONG: blockTagDeserializer('strong'),
+  // STRONG: inlineTagDeserializer({ bold: true }),
   CODE: inlineTagDeserializer({ code: true }),
-  DEL: inlineTagDeserializer({ strikethrough: true }),
-  EM: inlineTagDeserializer({ italic: true }),
-  I: inlineTagDeserializer({ italic: true }),
-  S: inlineTagDeserializer({ strikethrough: true }),
+  DEL: blockTagDeserializer('s'),
+  EM: blockTagDeserializer('em'),
+  I: blockTagDeserializer('i'),
+  S: blockTagDeserializer('s'),
   SPAN: spanTagDeserializer,
-  STRONG: inlineTagDeserializer({ bold: true }),
-  SUB: inlineTagDeserializer({ sub: true }),
-  SUP: inlineTagDeserializer({ sup: true }),
-  U: inlineTagDeserializer({ underline: true }),
+  SUB: blockTagDeserializer('sub'),
+  SUP: blockTagDeserializer('sup'),
+  U: blockTagDeserializer('u'),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

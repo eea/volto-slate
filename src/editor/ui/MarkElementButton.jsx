@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { isBlockActive, toggleBlock } from 'volto-slate/utils';
+import { isBlockActive, toggleInlineFormat } from 'volto-slate/utils';
 
 import ToolbarButton from './ToolbarButton';
 
-const BlockButton = ({ format, icon, ...props }) => {
+const MarkElementButton = ({ format, icon, ...props }) => {
   const editor = useSlate();
 
   const isActive = isBlockActive(editor, format);
@@ -12,7 +12,7 @@ const BlockButton = ({ format, icon, ...props }) => {
   const handleMouseDown = React.useCallback(
     (event) => {
       event.preventDefault();
-      toggleBlock(editor, format);
+      toggleInlineFormat(editor, format);
       console.log('toggled', format, editor);
     },
     [editor, format], // , isActive
@@ -28,4 +28,4 @@ const BlockButton = ({ format, icon, ...props }) => {
   );
 };
 
-export default BlockButton;
+export default MarkElementButton;

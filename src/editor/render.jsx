@@ -70,6 +70,7 @@ export const serializeNodes = (nodes) => {
 
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
+      console.log('node', node);
       return Text.isText(node) ? (
         <Leaf
           editor={editor}

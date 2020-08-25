@@ -6,7 +6,8 @@ import { FOOTNOTE } from 'volto-slate/constants';
 
 /**
  * @summary Called from Volto to configure new or existing Volto block types.
- * @param {object} config The object received from Volto containing the configuration for all the blocks.
+ * @param {object} config The object received from Volto containing the
+ * configuration for all the blocks.
  */
 export default function install(config) {
   config.blocks.blocksConfig.slateFootnotes = {

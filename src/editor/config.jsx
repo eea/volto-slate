@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { highlightByType, highlightSelection } from './decorate';
+import { highlightSelection } from './decorate'; // highlightByType,
 import {
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -27,6 +27,7 @@ import {
   blockTagDeserializer,
   preTagDeserializer,
   spanTagDeserializer,
+  bTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -209,9 +210,7 @@ export const htmlTagsToSlate = {
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
-  // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
-  // TODO: include <b> but identify if is Google Docs <b>
-  // B: bTagDeserializer,
+  B: bTagDeserializer,
   CODE: inlineTagDeserializer({ code: true }),
   DEL: inlineTagDeserializer({ strikethrough: true }),
   EM: inlineTagDeserializer({ italic: true }),

@@ -89,3 +89,18 @@ export const spanTagDeserializer = (editor, el) => {
 
   return children;
 };
+
+export const bTagDeserializer = (editor, el) => {
+  if ((el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1) {
+    // paste that comes from Google Docs
+    return deserializeChildren(el, editor);
+  }
+
+  // const style = el.getAttribute('style') || '';
+  const children = deserializeChildren(el, editor);
+
+  const attrs = { bold: true };
+  return children.map((child) => {
+    return jsx('text', attrs, child);
+  });
+};

@@ -182,8 +182,9 @@ export function joinWithNextBlock({ editor, event }) {
   return true;
 }
 
-/*
+/**
  * Join current block with neighbor block, if the blocks are compatible.
+ * @todo This seems to be dead code that should be removed or transformed into a combination of `joinWithPreviousBlock` and `joinWithNextBlock` which are written above.
  */
 export function joinWithNeighborBlock(
   getNeighborVoltoBlock,
@@ -191,6 +192,9 @@ export function joinWithNeighborBlock(
   isValidOp,
   mergeOp,
 ) {
+  /**
+   *
+   */
   return ({ editor, event }) => {
     // TODO: read block values not from editor properties, but from block
     // properties
@@ -251,13 +255,24 @@ export function joinWithNeighborBlock(
   };
 }
 
+/**
+ * @param {object} block The Volto object representing the configuration and contents of a Volto Block of type Slate Text.
+ * @returns {Range} The collapsed Slate Range that represents the last position the text cursor can take inside the given block.
+ */
 function getBlockEndAsRange(block) {
+  // The value of the Slate Text Volto block.
   const { value } = block;
+  // The Slate Path representing the last root-level Slate block inside the Volto block.
   const location = [value.length - 1];
+  // The Slate Node that represents all the contents of the given Volto block.
   const editor = { children: value };
+  // The path of the last Slate Node in the last Slate Path computed above.
   const path = Editor.last(editor, location)[1];
+  // The last Text node (leaf node) entry inside the path computed just above.
   const [leaf, leafpath] = Editor.leaf(editor, path);
+  // The offset of the Points in the collapsed Range computed below:
   const offset = (leaf.text || '').length;
+
   return {
     anchor: { path: leafpath, offset },
     focus: { path: leafpath, offset },

@@ -50,6 +50,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   event.preventDefault();
 
   // If the Editor contains no characters
+  // TODO: clarify if this special case really needs to be handled or not. In `joinWithNextBlock` it is not handled.
   const text = Editor.string(editor, []);
   if (!text) {
     // we're dealing with an empty paragraph, no sense in merging
@@ -73,7 +74,10 @@ export function joinWithPreviousBlock({ editor, event }) {
   // Else the editor contains characters, so we merge the current block's `editor` with the block before, `otherBlock`.
   mergeSlateWithBlockBackward(editor, otherBlock);
 
+  // TODO: save the old selection of the current block, in which the cursor is, in case we can undo to it.
   // const selection = JSON.parse(JSON.stringify(editor.selection));
+
+  // Clone the Slate document's nodes to insert them later into the previous block.
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc
@@ -84,25 +88,36 @@ export function joinWithPreviousBlock({ editor, event }) {
   const cursor = getBlockEndAsRange(otherBlock);
   saveSlateBlockSelection(otherBlockId, cursor);
 
+  // Put the combined block contents into the previous block.
   onChangeBlock(otherBlockId, {
-    '@type': 'slate',
+    '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
     value: combined,
     plaintext: serializeNodesToText(combined || []),
   }).then(() => {
+    // Delete the current block.
     onDeleteBlock(block, false).then(() => {
+      // Focus (select) the previous block which now contains the contents of both blocks.
       onSelectBlock(otherBlockId);
     });
   });
 
+  // Mark the event as handled.
   return true;
 }
 
+/**
+ * Joins the current block (which has the cursor) with the next block to make a single block.
+ * @param {Editor} editor
+ * @param {KeyboardEvent} event
+ */
 export function joinWithNextBlock({ editor, event }) {
   // TODO: read block values not from editor properties, but from block
   // properties
 
+  // The join takes place only when the cursor is at the end of the current block.
   if (!isCursorAtBlockEnd(editor)) return;
 
+  // From here on, the cursor is surely at the end of the current block.
   const blockProps = editor.getBlockProps();
   const {
     block,
@@ -114,43 +129,56 @@ export function joinWithNextBlock({ editor, event }) {
   } = blockProps;
 
   const { formContext } = editor;
-  const properties = formContext.contextData.formData;
+  const formProperties = formContext.contextData.formData;
 
-  const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
+  // Get the next Volto block.
+  const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(
+    index,
+    formProperties,
+  );
 
+  // If the next block is not Slate Text, do nothing. (TODO: use a constant instead of 'slate'.)
   if (otherBlock['@type'] !== 'slate') return;
 
+  // From here on, the next block is surely Slate Text.
   event.stopPropagation();
   event.preventDefault();
 
+  // The editor either contains characters or not, so we merge the current block's `editor` with the block after, `otherBlock`.
   mergeSlateWithBlockForward(editor, otherBlock);
 
+  // Store the selection of the block that has the text cursor.
   const selection = JSON.parse(JSON.stringify(editor.selection));
+
+  // Clone the Slate document's nodes to insert them later into the next block.
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc
   // Should probably save both undo histories, so that the blocks are split,
   // the undos can be restored??
-  // TODO: after Enter, the current filled-with-previous-block
-  // block is visible for a fraction of second
 
+  // The stored selection is set as the selection of the final (next) block because its contents begin with the contents of the block that has the text cursor.
   const cursor = selection;
   saveSlateBlockSelection(otherBlockId, cursor);
 
   // setTimeout ensures setState has been successfully executed in Form.jsx.
   // See https://github.com/plone/volto/issues/1519
   setTimeout(() => {
+    // Put the combined block contents into the next block.
     onChangeBlock(otherBlockId, {
-      '@type': 'slate',
+      '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
       value: combined,
       plaintext: serializeNodesToText(combined || []),
-    });
-    setTimeout(() => {
-      onDeleteBlock(block, false);
-      onSelectBlock(otherBlockId);
+    }).then(() => {
+      // Delete the current block.
+      onDeleteBlock(block, false).then(() => {
+        // Focus (select) the next block which now contains the contents of both blocks.
+        onSelectBlock(otherBlockId);
+      });
     });
   });
 
+  // Mark the event as handled.
   return true;
 }
 

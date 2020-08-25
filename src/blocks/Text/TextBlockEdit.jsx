@@ -136,6 +136,9 @@ const TextBlockEdit = (props) => {
   ]);
 
   // const blockChooserRef = React.useRef();
+  /**
+   * This event handler unregisters itself after its first call.
+   */
   const handleClickOutside = React.useCallback((e) => {
     const blockChooser = document.querySelector('.blocks-chooser');
     document.removeEventListener('mousedown', handleClickOutside, false);
@@ -209,7 +212,9 @@ const TextBlockEdit = (props) => {
           basic
           icon
           onClick={() => {
+            // This event handler unregisters itself after its first call.
             document.addEventListener('mousedown', handleClickOutside, false);
+
             setAddNewBlockOpened(!addNewBlockOpened);
           }}
           className="block-add-button"

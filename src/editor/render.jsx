@@ -12,18 +12,19 @@ export const Element = ({ element, ...rest }) => {
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
+  console.log('el', element, rest);
   return <El element={element} {...rest} />;
 };
 
-export const Leaf = ({
-  attributes,
-  leaf,
-  children,
-  mode,
-  text,
-  // path,
-  // editor,
-}) => {
+export const Leaf = ({ children, ...rest }) => {
+  const {
+    attributes,
+    leaf,
+    mode,
+    // text,
+    // path,
+    // editor,
+  } = rest;
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
@@ -70,7 +71,6 @@ export const serializeNodes = (nodes) => {
 
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
-      console.log('node', node);
       return Text.isText(node) ? (
         <Leaf
           editor={editor}

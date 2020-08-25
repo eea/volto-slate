@@ -61,7 +61,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
         ? jsx('text', attrs, child)
         : {
             ...child,
-            ...attrs,
+            attrs, // pass the inline attrs as separate object
           };
     return res;
   });

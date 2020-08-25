@@ -40,20 +40,29 @@ export const insertData = (editor) => {
 
       console.log('deserialize body', body);
       let fragment = deserialize(editor, body);
-      console.log('parsed', parsed, fragment);
+      console.log('parsed body', parsed);
+      console.log('parse fragment', fragment);
 
       if (!Editor.string(editor, [])) {
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          Transforms.insertFragment(editor, fragment);
+          return;
+        }
+
         // Delete the empty placeholder paragraph, if we can
         Transforms.deselect(editor);
         Transforms.removeNodes(editor);
 
         // Wrap the text nodes of the fragment in paragraphs
-        fragment = Array.isArray(fragment)
-          ? fragment.map((b) =>
-              Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-            )
-          : fragment;
-        console.log('Pasting in empty block:', fragment);
+        // fragment = Array.isArray(fragment)
+        //   ? fragment.map((b) =>
+        //       Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
+        //     )
+        //   : fragment;
+        // console.log('Pasting in empty block:', fragment);
       }
 
       // TODO: use Editor.isEmpty(editor, editor);

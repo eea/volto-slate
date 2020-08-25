@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { Editor, Transforms, PathRef, Node } from 'slate';
+import { Editor, Transforms } from 'slate';
 import { TABLE, THEAD, TBODY, TFOOT, TD, TH, TR } from 'volto-slate/constants';
 
 /**

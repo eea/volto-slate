@@ -66,13 +66,10 @@ export const Leaf = ({
 };
 
 export const serializeNodes = (nodes) => {
-  // let index = 0;
   const editor = { children: nodes || [] };
 
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
-      // const id = index++;
-
       return Text.isText(node) ? (
         <Leaf
           editor={editor}

@@ -1,4 +1,5 @@
 import { jsx } from 'slate-hyperscript';
+import { Text } from 'slate';
 // import { settings } from '~/config';
 
 export const deserialize = (editor, el) => {
@@ -55,7 +56,14 @@ export const bodyTagDeserializer = (editor, el) => {
 
 export const inlineTagDeserializer = (attrs) => (editor, el) => {
   return deserializeChildren(el, editor).map((child) => {
-    return jsx('text', attrs, child);
+    const res =
+      Text.isText(child) || typeof child === 'string'
+        ? jsx('text', attrs, child)
+        : {
+            ...child,
+            ...attrs,
+          };
+    return res;
   });
 };
 

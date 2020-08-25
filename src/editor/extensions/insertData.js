@@ -28,11 +28,6 @@ export const insertData = (editor) => {
     // console.log('text', text);
     const html = data.getData('text/html');
 
-    // editor.htmlTagsToSlate = {
-    //   ...editor.htmlTagsToSlate,
-    //   IMG: deserializeImageTag,
-    // };
-
     if (html) {
       const parsed = new DOMParser().parseFromString(html, 'text/html');
 
@@ -43,6 +38,7 @@ export const insertData = (editor) => {
         body = parsed.body;
       }
 
+      console.log('deserialize body', body);
       let fragment = deserialize(editor, body);
       console.log('parsed', parsed, fragment);
 
@@ -70,8 +66,6 @@ export const insertData = (editor) => {
 
       Transforms.insertNodes(editor, fragment);
       Transforms.deselect(editor); // Solves a problem when pasting images
-
-      // console.log('AFTER TABLE PASTE', editor.children);
 
       return;
     }

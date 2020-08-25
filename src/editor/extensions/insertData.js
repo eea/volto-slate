@@ -40,11 +40,10 @@ export const insertData = (editor) => {
 
       console.log('deserialize body', body);
       let fragment = deserialize(editor, body);
-      console.log('parsed', parsed, fragment);
+      console.log('parsed body', parsed);
+      console.log('parse fragment', fragment);
 
       if (!Editor.string(editor, [])) {
-        // Delete the empty placeholder paragraph, if we can
-
         if (
           Array.isArray(fragment) &&
           fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
@@ -53,6 +52,7 @@ export const insertData = (editor) => {
           return;
         }
 
+        // Delete the empty placeholder paragraph, if we can
         Transforms.deselect(editor);
         Transforms.removeNodes(editor);
 

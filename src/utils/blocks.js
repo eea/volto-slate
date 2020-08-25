@@ -27,6 +27,18 @@ export const toggleFormat = (editor, format) => {
   });
 };
 
+export const toggleInlineFormat = (editor, format) => {
+  const { slate } = settings;
+  const isActive = isBlockActive(editor, format);
+  const type = isActive ? slate.defaultBlockType : format;
+  const block = { type: format, children: [] };
+  Transforms.wrapNodes(editor, block, { split: true });
+  console.log('format type', type, JSON.stringify(editor.children));
+  // Transforms.setNodes(editor, {
+  //   type,
+  // });
+};
+
 export const changeBlockToList = (editor, format) => {
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {

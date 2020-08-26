@@ -247,9 +247,8 @@ export const htmlTagsToSlate = {
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
-  // B: bTagDeserializer,
-  // B: blockTagDeserializer('b'), // TODO: reuse bTagDeserializer
-  B: bTagDeserializer, // TODO: reuse bTagDeserializer
+  // B: blockTagDeserializer('b'),
+  B: bTagDeserializer,
   STRONG: blockTagDeserializer('strong'),
   CODE: inlineTagDeserializer({ code: true }),
   DEL: blockTagDeserializer('s'),

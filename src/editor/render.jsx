@@ -16,14 +16,7 @@ export const Element = ({ element, ...rest }) => {
 };
 
 export const Leaf = ({ children, ...rest }) => {
-  const {
-    attributes,
-    leaf,
-    mode,
-    // text,
-    // path,
-    // editor,
-  } = rest;
+  const { attributes, leaf, mode } = rest;
   let { leafs } = settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
@@ -76,7 +69,6 @@ export const serializeNodes = (nodes) => {
           path={path}
           leaf={node}
           text={node}
-          attributes={{ 'data-slate-leaf': true }}
           mode="view"
           key={path}
         >
@@ -87,7 +79,6 @@ export const serializeNodes = (nodes) => {
           editor={editor}
           path={path}
           element={node}
-          attributes={{ 'data-slate-node': 'element', ref: null }}
           mode="view"
           key={path}
         >

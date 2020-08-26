@@ -12,7 +12,6 @@ export const Element = ({ element, ...rest }) => {
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  console.log('el', element, rest);
   return <El element={element} {...rest} />;
 };
 

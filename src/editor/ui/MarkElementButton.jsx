@@ -13,7 +13,6 @@ const MarkElementButton = ({ format, icon, ...props }) => {
     (event) => {
       event.preventDefault();
       toggleInlineFormat(editor, format);
-      console.log('toggled', format, editor);
     },
     [editor, format], // , isActive
   );

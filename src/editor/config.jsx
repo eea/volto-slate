@@ -34,7 +34,7 @@ import {
   blockTagDeserializer,
   preTagDeserializer,
   spanTagDeserializer,
-  bTagDeserializer,
+  // bTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -43,29 +43,39 @@ export const buttons = {
     <MarkElementButton title="Bold" format="b" icon={boldIcon} {...props} />
   ),
   italic: (props) => (
-    <MarkButton title="Italic" format="italic" icon={italicIcon} {...props} />
+    <MarkElementButton
+      title="Italic"
+      format="em"
+      icon={italicIcon}
+      {...props}
+    />
   ),
   underline: (props) => (
-    <MarkButton
+    <MarkElementButton
       title="Underline"
-      format="underline"
+      format="u"
       icon={underlineIcon}
       {...props}
     />
   ),
   strikethrough: (props) => (
-    <MarkButton
+    <MarkElementButton
       title="Strikethrough"
-      format="strikethrough"
+      format="s"
       icon={strikethroughIcon}
       {...props}
     />
   ),
   sub: (props) => (
-    <MarkButton title="Subscript" format="sub" icon={subindexIcon} {...props} />
+    <MarkElementButton
+      title="Subscript"
+      format="sub"
+      icon={subindexIcon}
+      {...props}
+    />
   ),
   sup: (props) => (
-    <MarkButton
+    <MarkElementButton
       title="Superscript"
       format="sup"
       icon={superindexIcon}
@@ -238,9 +248,8 @@ export const htmlTagsToSlate = {
   LI: blockTagDeserializer('li'),
 
   // B: bTagDeserializer,
-  B: blockTagDeserializer('b'),
+  B: blockTagDeserializer('b'), // TODO: reuse bTagDeserializer
   STRONG: blockTagDeserializer('strong'),
-  // STRONG: inlineTagDeserializer({ bold: true }),
   CODE: inlineTagDeserializer({ code: true }),
   DEL: blockTagDeserializer('s'),
   EM: blockTagDeserializer('em'),
@@ -250,6 +259,7 @@ export const htmlTagsToSlate = {
   SUB: blockTagDeserializer('sub'),
   SUP: blockTagDeserializer('sup'),
   U: blockTagDeserializer('u'),
+  // STRONG: inlineTagDeserializer({ bold: true }),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

@@ -34,7 +34,7 @@ import {
   blockTagDeserializer,
   preTagDeserializer,
   spanTagDeserializer,
-  // bTagDeserializer,
+  bTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -248,7 +248,8 @@ export const htmlTagsToSlate = {
   LI: blockTagDeserializer('li'),
 
   // B: bTagDeserializer,
-  B: blockTagDeserializer('b'), // TODO: reuse bTagDeserializer
+  // B: blockTagDeserializer('b'), // TODO: reuse bTagDeserializer
+  B: bTagDeserializer, // TODO: reuse bTagDeserializer
   STRONG: blockTagDeserializer('strong'),
   CODE: inlineTagDeserializer({ code: true }),
   DEL: blockTagDeserializer('s'),

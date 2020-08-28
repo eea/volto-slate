@@ -80,7 +80,10 @@ const StylingsButton = ({ ...props }) => {
   //   },
   //   [createEmptyRow, editor],
   // );
-
+  const opts = [
+    { value: 'green-text', label: 'Green Text' },
+    { value: 'no-styling', label: 'No Styling' },
+  ];
   return (
     <>
       {/* <Dropdown
@@ -106,10 +109,9 @@ const StylingsButton = ({ ...props }) => {
       >
         <Dropdown.Menu className="slate-table-dropdown-menu"> */}
       <Select
-        options={[
-          { value: 'green-text', label: 'Green Text' },
-          { value: 'no-styling', label: 'No Styling' },
-        ]}
+        options={opts}
+        value={opts[opts.length - 1]}
+        defaultValue={opts[opts.length - 1]}
         styles={{
           valueContainer: (provided, state) => {
             return {
@@ -142,6 +144,11 @@ const StylingsButton = ({ ...props }) => {
               ...provided,
               marginLeft: '3px',
               backgroundColor: state.isFocused ? '#f3f3f3' : 'unset',
+            };
+          },
+          singleValue: (provided, state) => {
+            return {
+              paddingLeft: '3px',
             };
           },
         }}

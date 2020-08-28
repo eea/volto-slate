@@ -186,6 +186,13 @@ const StylingsButton = ({
               color: brownColor,
             };
           },
+          option: (provided, state) => {
+            return {
+              ...provided,
+              fontSize: '1rem',
+              color: brownColor,
+            };
+          },
         }}
         onChange={() => {
           setKeepHoveringToolbarOpen(false);

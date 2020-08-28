@@ -11,7 +11,16 @@ import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
 const brownColor = '#826A6A';
 
-const StylingsButton = ({ ...props }) => {
+const opts = [
+  { value: 'green-text', label: 'Green Text' },
+  { value: 'no-styling', label: 'No Styling' },
+];
+
+const StylingsButton = ({
+  keepHoveringToolbarOpen,
+  setKeepHoveringToolbarOpen,
+  ...props
+}) => {
   const editor = useSlate();
 
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -82,12 +91,20 @@ const StylingsButton = ({ ...props }) => {
   //   },
   //   [createEmptyRow, editor],
   // );
-  const opts = [
-    { value: 'green-text', label: 'Green Text' },
-    { value: 'no-styling', label: 'No Styling' },
-  ];
+
   return (
-    <>
+    <div
+      // TODO: instead of mouse down, capture something like focus (for touch
+      // and keyboard navigation)
+      onMouseDownCapture={(ev) => {
+        // if (!setKeepHoveringToolbarOpen) {
+        //   debugger;
+        // }
+        // ev.stopPropagation();
+        ev.preventDefault();
+        setKeepHoveringToolbarOpen(true);
+      }}
+    >
       {/* <Dropdown
         open={dropdownOpen}
         onClose={() => {
@@ -114,6 +131,10 @@ const StylingsButton = ({ ...props }) => {
         options={opts}
         value={opts[opts.length - 1]}
         defaultValue={opts[opts.length - 1]}
+        isMulti={false}
+        // menuPortalTarget={document.querySelectorAll('.slate-toolbar')[1]}
+        // menuIsOpen
+        menuIsOpen={keepHoveringToolbarOpen}
         styles={{
           valueContainer: (provided, state) => {
             return {
@@ -156,6 +177,9 @@ const StylingsButton = ({ ...props }) => {
             };
           },
         }}
+        onChange={() => {
+          setKeepHoveringToolbarOpen(false);
+        }}
         // onMenuOpen={() => {
         //   return true;
         // }}
@@ -193,7 +217,7 @@ const StylingsButton = ({ ...props }) => {
           /> */}
       {/* </Dropdown.Menu>
       </Dropdown> */}
-    </>
+    </div>
   );
 };
 

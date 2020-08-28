@@ -5,11 +5,15 @@ import { Button } from 'semantic-ui-react';
 
 const ToolbarButton = React.forwardRef(
   ({ className, active, reversed, icon, style, ...props }, ref) => {
+    const newProps = { ...props };
+    delete newProps.keepHoveringToolbarOpen;
+    delete newProps.setKeepHoveringToolbarOpen;
+
     return (
       <div className="button-wrapper">
         <Button
           as="a"
-          {...props}
+          {...newProps}
           ref={ref}
           style={style}
           className={cx(className)}

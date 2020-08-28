@@ -9,6 +9,8 @@ import Select from 'react-select';
 import { Editor, Transforms } from 'slate';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
+const brownColor = '#826A6A';
+
 const StylingsButton = ({ ...props }) => {
   const editor = useSlate();
 
@@ -149,6 +151,8 @@ const StylingsButton = ({ ...props }) => {
           singleValue: (provided, state) => {
             return {
               paddingLeft: '3px',
+              fontSize: '1rem',
+              color: brownColor,
             };
           },
         }}

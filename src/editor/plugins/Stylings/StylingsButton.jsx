@@ -94,15 +94,25 @@ const StylingsButton = ({
 
   return (
     <div
-      // TODO: instead of mouse down, capture something like focus (for touch
-      // and keyboard navigation)
-      onMouseDownCapture={(ev) => {
+      onFocusCapture={(ev) => {
         // if (!setKeepHoveringToolbarOpen) {
         //   debugger;
         // }
         // ev.stopPropagation();
-        ev.preventDefault();
+        // ev.preventDefault();
         setKeepHoveringToolbarOpen(true);
+
+        // a hack: without the timeout, the selection is not saved; ideally the code inside the timeout below would wait for the rerender caused by the setKeepHoveringToolbarOpen call above to finish; also, the artificial pink selection has an issue: it is not saved when blurring the editor by clicking on an empty space above the form
+        setTimeout(() => {
+          editor.getBlockProps().onSelectBlock(editor.getBlockProps().block);
+        }, 100);
+      }}
+      onFocus={() => {
+        // debugger;
+        // editor.getBlockProps().onSelectBlock(editor.getBlockProps().block);
+      }}
+      onBlur={(ev) => {
+        setKeepHoveringToolbarOpen(false);
       }}
     >
       {/* <Dropdown
@@ -134,7 +144,7 @@ const StylingsButton = ({
         isMulti={false}
         // menuPortalTarget={document.querySelectorAll('.slate-toolbar')[1]}
         // menuIsOpen
-        menuIsOpen={keepHoveringToolbarOpen}
+        // menuIsOpen={keepHoveringToolbarOpen}
         styles={{
           valueContainer: (provided, state) => {
             return {

@@ -17,17 +17,18 @@ const Toolbar = ({ toggleButton, children }) => {
       return;
     }
 
-    const { selection } = editor;
-    if (!selection) {
+    const { selection, savedSelection } = editor;
+    if (!(selection || savedSelection)) {
       el.removeAttribute('style');
       return;
     }
 
     const domSelection = window.getSelection();
-    // See
-    // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
     if (domSelection.rangeCount < 1) {
-      el.removeAttribute('style');
+      // don't do anything here, this happens when opening a focus-stealing
+      // component, in which case we actually want to keep the toolbar open
+      // See
+      // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
       return;
     }
     const domRange = domSelection.getRangeAt(0);

@@ -60,9 +60,7 @@ const Object = ({ schema, value, onChange, errors = {}, id, ...props }) => {
                 <Icon name={downSVG} size="20px" />
               )}
             </Accordion.Title>
-            <Accordion.Content
-              active={activeIndex === index}
-            >
+            <Accordion.Content active={activeIndex === index}>
               <Segment className="form" style={{ paddingBottom: '1em' }}>
                 {renderFieldSet(fieldset)}
               </Segment>

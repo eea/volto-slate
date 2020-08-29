@@ -33,7 +33,6 @@ const SlateEditor = ({
   const { slate } = settings;
 
   const [showToolbar, setShowToolbar] = useState(false);
-  const [keepHoveringToolbarOpen, setKeepHoveringToolbarOpen] = useState(false);
 
   const defaultExtensions = slate.extensions;
   let editor = React.useMemo(() => {
@@ -122,8 +121,6 @@ const SlateEditor = ({
     [j_value, onChange],
   );
 
-  console.log('keep', keepHoveringToolbarOpen);
-
   return (
     <div
       {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
@@ -134,22 +131,21 @@ const SlateEditor = ({
         value={value || initialValue}
         onChange={handleChange}
       >
-        {((selected && hasRangeSelection(editor)) ||
-          keepHoveringToolbarOpen) /* && hasRangeSelection(editor) */ && (
-          <SlateToolbar
-            key="hovering-slate-toolbar"
-            selected={selected}
-            showToolbar={showToolbar}
-            setShowToolbar={setShowToolbar}
-            keepHoveringToolbarOpen={keepHoveringToolbarOpen}
-            setKeepHoveringToolbarOpen={setKeepHoveringToolbarOpen}
-          />
-        )}
-        {selected && !hasRangeSelection(editor) && (
-          <SlateContextToolbar
-            editor={editor}
-            plugins={slate.contextToolbarButtons}
-          />
+        {selected ? (
+          hasRangeSelection(editor) ? (
+            <SlateToolbar
+              selected={selected}
+              showToolbar={showToolbar}
+              setShowToolbar={setShowToolbar}
+            />
+          ) : (
+            <SlateContextToolbar
+              editor={editor}
+              plugins={slate.contextToolbarButtons}
+            />
+          )
+        ) : (
+          ''
         )}
         <Editable
           readOnly={!selected}

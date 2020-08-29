@@ -18,40 +18,20 @@ import ToolbarButton from './ToolbarButton';
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
-  const {
-    selected,
-    showToolbar,
-    setShowToolbar,
-    keepHoveringToolbarOpen,
-    setKeepHoveringToolbarOpen,
-  } = props;
+  const { selected, showToolbar, setShowToolbar } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
   function renderButton(name, index) {
     const Btn = buttons[name];
-    // console.log(
-    //   'LOG',
-    //   name,
-    //   keepHoveringToolbarOpen,
-    //   setKeepHoveringToolbarOpen,
-    // );
     // using also name because some buttons can be like "Separator"
-    return (
-      <Btn
-        key={`${name}-${index}`}
-        keepHoveringToolbarOpen={keepHoveringToolbarOpen}
-        setKeepHoveringToolbarOpen={setKeepHoveringToolbarOpen}
-      />
-    );
+    return <Btn key={`${name}-${index}`} />;
   }
 
   return (
     <>
       {!showToolbar && (
         <Toolbar
-          keepHoveringToolbarOpen={keepHoveringToolbarOpen}
-          setKeepHoveringToolbarOpen={setKeepHoveringToolbarOpen}
           toggleButton={
             <ToolbarButton
               title="More..."

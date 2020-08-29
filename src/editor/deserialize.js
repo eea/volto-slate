@@ -1,15 +1,15 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-// import { settings } from '~/config';
+
+const TEXT_NODE = 3;
+const ELEMENT_NODE = 1;
 
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
-  if (el.nodeType === 3) {
-    // TEXT_NODE
+  if (el.nodeType === TEXT_NODE) {
     return el.nodeValue === '\n' ? null : el.textContent;
-  } else if (el.nodeType !== 1) {
-    // !== ELEMENT_NODE
+  } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
     return '\n';
@@ -23,8 +23,7 @@ export const deserialize = (editor, el) => {
     return htmlTagsToSlate[nodeName](editor, el);
   }
 
-  // fallback deserializer
-  return deserializeChildren(el, editor);
+  return deserializeChildren(el, editor); // fallback deserializer
 };
 
 export const preTagDeserializer = (editor, el) => {
@@ -71,6 +70,7 @@ export const spanTagDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
   const children = deserializeChildren(el, editor);
 
+  // TODO: handle sub/sup as <sub> and <sup>
   // Handle Google Docs' <sub> formatting
   if (style.replace(/\s/g, '').indexOf('vertical-align:sub') > -1) {
     const attrs = { sub: true };
@@ -92,15 +92,9 @@ export const spanTagDeserializer = (editor, el) => {
 
 export const bTagDeserializer = (editor, el) => {
   if ((el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1) {
-    // paste that comes from Google Docs
+    // Google Docs does weird things with <b> tag
     return deserializeChildren(el, editor);
   }
 
-  // const style = el.getAttribute('style') || '';
-  const children = deserializeChildren(el, editor);
-
-  const attrs = { bold: true };
-  return children.map((child) => {
-    return jsx('text', attrs, child);
-  });
+  return jsx('element', { type: 'b' }, deserializeChildren(el, editor));
 };

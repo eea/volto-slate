@@ -15,6 +15,14 @@ const selectStyles = {
       paddingTop: '0px',
       paddingRight: '0px',
       paddingDown: '0px',
+      fontSize: '1rem',
+      position: 'static',
+    };
+  },
+  input: (provided, state) => {
+    return {
+      ...provided,
+      display: 'none',
     };
   },
   dropdownIndicator: (provided, state) => {
@@ -37,7 +45,6 @@ const selectStyles = {
     };
   },
   control: (provided, state) => {
-    console.log('control state', state);
     return {
       ...provided,
       minHeight: 'auto',
@@ -51,7 +58,7 @@ const selectStyles = {
     return {
       ...provided,
       marginLeft: '3px',
-      width: '10rem',
+      width: '15rem',
       // backgroundColor: state.isFocused ? '#f3f3f3' : 'unset',
     };
   },
@@ -70,12 +77,20 @@ const selectStyles = {
       // color: state.isSelected ? 'white' : brownColor,
     };
   },
+  noOptionsMessage: (provided, state) => {
+    return {
+      ...provided,
+      fontSize: '1rem',
+    };
+  },
 };
 
 const StylingsButton = (props) => {
   const editor = useSlate();
 
-  const opts = settings.slate.styleMenuDefinitions;
+  const opts = settings.slate.styleMenuDefinitions.map((def) => {
+    return { value: def.cssClass, label: def.label };
+  });
 
   const [selectedStyle, setSelectedStyle] = React.useState(
     opts[opts.length - 1],
@@ -89,10 +104,19 @@ const StylingsButton = (props) => {
         isMulti={true}
         styles={selectStyles}
         placeholder="No Style"
+        noOptionsMessage={({ inputValue }) => 'All Styles Applied'}
         components={{
           MultiValue: (props) => {
-            // console.log('MultiValue props', props);
-            return <>{props.children}</>;
+            const val = props.getValue();
+
+            if (props.index === 0) {
+              const cond = val.length > 1;
+              const lbl = val[props.index].label + '...';
+              const lbl2 = val[props.index].label;
+              return <>{cond ? lbl : lbl2}</>;
+            }
+
+            return '';
           },
         }}
         theme={(theme) => {

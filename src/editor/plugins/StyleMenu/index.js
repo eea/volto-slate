@@ -28,7 +28,8 @@ export default function install(config) {
   slate.elements['style'] = StyleElement;
 
   slate.styleMenuDefinitions = [
-    { value: 'green-text', label: 'Green Text' },
+    { cssClass: 'green-text', isBlock: true, label: 'Green Text' },
+    { cssClass: 'blue-text', isBlock: true, label: 'Blue Text' },
     // { value: 'no-styling', label: 'No Styling' },
   ];
 

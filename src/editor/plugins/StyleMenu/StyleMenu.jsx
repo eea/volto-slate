@@ -35,7 +35,7 @@ const selectStyles = {
       minHeight: 'auto',
       borderWidth: 'unset',
       cursor: 'pointer',
-      // borderColor: state.isFocused || state.isHovered ? brownColor : '#f3f3f3',
+      // borderColor: state.isFocused ? brownColor : '#f3f3f3',
       // boxShadow: 'unset',
     };
   },
@@ -57,6 +57,7 @@ const selectStyles = {
     return {
       ...provided,
       fontSize: '1rem',
+      cursor: 'pointer',
       // color: state.isSelected ? 'white' : brownColor,
     };
   },
@@ -65,12 +66,15 @@ const selectStyles = {
 const StylingsButton = (props) => {
   // const editor = useSlate();
 
+  const [selectedStyle, setSelectedStyle] = React.useState(
+    opts[opts.length - 1],
+  );
+
   return (
     <div>
       <Select
         options={opts}
-        value={opts[opts.length - 1]}
-        defaultValue={opts[opts.length - 1]}
+        value={selectedStyle}
         isMulti={false}
         styles={selectStyles}
         theme={(theme) => {
@@ -85,8 +89,8 @@ const StylingsButton = (props) => {
             },
           };
         }}
-        onChange={({ value }) => {
-          console.log('Selected:', value);
+        onChange={(selItem) => {
+          setSelectedStyle(selItem);
         }}
       ></Select>
     </div>

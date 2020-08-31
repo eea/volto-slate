@@ -161,6 +161,7 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
  */
 export function hasRangeSelection(editor) {
   const { savedSelection } = editor;
+  // console.log('hasRange', savedSelection);
   const selection = savedSelection || editor.selection;
 
   const res =

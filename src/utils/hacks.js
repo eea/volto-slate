@@ -6,7 +6,6 @@ export const fixSelection = (editor, event, defaultSelection) => {
   // Don't remove it, unless this test passes:
   // - with the Slate block unselected, click in the block.
   // - Hit backspace. If it deletes, then the test passes
-  console.log(event);
 
   if (!editor.selection) {
     if (defaultSelection) {
@@ -20,6 +19,7 @@ export const fixSelection = (editor, event, defaultSelection) => {
       try {
         const s = ReactEditor.toSlateRange(editor, sel);
         console.log('error s', s);
+        console.log(event);
         Transforms.select(editor, s);
       } catch {
         console.log('error', editor.children);

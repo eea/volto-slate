@@ -88,11 +88,9 @@ const SlateEditor = ({
           editor.selection.anchor &&
           !isEqual(editor.selection, savedSelection)
         ) {
-          if (!Range.isBackward(editor.selection)) {
-            // TODO: saving selection is disabled on range backward because it
-            // keeps "jumping".
-            setSavedSelection(editor.selection);
-          }
+          // if (!Range.isBackward(editor.selection))
+          // TODO: saving selection is weird on backward motion, it "jumps"
+          setSavedSelection(editor.selection);
         }
         // }
       }, 100),

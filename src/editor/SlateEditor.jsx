@@ -87,7 +87,7 @@ const SlateEditor = ({
 
     if (selected) {
       ReactEditor.focus(editor);
-      fixSelection(editor);
+      fixSelection(editor); // If you plan on removing this, test thoroughly!
     }
     if (
       selected &&

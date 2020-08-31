@@ -14,6 +14,7 @@ import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
 
 import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
+import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
 
 import './less/editor.less';
 
@@ -52,25 +53,12 @@ const SlateEditor = ({
   // its selection, but I want to keep that selection because my operations
   // should apply to it).
 
-  const selection = JSON.stringify(editor?.selection || {});
   const initial_selection = React.useRef();
   const [savedSelection, setSavedSelection] = React.useState();
   editor.setSavedSelection = setSavedSelection;
   editor.savedSelection = savedSelection;
 
-  React.useEffect(() => {
-    if (selected && selection && JSON.parse(selection).anchor) {
-      setSavedSelection(JSON.parse(selection));
-    }
-  }, [selection, selected, editor]);
-
-  /*
-   * We 'restore' the selection because we manipulate it in several cases:
-   * - when blocks are artificially joined, we set the selection at junction
-   * - when moving up, we set it at end of previous blok
-   * - when moving down, we set it at beginning of next block
-   */
-  React.useLayoutEffect(() => {
+  const onDOMSelectionChange = React.useCallback(() => {
     if (selected) {
       ReactEditor.focus(editor);
 
@@ -79,18 +67,40 @@ const SlateEditor = ({
       // - with the Slate block unselected, click in the block.
       // - Hit backspace. If it deletes, then the test passes
       fixSelection(editor);
-      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
 
-      if (defaultSelection) {
-        if (initial_selection.current !== defaultSelection) {
-          initial_selection.current = defaultSelection;
-          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-        }
-        return () => ReactEditor.blur(editor);
+      // Save the selection
+      const newSel = JSON.stringify(editor.selection);
+      if (newSel && JSON.parse(newSel).anchor) {
+        setSavedSelection(JSON.parse(newSel));
       }
     }
-    return () => ReactEditor.blur(editor);
-  }, [editor, selected, defaultSelection]);
+  }, [editor, selected]);
+
+  /*
+   * We 'restore' the selection because we manipulate it in several cases:
+   * - when blocks are artificially joined, we set the selection at junction
+   * - when moving up, we set it at end of previous blok
+   * - when moving down, we set it at beginning of next block
+   */
+  useIsomorphicLayoutEffect(() => {
+    window.document.addEventListener('selectionchange', onDOMSelectionChange);
+
+    if (
+      selected &&
+      defaultSelection &&
+      initial_selection.current !== defaultSelection
+    ) {
+      initial_selection.current = defaultSelection;
+      setTimeout(() => Transforms.select(editor, defaultSelection), 0);
+    }
+    return () => {
+      // ReactEditor.blur(editor);
+      window.document.removeEventListener(
+        'selectionchange',
+        onDOMSelectionChange,
+      );
+    };
+  }, [editor, selected, defaultSelection, onDOMSelectionChange]);
 
   const initialValue = slate.defaultValue();
 
@@ -172,6 +182,7 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
+          {...rest}
         />
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;

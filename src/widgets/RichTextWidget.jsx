@@ -9,12 +9,18 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 
 const SlateRichTextWidget = (props) => {
   const { id, onChange, value, focus } = props;
-  // const [selected, setSelected] = React.useState(focus);
-  // console.log('props', props);
-  // onClick={() => setSelected(true)}
+  const [selected, setSelected] = React.useState(focus);
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
-      <div style={{ boxSizing: 'initial' }}>
+      <div
+        role="textbox"
+        tabindex="-1"
+        style={{ boxSizing: 'initial' }}
+        onClick={() => {
+          setSelected(true);
+        }}
+        onKeyDown={() => {}}
+      >
         <SlateEditor
           id={id}
           name={id}
@@ -22,7 +28,7 @@ const SlateRichTextWidget = (props) => {
           onChange={(newValue) => {
             onChange(id, newValue);
           }}
-          selected={true}
+          selected={selected}
         />
       </div>
     </FormFieldWrapper>

@@ -168,6 +168,5 @@ export function hasRangeSelection(editor) {
     selection &&
     Range.isExpanded(selection) &&
     Editor.string(editor, selection) !== '';
-  console.log('hasRange', ReactEditor.isFocused(editor), res);
   return res;
 }

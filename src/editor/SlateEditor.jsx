@@ -1,6 +1,9 @@
 import cx from 'classnames';
+import { isEqual } from 'lodash';
+import throttle from 'lodash/throttle';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { Range } from 'slate';
 import { withHistory } from 'slate-history';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -58,27 +61,39 @@ const SlateEditor = ({
   editor.setSavedSelection = setSavedSelection;
   editor.savedSelection = savedSelection;
 
-  const onDOMSelectionChange = React.useCallback(() => {
-    if (selected) {
-      const { activeElement } = window.document;
-      const el = ReactEditor.toDOMNode(editor, editor);
-      if (activeElement !== el) return;
+  const onDOMSelectionChange = React.useCallback(
+    throttle(() => {
+      if (selected) {
+        const { activeElement } = window.document;
+        const el = ReactEditor.toDOMNode(editor, editor);
+        if (activeElement !== el) return;
 
-      ReactEditor.focus(editor);
+        ReactEditor.focus(editor);
 
-      // This makes the Backspace key work properly in block.
-      // Don't remove it, unless this test passes:
-      // - with the Slate block unselected, click in the block.
-      // - Hit backspace. If it deletes, then the test passes
-      fixSelection(editor);
+        // This makes the Backspace key work properly in block.
+        // Don't remove it, unless this test passes:
+        // - with the Slate block unselected, click in the block.
+        // - Hit backspace. If it deletes, then the test passes
+        fixSelection(editor);
+        // setSavedSelection(editor.selection);
 
-      // Save the selection
-      const newSel = JSON.stringify(editor.selection);
-      if (newSel && JSON.parse(newSel).anchor) {
-        setSavedSelection(JSON.parse(newSel));
+        // Save the selection
+        if (
+          editor.selection &&
+          editor.selection.anchor &&
+          !isEqual(editor.selection, savedSelection)
+        ) {
+          if (!Range.isBackward(editor.selection)) {
+            // TODO: saving selection is disabled on range backward because it
+            // keeps "jumping".
+            // console.log('set');
+            setSavedSelection(editor.selection);
+          }
+        }
       }
-    }
-  }, [editor, selected]);
+    }, 100),
+    [editor, selected, savedSelection],
+  );
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -195,8 +210,10 @@ const SlateEditor = ({
         {slate.persistentHelpers.map((Helper, i) => {
           return <Helper key={i} />;
         })}
-        {/* <div>{JSON.stringify(savedSelection)}</div> */}
-        {/* <div>{JSON.stringify(editor.selection)}</div> */}
+        <ul>
+          <li>{JSON.stringify(savedSelection)}</li>
+          <li>{JSON.stringify(editor.selection)}</li>
+        </ul>
       </Slate>
     </div>
   );

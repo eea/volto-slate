@@ -29,32 +29,35 @@ const selectStyles = {
     };
   },
   control: (provided, state) => {
+    console.log('control state', state);
     return {
       ...provided,
       minHeight: 'auto',
       borderWidth: 'unset',
       cursor: 'pointer',
+      // borderColor: state.isFocused || state.isHovered ? brownColor : '#f3f3f3',
+      // boxShadow: 'unset',
     };
   },
   container: (provided, state) => {
     return {
       ...provided,
       marginLeft: '3px',
-      backgroundColor: state.isFocused ? '#f3f3f3' : 'unset',
+      // backgroundColor: state.isFocused ? '#f3f3f3' : 'unset',
     };
   },
   singleValue: (provided, state) => {
     return {
       paddingLeft: '3px',
       fontSize: '1rem',
-      color: brownColor,
+      // color: brownColor,
     };
   },
   option: (provided, state) => {
     return {
       ...provided,
       fontSize: '1rem',
-      color: brownColor,
+      // color: state.isSelected ? 'white' : brownColor,
     };
   },
 };
@@ -70,6 +73,18 @@ const StylingsButton = (props) => {
         defaultValue={opts[opts.length - 1]}
         isMulti={false}
         styles={selectStyles}
+        theme={(theme) => {
+          return {
+            ...theme,
+            colors: {
+              ...theme.colors,
+              primary: '#826A6AFF',
+              primary75: '#826A6Abf',
+              primary50: '#826A6A7f',
+              primary25: '#826A6A40',
+            },
+          };
+        }}
         onChange={({ value }) => {
           console.log('Selected:', value);
         }}

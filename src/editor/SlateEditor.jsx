@@ -60,6 +60,10 @@ const SlateEditor = ({
 
   const onDOMSelectionChange = React.useCallback(() => {
     if (selected) {
+      const { activeElement } = window.document;
+      const el = ReactEditor.toDOMNode(editor, editor);
+      if (activeElement !== el) return;
+
       ReactEditor.focus(editor);
 
       // This makes the Backspace key work properly in block.

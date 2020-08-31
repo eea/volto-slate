@@ -3,7 +3,7 @@ import { useSlate } from 'slate-react';
 import Select, { components } from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-import { toggleBlockStyle } from '../../../utils/blocks';
+import { toggleBlockStyle, isBlockStyleActive } from '../../../utils/blocks';
 
 const messages = defineMessages({
   allStylesApplied: {
@@ -96,11 +96,22 @@ const StylingsButton = (props) => {
   const editor = useSlate();
   const intl = useIntl();
 
+  // Converting the settings to a format that is required by react-select.
   const opts = settings.slate.styleMenuDefinitions.map((def) => {
     return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
   });
 
-  const [selectedStyle, setSelectedStyle] = React.useState(null);
+  // Calculating the initial selection.
+  const toSelect = [];
+  for (const val of opts) {
+    const ia = isBlockStyleActive(editor, val.value);
+    if (ia) {
+      toSelect.push(val);
+      break;
+    }
+  }
+
+  const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
 
   return (
     <div>

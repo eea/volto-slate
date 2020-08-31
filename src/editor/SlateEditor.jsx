@@ -85,6 +85,10 @@ const SlateEditor = ({
   useIsomorphicLayoutEffect(() => {
     window.document.addEventListener('selectionchange', onDOMSelectionChange);
 
+    if (selected) {
+      ReactEditor.focus(editor);
+      fixSelection(editor);
+    }
     if (
       selected &&
       defaultSelection &&

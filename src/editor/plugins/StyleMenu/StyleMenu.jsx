@@ -1,31 +1,39 @@
 import React from 'react';
-// import { useSlate } from 'slate-react';
-import Select from 'react-select';
+import { useSlate } from 'slate-react';
+import Select, { components } from 'react-select';
+import { settings } from '~/config';
+
+import { isBlockActive, toggleBlock } from 'volto-slate/utils';
 
 const brownColor = '#826A6A';
-
-const opts = [
-  { value: 'green-text', label: 'Green Text' },
-  { value: 'no-styling', label: 'No Styling' },
-];
 
 const selectStyles = {
   valueContainer: (provided, state) => {
     return {
       ...provided,
-      padding: '0 0 0 0',
+      paddingLeft: '0px',
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingDown: '0px',
     };
   },
   dropdownIndicator: (provided, state) => {
     return {
       ...provided,
-      padding: '0 0 0 0',
+      paddingLeft: '0px',
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingDown: '0px',
     };
   },
   indicatorsContainer: (provided, state) => {
     return {
       ...provided,
-      padding: '0 0 0 0',
+      padding: '0px',
+      paddingLeft: '0px',
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingDown: '0px',
     };
   },
   control: (provided, state) => {
@@ -43,6 +51,7 @@ const selectStyles = {
     return {
       ...provided,
       marginLeft: '3px',
+      width: '10rem',
       // backgroundColor: state.isFocused ? '#f3f3f3' : 'unset',
     };
   },
@@ -64,7 +73,9 @@ const selectStyles = {
 };
 
 const StylingsButton = (props) => {
-  // const editor = useSlate();
+  const editor = useSlate();
+
+  const opts = settings.slate.styleMenuDefinitions;
 
   const [selectedStyle, setSelectedStyle] = React.useState(
     opts[opts.length - 1],
@@ -75,8 +86,15 @@ const StylingsButton = (props) => {
       <Select
         options={opts}
         value={selectedStyle}
-        isMulti={false}
+        isMulti={true}
         styles={selectStyles}
+        placeholder="No Style"
+        components={{
+          MultiValue: (props) => {
+            // console.log('MultiValue props', props);
+            return <>{props.children}</>;
+          },
+        }}
         theme={(theme) => {
           return {
             ...theme,
@@ -91,6 +109,7 @@ const StylingsButton = (props) => {
         }}
         onChange={(selItem) => {
           setSelectedStyle(selItem);
+          // toggleBlock(editor, 'style');
         }}
       ></Select>
     </div>

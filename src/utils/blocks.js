@@ -18,12 +18,28 @@ export const isBlockActive = (editor, format) => {
   return !!match;
 };
 
+export const isBlockStyleActive = (editor, style) => {
+  const [match] = Editor.nodes(editor, {
+    match: (n) => n.styleName === style,
+  });
+
+  return !!match;
+};
+
 export const toggleFormat = (editor, format) => {
   const { slate } = settings;
   const isActive = isBlockActive(editor, format);
   const type = isActive ? slate.defaultBlockType : format;
   Transforms.setNodes(editor, {
     type,
+  });
+};
+
+export const toggleStyle = (editor, style) => {
+  const isActive = isBlockStyleActive(editor, style);
+  style = isActive ? undefined : style;
+  Transforms.setNodes(editor, {
+    styleName: style,
   });
 };
 
@@ -75,6 +91,24 @@ export const toggleFormatAsListItem = (editor, format) => {
 };
 
 /*
+ * Applies a block format unto a list item. Will split the list and deconstruct the
+ * block
+ */
+export const toggleStyleAsListItem = (editor, style) => {
+  const { slate } = settings;
+  Transforms.unwrapNodes(editor, {
+    match: (n) => slate.listTypes.includes(n.type),
+    split: true,
+  });
+
+  Transforms.setNodes(editor, {
+    styleName: style,
+  });
+
+  deconstructToVoltoBlocks(editor);
+};
+
+/*
  * Toggles between list types by exploding the block
  */
 export const switchListType = (editor, format) => {
@@ -109,6 +143,32 @@ export const toggleBlock = (editor, format) => {
     toggleFormat(editor, format);
   } else {
     console.warn('toggleBlock case not covered, please examine:', {
+      wantsList,
+      isActive,
+      isListItem,
+    });
+  }
+};
+
+export const toggleBlockStyle = (editor, style) => {
+  // We have 6 boolean variables which need to be accounted for.
+  // See https://docs.google.com/spreadsheets/d/1mVeMuqSTMABV2BhoHPrPAFjn7zUksbNgZ9AQK_dcd3U/edit?usp=sharing
+  const { slate } = settings;
+
+  const isListItem = isBlockActive(editor, slate.listItemType);
+  const isActive = isBlockActive(editor, style);
+  const wantsList = false;
+
+  if (isListItem && !wantsList) {
+    toggleStyleAsListItem(editor, style);
+  } else if (isListItem && wantsList && !isActive) {
+    // switchListType(editor, format); // this will deconstruct to Volto blocks
+  } else if (!isListItem && wantsList) {
+    // changeBlockToList(editor, format);
+  } else if (!isListItem && !wantsList) {
+    toggleStyle(editor, style);
+  } else {
+    console.warn('toggleBlockStyle case not covered, please examine:', {
       wantsList,
       isActive,
       isListItem,

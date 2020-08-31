@@ -1,19 +1,6 @@
 import React from 'react';
 import StyleMenu from './StyleMenu';
-
-export const StyleElement = ({ attributes, children, element }) => {
-  return (
-    <div
-      className={`style-${element.styleName}`}
-      {...attributes}
-      style={{
-        color: 'green',
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+import './style.css';
 
 export default function install(config) {
   const { slate } = config.settings;
@@ -25,12 +12,9 @@ export default function install(config) {
     'styleMenu',
   ];
 
-  slate.elements['style'] = StyleElement;
-
   slate.styleMenuDefinitions = [
     { cssClass: 'green-text', isBlock: true, label: 'Green Text' },
     { cssClass: 'blue-text', isBlock: true, label: 'Blue Text' },
-    // { value: 'no-styling', label: 'No Styling' },
   ];
 
   return config;

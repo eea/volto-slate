@@ -3,7 +3,7 @@ import { useSlate } from 'slate-react';
 import Select, { components } from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-import { isBlockActive, toggleBlock } from 'volto-slate/utils';
+import { toggleBlockStyle } from '../../../utils/blocks';
 
 const messages = defineMessages({
   allStylesApplied: {
@@ -143,7 +143,9 @@ const StylingsButton = (props) => {
         }}
         onChange={(selItem) => {
           setSelectedStyle(selItem);
-          // toggleBlock(editor, 'style');
+          for (let x of selItem) {
+            toggleBlockStyle(editor, x.value);
+          }
         }}
       ></Select>
     </div>

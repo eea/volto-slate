@@ -185,7 +185,9 @@ export const elements = {
   h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
-  p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  p: ({ attributes, children }) => {
+    return <p {...attributes}>{children}</p>;
+  },
   ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
 
   // While usual slate editor consider these to be Leafs, we treat them as

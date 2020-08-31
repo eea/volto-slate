@@ -110,6 +110,7 @@ const StylingsButton = (props) => {
         isMulti={true}
         styles={selectStyles}
         placeholder="No Style"
+        hideSelectedOptions={false}
         noOptionsMessage={({ inputValue }) =>
           intl.formatMessage(messages.allStylesApplied)
         }

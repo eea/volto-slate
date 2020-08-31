@@ -1,9 +1,16 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import Select, { components } from 'react-select';
+import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-
 import { isBlockActive, toggleBlock } from 'volto-slate/utils';
+
+const messages = defineMessages({
+  allStylesApplied: {
+    id: 'All Styles Applied',
+    defaultMessage: 'All Styles Applied',
+  },
+});
 
 const brownColor = '#826A6A';
 
@@ -87,14 +94,13 @@ const selectStyles = {
 
 const StylingsButton = (props) => {
   const editor = useSlate();
+  const intl = useIntl();
 
   const opts = settings.slate.styleMenuDefinitions.map((def) => {
     return { value: def.cssClass, label: def.label };
   });
 
-  const [selectedStyle, setSelectedStyle] = React.useState(
-    opts[opts.length - 1],
-  );
+  const [selectedStyle, setSelectedStyle] = React.useState(null);
 
   return (
     <div>
@@ -104,8 +110,11 @@ const StylingsButton = (props) => {
         isMulti={true}
         styles={selectStyles}
         placeholder="No Style"
-        noOptionsMessage={({ inputValue }) => 'All Styles Applied'}
+        noOptionsMessage={({ inputValue }) =>
+          intl.formatMessage(messages.allStylesApplied)
+        }
         components={{
+          // Shows the most relevant part of the selection as a simple string of text.
           MultiValue: (props) => {
             const val = props.getValue();
 
@@ -124,10 +133,10 @@ const StylingsButton = (props) => {
             ...theme,
             colors: {
               ...theme.colors,
-              primary: '#826A6AFF',
-              primary75: '#826A6Abf',
-              primary50: '#826A6A7f',
-              primary25: '#826A6A40',
+              primary: '#826A6AFF', // 100% opaque @brown
+              primary75: '#826A6Abf', // 75% opaque @brown
+              primary50: '#826A6A7f', // 50% opaque @brown
+              primary25: '#826A6A40', // 25% opaque @brown
             },
           };
         }}

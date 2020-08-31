@@ -97,7 +97,7 @@ const StylingsButton = (props) => {
   const intl = useIntl();
 
   const opts = settings.slate.styleMenuDefinitions.map((def) => {
-    return { value: def.cssClass, label: def.label };
+    return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
   });
 
   const [selectedStyle, setSelectedStyle] = React.useState(null);
@@ -141,10 +141,19 @@ const StylingsButton = (props) => {
             },
           };
         }}
-        onChange={(selItem) => {
-          setSelectedStyle(selItem);
-          for (let x of selItem) {
-            toggleBlockStyle(editor, x.value);
+        onChange={(selItem, meta) => {
+          console.log('meta', meta);
+
+          if (selItem.length === 0) {
+            setSelectedStyle(selItem);
+            toggleBlockStyle(editor, undefined);
+            return;
+          }
+
+          if (meta.action === 'select-option' && meta.option.isBlock) {
+            setSelectedStyle([meta.option]);
+            toggleBlockStyle(editor, meta.option.value);
+          } else {
           }
         }}
       ></Select>

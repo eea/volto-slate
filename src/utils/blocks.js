@@ -19,16 +19,28 @@ export const isBlockActive = (editor, format) => {
 };
 
 export const isBlockStyleActive = (editor, style) => {
-  const [match] = Editor.nodes(editor, {
-    match: (n) => n.styleName === style,
-  });
+  const sn = Array.from(
+    Editor.nodes(editor, {
+      match: (n) => typeof n.styleName === 'string',
+    }),
+  );
 
-  return !!match;
+  for (const [n] of sn) {
+    if (n.styleName.split(' ').filter((x) => x === style).length > 0) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 export const isInlineStyleActive = (editor, style) => {
   const m = Editor.marks(editor);
-  if (m && m.styleName === style) {
+  if (
+    m &&
+    m.styleName &&
+    m.styleName.split(' ').filter((x) => x === style).length > 0
+  ) {
     return true;
   }
   return false;
@@ -44,20 +56,22 @@ export const toggleFormat = (editor, format) => {
 };
 
 export const internalToggleBlockStyle = (editor, style) => {
-  const isActive = isBlockStyleActive(editor, style);
-  style = isActive ? undefined : style;
-  Transforms.setNodes(editor, {
-    styleName: style,
-  });
+  // const isActive = isBlockStyleActive(editor, style);
+  // style = isActive ? undefined : style;
+  // Transforms.setNodes(editor, {
+  //   styleName: style,
+  // });
+  toggleBlockStyleInSelection(editor, style);
 };
 
 export const internalToggleInlineStyle = (editor, style) => {
-  const isActive = isInlineStyleActive(editor, style);
-  if (isActive) {
-    Editor.removeMark(editor, 'styleName');
-  } else {
-    Editor.addMark(editor, 'styleName', style);
-  }
+  // const isActive = isInlineStyleActive(editor, style);
+  // if (isActive) {
+  //   Editor.removeMark(editor, 'styleName');
+  // } else {
+  //   Editor.addMark(editor, 'styleName', style);
+  // }
+  toggleInlineStyleInSelection(editor, style);
 };
 
 export const toggleInlineFormat = (editor, format) => {
@@ -118,9 +132,7 @@ export const toggleBlockStyleAsListItem = (editor, style) => {
     split: true,
   });
 
-  Transforms.setNodes(editor, {
-    styleName: style,
-  });
+  toggleBlockStyleInSelection(editor, style);
 
   deconstructToVoltoBlocks(editor);
 };
@@ -134,8 +146,7 @@ export const toggleInlineStyleAsListItem = (editor, style) => {
   //   match: (n) => slate.listTypes.includes(n.type),
   //   split: true,
   // });
-
-  Editor.addMark(editor, 'styleName', style);
+  toggleInlineStyleInSelection(editor, style);
   // Transforms.setNodes(editor, {
   //   styleName: style,
   // });
@@ -236,3 +247,52 @@ export const toggleInlineStyle = (editor, style) => {
     });
   }
 };
+
+function toggleInlineStyleInSelection(editor, style) {
+  const m = Editor.marks(editor);
+  if (
+    m &&
+    m.styleName &&
+    m.styleName.split(' ').filter((x) => x === style).length > 0
+  ) {
+    // remove the style
+    Editor.addMark(
+      editor,
+      'styleName',
+      m.styleName
+        .split(' ')
+        .filter((x) => x !== style)
+        .join(' '),
+    );
+  }
+  // add a new style
+  Editor.addMark(
+    editor,
+    'styleName',
+    m && m.styleName
+      ? m.styleName + ' ' + style
+      : m && !m.styleName
+      ? style
+      : '',
+  );
+}
+
+function toggleBlockStyleInSelection(editor, style) {
+  const sn = Array.from(Editor.nodes(editor));
+
+  for (const [n, p] of sn) {
+    let cn = n.styleName;
+    if (typeof n.styleName !== 'string') {
+      cn = style;
+    } else if (n.styleName.split(' ').filter((x) => x === style).length > 0) {
+      cn = cn
+        .split(' ')
+        .filter((x) => x !== style)
+        .join(' ');
+    } else {
+      // the style is not set but other styles are set
+      cn = cn.split(' ').concat(style).join(' ');
+    }
+    Transforms.setNodes(editor, { styleName: cn }, { at: p });
+  }
+}

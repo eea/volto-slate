@@ -202,9 +202,10 @@ const SlateEditor = ({
           }}
           {...rest}
         />
-        {slate.persistentHelpers.map((Helper, i) => {
-          return <Helper key={i} />;
-        })}
+        {selected &&
+          slate.persistentHelpers.map((Helper, i) => {
+            return <Helper key={i} />;
+          })}
         <ul>
           <li>{selected ? 'selected' : 'no-selected'}</li>
           <li>defaultSelection: {JSON.stringify(defaultSelection)}</li>

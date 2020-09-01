@@ -8,7 +8,7 @@ import checkSVG from '@plone/volto/icons/check.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
 import { useSlate } from 'slate-react';
 import { isEqual } from 'lodash';
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+// import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 import {
   unwrapFootnote,
   insertFootnote,

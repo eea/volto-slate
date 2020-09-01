@@ -26,10 +26,14 @@ export const Leaf = ({ children, ...rest }) => {
       : acc;
   }, children);
 
-  const klass = cx({
+  const obj = {
     [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
     'highlight-selection': mode !== 'view' && leaf.isSelection,
-  });
+  };
+  if (leaf.styleName) {
+    obj[leaf.styleName] = true;
+  }
+  const klass = cx(obj);
 
   return mode === 'view' ? (
     typeof children === 'string' ? (

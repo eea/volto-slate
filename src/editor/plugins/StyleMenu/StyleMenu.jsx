@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
+import { Editor } from 'slate';
 import Select, { components } from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
@@ -124,18 +125,21 @@ const StylingsButton = (props) => {
   ];
 
   // Calculating the initial selection.
+  // TODO: keep it synchronized with the SlateEditor's selection
   const toSelect = [];
-  for (const val of opts) {
-    if (!val.isBlock) continue;
+  // block styles
+  for (const val of opts[0].options) {
     const ia = isBlockStyleActive(editor, val.value);
     if (ia) {
       toSelect.push(val);
-      break;
     }
   }
-  for (const val of opts) {
-    if (val.isBlock) continue;
-    toSelect.push(val);
+  // inline styles
+  for (const val of opts[1].options) {
+    const ia = isInlineStyleActive(editor, val.value);
+    if (ia) {
+      toSelect.push(val);
+    }
   }
 
   const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
@@ -189,16 +193,24 @@ const StylingsButton = (props) => {
             return;
           }
 
-          if (meta.action === 'select-option' && meta.option.isBlock) {
-            setSelectedStyle([meta.option]);
-            toggleBlockStyle(editor, meta.option.value);
-          } else {
-            // TODO: complete this algorithm
-            if (meta.action === 'select-option' && !meta.option.isBlock) {
-              setSelectedStyle([meta.option]);
-              toggleInlineStyle(editor, meta.option.value);
+          // TODO: compose separate style names to make the final className
+          // value (currently a single style name is inside the className of the
+          // selection or the block)
+          for (const item of selItem) {
+            if (isBlockStyleActive(editor, item.value)) {
+              toggleBlockStyle(editor, item.value);
+            } else if (isInlineStyleActive(editor, item.value)) {
+              toggleInlineStyle(editor, item.value);
+            }
+
+            if (item.isBlock) {
+              toggleBlockStyle(editor, item.value);
+            } else {
+              toggleInlineStyle(editor, item.value);
             }
           }
+
+          setSelectedStyle(selItem);
         }}
       ></Select>
     </div>

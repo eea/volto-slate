@@ -27,7 +27,9 @@ export const isBlockStyleActive = (editor, style) => {
 };
 
 export const isInlineStyleActive = (editor, style) => {
-  if (Editor.marks(editor)[style]) {
+  const m = Editor.marks(editor);
+
+  if (m?.[style]) {
     return true;
   }
   return false;

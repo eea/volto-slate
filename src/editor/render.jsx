@@ -44,15 +44,23 @@ export const Leaf = ({ children, ...rest }) => {
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
-                {t}
+                {leaf.styleName ? (
+                  <span className={leaf.styleName}>{t}</span>
+                ) : (
+                  t
+                )}
                 <br />
               </>
+            ) : leaf.styleName ? (
+              <span className={leaf.styleName}>{t}</span>
             ) : (
               t
             )}
           </React.Fragment>
         );
       })
+    ) : leaf.styleName ? (
+      <span className={leaf.styleName}>{children}</span>
     ) : (
       children
     )

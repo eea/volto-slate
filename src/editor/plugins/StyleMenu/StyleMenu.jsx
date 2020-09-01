@@ -142,13 +142,13 @@ const StylingsButton = (props) => {
     }
   }
 
-  const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
+  // const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
 
   return (
     <div>
       <Select
         options={opts}
-        value={selectedStyle}
+        value={toSelect}
         isMulti={true}
         styles={selectStyles}
         placeholder="No Style"
@@ -187,7 +187,7 @@ const StylingsButton = (props) => {
           console.log('meta', meta);
 
           if (selItem.length === 0) {
-            setSelectedStyle(selItem);
+            // setSelectedStyle(selItem);
             toggleBlockStyle(editor, undefined);
             toggleInlineStyle(editor, undefined);
             return;
@@ -210,7 +210,7 @@ const StylingsButton = (props) => {
             }
           }
 
-          setSelectedStyle(selItem);
+          // setSelectedStyle(selItem);
         }}
       ></Select>
     </div>

@@ -1,4 +1,4 @@
-import { Editor, Transforms } from 'slate';
+import { Editor, Transforms, Range, RangeRef } from 'slate';
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
@@ -37,11 +37,8 @@ export const isBlockStyleActive = (editor, style) => {
 
 export const isInlineStyleActive = (editor, style) => {
   const m = Editor.marks(editor);
-  if (
-    m &&
-    m.styleName &&
-    m.styleName.split(' ').filter((x) => x === style).length > 0
-  ) {
+  const keyName = `style-${style}`;
+  if (m && m[keyName]) {
     return true;
   }
   return false;
@@ -257,33 +254,36 @@ export const toggleInlineStyle = (editor, style) => {
 };
 
 function toggleInlineStyleInSelection(editor, style) {
+  // Editor.withoutNormalizing(editor, () => {
+  //   const selEdges = Range.edges(editor.selection);
+  //   debugger;
+
+  //   const ref = Editor.rangeRef(editor, editor.selection, {
+  //     affinity: 'inward',
+  //   });
+
+  //   Transforms.splitNodes(editor, {
+  //     mode: 'lowest',
+  //     at: selEdges[0],
+  //     height: 2, // TODO: is this a bad value for some cases?
+  //   });
+  //   Transforms.splitNodes(editor, {
+  //     mode: 'lowest',
+  //     at: selEdges[1],
+  //     height: 2, // TODO: see above comment.
+  //   });
+
+  //   Transforms.select(editor, ref.current);
+  // });
+
   const m = Editor.marks(editor);
-  if (
-    m &&
-    m.styleName &&
-    m.styleName.split(' ').filter((x) => x === style).length > 0
-  ) {
-    // remove the style
-    Editor.addMark(
-      editor,
-      'styleName',
-      m.styleName
-        .split(' ')
-        .filter((x) => x !== style)
-        .join(' '),
-    );
-    return;
+  const keyName = 'style-' + style;
+
+  if (m && m[keyName]) {
+    Editor.removeMark(editor, keyName);
+  } else {
+    Editor.addMark(editor, keyName, true);
   }
-  // add a new style
-  Editor.addMark(
-    editor,
-    'styleName',
-    m && m.styleName
-      ? m.styleName + ' ' + style
-      : m && !m.styleName
-      ? style
-      : '',
-  );
 }
 
 function toggleBlockStyleInSelection(editor, style) {

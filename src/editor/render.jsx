@@ -30,9 +30,13 @@ export const Leaf = ({ children, ...rest }) => {
     [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
     'highlight-selection': mode !== 'view' && leaf.isSelection,
   };
-  if (leaf.styleName) {
-    obj[leaf.styleName] = true;
+
+  for (const prop in leaf) {
+    if (prop.startsWith('style-')) {
+      obj[prop.substring(6)] = true;
+    }
   }
+
   const klass = cx(obj);
 
   return mode === 'view' ? (
@@ -44,25 +48,17 @@ export const Leaf = ({ children, ...rest }) => {
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
-                {leaf.styleName ? (
-                  <span className={leaf.styleName}>{t}</span>
-                ) : (
-                  t
-                )}
+                {<span className={klass}>{t}</span>}
                 <br />
               </>
-            ) : leaf.styleName ? (
-              <span className={leaf.styleName}>{t}</span>
             ) : (
-              t
+              <span className={klass}>{t}</span>
             )}
           </React.Fragment>
         );
       })
-    ) : leaf.styleName ? (
-      <span className={leaf.styleName}>{children}</span>
     ) : (
-      children
+      <span className={klass}>{children}</span>
     )
   ) : (
     <span {...attributes} className={klass}>

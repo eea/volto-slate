@@ -1,6 +1,9 @@
 import cx from 'classnames';
+import { isEqual } from 'lodash';
+// import throttle from 'lodash/throttle';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { Range } from 'slate';
 import { withHistory } from 'slate-history';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -29,6 +32,8 @@ const SlateEditor = ({
   extensions,
   renderExtensions = [],
   testingEditorRef,
+  onFocus,
+  onBlur,
   ...rest
 }) => {
   const { slate } = settings;
@@ -58,27 +63,39 @@ const SlateEditor = ({
   editor.setSavedSelection = setSavedSelection;
   editor.savedSelection = savedSelection;
 
-  const onDOMSelectionChange = React.useCallback(() => {
-    if (selected) {
-      const { activeElement } = window.document;
-      const el = ReactEditor.toDOMNode(editor, editor);
-      if (activeElement !== el) return;
+  const onDOMSelectionChange = React.useCallback(
+    (evt) =>
+      setTimeout(() => {
+        const { activeElement } = window.document;
+        const el = ReactEditor.toDOMNode(editor, editor);
+        if (activeElement !== el) return;
 
-      ReactEditor.focus(editor);
+        ReactEditor.focus(editor);
 
-      // This makes the Backspace key work properly in block.
-      // Don't remove it, unless this test passes:
-      // - with the Slate block unselected, click in the block.
-      // - Hit backspace. If it deletes, then the test passes
-      fixSelection(editor);
+        if (
+          defaultSelection &&
+          initial_selection.current !== defaultSelection
+        ) {
+          initial_selection.current = defaultSelection;
+          fixSelection(editor, evt, defaultSelection); // If you plan on removing this, test thoroughly!
+        } else {
+          fixSelection(editor, evt);
+        }
 
-      // Save the selection
-      const newSel = JSON.stringify(editor.selection);
-      if (newSel && JSON.parse(newSel).anchor) {
-        setSavedSelection(JSON.parse(newSel));
-      }
-    }
-  }, [editor, selected]);
+        // Save the selection, available as editor.savedSelection
+        if (
+          editor.selection &&
+          editor.selection.anchor &&
+          !isEqual(editor.selection, savedSelection)
+        ) {
+          // if (!Range.isBackward(editor.selection))
+          // TODO: saving selection is weird on backward motion, it "jumps"
+          setSavedSelection(editor.selection);
+        }
+        // }
+      }, 100),
+    [editor, savedSelection, defaultSelection], //selected,
+  );
 
   /*
    * We 'restore' the selection because we manipulate it in several cases:
@@ -87,28 +104,18 @@ const SlateEditor = ({
    * - when moving down, we set it at beginning of next block
    */
   useIsomorphicLayoutEffect(() => {
-    window.document.addEventListener('selectionchange', onDOMSelectionChange);
-
     if (selected) {
       ReactEditor.focus(editor);
-      fixSelection(editor); // If you plan on removing this, test thoroughly!
+      window.document.addEventListener('selectionchange', onDOMSelectionChange);
     }
-    if (
-      selected &&
-      defaultSelection &&
-      initial_selection.current !== defaultSelection
-    ) {
-      initial_selection.current = defaultSelection;
-      setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-    }
+
     return () => {
-      // ReactEditor.blur(editor);
       window.document.removeEventListener(
         'selectionchange',
         onDOMSelectionChange,
       );
     };
-  }, [editor, selected, defaultSelection, onDOMSelectionChange]);
+  }, [onDOMSelectionChange, editor, selected, defaultSelection]);
 
   const initialValue = slate.defaultValue();
 
@@ -138,6 +145,7 @@ const SlateEditor = ({
     },
     [j_value, onChange],
   );
+  // readOnly={!selected}
 
   return (
     <div
@@ -166,12 +174,14 @@ const SlateEditor = ({
           ''
         )}
         <Editable
-          readOnly={!selected}
+          readOnly={false}
           placeholder={placeholder}
           renderElement={(props) => <Element {...props} />}
           renderLeaf={(props) => <Leaf {...props} />}
           decorate={multiDecorate}
           spellCheck={false}
+          onFocus={onFocus}
+          onBlur={onBlur}
           onKeyDown={(event) => {
             let wasHotkey = false;
 
@@ -192,11 +202,17 @@ const SlateEditor = ({
           }}
           {...rest}
         />
-        {slate.persistentHelpers.map((Helper, i) => {
-          return <Helper key={i} />;
-        })}
-        {/* <div>{JSON.stringify(savedSelection)}</div> */}
-        {/* <div>{JSON.stringify(editor.selection)}</div> */}
+        {selected &&
+          slate.persistentHelpers.map((Helper, i) => {
+            return <Helper key={i} />;
+          })}
+        {/* <ul> */}
+        {/*   <li>{selected ? 'selected' : 'no-selected'}</li> */}
+        {/*   <li>defaultSelection: {JSON.stringify(defaultSelection)}</li> */}
+        {/*   <li>savedSelection: {JSON.stringify(savedSelection)}</li> */}
+        {/*   <li>live selection: {JSON.stringify(editor.selection)}</li> */}
+        {/*   <li>children: {JSON.stringify(editor.children)}</li> */}
+        {/* </ul> */}
       </Slate>
     </div>
   );

@@ -162,6 +162,7 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
 export function hasRangeSelection(editor) {
   const { savedSelection } = editor;
   const selection = savedSelection || editor.selection;
+  console.log('hasRange', selection, savedSelection);
 
   const res =
     // ReactEditor.isFocused(editor) &&

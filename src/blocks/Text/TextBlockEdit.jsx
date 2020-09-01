@@ -179,12 +179,11 @@ const TextBlockEdit = (props) => {
           <SlateEditor
             index={index}
             properties={properties}
-            onAddBlock={onAddBlock}
             extensions={textblockExtensions}
             renderExtensions={[withBlockProperties]}
-            onSelectBlock={onSelectBlock}
             value={value}
             block={block}
+            onFocus={() => onSelectBlock(block)}
             onChange={(value, selection) => {
               onChangeBlock(block, {
                 ...data,

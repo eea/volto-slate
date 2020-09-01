@@ -78,10 +78,17 @@ export const internalToggleInlineStyle = (editor, style) => {
 export const toggleInlineFormat = (editor, format) => {
   const isActive = isBlockActive(editor, format);
   if (isActive) {
+    const rangeRef = Editor.rangeRef(editor, editor.selection);
+
     Transforms.unwrapNodes(editor, {
       match: (n) => n.type === format,
       split: false,
     });
+
+    const newSel = JSON.parse(JSON.stringify(rangeRef.current));
+
+    Transforms.select(editor, newSel);
+    editor.setSavedSelection(newSel);
     return;
   }
   const block = { type: format, children: [] };

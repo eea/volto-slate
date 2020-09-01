@@ -18,7 +18,9 @@ export default (config) => {
     footnote_editor,
   };
 
-  slate.buttons.footnote = (props) => <FootnoteButton {...props} title="Footnote" />;
+  slate.buttons.footnote = (props) => (
+    <FootnoteButton {...props} title="Footnote" />
+  );
   slate.elements.footnote = FootnoteElement;
 
   slate.extensions = [...(slate.extensions || []), withFootnote];

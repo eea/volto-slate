@@ -1,9 +1,10 @@
-.green-text {
+.green-block-text {
   color: green;
 }
 
-.blue-text {
+.cool-inline-text {
   font-weight: bold;
+  font-style: italic;
 }
 
 .red-inline-text {

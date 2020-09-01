@@ -21,7 +21,8 @@ export const isBlockActive = (editor, format) => {
 export const isBlockStyleActive = (editor, style) => {
   const sn = Array.from(
     Editor.nodes(editor, {
-      match: (n) => typeof n.styleName === 'string',
+      match: (n) => !Editor.isEditor(n) && typeof n.styleName === 'string',
+      mode: 'highest',
     }),
   );
 
@@ -264,6 +265,7 @@ function toggleInlineStyleInSelection(editor, style) {
         .filter((x) => x !== style)
         .join(' '),
     );
+    return;
   }
   // add a new style
   Editor.addMark(
@@ -278,7 +280,14 @@ function toggleInlineStyleInSelection(editor, style) {
 }
 
 function toggleBlockStyleInSelection(editor, style) {
-  const sn = Array.from(Editor.nodes(editor));
+  const sn = Array.from(
+    Editor.nodes(editor, {
+      mode: 'highest',
+      match: (n) => {
+        return !Editor.isEditor(n);
+      },
+    }),
+  );
 
   for (const [n, p] of sn) {
     let cn = n.styleName;

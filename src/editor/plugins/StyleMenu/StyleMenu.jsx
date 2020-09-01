@@ -201,11 +201,11 @@ const StylingsButton = (props) => {
                 toggleInlineStyle(editor, item.value);
               }
             } else if (!isRequested && isActive) {
-              if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
+              if (item.isBlock && isBlockStyleActive(editor, item.value)) {
                 toggleBlockStyle(editor, item.value);
               } else if (
                 !item.isBlock &&
-                !isInlineStyleActive(editor, item.value)
+                isInlineStyleActive(editor, item.value)
               ) {
                 toggleInlineStyle(editor, item.value);
               }

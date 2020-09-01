@@ -26,6 +26,13 @@ export const isBlockStyleActive = (editor, style) => {
   return !!match;
 };
 
+export const isInlineStyleActive = (editor, style) => {
+  if (Editor.marks(editor)[style]) {
+    return true;
+  }
+  return false;
+};
+
 export const toggleFormat = (editor, format) => {
   const { slate } = settings;
   const isActive = isBlockActive(editor, format);
@@ -35,12 +42,21 @@ export const toggleFormat = (editor, format) => {
   });
 };
 
-export const toggleStyle = (editor, style) => {
+export const internalToggleBlockStyle = (editor, style) => {
   const isActive = isBlockStyleActive(editor, style);
   style = isActive ? undefined : style;
   Transforms.setNodes(editor, {
     styleName: style,
   });
+};
+
+export const internalToggleInlineStyle = (editor, style) => {
+  const isActive = isInlineStyleActive(editor, style);
+  if (isActive) {
+    Editor.removeMark(editor, 'styleName');
+  } else {
+    Editor.addMark(editor, 'styleName', style);
+  }
 };
 
 export const toggleInlineFormat = (editor, format) => {
@@ -94,7 +110,7 @@ export const toggleFormatAsListItem = (editor, format) => {
  * Applies a block format unto a list item. Will split the list and deconstruct the
  * block
  */
-export const toggleStyleAsListItem = (editor, style) => {
+export const toggleBlockStyleAsListItem = (editor, style) => {
   const { slate } = settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
@@ -106,6 +122,24 @@ export const toggleStyleAsListItem = (editor, style) => {
   });
 
   deconstructToVoltoBlocks(editor);
+};
+
+/*
+ * Applies an inline style unto a list item.
+ */
+export const toggleInlineStyleAsListItem = (editor, style) => {
+  // const { slate } = settings;
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => slate.listTypes.includes(n.type),
+  //   split: true,
+  // });
+
+  Editor.addMark(editor, 'styleName', style);
+  // Transforms.setNodes(editor, {
+  //   styleName: style,
+  // });
+
+  // deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -156,19 +190,45 @@ export const toggleBlockStyle = (editor, style) => {
   const { slate } = settings;
 
   const isListItem = isBlockActive(editor, slate.listItemType);
-  const isActive = isBlockActive(editor, style);
+  const isActive = isBlockStyleActive(editor, style);
   const wantsList = false;
 
   if (isListItem && !wantsList) {
-    toggleStyleAsListItem(editor, style);
+    toggleBlockStyleAsListItem(editor, style);
   } else if (isListItem && wantsList && !isActive) {
     // switchListType(editor, format); // this will deconstruct to Volto blocks
   } else if (!isListItem && wantsList) {
     // changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {
-    toggleStyle(editor, style);
+    internalToggleBlockStyle(editor, style);
   } else {
     console.warn('toggleBlockStyle case not covered, please examine:', {
+      wantsList,
+      isActive,
+      isListItem,
+    });
+  }
+};
+
+export const toggleInlineStyle = (editor, style) => {
+  // We have 6 boolean variables which need to be accounted for.
+  // See https://docs.google.com/spreadsheets/d/1mVeMuqSTMABV2BhoHPrPAFjn7zUksbNgZ9AQK_dcd3U/edit?usp=sharing
+  const { slate } = settings;
+
+  const isListItem = isBlockActive(editor, slate.listItemType);
+  const isActive = isInlineStyleActive(editor, style);
+  const wantsList = false;
+
+  if (isListItem && !wantsList) {
+    toggleInlineStyleAsListItem(editor, style);
+  } else if (isListItem && wantsList && !isActive) {
+    // switchListType(editor, format); // this will deconstruct to Volto blocks
+  } else if (!isListItem && wantsList) {
+    // changeBlockToList(editor, format);
+  } else if (!isListItem && !wantsList) {
+    internalToggleInlineStyle(editor, style);
+  } else {
+    console.warn('toggleInlineStyle case not covered, please examine:', {
       wantsList,
       isActive,
       isListItem,

@@ -3,7 +3,12 @@ import { useSlate } from 'slate-react';
 import Select, { components } from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-import { toggleBlockStyle, isBlockStyleActive } from '../../../utils/blocks';
+import {
+  toggleBlockStyle,
+  isBlockStyleActive,
+  toggleInlineStyle,
+  isInlineStyleActive,
+} from '../../../utils/blocks';
 
 const messages = defineMessages({
   allStylesApplied: {
@@ -90,6 +95,12 @@ const selectStyles = {
       fontSize: '1rem',
     };
   },
+  group: (provided, state) => {
+    return {
+      ...provided,
+      fontSize: '1rem',
+    };
+  },
 };
 
 const StylingsButton = (props) => {
@@ -97,18 +108,34 @@ const StylingsButton = (props) => {
   const intl = useIntl();
 
   // Converting the settings to a format that is required by react-select.
-  const opts = settings.slate.styleMenuDefinitions.map((def) => {
+  let opts = settings.slate.styleMenuDefinitions.map((def) => {
     return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
   });
+
+  opts = [
+    {
+      label: 'For blocks',
+      options: opts.filter((x) => x.isBlock),
+    },
+    {
+      label: 'For inlines',
+      options: opts.filter((x) => !x.isBlock),
+    },
+  ];
 
   // Calculating the initial selection.
   const toSelect = [];
   for (const val of opts) {
+    if (!val.isBlock) continue;
     const ia = isBlockStyleActive(editor, val.value);
     if (ia) {
       toSelect.push(val);
       break;
     }
+  }
+  for (const val of opts) {
+    if (val.isBlock) continue;
+    toSelect.push(val);
   }
 
   const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
@@ -158,6 +185,7 @@ const StylingsButton = (props) => {
           if (selItem.length === 0) {
             setSelectedStyle(selItem);
             toggleBlockStyle(editor, undefined);
+            toggleInlineStyle(editor, undefined);
             return;
           }
 
@@ -165,6 +193,11 @@ const StylingsButton = (props) => {
             setSelectedStyle([meta.option]);
             toggleBlockStyle(editor, meta.option.value);
           } else {
+            // TODO: complete this algorithm
+            if (meta.action === 'select-option' && !meta.option.isBlock) {
+              setSelectedStyle([meta.option]);
+              toggleInlineStyle(editor, meta.option.value);
+            }
           }
         }}
       ></Select>

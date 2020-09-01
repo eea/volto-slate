@@ -181,28 +181,36 @@ const StylingsButton = (props) => {
           };
         }}
         onChange={(selItem, meta) => {
-          console.log('meta', meta);
+          // console.log('meta', meta);
 
-          if (selItem.length === 0) {
-            toggleBlockStyle(editor, undefined);
-            toggleInlineStyle(editor, undefined);
-            return;
-          }
+          for (const item of rawOpts) {
+            const isRequested = selItem.includes(item);
+            const isActive =
+              isBlockStyleActive(editor, item.value) ||
+              isInlineStyleActive(editor, item.value);
 
-          // TODO: compose separate style names to make the final className
-          // value (currently a single style name is inside the className of the
-          // selection or the block)
-          for (const item of selItem) {
-            if (isBlockStyleActive(editor, item.value)) {
-              toggleBlockStyle(editor, item.value);
-            } else if (isInlineStyleActive(editor, item.value)) {
-              toggleInlineStyle(editor, item.value);
-            }
-
-            if (item.isBlock) {
-              toggleBlockStyle(editor, item.value);
-            } else {
-              toggleInlineStyle(editor, item.value);
+            if (isRequested && isActive) {
+              // nothing to do
+            } else if (isRequested && !isActive) {
+              if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
+                toggleBlockStyle(editor, item.value);
+              } else if (
+                !item.isBlock &&
+                !isInlineStyleActive(editor, item.value)
+              ) {
+                toggleInlineStyle(editor, item.value);
+              }
+            } else if (!isRequested && isActive) {
+              if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
+                toggleBlockStyle(editor, item.value);
+              } else if (
+                !item.isBlock &&
+                !isInlineStyleActive(editor, item.value)
+              ) {
+                toggleInlineStyle(editor, item.value);
+              }
+            } else if (!isRequested && !isActive) {
+              // nothing to do
             }
           }
         }}

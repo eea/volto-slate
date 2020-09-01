@@ -109,23 +109,22 @@ const StylingsButton = (props) => {
   const intl = useIntl();
 
   // Converting the settings to a format that is required by react-select.
-  let opts = settings.slate.styleMenuDefinitions.map((def) => {
+  const rawOpts = settings.slate.styleMenuDefinitions.map((def) => {
     return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
   });
 
-  opts = [
+  const opts = [
     {
       label: 'For blocks',
-      options: opts.filter((x) => x.isBlock),
+      options: rawOpts.filter((x) => x.isBlock),
     },
     {
       label: 'For inlines',
-      options: opts.filter((x) => !x.isBlock),
+      options: rawOpts.filter((x) => !x.isBlock),
     },
   ];
 
   // Calculating the initial selection.
-  // TODO: keep it synchronized with the SlateEditor's selection
   const toSelect = [];
   // block styles
   for (const val of opts[0].options) {
@@ -141,8 +140,6 @@ const StylingsButton = (props) => {
       toSelect.push(val);
     }
   }
-
-  // const [selectedStyle, setSelectedStyle] = React.useState(toSelect);
 
   return (
     <div>
@@ -187,7 +184,6 @@ const StylingsButton = (props) => {
           console.log('meta', meta);
 
           if (selItem.length === 0) {
-            // setSelectedStyle(selItem);
             toggleBlockStyle(editor, undefined);
             toggleInlineStyle(editor, undefined);
             return;
@@ -209,8 +205,6 @@ const StylingsButton = (props) => {
               toggleInlineStyle(editor, item.value);
             }
           }
-
-          // setSelectedStyle(selItem);
         }}
       ></Select>
     </div>

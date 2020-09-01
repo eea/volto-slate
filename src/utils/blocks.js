@@ -54,21 +54,10 @@ export const toggleFormat = (editor, format) => {
 };
 
 export const internalToggleBlockStyle = (editor, style) => {
-  // const isActive = isBlockStyleActive(editor, style);
-  // style = isActive ? undefined : style;
-  // Transforms.setNodes(editor, {
-  //   styleName: style,
-  // });
   toggleBlockStyleInSelection(editor, style);
 };
 
 export const internalToggleInlineStyle = (editor, style) => {
-  // const isActive = isInlineStyleActive(editor, style);
-  // if (isActive) {
-  //   Editor.removeMark(editor, 'styleName');
-  // } else {
-  //   Editor.addMark(editor, 'styleName', style);
-  // }
   toggleInlineStyleInSelection(editor, style);
 };
 
@@ -146,17 +135,7 @@ export const toggleBlockStyleAsListItem = (editor, style) => {
  * Applies an inline style unto a list item.
  */
 export const toggleInlineStyleAsListItem = (editor, style) => {
-  // const { slate } = settings;
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) => slate.listTypes.includes(n.type),
-  //   split: true,
-  // });
   toggleInlineStyleInSelection(editor, style);
-  // Transforms.setNodes(editor, {
-  //   styleName: style,
-  // });
-
-  // deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -254,28 +233,6 @@ export const toggleInlineStyle = (editor, style) => {
 };
 
 function toggleInlineStyleInSelection(editor, style) {
-  // Editor.withoutNormalizing(editor, () => {
-  //   const selEdges = Range.edges(editor.selection);
-  //   debugger;
-
-  //   const ref = Editor.rangeRef(editor, editor.selection, {
-  //     affinity: 'inward',
-  //   });
-
-  //   Transforms.splitNodes(editor, {
-  //     mode: 'lowest',
-  //     at: selEdges[0],
-  //     height: 2, // TODO: is this a bad value for some cases?
-  //   });
-  //   Transforms.splitNodes(editor, {
-  //     mode: 'lowest',
-  //     at: selEdges[1],
-  //     height: 2, // TODO: see above comment.
-  //   });
-
-  //   Transforms.select(editor, ref.current);
-  // });
-
   const m = Editor.marks(editor);
   const keyName = 'style-' + style;
 

@@ -15,7 +15,7 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { HighlightByType, HighlightSelection } from './decorate';
+import { highlightByType, highlightSelection } from './decorate';
 import {
   withDeleteSelectionOnEnter,
   withDeserializers,
@@ -26,34 +26,69 @@ import {
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
-  spanDeserializer,
+  spanTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
 export const buttons = {
-  bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
+  bold: (props) => (
+    <MarkButton title="Bold" format="bold" icon={boldIcon} {...props} />
+  ),
   italic: (props) => (
-    <MarkButton format="italic" icon={italicIcon} {...props} />
+    <MarkButton title="Italic" format="italic" icon={italicIcon} {...props} />
   ),
   underline: (props) => (
-    <MarkButton format="underline" icon={underlineIcon} {...props} />
+    <MarkButton
+      title="Underline"
+      format="underline"
+      icon={underlineIcon}
+      {...props}
+    />
   ),
   strikethrough: (props) => (
-    <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
+    <MarkButton
+      title="Strikethrough"
+      format="strikethrough"
+      icon={strikethroughIcon}
+      {...props}
+    />
   ),
-  sub: (props) => <MarkButton format="sub" icon={subindexIcon} {...props} />,
-  sup: (props) => <MarkButton format="sup" icon={superindexIcon} {...props} />,
-  code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
+  sub: (props) => (
+    <MarkButton title="Subscript" format="sub" icon={subindexIcon} {...props} />
+  ),
+  sup: (props) => (
+    <MarkButton
+      title="Superscript"
+      format="sup"
+      icon={superindexIcon}
+      {...props}
+    />
+  ),
+  code: (props) => (
+    <MarkButton title="Code" format="code" icon={codeIcon} {...props} />
+  ),
   'heading-two': (props) => (
-    <BlockButton format="h2" icon={headingIcon} {...props} />
+    <BlockButton title="Title" format="h2" icon={headingIcon} {...props} />
   ),
   'heading-three': (props) => (
-    <BlockButton format="h3" icon={subheadingIcon} {...props} />
+    <BlockButton
+      title="Subtitle"
+      format="h3"
+      icon={subheadingIcon}
+      {...props}
+    />
   ),
   'numbered-list': (props) => (
-    <BlockButton format="ol" icon={listNumberedIcon} {...props} />
+    <BlockButton
+      title="Numbered list"
+      format="ol"
+      icon={listNumberedIcon}
+      {...props}
+    />
   ),
-  'bulleted-list': (props) => <BlockButton format="ul" icon={listBulletIcon} />,
+  'bulleted-list': (props) => (
+    <BlockButton title="Bulleted list" format="ul" icon={listBulletIcon} />
+  ),
   separator: (props) => <Separator />,
   expando: (props) => <Expando />,
 };
@@ -78,12 +113,11 @@ export const toolbarButtons = [...defaultToolbarButtons];
 
 export const expandedToolbarButtons = [...defaultToolbarButtons];
 
-// These components are rendered in the toolbar on demand, as configured by plugins.
-// They are rendered as "context" buttons, when there is no selection
-// Each one is a function (editor) => (<Component/> or null)
-// It is important to be able to tell if a plugin would return something
-// because we don't want to render the toolbar at all if there's no children
-// (due to CSS reasons).
+// These components are rendered in the toolbar on demand, as configured by
+// plugins.  They are rendered as "context" buttons, when there is no selection
+// Each one is a function (editor) => (<Component/> or null). It is important
+// to be able to tell if a plugin would return something because we don't want
+// to render the toolbar at all if there's no children (due to CSS reasons).
 export const contextToolbarButtons = [];
 
 // A set of components that are always rendered, unlike the button variety.
@@ -176,19 +210,21 @@ export const htmlTagsToSlate = {
   LI: blockTagDeserializer('li'),
 
   // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
+  // TODO: include <b> but identify if is Google Docs <b>
+  // B: bTagDeserializer,
   CODE: inlineTagDeserializer({ code: true }),
   DEL: inlineTagDeserializer({ strikethrough: true }),
   EM: inlineTagDeserializer({ italic: true }),
   I: inlineTagDeserializer({ italic: true }),
   S: inlineTagDeserializer({ strikethrough: true }),
-  SPAN: spanDeserializer,
+  SPAN: spanTagDeserializer,
   STRONG: inlineTagDeserializer({ bold: true }),
   SUB: inlineTagDeserializer({ sub: true }),
   SUP: inlineTagDeserializer({ sup: true }),
   U: inlineTagDeserializer({ underline: true }),
 };
 
-// Adds "highlight" decoratation in the editor. Used by `highlightByType`
+// Adds "highlight" decoration in the editor. Used by `highlightByType`
 // See the Footnote plugin for an example.
 export const nodeTypesToHighlight = [];
 
@@ -196,4 +232,4 @@ export const nodeTypesToHighlight = [];
 // applied in the editor. They are not persisted in the final value, so they
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
-export const runtimeDecorators = [HighlightSelection, HighlightByType];
+export const runtimeDecorators = [highlightSelection]; // , highlightByType

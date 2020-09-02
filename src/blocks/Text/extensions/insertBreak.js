@@ -6,6 +6,15 @@ import {
   isRangeAtRoot,
 } from 'volto-slate/utils';
 
+/**
+ * @param {Editor} editor The Slate editor object to extend.
+ * @description If the selection exists and touches with one of its edges a closest-to-root `Text` node (`Path` with length `2`)
+ *
+ *   - if the parent node of the selection exists, split editor into two fragments put inside separate Volto Slate Text blocks;
+ *   - if the parent node of the selection does not exist, do nothing;
+ *
+ * and if the selection does not exist or does not touch with one of its edges a closest-to-root `Text` node, call the default behavior.
+ */
 export const withSplitBlocksOnBreak = (editor) => {
   const { insertBreak } = editor;
 

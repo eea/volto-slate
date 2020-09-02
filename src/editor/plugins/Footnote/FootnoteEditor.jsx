@@ -88,6 +88,3 @@ export default (props) => {
     />
   );
 };
-
-// import formatClearSVG from '@plone/volto/icons/format-clear.svg';
-// import { Editor, Range, Transforms } from 'slate';

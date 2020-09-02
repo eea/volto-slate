@@ -1,6 +1,6 @@
 /**
- * Edit text block.
- * @module components/manage/Blocks/Title/Edit
+ * Slate Table block editor.
+ * @module volto-slate/blocks/Table/Edit
  */
 
 import React, { Component } from 'react';
@@ -18,23 +18,40 @@ import rowSVG from '@plone/volto/icons/row.svg';
 import colSVG from '@plone/volto/icons/column.svg';
 import deleteSVG from '@plone/volto/icons/delete.svg';
 
+/**
+ * Returns a random string of 32 digits.
+ */
 const getId = () => Math.floor(Math.random() * Math.pow(2, 24)).toString(32);
 
+/**
+ * @returns {object} An empty Slate paragraph (a simple Slate block node with type set to "p" and a `Text` child with an empty string).
+ */
 function getEmptyParagraph() {
   return [{ type: 'p', children: [{ text: '' }] }];
 }
 
-const emptyCell = (type) => ({
+/**
+ * @param {string} type The type of the newly created cell: either 'header' or 'data', by default it is 'data'.
+ * @returns {object} A new cell object containing three properties: `key`, `type` and `value`.
+ */
+const emptyCell = (type = 'data') => ({
   key: getId(),
-  type: type || 'data',
+  type: type,
   value: getEmptyParagraph(),
 });
 
+/**
+ * @param {Array[object]} cells Array of placeholders, each of them will be replaced in the newly created row with an empty cell. (Practically, just the length of the array matters.)
+ * @returns {object} A new row object containing the keys `key` and `cells`.
+ */
 const emptyRow = (cells) => ({
   key: getId(),
   cells: map(cells, () => emptyCell()),
 });
 
+/**
+ * The initial value for the displayed table's data. The IDs of the rows and cells are computed here only once, so each new table has the same IDs initially, but this does not have bad consequences since the key has relevance only in the context in which it is used.
+ */
 const initialTable = {
   fixed: true,
   compact: false,
@@ -128,7 +145,7 @@ const messages = defineMessages({
 });
 
 /**
- * Edit text block class.
+ * Edit component for the Slate Table block type in Volto.
  * @class Edit
  * @extends Component
  */
@@ -196,7 +213,7 @@ class Edit extends Component {
   }
 
   /**
-   * Component did mount
+   * Component did mount lifecycle method
    * @method componentDidMount
    * @returns {undefined}
    */
@@ -211,7 +228,7 @@ class Edit extends Component {
   }
 
   /**
-   * Component will receive props
+   * Component will receive props lifecycle method
    * @method componentWillReceiveProps
    * @param {Object} nextProps Next properties
    * @returns {undefined}
@@ -238,10 +255,9 @@ class Edit extends Component {
 
   /**
    * Change cell handler
-   * @method onChangeCell
    * @param {Number} row Row index.
    * @param {Number} cell Cell index.
-   * @param {Object} editorState Editor state.
+   * @param {Array} slateValue Value of the `SlateEditor` in the cell.
    * @returns {undefined}
    */
   onChangeCell(row, cell, slateValue) {
@@ -257,7 +273,7 @@ class Edit extends Component {
   }
 
   /**
-   * Toggle cell type
+   * Toggle cell type (from header to data or reverse)
    * @method toggleCellType
    * @returns {undefined}
    */
@@ -274,8 +290,7 @@ class Edit extends Component {
   }
 
   /**
-   * Insert row before handler
-   * @method onInsertRowBefore
+   * Insert row before handler. Keeps the selected cell as selected after the operation is done.
    * @returns {undefined}
    */
   onInsertRowBefore() {
@@ -301,7 +316,6 @@ class Edit extends Component {
 
   /**
    * Insert row after handler
-   * @method onInsertRowAfter
    * @returns {undefined}
    */
   onInsertRowAfter() {
@@ -320,8 +334,7 @@ class Edit extends Component {
   }
 
   /**
-   * Insert col before handler
-   * @method onInsertColBefore
+   * Insert column before handler. Keeps the selected cell as selected after the operation is done.
    * @returns {undefined}
    */
   onInsertColBefore() {
@@ -349,8 +362,7 @@ class Edit extends Component {
   }
 
   /**
-   * Insert col after handler
-   * @method onInsertColAfter
+   * Insert column after handler
    * @returns {undefined}
    */
   onInsertColAfter() {
@@ -372,8 +384,7 @@ class Edit extends Component {
   }
 
   /**
-   * Delete col handler
-   * @method onDeleteCol
+   * Delete column handler. Changes the selected cell if the last table column is selected.
    * @returns {undefined}
    */
   onDeleteCol() {
@@ -404,7 +415,7 @@ class Edit extends Component {
   }
 
   /**
-   * Delete row handler
+   * Delete row handler. Changes the selected cell if the last table row is selected.
    * @method onDeleteRow
    * @returns {undefined}
    */
@@ -433,9 +444,9 @@ class Edit extends Component {
   }
 
   /**
-   * Toggle bool
+   * Toggles bool state data ('fixed', 'compact' etc. can be true or false).
    * @method toggleBool
-   * @param {string} value Value to toggle.
+   * @param {string} value Key in the table state to toggle.
    * @returns {undefined}
    */
   toggleBool(value) {

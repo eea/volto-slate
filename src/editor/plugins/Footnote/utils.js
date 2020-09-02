@@ -1,6 +1,12 @@
 import { Editor, Transforms } from 'slate'; // Range,
 import { FOOTNOTE } from 'volto-slate/constants';
 
+/**
+ * @description Creates or updates an existing FOOTNOTE. It also takes care of the saved selection and uses PathRef.
+ *
+ * @param {Editor} editor The editor in which to insert a footnote.
+ * @param {object} data The object which will be set as the value of the `data` property on the new or existing FOOTNOTE Slate node.
+ */
 export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
@@ -41,6 +47,7 @@ export function insertFootnote(editor, data) {
     }
   }
 }
+
 export const unwrapFootnote = (editor) => {
   const selection = editor.selection || editor.savedSelection;
   Transforms.select(editor, selection);

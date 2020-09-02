@@ -59,7 +59,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
   });
 };
 
-export const spanDeserializer = (editor, el) => {
+export const spanTagDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
   const children = deserializeChildren(el, editor);
 

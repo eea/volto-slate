@@ -7,6 +7,10 @@ import {
 import './less/public.less';
 import { settings } from '~/config';
 
+/**
+ * @param {object} properties A prop received by the View component `FootnotesBlockView` which is read by the `getBlocksFieldname` and `getBlocksLayoutFieldname` Volto helpers to produce the return value.
+ * @returns {Array} The blocks data taken from the Volto form.
+ */
 const getBlocks = (properties) => {
   const blocksFieldName = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
@@ -15,6 +19,10 @@ const getBlocks = (properties) => {
   );
 };
 
+/**
+ * @summary The React component that displays the list of footnotes inserted before in the current page.
+ * @param {object} props Contains the properties `data` and `properties` as received from the Volto form.
+ */
 const FootnotesBlockView = (props) => {
   const { data, properties } = props;
   const { title } = data;

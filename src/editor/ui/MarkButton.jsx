@@ -4,11 +4,12 @@ import { useSlate } from 'slate-react';
 import { isMarkActive, toggleMark } from 'volto-slate/utils';
 import ToolbarButton from './ToolbarButton';
 
-const MarkButton = ({ format, icon }) => {
+const MarkButton = ({ format, icon, ...props }) => {
   const editor = useSlate();
 
   return (
     <ToolbarButton
+      {...props}
       active={isMarkActive(editor, format)}
       onMouseDown={(event) => {
         event.preventDefault();

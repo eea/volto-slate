@@ -18,6 +18,7 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 - Volto's draftjs implementation depends on draft-js-plugins, a third-party project that introduces its own set of bugs and maintanance issues
 - Slate has a modern, developer-friendly api that makes developing plugins something easy to do. Getting the editor in a plugin is as easy as `const editor = useSlate()`, overriding core functionality is something that's built in as pluggable, directly in Slate.
+
 - Volto's draft based implementation depends on Redraft for its final output, which comes with its own bugs and issues. While it is nice to have view-mode components, this is something that volto-slate implements just as well.
 - Because Slate's internal storage uses a tree modeled on the DOM pattern, its final rendered output is very clean. Note: The Slate editor value is a JSON object, similar to the Draftjs based implementation.
 
@@ -79,3 +80,6 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 #### 19. The content rendered to the end-user
 ![19. The content rendered to the end-user](/docs/source/images/19.gif)
+
+## Credit
+A lot of inspiration from the great [Slate Plugins repository](https://github.com/udecode/slate-plugins/), especially the autoformat handlers.

@@ -1,11 +1,17 @@
+import { Point, Range } from 'slate';
+
+/**
+ * @param {Point} point The point to verify.
+ * @returns {boolean} Whether it refers to a (leaf) Text node in the closest-to-root level it can be.
+ */
 export const isPointAtRoot = (point) => point.path.length === 2;
 
-/*
- * Returns true if cursor is at block level (not in inner node child)
- *
- * TODO: confirm this description
+/**
+ * @summary Returns true if the specified range has any of its edges at the closest-to-root level a Point can be (a Point can only reffer to Text nodes).
+ * @description It does not assure the caller about whether the contents of the range are at block level, but it does assure that one of the edges of the given range is at closest-to-root level it can be. A range can cover inner node children though. If through "inner node child" we also understand the closest-to-root level Leaf nodes can be (taking into account this: Editor - level 0, blocks - level 1, blocks and leaves - level 2, it is level 2) then the cursor specified by the given range can include inner node childs and the return value can be true at the same time. Practically the cursor is always at block level since nothing exists outside blocks in Slate and is always in Text nodes since a Point can only reffer to an offset in a Text node.
+ * @param {Range} range Must be a valid `Range`, not `null` or `undefined`.
+ * @returns {boolean}
  */
 export const isRangeAtRoot = (range) => {
-  // console.log('isRangeAtRoot', range);
   return isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
 };

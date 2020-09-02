@@ -24,6 +24,7 @@ const selectStyles = {
   valueContainer: (provided, state) => {
     return {
       ...provided,
+      padding: '0px',
       paddingLeft: '0px',
       paddingTop: '0px',
       paddingRight: '0px',
@@ -41,6 +42,7 @@ const selectStyles = {
   dropdownIndicator: (provided, state) => {
     return {
       ...provided,
+      padding: '0px',
       paddingLeft: '0px',
       paddingTop: '0px',
       paddingRight: '0px',
@@ -57,12 +59,23 @@ const selectStyles = {
       paddingDown: '0px',
     };
   },
+  clearIndicator: (provided, state) => {
+    return {
+      ...provided,
+      padding: '0px',
+      paddingLeft: '0px',
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingDown: '0px',
+    };
+  },
   control: (provided, state) => {
     return {
       ...provided,
       minHeight: 'auto',
       borderWidth: 'unset',
       cursor: 'pointer',
+      marginTop: '0.25rem',
       // borderColor: state.isFocused ? brownColor : '#f3f3f3',
       // boxShadow: 'unset',
     };

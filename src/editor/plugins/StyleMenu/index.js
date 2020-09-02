@@ -14,6 +14,11 @@ export default function install(config) {
 
   slate.styleMenuDefinitions = [
     { cssClass: 'green-block-text', isBlock: true, label: 'Green Text' },
+    {
+      cssClass: 'underline-block-text',
+      isBlock: true,
+      label: 'Underline Text',
+    },
     { cssClass: 'cool-inline-text', isBlock: false, label: 'Cool Inline Text' },
     { cssClass: 'red-inline-text', isBlock: false, label: 'Red Inline Text' },
   ];

@@ -18,12 +18,12 @@ export const fixSelection = (editor, event, defaultSelection) => {
     if (sel) {
       try {
         const s = ReactEditor.toSlateRange(editor, sel);
-        console.log('error s', s);
-        console.log(event);
+        // console.log('error s', s);
+        // console.log(event);
         Transforms.select(editor, s);
       } catch {
-        console.log('error', editor.children);
-        console.log('error sel', sel);
+        // console.log('error', editor.children);
+        // console.log('error sel', sel);
       }
     }
   }

@@ -156,12 +156,13 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
 }
 
 /**
- * @returns {boolean} true if editor contains a range selection
+ * @returns {boolean} true if editor contains a range selection (active
+ * selection or at least a saved selection)
  * @param {Editor} editor
  */
 export function hasRangeSelection(editor) {
   const { savedSelection } = editor;
-  const selection = savedSelection || editor.selection;
+  const selection = editor.selection || savedSelection;
   console.log('hasRange', selection, savedSelection);
 
   const res =

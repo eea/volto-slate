@@ -63,9 +63,13 @@ const SlateEditor = ({
   editor.setSavedSelection = setSavedSelection;
   editor.savedSelection = savedSelection;
 
+  const timeoutRef = React.useRef(null);
   const onDOMSelectionChange = React.useCallback(
-    (evt) =>
-      setTimeout(() => {
+    (evt) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
         const { activeElement } = window.document;
         const el = ReactEditor.toDOMNode(editor, editor);
         if (activeElement !== el) return;
@@ -93,7 +97,8 @@ const SlateEditor = ({
           setSavedSelection(editor.selection);
         }
         // }
-      }, 100),
+      }, 100);
+    },
     [editor, savedSelection, defaultSelection], //selected,
   );
 

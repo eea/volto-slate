@@ -14,7 +14,6 @@ export const fixSelection = (editor, event, defaultSelection) => {
       return;
     }
 
-    ReactEditor.focus(editor);
     const sel = window.getSelection();
 
     if (sel) {

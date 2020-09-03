@@ -1,4 +1,5 @@
 import { Editor } from 'slate';
+import { ReactEditor } from 'slate-react';
 import {
   splitEditorInTwoFragments,
   setEditorContent,
@@ -29,6 +30,7 @@ export const withSplitBlocksOnBreak = (editor) => {
       if (block) {
         const [top, bottom] = splitEditorInTwoFragments(editor);
         setEditorContent(editor, top);
+        ReactEditor.blur(editor);
         createAndSelectNewBlockAfter(editor, bottom);
       }
       return;

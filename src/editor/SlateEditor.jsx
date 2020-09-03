@@ -74,7 +74,10 @@ const SlateEditor = ({
         const el = ReactEditor.toDOMNode(editor, editor);
         if (activeElement !== el) return;
 
-        ReactEditor.focus(editor);
+        if (!ReactEditor.isFocused(editor)) {
+          console.log('focusing editor');
+          ReactEditor.focus(editor);
+        }
 
         if (
           defaultSelection &&
@@ -85,6 +88,7 @@ const SlateEditor = ({
         } else {
           fixSelection(editor, evt);
         }
+        // }
 
         // Save the selection, available as editor.savedSelection
         if (
@@ -186,7 +190,9 @@ const SlateEditor = ({
           decorate={multiDecorate}
           spellCheck={false}
           onFocus={onFocus}
-          onBlur={onBlur}
+          onBlur={() => {
+            console.log('i got blurred');
+          }}
           onKeyDown={(event) => {
             let wasHotkey = false;
 

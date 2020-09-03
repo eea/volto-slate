@@ -154,6 +154,7 @@ const TextBlockEdit = (props) => {
         <MarkdownIntroduction />
       </SidebarPortal>
 
+      <div>{block}</div>
       <Dropzone
         disableClick
         onDrop={onDrop}

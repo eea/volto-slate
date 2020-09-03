@@ -6,12 +6,27 @@ export const fixSelection = (editor, event, defaultSelection) => {
   // Don't remove it, unless this test passes:
   // - with the Slate block unselected, click in the block.
   // - Hit backspace. If it deletes, then the test passes
-  console.log('fix selection');
+  // console.log('fix selection', defaultSelection);
 
   if (!editor.selection) {
     if (defaultSelection) {
-      Transforms.select(editor, defaultSelection);
-      return;
+      if (defaultSelection === 'start') {
+        const [, path] = Node.first(editor, []);
+        const newSel = {
+          anchor: { path, offset: 0 },
+          focus: { path, offset: 0 },
+        };
+        return Transforms.select(editor, newSel);
+      }
+      if (defaultSelection === 'end') {
+        const [leaf, path] = Node.last(editor, []);
+        const newSel = {
+          anchor: { path, offset: (leaf.text || '').length },
+          focus: { path, offset: (leaf.text || '').length },
+        };
+        Transforms.select(editor, newSel);
+      }
+      return Transforms.select(editor, defaultSelection);
     }
 
     const sel = window.getSelection();
@@ -19,7 +34,6 @@ export const fixSelection = (editor, event, defaultSelection) => {
     if (sel) {
       if (sel.type === 'None') {
         const [leaf, path] = Node.last(editor, []);
-        console.log('leaf', leaf, 'path', path);
         const newSel = {
           anchor: { path, offset: (leaf.text || '').length },
           focus: { path, offset: (leaf.text || '').length },

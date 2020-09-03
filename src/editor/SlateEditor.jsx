@@ -66,6 +66,8 @@ const SlateEditor = ({
   const timeoutRef = React.useRef(null);
   const onDOMSelectionChange = React.useCallback(
     (evt) => {
+      console.log('evt');
+      // debugger;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -88,7 +90,6 @@ const SlateEditor = ({
         } else {
           fixSelection(editor, evt);
         }
-        // }
 
         // Save the selection, available as editor.savedSelection
         if (
@@ -100,7 +101,6 @@ const SlateEditor = ({
           // TODO: saving selection is weird on backward motion, it "jumps"
           setSavedSelection(editor.selection);
         }
-        // }
       }, 100);
     },
     [editor, savedSelection, defaultSelection], //selected,
@@ -114,7 +114,7 @@ const SlateEditor = ({
    */
   useIsomorphicLayoutEffect(() => {
     if (selected) {
-      ReactEditor.focus(editor);
+      if (!ReactEditor.isFocused(editor)) ReactEditor.focus(editor);
       window.document.addEventListener('selectionchange', onDOMSelectionChange);
     }
 
@@ -211,7 +211,6 @@ const SlateEditor = ({
 
             onKeyDown && onKeyDown({ editor, event });
           }}
-          {...rest}
         />
         {selected &&
           slate.persistentHelpers.map((Helper, i) => {

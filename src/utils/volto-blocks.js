@@ -110,7 +110,11 @@ export function createSlateTableBlock(
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
   const { onSelectBlock } = blockProps;
-  createSlateBlock(blockValue, blockProps).then((id) => onSelectBlock(id));
+  createSlateBlock(blockValue, blockProps).then((id) => {
+    const blockProps = editor.getBlockProps();
+    blockProps.saveSlateBlockSelection(id, 'start');
+    onSelectBlock(id);
+  });
 };
 
 export function getNextVoltoBlock(index, properties) {

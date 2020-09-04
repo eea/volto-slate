@@ -68,7 +68,7 @@ class SlateEditor extends Component {
     const plugins = [
       ...defaultExtensions,
       ...this.props.extensions,
-      ...renderExtensions,
+      // ...renderExtensions,
     ];
     const editor = plugins.reduce((acc, apply) => apply(acc), raw);
 
@@ -119,7 +119,7 @@ class SlateEditor extends Component {
 
     throttle(() => {
       setTimeout(() => {
-        console.log('save');
+        // console.log('save selection');
         this.setSavedSelection(editor.selection);
         this.setState({ update: true }); // just a dummy thing to trigger re-render
         // this.setState({ savedSelection: editor.selection });
@@ -167,7 +167,7 @@ class SlateEditor extends Component {
       return;
     }
 
-    if (this.props.selected) {
+    if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
         console.log('focusing');
         ReactEditor.focus(this.state.editor);
@@ -180,7 +180,7 @@ class SlateEditor extends Component {
   }
 
   render() {
-    const editor = this.state.editor;
+    // const editor = this.state.editor;
     const {
       selected,
       value,
@@ -192,9 +192,14 @@ class SlateEditor extends Component {
     } = this.props;
     const { slate } = settings;
 
-    if (testingEditorRef) {
-      testingEditorRef.current = editor;
-    }
+    // if (testingEditorRef) {
+    //   testingEditorRef.current = editor;
+    // }
+
+    const editor = this.props.renderExtensions.reduce(
+      (acc, apply) => apply(acc),
+      this.state.editor,
+    );
 
     // console.log('rerender');
     return (

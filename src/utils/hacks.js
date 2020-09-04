@@ -40,9 +40,14 @@ export const fixSelection = (editor, event, defaultSelection) => {
         };
         Transforms.select(editor, newSel);
       } else {
-        const s = ReactEditor.toSlateRange(editor, sel);
-        console.log('s', s);
-        Transforms.select(editor, s);
+        try {
+          const s = ReactEditor.toSlateRange(editor, sel);
+          console.log('s', s);
+          Transforms.select(editor, s);
+        } catch {
+          console.log('sel', sel);
+          console.log('editor', JSON.stringify(editor.children));
+        }
       }
     }
   }

@@ -120,7 +120,7 @@ export function isCursorAtBlockEnd(editor) {
  */
 export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
   const { slate } = settings;
-  const r = Editor.range(
+  const range = Editor.range(
     editor,
     Range.isBackward(editor.selection)
       ? editor.selection.focus
@@ -130,11 +130,13 @@ export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
 
   // this is the case when the fragment is empty, and we must return
   // empty fragment but without formatting
-  if (Range.isCollapsed(r)) {
+  if (Range.isCollapsed(range)) {
     return slate.defaultValue();
   }
 
-  return Editor.fragment(editor, r);
+  // immer doesn't like editor.savedSelection
+  const newEditor = { children: editor.children };
+  return Editor.fragment(newEditor, range);
 }
 
 /**
@@ -143,10 +145,12 @@ export function getFragmentFromStartOfSelectionToEndOfEditor(editor) {
  * @param {} editor
  */
 export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
+  // immer doesn't like editor.savedSelection
+  const newEditor = { children: editor.children };
   return Editor.fragment(
-    editor,
+    newEditor,
     Editor.range(
-      editor,
+      newEditor,
       [],
       Range.isBackward(editor.selection)
         ? editor.selection.focus
@@ -160,14 +164,48 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
  * @param {Editor} editor
  */
 export function hasRangeSelection(editor) {
-  const { savedSelection } = editor;
-  const selection = editor.selection || savedSelection || editor.selection;
+  const { savedSelection, selection } = editor;
+  // const selection = editor.selection || savedSelection || editor.selection;
 
-  const res =
-    // ReactEditor.isFocused(editor) &&
-    selection &&
-    Range.isExpanded(selection) &&
-    Editor.string(editor, selection) !== '';
-  // console.log('hasRange', selection, savedSelection, res);
+  const range = ReactEditor.isFocused(editor)
+    ? selection || savedSelection
+    : savedSelection;
+  const res = Range.isExpanded(range);
+  // const isNativeExpanded =
+  //   editor.selection && Range.isExpanded(editor.selection);
+  // const isSavedExpanded =
+  //   editor.savedSelection && Range.isExpanded(editor.savedSelection);
+  //
+  // // ReactEditor.isFocused(editor) &&
+  // // &&
+  // // Editor.string(editor, selection) !== '';
+  // // console.log('hasRange', selection, savedSelection, res);
+  //
+  // const res = selection && (isNativeExpanded || isSavedExpanded);
+  // console.log('has', res);
   return res;
+}
+
+export function parseDefaultSelection(editor, defaultSelection) {
+  // if (!editor.selection) {
+  if (defaultSelection) {
+    if (defaultSelection === 'start') {
+      const [, path] = Node.first(editor, []);
+      const newSel = {
+        anchor: { path, offset: 0 },
+        focus: { path, offset: 0 },
+      };
+      return newSel;
+    }
+    if (defaultSelection === 'end') {
+      const [leaf, path] = Node.last(editor, []);
+      const newSel = {
+        anchor: { path, offset: (leaf.text || '').length },
+        focus: { path, offset: (leaf.text || '').length },
+      };
+      return newSel;
+    }
+    return defaultSelection;
+  }
+  // }
 }

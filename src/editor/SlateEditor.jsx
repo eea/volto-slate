@@ -3,7 +3,6 @@ import { isEqual } from 'lodash';
 import throttle from 'lodash/throttle';
 import { createEditor, Transforms } from 'slate';
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
-// import { Range } from 'slate';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -13,13 +12,17 @@ import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
+import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
 
 import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
-import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
+
+// import { Range } from 'slate';
+// import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
 
 import './less/editor.less';
+
+const DEBUG = true;
 
 class SlateEditor extends Component {
   constructor(props) {
@@ -33,32 +36,52 @@ class SlateEditor extends Component {
     this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
     const { slate } = settings;
-    // this.savedSelection = null;
+    this.savedSelection = null;
 
     this.state = {
       editor: this.createEditor(),
       showToolbar: false,
       initialValue: slate.defaultValue(),
       defaultSelection: props.defaultSelection,
-      savedSelection: null,
+      // savedSelection: null,
     };
   }
 
   getSavedSelection() {
-    return this.state.savedSelection;
-    // return this.savedSelection;
+    // console.log('get saved', this.state.savedSelection);
+    // return this.state.savedSelection;
+    // console.log('get saved', this.savedSelection);
+    return this.savedSelection;
   }
   setSavedSelection(selection) {
-    this.setState({ savedSelection: selection });
-    // this.savedSelection = selection;
+    // console.log('set saved', this.state.savedSelection);
+    // this.setState({ savedSelection: selection });
+    // console.log('set saved', this.savedSelection);
+    this.savedSelection = selection;
   }
 
   createEditor() {
     const { slate } = settings;
     const defaultExtensions = slate.extensions;
     const raw = withHistory(withReact(createEditor()));
-    const plugins = [...defaultExtensions, ...this.props.extensions];
+    const { renderExtensions = [] } = this.props;
+    const plugins = [
+      ...defaultExtensions,
+      ...this.props.extensions,
+      ...renderExtensions,
+    ];
     const editor = plugins.reduce((acc, apply) => apply(acc), raw);
+
+    console.log('renderext', renderExtensions);
+    console.log('editor', editor);
+
+    // renderExtensions is needed because the editor is memoized, so if these
+    // extensions need an updated state (for example to insert updated
+    // blockProps) then we need to always wrap the editor with them
+    // const editor = this.props.renderExtensions.reduce(
+    //   (acc, apply) => apply(acc),
+    //   this.state.editor,
+    // );
 
     // When the editor loses focus it no longer has a valid selections. This
     // makes it impossible to have complex types of interactions (like filling
@@ -97,9 +120,11 @@ class SlateEditor extends Component {
     throttle(() => {
       setTimeout(() => {
         console.log('save');
-        this.setState({ savedSelection: editor.selection });
+        this.setSavedSelection(editor.selection);
+        this.setState({ update: true }); // just a dummy thing to trigger re-render
+        // this.setState({ savedSelection: editor.selection });
       }, 110);
-    }, 110);
+    }, 110)();
 
     // debugger;
     // ReactEditor.focus(editor);
@@ -110,7 +135,6 @@ class SlateEditor extends Component {
     //   const s = ReactEditor.toSlateRange(editor, sel);
     //   console.log('dom dom', this.props.block, s);
     // }
-
     // There's a 100ms delay in processing of dom selection events in Slate
     // fixSelection(editor, evt);
   }
@@ -150,23 +174,12 @@ class SlateEditor extends Component {
       }
     }
 
-    // defaultSelection is used for things such as "restoring" the selection
-    // when joining blocks or moving the selection to block start on block
-    // split
-    if (!isEqual(this.props.defaultSelection, this.state.defaultSelection)) {
-      Transforms.select(this.state.editor, this.props.defaultSelection);
-      this.setState({ defaultSelection: this.props.defaultSelection });
+    if (this.props.onUpdate) {
+      this.props.onUpdate(this.state.editor);
     }
   }
 
   render() {
-    // renderExtensions is needed because the editor is memoized, so if these
-    // extensions need an updated state (for example to insert updated
-    // blockProps) then we need to always wrap the editor with them
-    // const editor = this.props.renderExtensions.reduce(
-    //   (acc, apply) => apply(acc),
-    //   this.state.editor,
-    // );
     const editor = this.state.editor;
     const {
       selected,
@@ -179,9 +192,9 @@ class SlateEditor extends Component {
     } = this.props;
     const { slate } = settings;
 
-    // if (testingEditorRef) {
-    //   testingEditorRef.current = editor;
-    // }
+    if (testingEditorRef) {
+      testingEditorRef.current = editor;
+    }
 
     // console.log('rerender');
     return (
@@ -245,117 +258,30 @@ class SlateEditor extends Component {
             slate.persistentHelpers.map((Helper, i) => {
               return <Helper key={i} />;
             })}
-          <ul>
-            <li>{selected ? 'selected' : 'no-selected'}</li>
-            <li>
-              defaultSelection: {JSON.stringify(this.props.defaultSelection)}
-            </li>
-            <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
-            <li>live selection: {JSON.stringify(editor.selection)}</li>
-            <li>children: {JSON.stringify(editor.children)}</li>
-          </ul>
+          {DEBUG ? (
+            <ul>
+              <li>{selected ? 'selected' : 'no-selected'}</li>
+              <li>
+                defaultSelection: {JSON.stringify(this.props.defaultSelection)}
+              </li>
+              <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
+              <li>live selection: {JSON.stringify(editor.selection)}</li>
+              <li>children: {JSON.stringify(editor.children)}</li>
+            </ul>
+          ) : (
+            ''
+          )}
         </Slate>
       </div>
     );
   }
 }
 
-const SlateEditorFunction = ({
-  selected,
-  value,
-  onChange,
-  placeholder,
-  onKeyDown,
-  properties,
-  defaultSelection, // TODO: use useSelector
-  extensions,
-  renderExtensions = [],
-  testingEditorRef,
-  onFocus,
-  onBlur,
-  ...rest
-}) => {
-  const initial_selection = React.useRef();
-  const [savedSelection, setSavedSelection] = React.useState();
-  editor.setSavedSelection = setSavedSelection;
-  editor.savedSelection = savedSelection;
-
-  const timeoutRef = React.useRef(null);
-  const onDOMSelectionChange = React.useCallback(
-    (evt) => {
-      console.log('evt');
-      // debugger;
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
-        const { activeElement } = window.document;
-        const el = ReactEditor.toDOMNode(editor, editor);
-        if (activeElement !== el) return;
-
-        if (!ReactEditor.isFocused(editor)) {
-          console.log('focusing editor');
-          ReactEditor.focus(editor);
-        }
-
-        if (
-          defaultSelection &&
-          initial_selection.current !== defaultSelection
-        ) {
-          initial_selection.current = defaultSelection;
-          fixSelection(editor, evt, defaultSelection); // If you plan on removing this, test thoroughly!
-        } else {
-          fixSelection(editor, evt);
-        }
-
-        // Save the selection, available as editor.savedSelection
-        if (
-          editor.selection &&
-          editor.selection.anchor &&
-          !isEqual(editor.selection, savedSelection)
-        ) {
-          // if (!Range.isBackward(editor.selection))
-          // TODO: saving selection is weird on backward motion, it "jumps"
-          setSavedSelection(editor.selection);
-        }
-      }, 100);
-    },
-    [editor, savedSelection, defaultSelection], //selected,
-  );
-
-  /*
-   * We 'restore' the selection because we manipulate it in several cases:
-   * - when blocks are artificially joined, we set the selection at junction
-   * - when moving up, we set it at end of previous blok
-   * - when moving down, we set it at beginning of next block
-   */
-  useIsomorphicLayoutEffect(() => {
-    if (selected) {
-      if (!ReactEditor.isFocused(editor)) ReactEditor.focus(editor);
-      window.document.addEventListener('selectionchange', onDOMSelectionChange);
-    }
-
-    return () => {
-      window.document.removeEventListener(
-        'selectionchange',
-        onDOMSelectionChange,
-      );
-    };
-  }, [onDOMSelectionChange, editor, selected, defaultSelection]);
-
-  // readOnly={!selected}
-};
-
 SlateEditor.defaultProps = {
   extensions: [],
 };
 
-export default connect((state, props) => {
-  const blockId = props.block;
-  return {
-    defaultSelection: state.slate_block_selections?.[blockId],
-  };
-})(
+export default connect((state, props) => {})(
   __CLIENT__ && window?.Cypress
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,

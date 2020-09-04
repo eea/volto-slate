@@ -14,8 +14,9 @@ import { settings } from '~/config';
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { createImageBlock } from 'volto-slate/utils';
+import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
 import { uploadContent } from 'volto-slate/actions';
+import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
@@ -44,6 +45,8 @@ const TextBlockEdit = (props) => {
     uploadRequest,
     uploadContent,
     uploadedContent,
+    defaultSelection,
+    saveSlateBlockSelection,
   } = props;
 
   const { slate } = settings;
@@ -146,6 +149,31 @@ const TextBlockEdit = (props) => {
     setAddNewBlockOpened(false);
   }, []);
 
+  const handleUpdate = React.useCallback(
+    (editor) => {
+      // defaultSelection is used for things such as "restoring" the selection
+      // when joining blocks or moving the selection to block start on block
+      // split
+      // if (!isEqual(this.props.defaultSelection, this.state.defaultSelection)) {
+      if (defaultSelection) {
+        const selection = parseDefaultSelection(editor, defaultSelection);
+        console.log(
+          'restore default selection',
+          JSON.stringify(editor.selection),
+          defaultSelection,
+          block,
+          selection,
+        );
+        if (selection) {
+          Transforms.select(editor, selection);
+          saveSlateBlockSelection(block, null);
+          // this.setState({ defaultSelection: this.props.defaultSelection });
+        }
+      }
+    },
+    [defaultSelection, block, saveSlateBlockSelection],
+  );
+
   return (
     <>
       <SidebarPortal selected={selected}>
@@ -185,6 +213,7 @@ const TextBlockEdit = (props) => {
             value={value}
             block={block}
             onFocus={() => onSelectBlock(block)}
+            onUpdate={handleUpdate}
             onChange={(value, selection) => {
               onChangeBlock(block, {
                 ...data,
@@ -237,7 +266,11 @@ const TextBlockEdit = (props) => {
 
 export default connect(
   (state, props) => {
+    const blockId = props.block;
     return {
+      defaultSelection: blockId
+        ? state.slate_block_selections?.[blockId]
+        : null,
       uploadRequest: state.upload_content?.[props.block]?.upload || {},
       uploadedContent: state.upload_content?.[props.block]?.data || {},
     };

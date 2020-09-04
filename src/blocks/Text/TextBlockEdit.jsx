@@ -154,20 +154,13 @@ const TextBlockEdit = (props) => {
       // defaultSelection is used for things such as "restoring" the selection
       // when joining blocks or moving the selection to block start on block
       // split
-      // if (!isEqual(this.props.defaultSelection, this.state.defaultSelection)) {
       if (defaultSelection) {
         const selection = parseDefaultSelection(editor, defaultSelection);
-        console.log(
-          'restore default selection',
-          JSON.stringify(editor.selection),
-          defaultSelection,
-          block,
-          selection,
-        );
         if (selection) {
-          Transforms.select(editor, selection);
-          saveSlateBlockSelection(block, null);
-          // this.setState({ defaultSelection: this.props.defaultSelection });
+          setTimeout(() => {
+            Transforms.select(editor, selection);
+            saveSlateBlockSelection(block, null);
+          }, 120); // without setTimeout, the join is not correct
         }
       }
     },

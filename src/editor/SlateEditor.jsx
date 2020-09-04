@@ -17,9 +17,6 @@ import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
 import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
 
-// import { Range } from 'slate';
-// import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
-
 import './less/editor.less';
 
 const DEBUG = true;
@@ -36,7 +33,9 @@ class SlateEditor extends Component {
     this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
     const { slate } = settings;
+
     this.savedSelection = null;
+    this.mouseDown = null;
 
     this.state = {
       editor: this.createEditor(),
@@ -48,15 +47,9 @@ class SlateEditor extends Component {
   }
 
   getSavedSelection() {
-    // console.log('get saved', this.state.savedSelection);
-    // return this.state.savedSelection;
-    // console.log('get saved', this.savedSelection);
     return this.savedSelection;
   }
   setSavedSelection(selection) {
-    // console.log('set saved', this.state.savedSelection);
-    // this.setState({ savedSelection: selection });
-    // console.log('set saved', this.savedSelection);
     this.savedSelection = selection;
   }
 
@@ -64,24 +57,8 @@ class SlateEditor extends Component {
     const { slate } = settings;
     const defaultExtensions = slate.extensions;
     const raw = withHistory(withReact(createEditor()));
-    const { renderExtensions = [] } = this.props;
-    const plugins = [
-      ...defaultExtensions,
-      ...this.props.extensions,
-      // ...renderExtensions,
-    ];
+    const plugins = [...defaultExtensions, ...this.props.extensions];
     const editor = plugins.reduce((acc, apply) => apply(acc), raw);
-
-    console.log('renderext', renderExtensions);
-    console.log('editor', editor);
-
-    // renderExtensions is needed because the editor is memoized, so if these
-    // extensions need an updated state (for example to insert updated
-    // blockProps) then we need to always wrap the editor with them
-    // const editor = this.props.renderExtensions.reduce(
-    //   (acc, apply) => apply(acc),
-    //   this.state.editor,
-    // );
 
     // When the editor loses focus it no longer has a valid selections. This
     // makes it impossible to have complex types of interactions (like filling
@@ -117,26 +94,11 @@ class SlateEditor extends Component {
     const el = ReactEditor.toDOMNode(editor, editor);
     if (activeElement !== el) return;
 
-    throttle(() => {
-      setTimeout(() => {
-        // console.log('save selection');
-        this.setSavedSelection(editor.selection);
-        this.setState({ update: true }); // just a dummy thing to trigger re-render
-        // this.setState({ savedSelection: editor.selection });
-      }, 110);
-    }, 110)();
-
-    // debugger;
-    // ReactEditor.focus(editor);
-    // const sel = window.getSelection();
-    // console.log('on dom', this.state.editor.selection);
-    // if (sel.type === 'None') return;
-    // if (!editor.selection) {
-    //   const s = ReactEditor.toSlateRange(editor, sel);
-    //   console.log('dom dom', this.props.block, s);
-    // }
-    // There's a 100ms delay in processing of dom selection events in Slate
-    // fixSelection(editor, evt);
+    this.setSavedSelection(editor.selection);
+    if (!this.mouseDown) {
+      console.log('update');
+      this.setState({ update: true }); // just a dummy thing to trigger re-render
+    }
   }
 
   componentDidMount() {
@@ -169,7 +131,6 @@ class SlateEditor extends Component {
 
     if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        console.log('focusing');
         ReactEditor.focus(this.state.editor);
       }
     }
@@ -180,7 +141,6 @@ class SlateEditor extends Component {
   }
 
   render() {
-    // const editor = this.state.editor;
     const {
       selected,
       value,
@@ -189,19 +149,22 @@ class SlateEditor extends Component {
       onBlur,
       onKeyDown,
       testingEditorRef,
+      renderExtensions = [],
     } = this.props;
     const { slate } = settings;
 
-    // if (testingEditorRef) {
-    //   testingEditorRef.current = editor;
-    // }
-
-    const editor = this.props.renderExtensions.reduce(
+    // renderExtensions is needed because the editor is memoized, so if these
+    // extensions need an updated state (for example to insert updated
+    // blockProps) then we need to always wrap the editor with them
+    const editor = renderExtensions.reduce(
       (acc, apply) => apply(acc),
       this.state.editor,
     );
 
-    // console.log('rerender');
+    if (testingEditorRef) {
+      testingEditorRef.current = editor;
+    }
+
     return (
       <div
         {...this.props['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
@@ -240,6 +203,15 @@ class SlateEditor extends Component {
             renderLeaf={(props) => <Leaf {...props} />}
             decorate={this.multiDecorator}
             spellCheck={false}
+            onClick={() => {
+              this.setState({ update: true }); // just a dummy thing to trigger re-render
+            }}
+            onMouseDown={() => {
+              this.mouseDown = true;
+            }}
+            onMouseUp={() => {
+              this.mouseDown = false;
+            }}
             onKeyDown={(event) => {
               let wasHotkey = false;
 
@@ -286,7 +258,9 @@ SlateEditor.defaultProps = {
   extensions: [],
 };
 
-export default connect((state, props) => {})(
+export default connect((state, props) => {
+  return {};
+})(
   __CLIENT__ && window?.Cypress
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,

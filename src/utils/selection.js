@@ -165,7 +165,6 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(editor) {
  */
 export function hasRangeSelection(editor) {
   const { savedSelection, selection } = editor;
-  // const selection = editor.selection || savedSelection || editor.selection;
 
   const range = ReactEditor.isFocused(editor)
     ? selection || savedSelection
@@ -176,23 +175,10 @@ export function hasRangeSelection(editor) {
     return;
   }
   const res = Range.isExpanded(range);
-  // const isNativeExpanded =
-  //   editor.selection && Range.isExpanded(editor.selection);
-  // const isSavedExpanded =
-  //   editor.savedSelection && Range.isExpanded(editor.savedSelection);
-  //
-  // // ReactEditor.isFocused(editor) &&
-  // // &&
-  // // Editor.string(editor, selection) !== '';
-  // // console.log('hasRange', selection, savedSelection, res);
-  //
-  // const res = selection && (isNativeExpanded || isSavedExpanded);
-  // console.log('has', res);
   return res;
 }
 
 export function parseDefaultSelection(editor, defaultSelection) {
-  // if (!editor.selection) {
   if (defaultSelection) {
     if (defaultSelection === 'start') {
       const [, path] = Node.first(editor, []);
@@ -212,5 +198,4 @@ export function parseDefaultSelection(editor, defaultSelection) {
     }
     return defaultSelection;
   }
-  // }
 }

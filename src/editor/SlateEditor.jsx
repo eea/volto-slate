@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-import throttle from 'lodash/throttle';
-import { createEditor, Transforms } from 'slate';
+// import throttle from 'lodash/throttle';
+import { createEditor } from 'slate'; // , Transforms
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
@@ -145,8 +145,8 @@ class SlateEditor extends Component {
       selected,
       value,
       placeholder,
-      onFocus,
-      onBlur,
+      // onFocus,
+      // onBlur,
       onKeyDown,
       testingEditorRef,
       renderExtensions = [],
@@ -206,6 +206,9 @@ class SlateEditor extends Component {
             onClick={() => {
               this.setState({ update: true }); // just a dummy thing to trigger re-render
             }}
+            onBlur={() => {
+              console.log('blur', JSON.stringify(editor.selection));
+            }}
             onMouseDown={() => {
               this.mouseDown = true;
             }}
@@ -233,7 +236,7 @@ class SlateEditor extends Component {
           />
           {selected &&
             slate.persistentHelpers.map((Helper, i) => {
-              return <Helper key={i} />;
+              return <Helper key={i} editor={editor} />;
             })}
           {DEBUG ? (
             <ul>

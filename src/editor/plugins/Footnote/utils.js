@@ -11,7 +11,7 @@ export function insertFootnote(editor, data) {
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 
-    const selPathRef = Editor.pathRef(editor, selection.anchor.path);
+    const rangeRef = Editor.rangeRef(editor, selection);
 
     const res = Array.from(
       Editor.nodes(editor, {
@@ -36,15 +36,16 @@ export function insertFootnote(editor, data) {
       Transforms.wrapNodes(
         editor,
         { type: FOOTNOTE, data },
-        { split: true, at: selection },
+        { split: true, at: selection }, //,
       );
     }
 
-    if (data) {
-      // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
-      Transforms.select(editor, selPathRef.current);
-      Transforms.collapse(editor); // TODO; collapse to original offset
-    }
+    // if (data) {
+    // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
+    editor.savedSelection = rangeRef.current;
+    Transforms.select(editor, rangeRef.current);
+    // Transforms.collapse(editor); // TODO; collapse to original offset
+    // }
   }
 }
 
@@ -69,6 +70,7 @@ export const isActiveFootnote = (editor) => {
 
 export const getActiveFootnote = (editor) => {
   const selection = editor.selection || editor.savedSelection;
+
   const [node] = Editor.nodes(editor, {
     match: (n) => n.type === FOOTNOTE,
     at: selection,

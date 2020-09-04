@@ -53,6 +53,7 @@ export function highlightSelection(editor, [node, path], ranges) {
 
   if (selected && !editor.selection && editor.savedSelection) {
     const newSelection = editor.savedSelection;
+    console.log('will highlight', newSelection);
     if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
       const range = {
         ...newSelection,

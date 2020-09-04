@@ -20,10 +20,12 @@ import { useDispatch } from 'react-redux';
 
 export default (props) => {
   const dispatch = useDispatch();
-  const editor = useSlate();
+  // const editor = useSlate();
+  const { editor } = props;
   const [formData, setFormData] = React.useState({});
 
   const active = getActiveFootnote(editor);
+  console.log('active footnote in footeditor', active);
   const [footnoteNode] = active;
   const isFootnote = isActiveFootnote(editor);
 

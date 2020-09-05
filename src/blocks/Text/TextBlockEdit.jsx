@@ -29,6 +29,8 @@ import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
+const DEBUG = false;
+
 const TextBlockEdit = (props) => {
   const {
     block,
@@ -175,7 +177,7 @@ const TextBlockEdit = (props) => {
         <MarkdownIntroduction />
       </SidebarPortal>
 
-      <div>{block}</div>
+      {DEBUG ? <div>{block}</div> : ''}
       <Dropzone
         disableClick
         onDrop={onDrop}
@@ -207,6 +209,7 @@ const TextBlockEdit = (props) => {
             block={block}
             onFocus={() => onSelectBlock(block)}
             onUpdate={handleUpdate}
+            debug={DEBUG}
             onChange={(value, selection) => {
               onChangeBlock(block, {
                 ...data,

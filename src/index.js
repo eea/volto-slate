@@ -3,7 +3,6 @@ import * as slateReducers from './reducers';
 import installSlate from './editor';
 import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
-// import installFootnoteBlock from './blocks/Footnote';
 import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
 
@@ -12,7 +11,6 @@ export default (config) => {
     installSlate,
     installTextBlock,
     installTableBlock,
-    // installFootnoteBlock,
     installVoltoProposals,
   ].reduce((acc, apply) => apply(acc), config);
 

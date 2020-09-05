@@ -18,8 +18,6 @@ import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
-const DEBUG = false;
-
 class SlateEditor extends Component {
   constructor(props) {
     super(props);
@@ -234,7 +232,7 @@ class SlateEditor extends Component {
             slate.persistentHelpers.map((Helper, i) => {
               return <Helper key={i} editor={editor} />;
             })}
-          {DEBUG ? (
+          {this.props.debug ? (
             <ul>
               <li>{selected ? 'selected' : 'no-selected'}</li>
               <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>

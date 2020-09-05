@@ -171,7 +171,7 @@ export function hasRangeSelection(editor) {
     : savedSelection;
 
   if (!range) {
-    console.log('no range', editor);
+    // console.log('no range', editor);
     return;
   }
   const res = Range.isExpanded(range);

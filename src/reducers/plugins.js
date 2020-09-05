@@ -1,12 +1,15 @@
 const initialState = {};
 
 export default function slate_plugins(state = initialState, action = {}) {
-  const { type, ...rest } = action;
+  const { type, pluginId, ...rest } = action;
   switch (type) {
     case 'SLATE_PLUGINS':
       return {
         ...state,
-        ...rest,
+        [pluginId]: {
+          ...state[pluginId],
+          ...rest,
+        },
       };
     default:
       return state;

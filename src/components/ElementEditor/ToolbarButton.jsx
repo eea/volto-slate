@@ -22,10 +22,8 @@ const ElementToolbarButton = (props) => {
           {...props}
           active={isElement}
           onMouseDown={() => {
-            dispatch(
-              setPluginOptions(pluginId, { show_sidebar_editor: false }),
-            );
             if (!isElement) insertElement(editor, {});
+            dispatch(setPluginOptions(pluginId, { show_sidebar_editor: true }));
           }}
           icon={toolbarButtonIcon}
         />

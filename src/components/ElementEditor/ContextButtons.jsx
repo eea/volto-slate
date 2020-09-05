@@ -6,7 +6,7 @@ import editingSVG from '@plone/volto/icons/tag.svg';
 import clearSVG from '@plone/volto/icons/delete.svg';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
-import { SLATE_PLUGINS } from 'volto-slate/constants';
+import { setPluginOptions } from 'volto-slate/actions';
 
 /*
  * Note: this is a weirder component, it should be called as a native function
@@ -27,10 +27,7 @@ export default (options) => (editor) => {
         active={showEditor}
         aria-label={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
-          dispatch({
-            type: SLATE_PLUGINS,
-            [pluginId]: { show_sidebar_editor: true },
-          });
+          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: true }));
         }}
       />
       <ToolbarButton

@@ -18,7 +18,7 @@ import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
-const DEBUG = true;
+const DEBUG = false;
 
 class SlateEditor extends Component {
   constructor(props) {

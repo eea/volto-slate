@@ -13,6 +13,12 @@ export const _insertElement = (elementType) => (editor, data) => {
 
     const rangeRef = Editor.rangeRef(editor, selection);
 
+    // console.log(
+    //   'insert',
+    //   JSON.stringify(selection),
+    //   JSON.stringify(rangeRef.current),
+    // );
+
     const res = Array.from(
       Editor.nodes(editor, {
         match: (n) => n.type === elementType,
@@ -40,8 +46,9 @@ export const _insertElement = (elementType) => (editor, data) => {
       );
     }
 
-    editor.savedSelection = rangeRef.current;
-    Transforms.select(editor, rangeRef.current);
+    // console.log('new selection', JSON.parse(JSON.stringify(rangeRef.current)));
+    Transforms.select(editor, JSON.parse(JSON.stringify(rangeRef.current)));
+    editor.savedSelection = JSON.parse(JSON.stringify(rangeRef.current));
     // if (data) {
     // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
     // Transforms.collapse(editor); // TODO; collapse to original offset

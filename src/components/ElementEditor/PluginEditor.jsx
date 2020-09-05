@@ -37,10 +37,12 @@ export default (props) => {
       elRef.current = elementNode;
       setFormData(elementNode.data || {});
     } else if (!isElement) {
-      // if (footnoteRef.current) dispatch({ type: FOOTNOTE_EDITOR, show: false });
+      // if (elRef.current) {
+      //   dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+      // }
       elRef.current = null;
     }
-  }, [elementNode, isElement, dispatch]);
+  }, [pluginId, elementNode, isElement, dispatch]);
 
   const saveDataToEditor = React.useCallback(
     (formData) => {

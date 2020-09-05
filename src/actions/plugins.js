@@ -4,6 +4,6 @@ export function setPluginOptions(pluginId, values = {}) {
   return {
     type: SLATE_PLUGINS,
     pluginId,
-    values,
+    ...values,
   };
 }

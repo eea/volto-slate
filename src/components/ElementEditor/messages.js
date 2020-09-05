@@ -1,11 +1,11 @@
 import { defineMessages } from 'react-intl'; // , defineMessages
 
 const messages = defineMessages({
-  editElement: {
+  edit: {
     id: 'Edit element',
     defaultMessage: 'Edit element',
   },
-  deleteElement: {
+  delete: {
     id: 'Remove element',
     defaultMessage: 'Remove element',
   },

@@ -25,6 +25,7 @@ export const makeInlineElementPlugin = (options) => {
     title,
     extensions: [],
     elements: {},
+    // editSchema,
 
     // A generic "validation" method, just finds that a "positive" value
     // exists.  Plugin authors should overwrite it in options
@@ -35,7 +36,7 @@ export const makeInlineElementPlugin = (options) => {
     ...options,
   };
 
-  const ElementContextButtons = makeContextButtons(options);
+  const ElementContextButtons = makeContextButtons(pluginOptions);
 
   const PersistentHelper = (props) => (
     <SidebarEditor {...props} {...pluginOptions} />
@@ -52,7 +53,10 @@ export const makeInlineElementPlugin = (options) => {
     );
     slate.contextToolbarButtons.push(ElementContextButtons);
     slate.persistentHelpers.push(PersistentHelper);
-    slate.extensions = [...(slate.extensions || []), pluginOptions.extensions];
+    slate.extensions = [
+      ...(slate.extensions || []),
+      ...pluginOptions.extensions,
+    ];
     slate.elements = { ...slate.elements, ...pluginOptions.elements };
     slate.nodeTypesToHighlight.push(elementType);
 

@@ -26,7 +26,7 @@ const SidebarEditor = (props) => {
 
   return showEditor && active ? (
     <SidebarPopup open={true}>
-      <PluginEditor editor={editor} />
+      <PluginEditor {...props} />
     </SidebarPopup>
   ) : (
     ''

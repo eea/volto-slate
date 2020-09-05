@@ -14,7 +14,7 @@ import { setPluginOptions } from 'volto-slate/actions';
 export default (props) => {
   const {
     editor,
-    schema,
+    editSchema,
     pluginId,
     getActiveElement,
     isActiveElement,
@@ -56,8 +56,8 @@ export default (props) => {
 
   return (
     <InlineForm
-      schema={schema}
-      title={schema.title}
+      schema={editSchema}
+      title={editSchema.title}
       icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
       onChangeField={(id, value) => {
         setFormData({

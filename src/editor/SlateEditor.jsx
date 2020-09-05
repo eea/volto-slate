@@ -84,6 +84,7 @@ class SlateEditor extends Component {
   }
 
   onDOMSelectionChange(evt) {
+    // console.log('dom');
     const { activeElement } = window.document;
     const { editor } = this.state;
 
@@ -134,6 +135,17 @@ class SlateEditor extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const { selected = true, value } = nextProps;
+    return (
+      selected ||
+      this.props.selected !== selected ||
+      !isEqual(value, this.props.value)
+    );
+    // console.log('nextProps', nextProps);
+    // console.log('nextState', nextState);
+  }
+
   render() {
     const {
       selected,
@@ -146,6 +158,7 @@ class SlateEditor extends Component {
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
+    // console.log(JSON.stringify(this.state.editor.children?.[0]));
 
     // renderExtensions is needed because the editor is memoized, so if these
     // extensions need an updated state (for example to insert updated
@@ -197,6 +210,9 @@ class SlateEditor extends Component {
             renderLeaf={(props) => <Leaf {...props} />}
             decorate={this.multiDecorator}
             spellCheck={false}
+            onDoubleClick={() => {
+              // console.log('dbl');
+            }}
             onClick={() => {
               this.setState({ update: true }); // just a dummy thing to trigger re-render
             }}

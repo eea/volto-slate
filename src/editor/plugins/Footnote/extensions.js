@@ -24,7 +24,6 @@ export const withFootnote = (editor) => {
           at: path,
         },
       );
-      // console.log('set uid', node);
     }
     return normalizeNode(entry);
   };

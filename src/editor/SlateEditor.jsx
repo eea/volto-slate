@@ -1,6 +1,5 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-// import throttle from 'lodash/throttle';
 import { createEditor } from 'slate'; // , Transforms
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -32,17 +31,12 @@ class SlateEditor extends Component {
     this.setSavedSelection = this.setSavedSelection.bind(this);
     this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
-    const { slate } = settings;
-
     this.savedSelection = null;
     this.mouseDown = null;
 
     this.state = {
       editor: this.createEditor(),
       showToolbar: false,
-      initialValue: slate.defaultValue(),
-      defaultSelection: props.defaultSelection,
-      // savedSelection: null,
     };
   }
 
@@ -64,6 +58,10 @@ class SlateEditor extends Component {
     // makes it impossible to have complex types of interactions (like filling
     // in another text box, operating a select menu, etc). For this reason we
     // save the active selection
+    //
+    // Note: this property is incompatible with some immmer operations (like
+    // Editor.fragment(). For those operations you might get away by passing:
+    // { children: editor.children } instead of editor.
     Object.defineProperty(editor, 'savedSelection', {
       get: this.getSavedSelection,
       set: this.setSavedSelection,
@@ -96,7 +94,6 @@ class SlateEditor extends Component {
 
     this.setSavedSelection(editor.selection);
     if (!this.mouseDown) {
-      console.log('update');
       this.setState({ update: true }); // just a dummy thing to trigger re-render
     }
   }
@@ -110,7 +107,6 @@ class SlateEditor extends Component {
 
     if (this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        console.log('focusing mount');
         ReactEditor.focus(this.state.editor);
       }
     }
@@ -175,7 +171,7 @@ class SlateEditor extends Component {
       >
         <Slate
           editor={editor}
-          value={value || this.state.initialValue}
+          value={value || slate.defaultValue()}
           onChange={this.handleChange}
         >
           {selected ? (
@@ -207,7 +203,7 @@ class SlateEditor extends Component {
               this.setState({ update: true }); // just a dummy thing to trigger re-render
             }}
             onBlur={() => {
-              console.log('blur', JSON.stringify(editor.selection));
+              // console.log('blur', JSON.stringify(editor.selection));
             }}
             onMouseDown={() => {
               this.mouseDown = true;
@@ -241,9 +237,6 @@ class SlateEditor extends Component {
           {DEBUG ? (
             <ul>
               <li>{selected ? 'selected' : 'no-selected'}</li>
-              <li>
-                defaultSelection: {JSON.stringify(this.props.defaultSelection)}
-              </li>
               <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
               <li>live selection: {JSON.stringify(editor.selection)}</li>
               <li>children: {JSON.stringify(editor.children)}</li>

@@ -6,9 +6,7 @@ import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 import { ReactEditor } from 'slate-react';
 import checkSVG from '@plone/volto/icons/check.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
-import { useSlate } from 'slate-react';
 import { isEqual } from 'lodash';
-// import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
 import {
   unwrapFootnote,
   insertFootnote,
@@ -20,12 +18,10 @@ import { useDispatch } from 'react-redux';
 
 export default (props) => {
   const dispatch = useDispatch();
-  // const editor = useSlate();
   const { editor } = props;
   const [formData, setFormData] = React.useState({});
 
   const active = getActiveFootnote(editor);
-  console.log('active footnote in footeditor', active);
   const [footnoteNode] = active;
   const isFootnote = isActiveFootnote(editor);
 
@@ -46,7 +42,6 @@ export default (props) => {
       if (formData.footnote) {
         insertFootnote(editor, formData);
       } else {
-        console.log('unwrapping');
         unwrapFootnote(editor);
       }
     },

@@ -24,7 +24,6 @@ export const makeInlineElementPlugin = (options) => {
     toolbarButtonIcon: tagSVG,
     title,
     extensions: [],
-    elements: {},
     // editSchema,
 
     // A generic "validation" method, just finds that a "positive" value
@@ -57,7 +56,7 @@ export const makeInlineElementPlugin = (options) => {
       ...(slate.extensions || []),
       ...pluginOptions.extensions,
     ];
-    slate.elements = { ...slate.elements, ...pluginOptions.elements };
+    slate.elements[elementType] = options.element;
     slate.nodeTypesToHighlight.push(elementType);
 
     // The plugin authors should manually add the button to the relevant toolbars

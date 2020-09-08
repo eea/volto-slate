@@ -169,7 +169,6 @@ const TextBlockEdit = (props) => {
     [defaultSelection, block, saveSlateBlockSelection],
   );
 
-  console.log('render', block);
   return (
     <>
       <SidebarPortal selected={selected}>

@@ -7,6 +7,7 @@ import italicIcon from '@plone/volto/icons/italic.svg';
 import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
 import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
+import subTextIcon from '@plone/volto/icons/subtext.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 import subindexIcon from '@plone/volto/icons/subindex.svg';
@@ -96,6 +97,14 @@ export const buttons = {
       {...props}
     />
   ),
+  'heading-four': (props) => (
+    <BlockButton
+      title="Heading 4"
+      format="h4"
+      icon={subTextIcon}
+      {...props}
+    />
+  ),
   'numbered-list': (props) => (
     <BlockButton
       title="Numbered list"
@@ -119,6 +128,7 @@ export const defaultToolbarButtons = [
   'separator',
   'heading-two',
   'heading-three',
+  'heading-four',
   'separator',
   'sub',
   'sup',
@@ -183,6 +193,7 @@ export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
   h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
+  h4: ({ attributes, children }) => <h4 {...attributes}>{children}</h4>,
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
   p: ({ attributes, children }) => <p {...attributes}>{children}</p>,

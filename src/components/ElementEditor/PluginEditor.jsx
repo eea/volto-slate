@@ -21,6 +21,7 @@ export default (props) => {
     insertElement,
     unwrapElement,
     hasValue,
+    onChangeValues,
   } = props;
 
   const dispatch = useDispatch();
@@ -32,17 +33,13 @@ export default (props) => {
 
   // Update the form data based on the current footnote
   const elRef = React.useRef(null);
-  React.useEffect(() => {
-    if (isElement && !isEqual(elementNode, elRef.current)) {
-      elRef.current = elementNode;
-      setFormData(elementNode.data || {});
-    } else if (!isElement) {
-      // if (elRef.current) {
-      //   dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-      // }
-      elRef.current = null;
-    }
-  }, [pluginId, elementNode, isElement, dispatch]);
+
+  if (isElement && !isEqual(elementNode, elRef.current)) {
+    elRef.current = elementNode;
+    setFormData(elementNode.data || {});
+  } else if (!isElement) {
+    elRef.current = null;
+  }
 
   const saveDataToEditor = React.useCallback(
     (formData) => {
@@ -62,10 +59,13 @@ export default (props) => {
       title={editSchema.title}
       icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
       onChangeField={(id, value) => {
-        setFormData({
-          ...formData,
-          [id]: value,
-        });
+        if (!onChangeValues) {
+          return setFormData({
+            ...formData,
+            [id]: value,
+          });
+        }
+        return onChangeValues(id, value, formData, setFormData);
       }}
       formData={formData}
       headerActions={

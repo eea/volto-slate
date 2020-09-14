@@ -14,8 +14,9 @@ import { settings } from '~/config';
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { createImageBlock } from 'volto-slate/utils';
+import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
 import { uploadContent } from 'volto-slate/actions';
+import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
@@ -27,6 +28,8 @@ import addSVG from '@plone/volto/icons/circle-plus.svg';
 import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
+
+const DEBUG = false;
 
 const TextBlockEdit = (props) => {
   const {
@@ -44,6 +47,8 @@ const TextBlockEdit = (props) => {
     uploadRequest,
     uploadContent,
     uploadedContent,
+    defaultSelection,
+    saveSlateBlockSelection,
   } = props;
 
   const { slate } = settings;
@@ -136,12 +141,33 @@ const TextBlockEdit = (props) => {
   ]);
 
   // const blockChooserRef = React.useRef();
+  /**
+   * This event handler unregisters itself after its first call.
+   */
   const handleClickOutside = React.useCallback((e) => {
     const blockChooser = document.querySelector('.blocks-chooser');
     document.removeEventListener('mousedown', handleClickOutside, false);
     if (doesNodeContainClick(blockChooser, e)) return;
     setAddNewBlockOpened(false);
   }, []);
+
+  const handleUpdate = React.useCallback(
+    (editor) => {
+      // defaultSelection is used for things such as "restoring" the selection
+      // when joining blocks or moving the selection to block start on block
+      // split
+      if (defaultSelection) {
+        const selection = parseDefaultSelection(editor, defaultSelection);
+        if (selection) {
+          setTimeout(() => {
+            Transforms.select(editor, selection);
+            saveSlateBlockSelection(block, null);
+          }, 120); // without setTimeout, the join is not correct
+        }
+      }
+    },
+    [defaultSelection, block, saveSlateBlockSelection],
+  );
 
   return (
     <>
@@ -151,6 +177,7 @@ const TextBlockEdit = (props) => {
         <MarkdownIntroduction />
       </SidebarPortal>
 
+      {DEBUG ? <div>{block}</div> : ''}
       <Dropzone
         disableClick
         onDrop={onDrop}
@@ -176,12 +203,13 @@ const TextBlockEdit = (props) => {
           <SlateEditor
             index={index}
             properties={properties}
-            onAddBlock={onAddBlock}
             extensions={textblockExtensions}
             renderExtensions={[withBlockProperties]}
-            onSelectBlock={onSelectBlock}
             value={value}
             block={block}
+            onFocus={() => onSelectBlock(block)}
+            onUpdate={handleUpdate}
+            debug={DEBUG}
             onChange={(value, selection) => {
               onChangeBlock(block, {
                 ...data,
@@ -209,7 +237,9 @@ const TextBlockEdit = (props) => {
           basic
           icon
           onClick={() => {
+            // This event handler unregisters itself after its first call.
             document.addEventListener('mousedown', handleClickOutside, false);
+
             setAddNewBlockOpened(!addNewBlockOpened);
           }}
           className="block-add-button"
@@ -232,7 +262,11 @@ const TextBlockEdit = (props) => {
 
 export default connect(
   (state, props) => {
+    const blockId = props.block;
     return {
+      defaultSelection: blockId
+        ? state.slate_block_selections?.[blockId]
+        : null,
       uploadRequest: state.upload_content?.[props.block]?.upload || {},
       uploadedContent: state.upload_content?.[props.block]?.data || {},
     };

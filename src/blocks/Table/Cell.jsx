@@ -102,7 +102,8 @@ class Cell extends Component {
   }
 
   /**
-   * Handles the `onFocus` event received by the container `<div>` of the `SlateEditor`.
+   * Handles the `onFocus` event received by the container `<div>` of the
+   * `SlateEditor`.
    */
   handleContainerFocus() {
     this.setState({ selected: true }, () => {
@@ -114,7 +115,8 @@ class Cell extends Component {
    * Render method.
    * @method render
    * @returns {string} Markup for the component.
-   * @todo `Tab` works well to go through cells in the table, but `Shift-Tab` does nothing.
+   * @todo `Tab` works well to go through cells in the table, but `Shift-Tab`
+   * does nothing.
    */
   render() {
     return (

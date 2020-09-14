@@ -1,4 +1,4 @@
-import isUrl from 'is-url';
+// import isUrl from 'is-url';
 // import { wrapLink } from './utils';
 import { LINK } from 'volto-slate/constants';
 

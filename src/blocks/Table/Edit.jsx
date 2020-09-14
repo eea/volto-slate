@@ -24,15 +24,18 @@ import deleteSVG from '@plone/volto/icons/delete.svg';
 const getId = () => Math.floor(Math.random() * Math.pow(2, 24)).toString(32);
 
 /**
- * @returns {object} An empty Slate paragraph (a simple Slate block node with type set to "p" and a `Text` child with an empty string).
+ * @returns {object} An empty Slate paragraph (a simple Slate block node with
+ * type set to "p" and a `Text` child with an empty string).
  */
 function getEmptyParagraph() {
   return [{ type: 'p', children: [{ text: '' }] }];
 }
 
 /**
- * @param {string} type The type of the newly created cell: either 'header' or 'data', by default it is 'data'.
- * @returns {object} A new cell object containing three properties: `key`, `type` and `value`.
+ * @param {string} type The type of the newly created cell: either 'header' or
+ * 'data', by default it is 'data'.
+ * @returns {object} A new cell object containing three properties: `key`,
+ * `type` and `value`.
  */
 const emptyCell = (type = 'data') => ({
   key: getId(),
@@ -41,7 +44,9 @@ const emptyCell = (type = 'data') => ({
 });
 
 /**
- * @param {Array[object]} cells Array of placeholders, each of them will be replaced in the newly created row with an empty cell. (Practically, just the length of the array matters.)
+ * @param {Array[object]} cells Array of placeholders, each of them will be
+ * replaced in the newly created row with an empty cell. (Practically, just the
+ * length of the array matters.)
  * @returns {object} A new row object containing the keys `key` and `cells`.
  */
 const emptyRow = (cells) => ({
@@ -50,7 +55,10 @@ const emptyRow = (cells) => ({
 });
 
 /**
- * The initial value for the displayed table's data. The IDs of the rows and cells are computed here only once, so each new table has the same IDs initially, but this does not have bad consequences since the key has relevance only in the context in which it is used.
+ * The initial value for the displayed table's data. The IDs of the rows and
+ * cells are computed here only once, so each new table has the same IDs
+ * initially, but this does not have bad consequences since the key has
+ * relevance only in the context in which it is used.
  */
 const initialTable = {
   fixed: true,
@@ -290,7 +298,8 @@ class Edit extends Component {
   }
 
   /**
-   * Insert row before handler. Keeps the selected cell as selected after the operation is done.
+   * Insert row before handler. Keeps the selected cell as selected after the
+   * operation is done.
    * @returns {undefined}
    */
   onInsertRowBefore() {
@@ -334,7 +343,8 @@ class Edit extends Component {
   }
 
   /**
-   * Insert column before handler. Keeps the selected cell as selected after the operation is done.
+   * Insert column before handler. Keeps the selected cell as selected after the
+   * operation is done.
    * @returns {undefined}
    */
   onInsertColBefore() {
@@ -384,7 +394,8 @@ class Edit extends Component {
   }
 
   /**
-   * Delete column handler. Changes the selected cell if the last table column is selected.
+   * Delete column handler. Changes the selected cell if the last table column
+   * is selected.
    * @returns {undefined}
    */
   onDeleteCol() {
@@ -415,7 +426,8 @@ class Edit extends Component {
   }
 
   /**
-   * Delete row handler. Changes the selected cell if the last table row is selected.
+   * Delete row handler. Changes the selected cell if the last table row is
+   * selected.
    * @method onDeleteRow
    * @returns {undefined}
    */
@@ -521,7 +533,8 @@ class Edit extends Component {
    */
   render() {
     return (
-      // TODO: use slate-table instead of table, but first copy the CSS styles to the new name
+      // TODO: use slate-table instead of table, but first copy the CSS styles
+      // to the new name
       <div className={cx('block table', { selected: this.props.selected })}>
         {this.props.selected && (
           <div className="toolbar">

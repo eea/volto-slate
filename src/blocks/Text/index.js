@@ -52,7 +52,7 @@ export default (config) => {
         softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
       ArrowUp: [
-        moveListItemUp, // Move down a list with with Ctrl+down
+        moveListItemUp, // Move up a list with with Ctrl+up
         goUp, // Select previous block
       ],
       ArrowDown: [

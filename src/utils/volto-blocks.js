@@ -110,7 +110,11 @@ export function createSlateTableBlock(
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
   const { onSelectBlock } = blockProps;
-  createSlateBlock(blockValue, blockProps).then((id) => onSelectBlock(id));
+  createSlateBlock(blockValue, blockProps).then((id) => {
+    const blockProps = editor.getBlockProps();
+    blockProps.saveSlateBlockSelection(id, 'start');
+    onSelectBlock(id);
+  });
 };
 
 export function getNextVoltoBlock(index, properties) {
@@ -160,7 +164,7 @@ export function deconstructToVoltoBlocks(editor) {
   const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
-    console.log('editor', editor);
+    console.log('editor in deconstructToVoltoBlocks', editor);
     if (!editor?.children) return;
     if (editor.children.length === 1) {
       return resolve([blockProps.block]);

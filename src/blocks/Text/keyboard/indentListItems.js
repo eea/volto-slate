@@ -27,8 +27,8 @@ import { settings } from '~/config';
  *  </ul>
  * ```
  *
- * Although not the cleanest, there are numerous advantages to having lists
- * like this:
+ * Although not the cleanest, there are numerous advantages to having lists like
+ * this:
  * - Code is a lot cleaner, easy to understand and maintain
  * - Google Docs produces the same type of lists
  * - HTML produced by LibreWriter (as witnesed in clipboard transfer) is same
@@ -47,10 +47,9 @@ export function indentListItems({ editor, event }) {
     event.preventDefault();
     event.stopPropagation();
 
-    // If Shift & Ctrl, decrease multiple items depth.
-    // If Shift & !Ctrl, decrease item depth.
-    // If !Shift & Ctrl, increase multiple item depth.
-    // If !Shift & !Ctrl, increase item depth.
+    // If Shift & Ctrl, decrease multiple items depth. If Shift & !Ctrl,
+    // decrease item depth. If !Shift & Ctrl, increase multiple item depth. If
+    // !Shift & !Ctrl, increase item depth.
     return event.shiftKey
       ? event.ctrlKey
         ? decreaseMultipleItemsDepth(editor, event)
@@ -63,7 +62,8 @@ export function indentListItems({ editor, event }) {
 
 /**
  * Handle the new Volto blocks created by `deconstructToVoltoBlocks`.
- * @param {Editor} editor The Slate editor object as customized by the volto-slate addon.
+ * @param {Editor} editor The Slate editor object as customized by the
+ * volto-slate addon.
  * @param {string[]} newIds The IDs of the newly created Volto blocks.
  */
 const handleNewVoltoBlocks = (editor, [newId1, newId2, newId3]) => {
@@ -77,11 +77,12 @@ const handleNewVoltoBlocks = (editor, [newId1, newId2, newId3]) => {
     // If there are just 1-2 new blocks
     newId = newId1; // TODO: or newId2 in some situations?
   }
-  // Get the Edit component's props as received from Volto the last time it was rendered.
+  // Get the Edit component's props as received from Volto the last time it was
+  // rendered.
   const props = editor.getBlockProps();
-  // Unfortunately, until Volto's on* methods don't have Promise support,
-  // we have to use a setTimeout with a bigger value, to be able to
-  // properly select the proper block
+  // Unfortunately, until Volto's on* methods don't have Promise support, we
+  // have to use a setTimeout with a bigger value, to be able to properly select
+  // the proper block
   setTimeout(() => props.onSelectBlock(newId), 10);
 };
 
@@ -106,7 +107,8 @@ export function decreaseItemDepth(editor, event) {
   // with it as a sublist
   const listItemRef = Editor.pathRef(editor, listItemPath);
 
-  // TODO: please clarify, we unwrap at list item path but we only unwrap nodes that match list types, but list item type is different from all list types:
+  // TODO: please clarify, we unwrap at list item path but we only unwrap nodes
+  // that match list types, but list item type is different from all list types:
   Transforms.unwrapNodes(editor, {
     at: listItemPath,
     split: true,
@@ -115,14 +117,16 @@ export function decreaseItemDepth(editor, event) {
   });
 
   /**
-   * This condition is the same as "listItemRef.current is not the root editor node or one if its children".
+   * This condition is the same as "listItemRef.current is not the root editor
+   * node or one if its children".
    */
   function getCondition1() {
     return listItemRef.current.length > 1;
   }
 
   /**
-   * @returns The current parent Node of the PathRef linked to the initial list item that we want deindented.
+   * @returns The current parent Node of the PathRef linked to the initial list
+   * item that we want deindented.
    */
   function getParent() {
     return Path.parent(listItemRef.current);
@@ -135,7 +139,10 @@ export function decreaseItemDepth(editor, event) {
   if (getCondition1()) mergeWithNextList(editor, getParent());
 
   if (parentListPath.length === 1) {
-    // Our parent is at root, just under the Editor, where just block nodes can be, and the user wants to break out so we unwrap the list item. Usually this means making the list item a `p` just below the Editor in the document tree, keeping its contents.
+    // Our parent is at root, just under the Editor, where just block nodes can
+    // be, and the user wants to break out so we unwrap the list item. Usually
+    // this means making the list item a `p` just below the Editor in the
+    // document tree, keeping its contents.
     Transforms.setNodes(
       editor,
       { type: slate.defaultBlockType },
@@ -179,14 +186,16 @@ export function increaseItemDepth(editor, event) {
 
   // If the parent is not a list
   if (!slate.listTypes.includes(type)) {
-    // Do not increase any indent level.
-    // And also, this situation shows that there is a LI inside something that is not a list, and this means that something broke the data in the Slate document.
-    // TODO: Maybe throw an exception?
+    // Do not increase any indent level. And also, this situation shows that
+    // there is a LI inside something that is not a list, and this means that
+    // something broke the data in the Slate document. TODO: Maybe throw an
+    // exception?
     return false; // false means that the event was not practically handled
   }
 
   /**
-   * Create a list of the same type as the parent list and put the specified list item in it, then put the new list inside the parent list.
+   * Create a list of the same type as the parent list and put the specified
+   * list item in it, then put the new list inside the parent list.
    */
   function wrapListItem() {
     Transforms.wrapNodes(
@@ -200,7 +209,9 @@ export function increaseItemDepth(editor, event) {
 
   // If the parent list is just below the Editor node
   if (parentList.children.length === 1) {
-    // There should be just one block node inside the Editor node in volto-slate (what about table cells? currently they allow multiple paragraphs in them), so there should be no previous or next sibling.
+    // There should be just one block node inside the Editor node in volto-slate
+    // (what about table cells? currently they allow multiple paragraphs in
+    // them), so there should be no previous or next sibling.
     wrapListItem();
     return true;
   }
@@ -222,7 +233,8 @@ export function increaseItemDepth(editor, event) {
 }
 
 /**
- * [Not implemented] Indents current list item + plus siblings that come after it.
+ * [Not implemented] Indents current list item + plus siblings that come after
+ * it.
  * @param {Editor} editor
  * @param {Event} event
  */
@@ -231,7 +243,8 @@ export function increaseMultipleItemDepth(editor, event) {
 }
 
 /**
- * [Not implemented] Un-indents current list item + plus siblings that come after it.
+ * [Not implemented] Un-indents current list item + plus siblings that come
+ * after it.
  * @param {Editor} editor
  * @param {Event} event
  */

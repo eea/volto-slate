@@ -27,6 +27,27 @@ export const toggleFormat = (editor, format) => {
   });
 };
 
+export const toggleInlineFormat = (editor, format) => {
+  const isActive = isBlockActive(editor, format);
+  if (isActive) {
+    const rangeRef = Editor.rangeRef(editor, editor.selection);
+
+    Transforms.unwrapNodes(editor, {
+      match: (n) => n.type === format,
+      split: false,
+    });
+
+    const newSel = JSON.parse(JSON.stringify(rangeRef.current));
+
+    Transforms.select(editor, newSel);
+    // editor.setSavedSelection(newSel);
+    editor.savedSelection = newSel;
+    return;
+  }
+  const block = { type: format, children: [] };
+  Transforms.wrapNodes(editor, block, { split: true });
+};
+
 export const changeBlockToList = (editor, format) => {
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {

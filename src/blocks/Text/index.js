@@ -84,7 +84,7 @@ export default (config) => {
     view: TextBlockView,
     edit: TextBlockEdit,
     restricted: false,
-    mostUsed: true,
+    mostUsed: false,
     blockHasOwnFocusManagement: true,
     sidebarTab: 1,
     security: {

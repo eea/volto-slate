@@ -232,7 +232,7 @@ const TextBlockEdit = (props) => {
           />
         )}
       </Dropzone>
-      {!detached && !data.plaintext && (
+      {!detached && !data.plaintext && !data.disableNewBlocks && (
         <Button
           basic
           icon

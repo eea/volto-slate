@@ -32,6 +32,7 @@ export function joinWithPreviousBlock({ editor, event }) {
     onChangeBlock,
     onDeleteBlock,
     onSelectBlock,
+    data,
   } = blockProps;
 
   const { formContext } = editor;
@@ -45,6 +46,12 @@ export function joinWithPreviousBlock({ editor, event }) {
 
   // If the previous block is not Slate Text, do nothing.
   if (otherBlock['@type'] !== 'slate') return;
+
+  // Can't join if the previous block is required
+  if (otherBlock?.required) return;
+
+  // Can't join/remove this block if it's required
+  if (data?.required) return;
 
   // From here on, the previous block is surely Slate Text.
   event.stopPropagation();
@@ -137,6 +144,7 @@ export function joinWithNextBlock({ editor, event }) {
     onChangeBlock,
     onDeleteBlock,
     onSelectBlock,
+    data,
   } = blockProps;
 
   const { formContext } = editor;
@@ -151,6 +159,12 @@ export function joinWithNextBlock({ editor, event }) {
   // If the next block is not Slate Text, do nothing. (TODO: use a constant
   // instead of 'slate'.)
   if (otherBlock['@type'] !== 'slate') return;
+
+  // Can't join/remove this block if it's required
+  if (data?.required) return;
+
+  // Can't join if the next block is required
+  if (otherBlock?.required) return;
 
   // From here on, the next block is surely Slate Text.
   event.stopPropagation();
@@ -196,80 +210,6 @@ export function joinWithNextBlock({ editor, event }) {
 
   // Mark the event as handled.
   return true;
-}
-
-/**
- * Join current block with neighbor block, if the blocks are compatible.
- * @todo This seems to be dead code that should be removed or transformed into a
- * combination of `joinWithPreviousBlock` and `joinWithNextBlock` which are
- * written above.
- */
-export function joinWithNeighborBlock(
-  getNeighborVoltoBlock,
-  getCursorPosition,
-  isValidOp,
-  mergeOp,
-) {
-  /**
-   *
-   */
-  return ({ editor, event }) => {
-    // TODO: read block values not from editor properties, but from block
-    // properties
-    const blockProps = editor.getBlockProps();
-    const {
-      block,
-      index,
-      saveSlateBlockSelection,
-      onChangeBlock,
-      onDeleteBlock,
-      onSelectBlock,
-    } = blockProps;
-
-    const { formContext } = editor;
-    const properties = formContext.contextData.formData;
-
-    const [otherBlock = {}, otherBlockId] = getNeighborVoltoBlock(
-      index,
-      properties,
-    );
-
-    if (!isValidOp(editor)) return;
-
-    if (otherBlock['@type'] !== 'slate') return;
-
-    event.stopPropagation();
-    event.preventDefault();
-
-    mergeOp(editor, otherBlock);
-
-    const selection = JSON.parse(JSON.stringify(editor.selection));
-    const combined = JSON.parse(JSON.stringify(editor.children));
-
-    // TODO: don't remove undo history, etc Should probably save both undo
-    // histories, so that the blocks are split, the undos can be restored??
-    // TODO: after Enter, the current filled-with-previous-block block is
-    // visible for a fraction of second
-
-    const cursor = getCursorPosition(otherBlock, selection);
-    saveSlateBlockSelection(otherBlockId, cursor);
-
-    // setTimeout ensures setState has been successfully executed in Form.jsx.
-    // See https://github.com/plone/volto/issues/1519
-    setTimeout(() => {
-      onChangeBlock(otherBlockId, {
-        '@type': 'slate',
-        value: combined,
-        plaintext: serializeNodesToText(combined || []),
-      });
-      setTimeout(() => {
-        onDeleteBlock(block, false);
-        onSelectBlock(otherBlockId);
-      });
-    });
-
-    return true;
-  };
 }
 
 /**

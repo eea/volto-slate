@@ -39,6 +39,11 @@ export function backspaceInList({ editor, event }) {
   // If the cursor is at list block start, do something different:
   if (isCursorAtListBlockStart(editor)) {
     const { slate } = settings;
+    const blockProps = editor.getBlockProps();
+    const { data } = blockProps;
+
+    // Can't split if block is required
+    if (data?.required) return;
 
     // Raise all LI-s as direct children of the editor.
     Transforms.liftNodes(editor, {

@@ -116,7 +116,7 @@ class Cell extends Component {
    * @method render
    * @returns {string} Markup for the component.
    * @todo `Tab` works well to go through cells in the table, but `Shift-Tab`
-   * does nothing.
+   * does nothing although it should go through the cells in the reverse order.
    */
   render() {
     return (

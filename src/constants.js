@@ -1,5 +1,6 @@
 // action types
 export const SAVE_SLATE_BLOCK_SELECTION = 'SAVE_SLATE_BLOCK_SELECTION';
+// maybe rename to SET_SLATE_PLUGIN_OPTIONS
 export const SLATE_PLUGINS = 'SLATE_PLUGINS';
 export const UPLOAD_CONTENT = 'UPLOAD_CONTENT';
 

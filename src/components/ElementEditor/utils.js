@@ -9,7 +9,7 @@ import { Editor, Transforms } from 'slate'; // Range,
  *
  * @returns {boolean} true if an element was inserted, false otherwise
  */
-export const _insertElement = (elementType) => (editor, formContext, data) => {
+export const _insertElement = (elementType) => (editor, data) => {
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 

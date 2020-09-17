@@ -17,13 +17,7 @@ export const makeInlineElementPlugin = (options) => {
   const { elementType, isInlineElement, pluginId, title = 'Element' } = options;
   const pluginOptions = {
     pluginEditor: PluginEditor,
-    insertElement: (...args) => {
-      const r = _insertElement(elementType)(...args);
-      if (r) {
-        options.afterElementIsInserted(...args);
-      }
-      return r;
-    },
+    insertElement: _insertElement(elementType),
     getActiveElement: _getActiveElement(elementType),
     isActiveElement: _isActiveElement(elementType),
     unwrapElement: _unwrapElement(elementType),
@@ -39,7 +33,7 @@ export const makeInlineElementPlugin = (options) => {
     // element type is removed from the editor
     hasValue: (data) => Object.values(data).findIndex((v) => !!v) > -1,
 
-    ..._.omit(options, 'afterElementIsInserted'),
+    ...options,
   };
 
   const ElementContextButtons = makeContextButtons(pluginOptions);

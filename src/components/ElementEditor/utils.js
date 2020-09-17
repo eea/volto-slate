@@ -6,8 +6,10 @@ import { Editor, Transforms } from 'slate'; // Range,
  *
  * @param {Editor} editor The Slate editor for the context
  * @param {object} data Relevant data for this element
+ *
+ * @returns {boolean} true if an element was inserted, false otherwise
  */
-export const _insertElement = (elementType) => (editor, data) => {
+export const _insertElement = (elementType) => (editor, formContext, data) => {
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 
@@ -41,7 +43,11 @@ export const _insertElement = (elementType) => (editor, data) => {
 
     Transforms.select(editor, JSON.parse(JSON.stringify(rangeRef.current)));
     editor.savedSelection = JSON.parse(JSON.stringify(rangeRef.current));
+
+    return true;
   }
+
+  return false;
 };
 
 export const _unwrapElement = (elementType) => (editor) => {

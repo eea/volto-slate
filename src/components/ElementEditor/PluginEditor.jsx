@@ -4,6 +4,7 @@ import { isEqual } from 'lodash';
 import { ReactEditor } from 'slate-react';
 import InlineForm from 'volto-slate/futurevolto/InlineForm';
 import { Icon as VoltoIcon } from '@plone/volto/components';
+import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 import checkSVG from '@plone/volto/icons/check.svg';
@@ -25,6 +26,7 @@ export default (props) => {
   } = props;
 
   const dispatch = useDispatch();
+  const formContext = useFormStateContext();
   const [formData, setFormData] = React.useState({});
 
   const active = getActiveElement(editor);
@@ -45,12 +47,12 @@ export default (props) => {
     (formData) => {
       if (hasValue(formData)) {
         // hasValue(formData) = !!formData.footnote
-        insertElement(editor, formData);
+        insertElement(editor, formContext, formData);
       } else {
         unwrapElement(editor);
       }
     },
-    [editor, insertElement, unwrapElement, hasValue],
+    [editor, insertElement, unwrapElement, hasValue, formContext],
   );
 
   return (

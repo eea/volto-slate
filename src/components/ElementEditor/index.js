@@ -11,12 +11,19 @@ import {
 import messages from './messages';
 import ToolbarButton from './ToolbarButton';
 import tagSVG from '@plone/volto/icons/tag.svg';
+import _ from 'lodash';
 
 export const makeInlineElementPlugin = (options) => {
   const { elementType, isInlineElement, pluginId, title = 'Element' } = options;
   const pluginOptions = {
     pluginEditor: PluginEditor,
-    insertElement: _insertElement(elementType),
+    insertElement: (...args) => {
+      const r = _insertElement(elementType)(...args);
+      if (r) {
+        options.afterElementIsInserted(...args);
+      }
+      return r;
+    },
     getActiveElement: _getActiveElement(elementType),
     isActiveElement: _isActiveElement(elementType),
     unwrapElement: _unwrapElement(elementType),
@@ -32,7 +39,7 @@ export const makeInlineElementPlugin = (options) => {
     // element type is removed from the editor
     hasValue: (data) => Object.values(data).findIndex((v) => !!v) > -1,
 
-    ...options,
+    ..._.omit(options, 'afterElementIsInserted'),
   };
 
   const ElementContextButtons = makeContextButtons(pluginOptions);

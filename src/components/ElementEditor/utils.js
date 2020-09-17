@@ -7,7 +7,9 @@ import { Editor, Transforms } from 'slate'; // Range,
  * @param {Editor} editor The Slate editor for the context
  * @param {object} data Relevant data for this element
  *
- * @returns {boolean} true if an element was inserted, false otherwise
+ * @returns {boolean} true if an element was possibly inserted, false otherwise
+ * (currently we do not check here if the element was already applied to the
+ * editor)
  */
 export const _insertElement = (elementType) => (editor, data) => {
   if (editor.savedSelection) {

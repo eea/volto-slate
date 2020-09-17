@@ -11,7 +11,6 @@ import {
 import messages from './messages';
 import ToolbarButton from './ToolbarButton';
 import tagSVG from '@plone/volto/icons/tag.svg';
-import _ from 'lodash';
 
 export const makeInlineElementPlugin = (options) => {
   const { elementType, isInlineElement, pluginId, title = 'Element' } = options;

@@ -38,7 +38,7 @@ export default (config) => {
     isInlineElement: true,
     editSchema: LinkEditSchema,
     extensions: [withLink],
-    hasValue: (formData) => !!formData.footnote,
+    hasValue: (formData) => !!formData.link,
     toolbarButtonIcon: linkSVG,
     messages,
   };

@@ -12,6 +12,7 @@ import { Editor, Transforms } from 'slate'; // Range,
  * editor)
  */
 export const _insertElement = (elementType) => (editor, data) => {
+  console.log('insert', data);
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 

@@ -7,7 +7,14 @@ export const ObjectByTypeWidget = (props) => {
   const { schemas, value = {}, onChange, errors = {}, id } = props;
   const objectId = id;
 
-  const [activeTab, setActiveTab] = React.useState(0);
+  const schemaIds = schemas.map(({ id }) => id);
+  const defaultActiveTab = value
+    ? schemaIds.indexOf(Object.keys(value)[0])
+    : null;
+
+  const [activeTab, setActiveTab] = React.useState(
+    defaultActiveTab > -1 ? defaultActiveTab : 0,
+  );
   const createTab = ({ schema, id, icon }, index) => {
     return {
       menuItem: () => (

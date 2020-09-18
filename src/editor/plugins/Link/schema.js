@@ -1,7 +1,7 @@
 import externalSVG from '@plone/volto/icons/link.svg';
 import internalSVG from '@plone/volto/icons/nav.svg';
 import emailSVG from '@plone/volto/icons/email.svg';
-import pageLinkSVG from '@plone/volto/icons/show-blocks.svg';
+// import pageLinkSVG from '@plone/volto/icons/show-blocks.svg';
 
 export const EmailLinkSchema = {
   title: 'Email address',
@@ -21,6 +21,7 @@ export const EmailLinkSchema = {
       description: 'Optional',
     },
   },
+  required: [],
 };
 
 export const InternalLinkSchema = {
@@ -39,6 +40,7 @@ export const InternalLinkSchema = {
       default: [],
     },
   },
+  required: [],
 };
 
 export const PageLinkSchema = {
@@ -57,6 +59,7 @@ export const PageLinkSchema = {
       default: [],
     },
   },
+  required: [],
 };
 
 export const ExternalLinkSchema = {
@@ -84,6 +87,7 @@ export const ExternalLinkSchema = {
       ],
     },
   },
+  required: [],
 };
 
 const LinkEditSchema = {

@@ -250,7 +250,6 @@ class SlateEditor extends Component {
               slate.persistentHelpers.map((Helper, i) => {
                 return <Helper key={i} editor={editor} />;
               })}
-            {JSON.stringify(this.props.properties.description)}
             {this.props.debug ? (
               <ul>
                 <li>{selected ? 'selected' : 'no-selected'}</li>

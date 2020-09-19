@@ -80,35 +80,38 @@ export function syncCreateSlateBlock(value) {
   return [id, block];
 }
 
-export function createImageBlock(url, index, { onChangeBlock, onAddBlock }) {
-  const block = {
-    '@type': 'image',
-    url,
-  };
-  return new Promise((resolve) => {
-    onAddBlock('slate', index + 1).then((id) => {
-      onChangeBlock(id, block).then(resolve(id));
-    });
+export function createImageBlock(url, index, props) {
+  const { properties, onChangeField, onSelectBlock } = props;
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  const [id, formData] = addBlock(properties, 'image', index + 1);
+  const newFormData = changeBlock(formData, id, { '@type': 'image', url });
+
+  ReactDOM.unstable_batchedUpdates(() => {
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(id);
   });
 }
 
-export function createSlateTableBlock(
-  rows,
-  index,
-  { onChangeBlock, onAddBlock },
-) {
-  const block = {
-    '@type': 'slateTable',
-    table: {
-      rows,
-    },
-  };
-  return new Promise((resolve) => {
-    onAddBlock('slateTable', index + 1).then((id) => {
-      onChangeBlock(id, block).then(resolve(id));
-    });
-  });
-}
+// export function createSlateTableBlock(
+//   rows,
+//   index,
+//   { onChangeBlock, onAddBlock },
+// ) {
+//   const block = {
+//     '@type': 'slateTable',
+//     table: {
+//       rows,
+//     },
+//   };
+//   return new Promise((resolve) => {
+//     onAddBlock('slateTable', index + 1).then((id) => {
+//       onChangeBlock(id, block).then(resolve(id));
+//     });
+//   });
+// }
 
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
@@ -237,25 +240,6 @@ export function deconstructToVoltoBlocks(editor) {
     // TODO: add the placeholder block, because we remove it (because we remove
     // the current block)
 
-    // const data = {
-    //   ...contextData,
-    //   formData: {
-    //     ...formData,
-    //     [blocksFieldname]: omit(
-    //       {
-    //         ...formData[blocksFieldname],
-    //         ...fromEntries(blocks),
-    //       },
-    //       blockProps.block,
-    //     ),
-    //     [blocksLayoutFieldname]: {
-    //       ...formData[blocksLayoutFieldname],
-    //       items: layout,
-    //     },
-    //   },
-    //   selected: blockids[blockids.length - 1],
-    // };
-
     ReactDOM.unstable_batchedUpdates(() => {
       onChangeField(
         blocksFieldname,
@@ -272,9 +256,9 @@ export function deconstructToVoltoBlocks(editor) {
         items: layout,
       });
       onSelectBlock(blockids[blockids.length - 1]);
-      Promise.resolve().then(resolve(blockids));
+      resolve(blockids);
+      // or rather this?
+      // Promise.resolve().then(resolve(blockids));
     });
-
-    // setContextData(data).then(() => resolve(blockids));
   });
 }

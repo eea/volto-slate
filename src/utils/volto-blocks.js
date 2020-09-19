@@ -170,9 +170,11 @@ export function deconstructToVoltoBlocks(editor) {
       return resolve([blockProps.block]);
     }
 
-    const { formContext } = editor;
-    const { contextData, setContextData } = formContext;
-    const { formData } = contextData;
+    const { properties, onChangeField, onSelectBlock } = editor.getBlockProps();
+    const formData = properties;
+    // const { formContext } = editor;
+    // const { contextData, setContextData } = formContext;
+    // const { formData } = contextData;
     const blocksFieldname = getBlocksFieldname(formData);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
 
@@ -210,25 +212,43 @@ export function deconstructToVoltoBlocks(editor) {
     // TODO: add the placeholder block, because we remove it (because we remove
     // the current block)
 
-    const data = {
-      ...contextData,
-      formData: {
-        ...formData,
-        [blocksFieldname]: omit(
-          {
-            ...formData[blocksFieldname],
-            ...fromEntries(blocks),
-          },
-          blockProps.block,
-        ),
-        [blocksLayoutFieldname]: {
-          ...formData[blocksLayoutFieldname],
-          items: layout,
-        },
-      },
-      selected: blockids[blockids.length - 1],
-    };
+    // const data = {
+    //   ...contextData,
+    //   formData: {
+    //     ...formData,
+    //     [blocksFieldname]: omit(
+    //       {
+    //         ...formData[blocksFieldname],
+    //         ...fromEntries(blocks),
+    //       },
+    //       blockProps.block,
+    //     ),
+    //     [blocksLayoutFieldname]: {
+    //       ...formData[blocksLayoutFieldname],
+    //       items: layout,
+    //     },
+    //   },
+    //   selected: blockids[blockids.length - 1],
+    // };
 
-    setContextData(data).then(() => resolve(blockids));
+    onChangeField(
+      blocksFieldname,
+      omit(
+        {
+          ...formData[blocksFieldname],
+          ...fromEntries(blocks),
+        },
+        blockProps.block,
+      ),
+    );
+    onChangeField(blocksLayoutFieldname, {
+      ...formData[blocksLayoutFieldname],
+      items: layout,
+    });
+    onSelectBlock(blockids[blockids.length - 1]);
+
+    resolve(blockids);
+
+    // setContextData(data).then(() => resolve(blockids));
   });
 }

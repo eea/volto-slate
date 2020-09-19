@@ -35,13 +35,14 @@ export function joinWithPreviousBlock({ editor, event }) {
     data,
   } = blockProps;
 
-  const { formContext } = editor;
-  const formProperties = formContext.contextData.formData;
+  // const { formContext } = editor;
+  // const formProperties = formContext.contextData.formData;
+  const { properties } = editor.getBlockProps();
 
   // Get the previous Volto block.
   const [otherBlock = {}, otherBlockId] = getPreviousVoltoBlock(
     index,
-    formProperties,
+    properties,
   );
 
   // If the previous block is not Slate Text, do nothing.
@@ -147,14 +148,12 @@ export function joinWithNextBlock({ editor, event }) {
     data,
   } = blockProps;
 
-  const { formContext } = editor;
-  const formProperties = formContext.contextData.formData;
+  // const { formContext } = editor;
+  // const formProperties = formContext.contextData.formData;
+  const { properties } = editor.getBlockProps();
 
   // Get the next Volto block.
-  const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(
-    index,
-    formProperties,
-  );
+  const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
 
   // If the next block is not Slate Text, do nothing. (TODO: use a constant
   // instead of 'slate'.)

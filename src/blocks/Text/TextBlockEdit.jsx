@@ -7,7 +7,7 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
-import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
+// import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
@@ -62,19 +62,15 @@ const TextBlockEdit = (props) => {
 
   const prevReq = React.useRef(null);
 
-  const formContext = useFormStateContext();
+  // const formContext = useFormStateContext();
 
   const withBlockProperties = React.useCallback(
     (editor) => {
-      editor.getBlockProps = () => {
-        return {
-          ...props,
-        };
-      };
-      editor.formContext = formContext;
+      editor.getBlockProps = () => props;
+      // editor.formContext = formContext;
       return editor;
     },
-    [props, formContext],
+    [props],
   );
 
   const onDrop = React.useCallback(

@@ -129,10 +129,10 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
   ReactDOM.unstable_batchedUpdates(() => {
+    blockProps.saveSlateBlockSelection(blockId, 'start');
     onChangeField(blocksFieldname, newFormData[blocksFieldname]);
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
     onSelectBlock(blockId);
-    blockProps.saveSlateBlockSelection(blockId, 'start');
   });
 
   // createSlateBlock(blockValue, blockProps).then((id) => {
@@ -256,23 +256,24 @@ export function deconstructToVoltoBlocks(editor) {
     //   selected: blockids[blockids.length - 1],
     // };
 
-    onChangeField(
-      blocksFieldname,
-      omit(
-        {
-          ...formData[blocksFieldname],
-          ...fromEntries(blocks),
-        },
-        blockProps.block,
-      ),
-    );
-    onChangeField(blocksLayoutFieldname, {
-      ...formData[blocksLayoutFieldname],
-      items: layout,
+    ReactDOM.unstable_batchedUpdates(() => {
+      onChangeField(
+        blocksFieldname,
+        omit(
+          {
+            ...formData[blocksFieldname],
+            ...fromEntries(blocks),
+          },
+          blockProps.block,
+        ),
+      );
+      onChangeField(blocksLayoutFieldname, {
+        ...formData[blocksLayoutFieldname],
+        items: layout,
+      });
+      onSelectBlock(blockids[blockids.length - 1]);
+      Promise.resolve().then(resolve(blockids));
     });
-    onSelectBlock(blockids[blockids.length - 1]);
-
-    resolve(blockids);
 
     // setContextData(data).then(() => resolve(blockids));
   });

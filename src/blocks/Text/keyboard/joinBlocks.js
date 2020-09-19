@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { Editor } from 'slate';
 import {
@@ -9,6 +10,12 @@ import {
   mergeSlateWithBlockBackward,
   mergeSlateWithBlockForward,
 } from 'volto-slate/utils';
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+  deleteBlock,
+  changeBlock,
+} from '@plone/volto/helpers';
 
 /**
  * Joins the current block with the previous block to make a single block.
@@ -142,15 +149,13 @@ export function joinWithNextBlock({ editor, event }) {
     block,
     index,
     saveSlateBlockSelection,
-    onChangeBlock,
-    onDeleteBlock,
     onSelectBlock,
     data,
   } = blockProps;
 
   // const { formContext } = editor;
   // const formProperties = formContext.contextData.formData;
-  const { properties } = editor.getBlockProps();
+  const { properties, onChangeField } = editor.getBlockProps();
 
   // Get the next Volto block.
   const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
@@ -186,28 +191,24 @@ export function joinWithNextBlock({ editor, event }) {
   // because its contents begin with the contents of the block that has the text
   // cursor.
   const cursor = selection;
-  saveSlateBlockSelection(otherBlockId, cursor);
 
-  // setTimeout ensures setState has been successfully executed in Form.jsx. See
-  // https://github.com/plone/volto/issues/1519
-  setTimeout(() => {
-    // Put the combined block contents into the next block.
-    onChangeBlock(otherBlockId, {
-      // TODO: use a constant specified in src/constants.js instead of 'slate'
-      '@type': 'slate',
-      value: combined,
-      plaintext: serializeNodesToText(combined || []),
-    }).then(() => {
-      // Delete the current block.
-      onDeleteBlock(block, false).then(() => {
-        // Focus (select) the next block which now contains the contents of both
-        // blocks.
-        onSelectBlock(otherBlockId);
-      });
-    });
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  const formData = changeBlock(properties, otherBlockId, {
+    // TODO: use a constant specified in src/constants.js instead of 'slate'
+    '@type': 'slate',
+    value: combined,
+    plaintext: serializeNodesToText(combined || []),
   });
+  const newFormData = deleteBlock(formData, block);
 
-  // Mark the event as handled.
+  ReactDOM.unstable_batchedUpdates(() => {
+    saveSlateBlockSelection(otherBlockId, cursor);
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(otherBlockId);
+  });
   return true;
 }
 

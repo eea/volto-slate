@@ -1,7 +1,10 @@
+import ReactDOM from 'react-dom';
 import { v4 as uuid } from 'uuid';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
+  addBlock,
+  changeBlock,
 } from '@plone/volto/helpers';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
@@ -109,12 +112,34 @@ export function createSlateTableBlock(
 
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
-  const { onSelectBlock } = blockProps;
-  createSlateBlock(blockValue, blockProps).then((id) => {
-    const blockProps = editor.getBlockProps();
-    blockProps.saveSlateBlockSelection(id, 'start');
-    onSelectBlock(id);
+
+  const { onSelectBlock, properties, index, onChangeField } = blockProps;
+
+  const [blockId, formData] = addBlock(properties, 'slate', index + 1);
+
+  const options = {
+    '@type': 'slate',
+    value: JSON.parse(JSON.stringify(blockValue)),
+    plaintext: serializeNodesToText(blockValue),
+  };
+
+  const newFormData = changeBlock(formData, blockId, options);
+
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  ReactDOM.unstable_batchedUpdates(() => {
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(blockId);
+    blockProps.saveSlateBlockSelection(blockId, 'start');
   });
+
+  // createSlateBlock(blockValue, blockProps).then((id) => {
+  //   const blockProps = editor.getBlockProps();
+  //   blockProps.saveSlateBlockSelection(id, 'start');
+  //   onSelectBlock(id);
+  // });
 };
 
 export function getNextVoltoBlock(index, properties) {

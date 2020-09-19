@@ -3,9 +3,8 @@ import { v4 as uuid } from 'uuid';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
-  addBlock,
-  changeBlock,
 } from '@plone/volto/helpers';
+import { addBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
@@ -25,7 +24,6 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // previous block. Replace it in the current editor (over which we have
   // control), join with current block value, then use this result for previous
   // block, delete current block
-  //
 
   const prev = prevBlock.value;
 
@@ -162,12 +160,8 @@ export function deconstructToVoltoBlocks(editor) {
     }
 
     const { properties, onChangeField, onSelectBlock } = editor.getBlockProps();
-    const formData = properties;
-    // const { formContext } = editor;
-    // const { contextData, setContextData } = formContext;
-    // const { formData } = contextData;
-    const blocksFieldname = getBlocksFieldname(formData);
-    const blocksLayoutFieldname = getBlocksLayoutFieldname(formData);
+    const blocksFieldname = getBlocksFieldname(properties);
+    const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
     const { index } = blockProps;
     let blocks = [];
@@ -195,9 +189,9 @@ export function deconstructToVoltoBlocks(editor) {
     const blockids = blocks.map((b) => b[0]);
 
     const layout = [
-      ...formData[blocksLayoutFieldname].items.slice(0, index),
+      ...properties[blocksLayoutFieldname].items.slice(0, index),
       ...blockids,
-      ...formData[blocksLayoutFieldname].items.slice(index),
+      ...properties[blocksLayoutFieldname].items.slice(index),
     ].filter((id) => id !== blockProps.block);
 
     // TODO: add the placeholder block, because we remove it (because we remove
@@ -208,14 +202,14 @@ export function deconstructToVoltoBlocks(editor) {
         blocksFieldname,
         omit(
           {
-            ...formData[blocksFieldname],
+            ...properties[blocksFieldname],
             ...fromEntries(blocks),
           },
           blockProps.block,
         ),
       );
       onChangeField(blocksLayoutFieldname, {
-        ...formData[blocksLayoutFieldname],
+        ...properties[blocksLayoutFieldname],
         items: layout,
       });
       onSelectBlock(blockids[blockids.length - 1]);

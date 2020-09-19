@@ -57,19 +57,6 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   Editor.deleteForward(editor, { unit: 'character' });
 }
 
-export function createSlateBlock(value, { index, onChangeBlock, onAddBlock }) {
-  return new Promise((resolve) => {
-    onAddBlock('slate', index + 1).then((id) => {
-      const options = {
-        '@type': 'slate',
-        value: JSON.parse(JSON.stringify(value)),
-        plaintext: serializeNodesToText(value),
-      };
-      onChangeBlock(id, options).then(() => resolve(id));
-    });
-  });
-}
-
 export function syncCreateSlateBlock(value) {
   const id = uuid();
   const block = {
@@ -95,24 +82,6 @@ export function createImageBlock(url, index, props) {
   });
 }
 
-// export function createSlateTableBlock(
-//   rows,
-//   index,
-//   { onChangeBlock, onAddBlock },
-// ) {
-//   const block = {
-//     '@type': 'slateTable',
-//     table: {
-//       rows,
-//     },
-//   };
-//   return new Promise((resolve) => {
-//     onAddBlock('slateTable', index + 1).then((id) => {
-//       onChangeBlock(id, block).then(resolve(id));
-//     });
-//   });
-// }
-
 export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blockProps = editor.getBlockProps();
 
@@ -137,12 +106,6 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
     onSelectBlock(blockId);
   });
-
-  // createSlateBlock(blockValue, blockProps).then((id) => {
-  //   const blockProps = editor.getBlockProps();
-  //   blockProps.saveSlateBlockSelection(id, 'start');
-  //   onSelectBlock(id);
-  // });
 };
 
 export function getNextVoltoBlock(index, properties) {

@@ -12,9 +12,8 @@ import {
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
-  deleteBlock,
-  changeBlock,
 } from '@plone/volto/helpers';
+import { deleteBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 
 /**
  * Joins the current block with the previous block to make a single block.

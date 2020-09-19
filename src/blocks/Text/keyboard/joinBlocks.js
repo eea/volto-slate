@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { Editor } from 'slate';
 import {
-  // isCursorInList,
   getPreviousVoltoBlock,
   getNextVoltoBlock,
   isCursorAtBlockStart,
@@ -23,45 +22,31 @@ import {
  * @param {KeyboardEvent} event
  */
 export function joinWithPreviousBlock({ editor, event }) {
-  // TODO: read block values not from editor properties, but from block
-  // properties
-
-  // The join takes place only when the cursor is at the beginning of the
-  // current block.
   if (!isCursorAtBlockStart(editor)) return;
 
-  // From here on, the cursor is surely at the start of the current block.
   const blockProps = editor.getBlockProps();
   const {
     block,
     index,
     saveSlateBlockSelection,
-    onChangeBlock,
-    onDeleteBlock,
     onSelectBlock,
     data,
+    properties,
+    onChangeField,
   } = blockProps;
 
-  // const { formContext } = editor;
-  // const formProperties = formContext.contextData.formData;
-  const { properties } = editor.getBlockProps();
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  // Get the previous Volto block.
   const [otherBlock = {}, otherBlockId] = getPreviousVoltoBlock(
     index,
     properties,
   );
 
-  // If the previous block is not Slate Text, do nothing.
-  if (otherBlock['@type'] !== 'slate') return;
+  // Don't join with required blocks
+  if (data?.required || otherBlock?.required || otherBlock['@type'] !== 'slate')
+    return;
 
-  // Can't join if the previous block is required
-  if (otherBlock?.required) return;
-
-  // Can't join/remove this block if it's required
-  if (data?.required) return;
-
-  // From here on, the previous block is surely Slate Text.
   event.stopPropagation();
   event.preventDefault();
 
@@ -70,24 +55,18 @@ export function joinWithPreviousBlock({ editor, event }) {
   // handled.
   const text = Editor.string(editor, []);
   if (!text) {
-    // we're dealing with an empty paragraph, no sense in merging
     const cursor = getBlockEndAsRange(otherBlock);
-    // Set the selection of the previous block to be collapsed at the end of the
-    // previous block.
-    saveSlateBlockSelection(otherBlockId, cursor);
+    const newFormData = deleteBlock(properties, block);
 
-    // TODO: is this setTimeout call necessary around the calls in its received
-    // function? In another place in this file we deleted it.
-    setTimeout(() => {
-      // Delete the current Volto block of type Slate Text that is just an empty
-      // paragraph
-      onDeleteBlock(block, false).then(() => {
-        // Then select the previous block.
-        onSelectBlock(otherBlockId);
-      });
-    }, 10);
+    ReactDOM.unstable_batchedUpdates(() => {
+      saveSlateBlockSelection(otherBlockId, cursor);
 
-    // Stop the handler and mark the event as handled.
+      onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+      onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+
+      onSelectBlock(otherBlockId);
+    });
+
     return true;
   }
 
@@ -95,37 +74,26 @@ export function joinWithPreviousBlock({ editor, event }) {
   // `editor` with the block before, `otherBlock`.
   mergeSlateWithBlockBackward(editor, otherBlock);
 
-  // TODO: save the old selection of the current block, in which the cursor is,
-  // in case we can undo to it. const selection =
-  // JSON.parse(JSON.stringify(editor.selection));
-
-  // Clone the Slate document's nodes to insert them later into the previous
-  // block.
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc Should probably save both undo
   // histories, so that the blocks are split, the undos can be restored??
 
-  // Set the selection of the previous block to be collapsed at the end of the
-  // previous block.
   const cursor = getBlockEndAsRange(otherBlock);
-  saveSlateBlockSelection(otherBlockId, cursor);
-
-  // Put the combined block contents into the previous block.
-  onChangeBlock(otherBlockId, {
+  const formData = changeBlock(properties, otherBlockId, {
     '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
     value: combined,
     plaintext: serializeNodesToText(combined || []),
-  }).then(() => {
-    // Delete the current block.
-    onDeleteBlock(block, false).then(() => {
-      // Focus (select) the previous block which now contains the contents of
-      // both blocks.
-      onSelectBlock(otherBlockId);
-    });
+  });
+  const newFormData = deleteBlock(formData, block);
+
+  ReactDOM.unstable_batchedUpdates(() => {
+    saveSlateBlockSelection(otherBlockId, cursor);
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(otherBlockId);
   });
 
-  // Mark the event as handled.
   return true;
 }
 
@@ -136,14 +104,8 @@ export function joinWithPreviousBlock({ editor, event }) {
  * @param {KeyboardEvent} event
  */
 export function joinWithNextBlock({ editor, event }) {
-  // TODO: read block values not from editor properties, but from block
-  // properties
-
-  // The join takes place only when the cursor is at the end of the current
-  // block.
   if (!isCursorAtBlockEnd(editor)) return;
 
-  // From here on, the cursor is surely at the end of the current block.
   const blockProps = editor.getBlockProps();
   const {
     block,
@@ -153,44 +115,23 @@ export function joinWithNextBlock({ editor, event }) {
     data,
   } = blockProps;
 
-  // const { formContext } = editor;
-  // const formProperties = formContext.contextData.formData;
   const { properties, onChangeField } = editor.getBlockProps();
-
-  // Get the next Volto block.
   const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
 
-  // If the next block is not Slate Text, do nothing. (TODO: use a constant
-  // instead of 'slate'.)
-  if (otherBlock['@type'] !== 'slate') return;
+  // Don't join with required blocks
+  if (data?.required || otherBlock?.required || otherBlock['@type'] !== 'slate')
+    return;
 
-  // Can't join/remove this block if it's required
-  if (data?.required) return;
-
-  // Can't join if the next block is required
-  if (otherBlock?.required) return;
-
-  // From here on, the next block is surely Slate Text.
   event.stopPropagation();
   event.preventDefault();
 
-  // The editor either contains characters or not, so we merge the current
-  // block's `editor` with the block after, `otherBlock`.
   mergeSlateWithBlockForward(editor, otherBlock);
 
-  // Store the selection of the block that has the text cursor.
-  const selection = JSON.parse(JSON.stringify(editor.selection));
-
-  // Clone the Slate document's nodes to insert them later into the next block.
+  const cursor = JSON.parse(JSON.stringify(editor.selection));
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc Should probably save both undo
   // histories, so that the blocks are split, the undos can be restored??
-
-  // The stored selection is set as the selection of the final (next) block
-  // because its contents begin with the contents of the block that has the text
-  // cursor.
-  const cursor = selection;
 
   const blocksFieldname = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);

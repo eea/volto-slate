@@ -1,18 +1,11 @@
-export const LinkSchema = {
-  title: 'Link',
-  // description:
-  //   'Specify the object to link to. It can be on this site already (Internal), an object you upload (Upload), from an external site (External), an email address (Email), or an anchor on this page (Anchor).',
+import externalSVG from '@plone/volto/icons/link.svg';
+import internalSVG from '@plone/volto/icons/nav.svg';
+import emailSVG from '@plone/volto/icons/email.svg';
+// import pageLinkSVG from '@plone/volto/icons/show-blocks.svg';
+
+export const EmailLinkSchema = {
+  title: 'Email address',
   fieldsets: [
-    {
-      id: 'internal',
-      title: 'Internal',
-      fields: ['internal_link'],
-    },
-    {
-      id: 'external',
-      title: 'External',
-      fields: ['external_link'],
-    },
     {
       id: 'email',
       title: 'Email',
@@ -20,16 +13,6 @@ export const LinkSchema = {
     },
   ],
   properties: {
-    internal_link: {
-      widget: 'object_browser',
-      title: 'Internal link',
-      default: [],
-    },
-    external_link: {
-      title: 'External URL',
-      description:
-        'URL can be relative within this site or absolute if it starts with http:// or https://',
-    },
     email_address: {
       title: 'Email address',
     },
@@ -41,19 +24,58 @@ export const LinkSchema = {
   required: [],
 };
 
-const LinkEditSchema = {
-  title: 'Insert link',
+export const InternalLinkSchema = {
+  title: 'Internal link',
   fieldsets: [
     {
-      id: 'default',
-      title: 'Internal link',
-      fields: ['link', 'target', 'title'],
+      id: 'internal',
+      title: 'Internal',
+      fields: ['internal_link'],
     },
   ],
   properties: {
-    link: {
-      widget: 'object',
-      schema: LinkSchema,
+    internal_link: {
+      widget: 'object_browser',
+      title: 'Internal link',
+      default: [],
+    },
+  },
+  required: [],
+};
+
+export const PageLinkSchema = {
+  title: 'Section in this page',
+  fieldsets: [
+    {
+      id: 'pagelink',
+      title: 'Link on this page',
+      fields: ['page_link'],
+    },
+  ],
+  properties: {
+    page_link: {
+      widget: 'object_browser',
+      title: 'Internal link',
+      default: [],
+    },
+  },
+  required: [],
+};
+
+export const ExternalLinkSchema = {
+  title: 'External link',
+  fieldsets: [
+    {
+      id: 'external',
+      title: 'External',
+      fields: ['external_link', 'target'],
+    },
+  ],
+  properties: {
+    external_link: {
+      title: 'External URL',
+      description:
+        'URL can be relative within this site or absolute if it starts with http:// or https://',
     },
     target: {
       title: 'Target',
@@ -64,10 +86,48 @@ const LinkEditSchema = {
         ['_top', 'Open in top frame (replaces all frames)'],
       ],
     },
-    title: {
-      title: 'Title',
+  },
+  required: [],
+};
+
+const LinkEditSchema = {
+  title: 'Insert link',
+  fieldsets: [
+    {
+      id: 'default',
+      title: 'Internal link',
+      fields: ['link'],
+    },
+  ],
+  properties: {
+    link: {
+      title: 'Link',
+      widget: 'object_by_type',
+      schemas: [
+        {
+          id: 'internal',
+          icon: internalSVG,
+          schema: InternalLinkSchema,
+        },
+        {
+          id: 'external',
+          icon: externalSVG,
+          schema: ExternalLinkSchema,
+        },
+        // {
+        //   id: 'pageLink',
+        //   icon: pageLinkSVG,
+        //   schema: PageLinkSchema,
+        // },
+        {
+          id: 'email',
+          icon: emailSVG,
+          schema: EmailLinkSchema,
+        },
+      ],
     },
   },
   required: [],
 };
+
 export default LinkEditSchema;

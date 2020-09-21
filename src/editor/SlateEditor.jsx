@@ -12,6 +12,7 @@ import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
+import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
@@ -180,85 +181,87 @@ class SlateEditor extends Component {
           selected,
         })}
       >
-        <Slate
-          editor={editor}
-          value={value || slate.defaultValue()}
-          onChange={this.handleChange}
-        >
-          {selected ? (
-            hasRangeSelection(editor) ? (
-              <SlateToolbar
-                selected={selected}
-                showToolbar={this.showToolbar}
-                setShowToolbar={(value) =>
-                  this.setState({ showToolbar: value })
-                }
-              />
+        <EditorContext.Provider value={editor}>
+          <Slate
+            editor={editor}
+            value={value || slate.defaultValue()}
+            onChange={this.handleChange}
+          >
+            {selected ? (
+              hasRangeSelection(editor) ? (
+                <SlateToolbar
+                  selected={selected}
+                  showToolbar={this.showToolbar}
+                  setShowToolbar={(value) =>
+                    this.setState({ showToolbar: value })
+                  }
+                />
+              ) : (
+                <SlateContextToolbar
+                  editor={editor}
+                  plugins={slate.contextToolbarButtons}
+                />
+              )
             ) : (
-              <SlateContextToolbar
-                editor={editor}
-                plugins={slate.contextToolbarButtons}
-              />
-            )
-          ) : (
-            ''
-          )}
-          <Editable
-            readOnly={false}
-            placeholder={placeholder}
-            renderElement={(props) => <Element {...props} />}
-            renderLeaf={(props) => <Leaf {...props} />}
-            decorate={this.multiDecorator}
-            spellCheck={false}
-            onDoubleClick={() => {
-              // console.log('dbl');
-            }}
-            onClick={() => {
-              this.setState({ update: true }); // just a dummy thing to trigger re-render
-            }}
-            onBlur={() => {
-              // console.log('blur', JSON.stringify(editor.selection));
-            }}
-            onMouseDown={() => {
-              this.mouseDown = true;
-            }}
-            onMouseUp={() => {
-              this.mouseDown = false;
-            }}
-            onKeyDown={(event) => {
-              let wasHotkey = false;
+              ''
+            )}
+            <Editable
+              readOnly={false}
+              placeholder={placeholder}
+              renderElement={(props) => <Element {...props} />}
+              renderLeaf={(props) => <Leaf {...props} />}
+              decorate={this.multiDecorator}
+              spellCheck={false}
+              onDoubleClick={() => {
+                // console.log('dbl');
+              }}
+              onClick={() => {
+                this.setState({ update: true }); // just a dummy thing to trigger re-render
+              }}
+              onBlur={() => {
+                // console.log('blur', JSON.stringify(editor.selection));
+              }}
+              onMouseDown={() => {
+                this.mouseDown = true;
+              }}
+              onMouseUp={() => {
+                this.mouseDown = false;
+              }}
+              onKeyDown={(event) => {
+                let wasHotkey = false;
 
-              for (const hotkey in slate.hotkeys) {
-                if (isHotkey(hotkey, event)) {
-                  event.preventDefault();
-                  const mark = slate.hotkeys[hotkey];
-                  toggleMark(editor, mark);
-                  wasHotkey = true;
+                for (const hotkey in slate.hotkeys) {
+                  if (isHotkey(hotkey, event)) {
+                    event.preventDefault();
+                    const mark = slate.hotkeys[hotkey];
+                    toggleMark(editor, mark);
+                    wasHotkey = true;
+                  }
                 }
-              }
 
-              if (wasHotkey) {
-                return;
-              }
+                if (wasHotkey) {
+                  return;
+                }
 
-              onKeyDown && onKeyDown({ editor, event });
-            }}
-          />
-          {selected &&
-            slate.persistentHelpers.map((Helper, i) => {
-              return <Helper key={i} editor={editor} />;
-            })}
-          {this.props.debug ? (
-            <ul>
-              <li>{selected ? 'selected' : 'no-selected'}</li>
-              <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
-              <li>live selection: {JSON.stringify(editor.selection)}</li>
-              <li>children: {JSON.stringify(editor.children)}</li>
-            </ul>
-          ) : (
-            ''
-          )}
-        </Slate>
+                onKeyDown && onKeyDown({ editor, event });
+              }}
+            />
+            {selected &&
+              slate.persistentHelpers.map((Helper, i) => {
+                return <Helper key={i} editor={editor} />;
+              })}
+            {this.props.debug ? (
+              <ul>
+                <li>{selected ? 'selected' : 'no-selected'}</li>
+                <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
+                <li>live selection: {JSON.stringify(editor.selection)}</li>
+                <li>children: {JSON.stringify(editor.children)}</li>
+              </ul>
+            ) : (
+              ''
+            )}
+          </Slate>
+        </EditorContext.Provider>
       </div>
     );
   }

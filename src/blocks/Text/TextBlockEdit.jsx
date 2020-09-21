@@ -7,7 +7,6 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
-import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
@@ -37,7 +36,6 @@ const TextBlockEdit = (props) => {
     data,
     detached,
     index,
-    onAddBlock,
     onChangeBlock,
     onMutateBlock,
     onSelectBlock,
@@ -62,19 +60,12 @@ const TextBlockEdit = (props) => {
 
   const prevReq = React.useRef(null);
 
-  const formContext = useFormStateContext();
-
   const withBlockProperties = React.useCallback(
     (editor) => {
-      editor.getBlockProps = () => {
-        return {
-          ...props,
-        };
-      };
-      editor.formContext = formContext;
+      editor.getBlockProps = () => props;
       return editor;
     },
-    [props, formContext],
+    [props],
   );
 
   const onDrop = React.useCallback(
@@ -117,33 +108,13 @@ const TextBlockEdit = (props) => {
     if (loaded && !loading && !prevLoaded && newImageId !== imageId) {
       const url = flattenToAppURL(imageId);
       setNewImageId(imageId);
-      createImageBlock('', index, {
-        onChangeBlock,
-        onAddBlock,
-      }).then((imageblockid) => {
-        const options = {
-          '@type': 'image',
-          url,
-        };
-        onChangeBlock(imageblockid, options);
-      });
+
+      createImageBlock(url, index, props);
     }
     prevReq.current = loaded;
-  }, [
-    loaded,
-    loading,
-    prevLoaded,
-    imageId,
-    newImageId,
-    index,
-    onChangeBlock,
-    onAddBlock,
-  ]);
+  }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
 
-  // const blockChooserRef = React.useRef();
-  /**
-   * This event handler unregisters itself after its first call.
-   */
+  // This event handler unregisters itself after its first call.
   const handleClickOutside = React.useCallback((e) => {
     const blockChooser = document.querySelector('.blocks-chooser');
     document.removeEventListener('mousedown', handleClickOutside, false);
@@ -162,7 +133,9 @@ const TextBlockEdit = (props) => {
           setTimeout(() => {
             Transforms.select(editor, selection);
             saveSlateBlockSelection(block, null);
-          }, 120); // without setTimeout, the join is not correct
+          }, 120);
+          // without setTimeout, the join is not correct. Slate uses internally
+          // a 100ms throttle, so setting to a bigger value seems to help
         }
       }
     },
@@ -232,7 +205,7 @@ const TextBlockEdit = (props) => {
           />
         )}
       </Dropzone>
-      {!detached && !data.plaintext && (
+      {!detached && !data.plaintext && !data.disableNewBlocks && (
         <Button
           basic
           icon

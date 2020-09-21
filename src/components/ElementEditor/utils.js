@@ -6,18 +6,17 @@ import { Editor, Transforms } from 'slate'; // Range,
  *
  * @param {Editor} editor The Slate editor for the context
  * @param {object} data Relevant data for this element
+ *
+ * @returns {boolean} true if an element was possibly inserted, false otherwise
+ * (currently we do not check here if the element was already applied to the
+ * editor)
  */
 export const _insertElement = (elementType) => (editor, data) => {
+  console.log('insert', data);
   if (editor.savedSelection) {
     const selection = editor.savedSelection;
 
     const rangeRef = Editor.rangeRef(editor, selection);
-
-    // console.log(
-    //   'insert',
-    //   JSON.stringify(selection),
-    //   JSON.stringify(rangeRef.current),
-    // );
 
     const res = Array.from(
       Editor.nodes(editor, {
@@ -37,7 +36,6 @@ export const _insertElement = (elementType) => (editor, data) => {
           match: path ? (n) => n.type === elementType : null,
         },
       );
-      // Transforms.collapse(editor, { edge: 'end' });
     } else {
       Transforms.wrapNodes(
         editor,
@@ -46,14 +44,13 @@ export const _insertElement = (elementType) => (editor, data) => {
       );
     }
 
-    // console.log('new selection', JSON.parse(JSON.stringify(rangeRef.current)));
     Transforms.select(editor, JSON.parse(JSON.stringify(rangeRef.current)));
     editor.savedSelection = JSON.parse(JSON.stringify(rangeRef.current));
-    // if (data) {
-    // If there's data, the footnote has been edited, otherwise it's a new footnote and we want to edit it
-    // Transforms.collapse(editor); // TODO; collapse to original offset
-    // }
+
+    return true;
   }
+
+  return false;
 };
 
 export const _unwrapElement = (elementType) => (editor) => {
@@ -67,20 +64,77 @@ export const _unwrapElement = (elementType) => (editor) => {
 
 export const _isActiveElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.savedSelection;
-  const [note] = Editor.nodes(editor, {
-    match: (n) => n.type === elementType,
-    at: selection,
-  });
+  let found = Array.from(
+    Editor.nodes(editor, {
+      match: (n) => n.type === elementType,
+      at: selection,
+    }) || [],
+  );
+  if (found.length) return true;
 
-  return !!note;
+  if (selection) {
+    const { path } = selection.anchor;
+    const isAtStart =
+      selection.anchor.offset === 0 && selection.focus.offset === 0;
+
+    if (isAtStart) {
+      found = Array.from(
+        Editor.previous(editor, {
+          at: path,
+          // match: (n) => n.type === MENTION,
+        }) || [],
+      );
+      if (found && found[0] && found[0].type === elementType) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 };
 
-export const _getActiveElement = (elementType) => (editor) => {
+export const _getActiveElement = (elementType) => (
+  editor,
+  direction = 'any',
+) => {
   const selection = editor.selection || editor.savedSelection;
+  let found = Array.from(
+    Editor.nodes(editor, {
+      match: (n) => n.type === elementType,
+      at: selection,
+    }),
+  );
+  if (found.length) return found[0];
 
-  const [node] = Editor.nodes(editor, {
-    match: (n) => n.type === elementType,
-    at: selection,
-  });
-  return node;
+  if (!selection) return false;
+
+  if (direction === 'any' || direction === 'backward') {
+    const { path } = selection.anchor;
+    const isAtStart =
+      selection.anchor.offset === 0 && selection.focus.offset === 0;
+
+    if (isAtStart) {
+      let found = Editor.previous(editor, {
+        at: path,
+      });
+      if (found && found[0].type === elementType) {
+        return found;
+      }
+    }
+  }
+
+  if (direction === 'any' || direction === 'forward') {
+    const { path } = selection.anchor;
+    const isAtStart =
+      selection.anchor.offset === 0 && selection.focus.offset === 0;
+
+    if (isAtStart) {
+      let found = Editor.next(editor, {
+        at: path,
+      });
+      if (found && found[0].type === elementType) {
+        return found;
+      }
+    }
+  }
 };

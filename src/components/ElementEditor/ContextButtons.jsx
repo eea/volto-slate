@@ -2,7 +2,6 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl'; // , defineMessages
 
-import editingSVG from '@plone/volto/icons/tag.svg';
 import clearSVG from '@plone/volto/icons/delete.svg';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
@@ -12,7 +11,13 @@ import { setPluginOptions } from 'volto-slate/actions';
  * Note: this is a weirder component, it should be called as a native function
  */
 export default (options) => (editor) => {
-  const { isActiveElement, unwrapElement, pluginId, messages } = options;
+  const {
+    isActiveElement,
+    unwrapElement,
+    pluginId,
+    messages,
+    toolbarButtonIcon,
+  } = options;
   const intl = useIntl();
   const dispatch = useDispatch();
   const showEditor = useSelector(
@@ -23,7 +28,7 @@ export default (options) => (editor) => {
     <React.Fragment key={pluginId}>
       <ToolbarButton
         title={intl.formatMessage(messages.edit)}
-        icon={editingSVG}
+        icon={toolbarButtonIcon}
         active={showEditor}
         aria-label={intl.formatMessage(messages.edit)}
         onMouseDown={() => {

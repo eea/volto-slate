@@ -153,7 +153,6 @@ export function deconstructToVoltoBlocks(editor) {
   const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
-    console.log('editor in deconstructToVoltoBlocks', editor);
     if (!editor?.children) return;
     if (editor.children.length === 1) {
       return resolve([blockProps.block]);
@@ -188,30 +187,28 @@ export function deconstructToVoltoBlocks(editor) {
 
     const blockids = blocks.map((b) => b[0]);
 
-    const layout = [
-      ...properties[blocksLayoutFieldname].items.slice(0, index),
-      ...blockids,
-      ...properties[blocksLayoutFieldname].items.slice(index),
-    ].filter((id) => id !== blockProps.block);
+    // TODO: add the placeholder block, because we remove it
+    // (when we remove the current block)
 
-    // TODO: add the placeholder block, because we remove it (because we remove
-    // the current block)
+    const blocksData = omit(
+      {
+        ...properties[blocksFieldname],
+        ...fromEntries(blocks),
+      },
+      blockProps.block,
+    );
+    const layoutData = {
+      ...properties[blocksLayoutFieldname],
+      items: [
+        ...properties[blocksLayoutFieldname].items.slice(0, index),
+        ...blockids,
+        ...properties[blocksLayoutFieldname].items.slice(index),
+      ].filter((id) => id !== blockProps.block),
+    };
 
     ReactDOM.unstable_batchedUpdates(() => {
-      onChangeField(
-        blocksFieldname,
-        omit(
-          {
-            ...properties[blocksFieldname],
-            ...fromEntries(blocks),
-          },
-          blockProps.block,
-        ),
-      );
-      onChangeField(blocksLayoutFieldname, {
-        ...properties[blocksLayoutFieldname],
-        items: layout,
-      });
+      onChangeField(blocksFieldname, blocksData);
+      onChangeField(blocksLayoutFieldname, layoutData);
       onSelectBlock(blockids[blockids.length - 1]);
       resolve(blockids);
       // or rather this?

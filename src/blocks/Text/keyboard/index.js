@@ -14,7 +14,7 @@ export * from './traverseBlocks';
  * them all until one of them returns `true`, moment when the rest of the
  * handlers are skipped.
  * @param {Editor} editor
- * @param {KeyboardEvent} event
+ * @param {KeyboardEvent} event A React synthetic keyboard event.
  */
 export function handleKey({ editor, event }) {
   const { slate } = settings;

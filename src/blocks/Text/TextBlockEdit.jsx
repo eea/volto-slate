@@ -47,6 +47,7 @@ const TextBlockEdit = (props) => {
     uploadedContent,
     defaultSelection,
     saveSlateBlockSelection,
+    allowedBlocks,
   } = props;
 
   const { slate } = settings;
@@ -227,6 +228,7 @@ const TextBlockEdit = (props) => {
             setAddNewBlockOpened(false);
           }}
           currentBlock={block}
+          allowedBlocks={allowedBlocks}
         />
       )}
     </>

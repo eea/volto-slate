@@ -58,8 +58,17 @@ export const Leaf = ({ children, ...rest }) => {
   );
 };
 
+const serializeData = (node) => {
+  return JSON.stringify({ type: node.type, data: node.data });
+};
+
 export const serializeNodes = (nodes) => {
   const editor = { children: nodes || [] };
+
+  // The reason for the closure is historic. We used to have key as the unique
+  // global counter (but now we use the path, which is just as good), then
+  // tried to pass the fake editor (to have access to the global content), but
+  // it doesn't help a lot in practice
 
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
@@ -81,6 +90,7 @@ export const serializeNodes = (nodes) => {
           element={node}
           mode="view"
           key={path}
+          data-slate-data={node.data ? serializeData(node) : null}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

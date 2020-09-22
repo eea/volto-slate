@@ -66,24 +66,9 @@ export function indentListItems({ editor, event }) {
  * volto-slate addon.
  * @param {string[]} newIds The IDs of the newly created Volto blocks.
  */
-const handleNewVoltoBlocks = (editor, [newId1, newId2, newId3]) => {
-  // TODO: (done?) rewrite to benefit from FormContext and Form promises
-  let newId;
-  // If there is a 3rd new block
-  if (newId3) {
-    // Set it to be selected (focused) with the call below
-    newId = newId2;
-  } else {
-    // If there are just 1-2 new blocks
-    newId = newId1; // TODO: or newId2 in some situations?
-  }
-  // Get the Edit component's props as received from Volto the last time it was
-  // rendered.
+const handleNewVoltoBlocks = (editor, blockIds) => {
   const props = editor.getBlockProps();
-  // Unfortunately, until Volto's on* methods don't have Promise support, we
-  // have to use a setTimeout with a bigger value, to be able to properly select
-  // the proper block
-  setTimeout(() => props.onSelectBlock(newId), 10);
+  props.onSelectBlock(blockIds[blockIds.length - 1]);
 };
 
 /**

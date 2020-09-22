@@ -21,9 +21,6 @@ export const isImageUrl = (url) => {
 export const onImageLoad = (editor, reader) => () => {
   const data = reader.result;
 
-  // TODO: we need an orchestrator at redux level that would get the
-  // "create image block with this content" action and implement it.
-
   // if (url) insertImage(editor, url);
   const fields = data.match(/^data:(.*);(.*),(.*)$/);
   const blockProps = editor.getBlockProps();

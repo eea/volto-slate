@@ -15,7 +15,9 @@ export const deserialize = (editor, el) => {
     return '\n';
   }
 
-  // console.log('n', `-${el.nodeValue}-`, el.nodeType, el.nodeName);
+  if (el.getAttribute('data-slate-data')) {
+    return typeDeserialize(editor, el);
+  }
 
   const { nodeName } = el;
 
@@ -26,18 +28,10 @@ export const deserialize = (editor, el) => {
   return deserializeChildren(el, editor); // fallback deserializer
 };
 
-export const preTagDeserializer = (editor, el) => {
-  // Based on Slate example implementation. Replaces <pre> tags with <code>.
-  // Comment: I don't know how good of an idea is this. I'd rather have two
-  // separate formats: "preserve whitespace" and "code". This feels like a hack
-  const { nodeName } = el;
-  let parent = el;
-
-  if (el.childNodes[0] && el.childNodes[0].nodeName === 'CODE') {
-    parent = el.childNodes[0];
-  }
-
-  return blockTagDeserializer(nodeName)(editor, parent);
+export const typeDeserialize = (editor, el) => {
+  const jsData = el.getAttribute('data-slate-data');
+  const { type, data } = JSON.parse(jsData);
+  return jsx('element', { type, data }, deserializeChildren(el, editor));
 };
 
 export const deserializeChildren = (parent, editor) =>
@@ -97,4 +91,18 @@ export const bTagDeserializer = (editor, el) => {
   }
 
   return jsx('element', { type: 'b' }, deserializeChildren(el, editor));
+};
+
+export const preTagDeserializer = (editor, el) => {
+  // Based on Slate example implementation. Replaces <pre> tags with <code>.
+  // Comment: I don't know how good of an idea is this. I'd rather have two
+  // separate formats: "preserve whitespace" and "code". This feels like a hack
+  const { nodeName } = el;
+  let parent = el;
+
+  if (el.childNodes[0] && el.childNodes[0].nodeName === 'CODE') {
+    parent = el.childNodes[0];
+  }
+
+  return blockTagDeserializer(nodeName)(editor, parent);
 };

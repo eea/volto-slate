@@ -1,5 +1,6 @@
 import { Editor, Text, Transforms, Block } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
+import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 import { settings } from '~/config';
 
 /**
@@ -22,8 +23,9 @@ function createBlock(textNode) {
 export const insertData = (editor) => {
   const { insertData } = editor;
 
+  // console.log('insertData extension here ');
   editor.insertData = (data) => {
-    console.log('data', data);
+    console.log('data in custom editor.insertData', data);
     // const text = data.getData('text/rtf');
     // console.log('text', text);
     const html = data.getData('text/html');
@@ -43,6 +45,7 @@ export const insertData = (editor) => {
       console.log('parsed body', parsed);
       console.log('parse fragment', fragment);
 
+      // If there is no text in the editor
       if (!Editor.string(editor, [])) {
         if (
           Array.isArray(fragment) &&
@@ -53,7 +56,7 @@ export const insertData = (editor) => {
         }
 
         // Delete the empty placeholder paragraph, if we can
-        Transforms.deselect(editor);
+        // Transforms.deselect(editor);
         Transforms.removeNodes(editor);
 
         // Wrap the text nodes of the fragment in paragraphs
@@ -74,7 +77,9 @@ export const insertData = (editor) => {
       // Transforms.insertFragment(editor, fragment);
 
       Transforms.insertNodes(editor, fragment);
-      Transforms.deselect(editor); // Solves a problem when pasting images
+
+      // TODO: This used to solve a problem when pasting images. What is it?
+      // Transforms.deselect(editor);
 
       return;
     }

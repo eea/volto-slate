@@ -60,6 +60,15 @@ export const breakList = (editor) => {
       return; // applies default behaviour, as defined in insertBreak.js extension
     }
 
+    if (parent) {
+      const blockProps = editor.getBlockProps();
+      const { data } = blockProps;
+      // Don't add new block if not allowed
+      if (data?.disableNewBlocks) {
+        return insertBreak();
+      }
+    }
+
     // TODO: while this is interesting as a tech demo, I'm not sure that this is
     // what we really want (break lists in two separate blocks)
 

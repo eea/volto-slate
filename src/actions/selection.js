@@ -7,7 +7,7 @@ import { SAVE_SLATE_BLOCK_SELECTION } from 'volto-slate/constants';
  * @param {string} blockid The ID of the block that should have its selection
  * saved.
  * @param {object} selection An object implementing the Slate's `Range`
- * interface.
+ * interface or a string: 'start', 'end'.
  *
  * @todo Clarify here if the `selection` parameter can be `null` or `undefined`.
  *

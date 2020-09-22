@@ -1,4 +1,4 @@
-import { Transforms, Editor } from 'slate';
+import { Transforms } from 'slate';
 import { settings } from '~/config';
 import {
   isCursorInList,
@@ -13,17 +13,10 @@ import {
  * @param {string[]} newIds The IDs of the newly created Volto blocks.
  */
 const handleNewVoltoBlocks = (editor, newIds) => {
-  // TODO: (done?) rewrite to benefit from FormContext and Form promises
-
   // Get the Edit component's props as received from Volto the last time it was
   // rendered.
   const props = editor.getBlockProps();
-  // Unfortunately, until Volto's on* methods don't have Promise support, we
-  // have to use a setTimeout with a bigger value, to be able to properly select
-  // the proper block
-  setTimeout(() => {
-    props.onSelectBlock(newIds[0]);
-  }, 100);
+  props.onSelectBlock(newIds[0]);
 };
 
 /**
@@ -39,6 +32,11 @@ export function backspaceInList({ editor, event }) {
   // If the cursor is at list block start, do something different:
   if (isCursorAtListBlockStart(editor)) {
     const { slate } = settings;
+    const blockProps = editor.getBlockProps();
+    const { data } = blockProps;
+
+    // Can't split if block is required
+    if (data?.required) return;
 
     // Raise all LI-s as direct children of the editor.
     Transforms.liftNodes(editor, {

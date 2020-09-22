@@ -24,7 +24,7 @@ export default function install(config) {
     view: TableView,
     edit: TableEdit,
     restricted: false,
-    mostUsed: true,
+    mostUsed: false,
     blockHasOwnFocusManagement: true,
     sidebarTab: 1,
     security: {

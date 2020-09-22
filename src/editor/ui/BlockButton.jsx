@@ -13,7 +13,7 @@ const BlockButton = ({ format, icon, ...props }) => {
     (event) => {
       event.preventDefault();
       toggleBlock(editor, format);
-      console.log('toggled', format, editor);
+      // console.log('toggled', format, editor);
     },
     [editor, format], // , isActive
   );

@@ -7,15 +7,15 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
-import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { createImageBlock } from 'volto-slate/utils';
+import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
 import { uploadContent } from 'volto-slate/actions';
+import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
@@ -28,13 +28,14 @@ import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
+const DEBUG = false;
+
 const TextBlockEdit = (props) => {
   const {
     block,
     data,
     detached,
     index,
-    onAddBlock,
     onChangeBlock,
     onMutateBlock,
     onSelectBlock,
@@ -44,6 +45,8 @@ const TextBlockEdit = (props) => {
     uploadRequest,
     uploadContent,
     uploadedContent,
+    defaultSelection,
+    saveSlateBlockSelection,
   } = props;
 
   const { slate } = settings;
@@ -57,19 +60,12 @@ const TextBlockEdit = (props) => {
 
   const prevReq = React.useRef(null);
 
-  const formContext = useFormStateContext();
-
   const withBlockProperties = React.useCallback(
     (editor) => {
-      editor.getBlockProps = () => {
-        return {
-          ...props,
-        };
-      };
-      editor.formContext = formContext;
+      editor.getBlockProps = () => props;
       return editor;
     },
-    [props, formContext],
+    [props],
   );
 
   const onDrop = React.useCallback(
@@ -112,39 +108,39 @@ const TextBlockEdit = (props) => {
     if (loaded && !loading && !prevLoaded && newImageId !== imageId) {
       const url = flattenToAppURL(imageId);
       setNewImageId(imageId);
-      createImageBlock('', index, {
-        onChangeBlock,
-        onAddBlock,
-      }).then((imageblockid) => {
-        const options = {
-          '@type': 'image',
-          url,
-        };
-        onChangeBlock(imageblockid, options);
-      });
+
+      createImageBlock(url, index, props);
     }
     prevReq.current = loaded;
-  }, [
-    loaded,
-    loading,
-    prevLoaded,
-    imageId,
-    newImageId,
-    index,
-    onChangeBlock,
-    onAddBlock,
-  ]);
+  }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
 
-  // const blockChooserRef = React.useRef();
-  /**
-   * This event handler unregisters itself after its first call.
-   */
+  // This event handler unregisters itself after its first call.
   const handleClickOutside = React.useCallback((e) => {
     const blockChooser = document.querySelector('.blocks-chooser');
     document.removeEventListener('mousedown', handleClickOutside, false);
     if (doesNodeContainClick(blockChooser, e)) return;
     setAddNewBlockOpened(false);
   }, []);
+
+  const handleUpdate = React.useCallback(
+    (editor) => {
+      // defaultSelection is used for things such as "restoring" the selection
+      // when joining blocks or moving the selection to block start on block
+      // split
+      if (defaultSelection) {
+        const selection = parseDefaultSelection(editor, defaultSelection);
+        if (selection) {
+          setTimeout(() => {
+            Transforms.select(editor, selection);
+            saveSlateBlockSelection(block, null);
+          }, 120);
+          // without setTimeout, the join is not correct. Slate uses internally
+          // a 100ms throttle, so setting to a bigger value seems to help
+        }
+      }
+    },
+    [defaultSelection, block, saveSlateBlockSelection],
+  );
 
   return (
     <>
@@ -154,6 +150,7 @@ const TextBlockEdit = (props) => {
         <MarkdownIntroduction />
       </SidebarPortal>
 
+      {DEBUG ? <div>{block}</div> : ''}
       <Dropzone
         disableClick
         onDrop={onDrop}
@@ -184,6 +181,8 @@ const TextBlockEdit = (props) => {
             value={value}
             block={block}
             onFocus={() => onSelectBlock(block)}
+            onUpdate={handleUpdate}
+            debug={DEBUG}
             onChange={(value, selection) => {
               onChangeBlock(block, {
                 ...data,
@@ -206,7 +205,7 @@ const TextBlockEdit = (props) => {
           />
         )}
       </Dropzone>
-      {!detached && !data.plaintext && (
+      {!detached && !data.plaintext && !data.disableNewBlocks && (
         <Button
           basic
           icon
@@ -236,7 +235,11 @@ const TextBlockEdit = (props) => {
 
 export default connect(
   (state, props) => {
+    const blockId = props.block;
     return {
+      defaultSelection: blockId
+        ? state.slate_block_selections?.[blockId]
+        : null,
       uploadRequest: state.upload_content?.[props.block]?.upload || {},
       uploadedContent: state.upload_content?.[props.block]?.data || {},
     };

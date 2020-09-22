@@ -16,7 +16,9 @@ export const withInsertData = (editor) => {
   const { insertData } = editor;
 
   editor.insertData = (data) => {
+    // debugger;
     insertData(data);
+
     deconstructToVoltoBlocks(editor);
   };
 

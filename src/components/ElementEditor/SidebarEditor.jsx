@@ -27,7 +27,9 @@ const SidebarEditor = (props) => {
       dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
   }, [active, dispatch, pluginId]);
 
-  return showEditor && active ? (
+  editor.isSidebarOpen = showEditor && active;
+
+  return editor.isSidebarOpen ? (
     <SidebarPopup open={true}>
       <PluginEditor {...props} />
     </SidebarPopup>

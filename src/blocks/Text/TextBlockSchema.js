@@ -1,5 +1,5 @@
 const Schema = {
-  title: 'Block settings',
+  title: 'Text block settings',
   fieldsets: [
     {
       id: 'default',

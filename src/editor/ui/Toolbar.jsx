@@ -23,6 +23,11 @@ const Toolbar = ({ toggleButton, children }) => {
       return;
     }
 
+    if (editor.isSidebarOpen) {
+      el.removeAttribute('style');
+      return;
+    }
+
     const domSelection = window.getSelection();
     if (domSelection.rangeCount < 1) {
       // don't do anything here, this happens when opening a focus-stealing

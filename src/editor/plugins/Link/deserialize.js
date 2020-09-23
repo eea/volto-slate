@@ -9,8 +9,6 @@ export const linkDeserializer = (editor, el) => {
     .map((el) => deserialize(editor, el))
     .flat();
 
-  console.log('link', el, children);
-
   const attrs = {
     type: LINK,
     url: el.getAttribute('href'),

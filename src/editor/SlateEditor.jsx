@@ -11,7 +11,7 @@ import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
+import { hasRangeSelection } from 'volto-slate/utils';
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
@@ -30,7 +30,11 @@ class SlateEditor extends Component {
     this.setSavedSelection = this.setSavedSelection.bind(this);
     this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
+    // private field for the getSavedSelection and setSavedSelection methods
     this.savedSelection = null;
+
+    // whether a mouse button is pressed or not (takes into account just mouse
+    // down and mouse up events received inside the Editable)
     this.mouseDown = null;
 
     this.state = {

@@ -11,6 +11,7 @@ import {
 import messages from './messages';
 import ToolbarButton from './ToolbarButton';
 import tagSVG from '@plone/volto/icons/tag.svg';
+import SchemaProvider from './SchemaProvider';
 
 export const makeInlineElementPlugin = (options) => {
   const { elementType, isInlineElement, pluginId, title = 'Element' } = options;
@@ -24,6 +25,10 @@ export const makeInlineElementPlugin = (options) => {
     toolbarButtonIcon: tagSVG,
     title,
     extensions: [],
+
+    // a component that should provide a schema as a render prop
+    schemaProvider: SchemaProvider,
+    // schema that can be used to create the edit form for this component
     // editSchema,
 
     // A generic "validation" method, just finds that a "positive" value

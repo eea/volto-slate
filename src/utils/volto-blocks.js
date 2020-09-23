@@ -97,6 +97,7 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
 
   const blocksFieldname = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+  // console.log('layout', blocksLayoutFieldname, newFormData);
 
   ReactDOM.unstable_batchedUpdates(() => {
     blockProps.saveSlateBlockSelection(blockId, 'start');
@@ -210,9 +211,9 @@ export function deconstructToVoltoBlocks(editor) {
       onChangeField(blocksFieldname, blocksData);
       onChangeField(blocksLayoutFieldname, layoutData);
       onSelectBlock(blockids[blockids.length - 1]);
-      resolve(blockids);
+      // resolve(blockids);
       // or rather this?
-      // Promise.resolve().then(resolve(blockids));
+      Promise.resolve().then(resolve(blockids));
     });
   });
 }

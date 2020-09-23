@@ -12,21 +12,22 @@ export default function install(config) {
     'styleMenu',
   ];
 
-  // The style menu definitions are set in the array that follows (from any
+  // The style menu definitions are set in the arrays that follow (from any
   // addon). Examples:
-  // [
-  //   { cssClass: 'green-block-text', isBlock: true, label: 'Green Text' },
-  //   {
-  //     cssClass: 'underline-block-text',
-  //     isBlock: true,
-  //     label: 'Underline Text',
-  //   },
-  //   { cssClass: 'cool-inline-text', isBlock: false, label: 'Cool Inline Text' },
-  //   { cssClass: 'red-inline-text', isBlock: false, label: 'Red Inline Text' },
+  // config.settings.slate.styleMenu.inlineStyles = [
+  //   ...config.settings.slate.styleMenu.inlineStyles,
+  //   { cssClass: 'cool-inline-text', label: 'Cool Inline Text' },
+  //   { cssClass: 'red-inline-text', label: 'Red Inline Text' },
   // ];
-  slate.styleMenuDefinitions = slate.styleMenuDefinitions
-    ? slate.styleMenuDefinitions
-    : [];
+  // config.settings.slate.styleMenu.blockStyles = [
+  //   ...config.settings.slate.styleMenu.blockStyles,
+  //   { cssClass: 'green-block-text', label: 'Green Text' },
+  //   { cssClass: 'underline-block-text', label: 'Underline Text' },
+  // ];
+  slate.styleMenu = {
+    inlineStyles: [],
+    blockStyles: [],
+  };
 
   return config;
 }

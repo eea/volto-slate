@@ -122,9 +122,14 @@ const StylingsButton = (props) => {
   const intl = useIntl();
 
   // Converting the settings to a format that is required by react-select.
-  const rawOpts = settings.slate.styleMenuDefinitions.map((def) => {
-    return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
-  });
+  const rawOpts = [
+    ...settings.slate.styleMenu.inlineStyles.map((def) => {
+      return { value: def.cssClass, label: def.label, isBlock: false };
+    }),
+    ...settings.slate.styleMenu.blockStyles.map((def) => {
+      return { value: def.cssClass, label: def.label, isBlock: true };
+    }),
+  ];
 
   // TODO: i18n for the two strings used below
   const opts = [

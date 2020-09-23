@@ -57,7 +57,7 @@ export default (props) => {
   const SchemaProvider = schemaProvider ? schemaProvider : BaseSchemaProvider;
 
   return (
-    <SchemaProvider {...props}>
+    <SchemaProvider {...props} formData={formData}>
       {(schema) => (
         <InlineForm
           schema={schema}

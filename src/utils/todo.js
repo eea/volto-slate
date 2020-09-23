@@ -17,14 +17,6 @@ export function insertEmptyListItem(editor) {
   Transforms.insertNodes(editor, createEmptyListItem());
 }
 
-export function getValueFromEditor(editor) {
-  const nodes = Editor.fragment(editor, []);
-
-  const value = JSON.parse(JSON.stringify(nodes || [createEmptyParagraph()]));
-
-  return { value, nodes };
-}
-
 export function getCollapsedRangeAtBeginningOfEditor(editor) {
   return {
     anchor: { path: [], offset: 0 },

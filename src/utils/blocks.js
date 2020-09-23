@@ -18,7 +18,7 @@ export const isBlockActive = (editor, format) => {
   return !!match;
 };
 
-export const toggleFormat = (editor, format) => {
+const toggleFormat = (editor, format) => {
   const { slate } = settings;
   const isActive = isBlockActive(editor, format);
   const type = isActive ? slate.defaultBlockType : format;

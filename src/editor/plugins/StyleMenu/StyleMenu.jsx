@@ -155,81 +155,81 @@ const StylingsButton = (props) => {
     }
   }
 
-  return (
-    <div>
-      <Select
-        options={opts}
-        value={toSelect}
-        isMulti={true}
-        styles={selectStyles}
-        placeholder="No Style"
-        hideSelectedOptions={false}
-        noOptionsMessage={({ inputValue }) =>
-          intl.formatMessage(messages.allStylesApplied)
-        }
-        components={{
-          // Shows the most relevant part of the selection as a simple string of text.
-          MultiValue: (props) => {
-            const val = props.getValue();
+  return rawOpts.length > 0 ? (
+    <Select
+      options={opts}
+      value={toSelect}
+      isMulti={true}
+      styles={selectStyles}
+      placeholder="No Style"
+      hideSelectedOptions={false}
+      noOptionsMessage={({ inputValue }) =>
+        intl.formatMessage(messages.allStylesApplied)
+      }
+      components={{
+        // Shows the most relevant part of the selection as a simple string of text.
+        MultiValue: (props) => {
+          const val = props.getValue();
 
-            if (props.index === 0) {
-              const cond = val.length > 1;
-              const lbl = val[props.index].label + '...';
-              const lbl2 = val[props.index].label;
-              return <>{cond ? lbl : lbl2}</>;
-            }
-
-            return '';
-          },
-        }}
-        theme={(theme) => {
-          return {
-            ...theme,
-            colors: {
-              ...theme.colors,
-              primary: '#826A6AFF', // 100% opaque @brown
-              primary75: '#826A6Abf', // 75% opaque @brown
-              primary50: '#826A6A7f', // 50% opaque @brown
-              primary25: '#826A6A40', // 25% opaque @brown
-            },
-          };
-        }}
-        onChange={(selItem, meta) => {
-          // console.log('meta', meta);
-
-          for (const item of rawOpts) {
-            const isRequested = selItem.includes(item);
-            const isActive =
-              isBlockStyleActive(editor, item.value) ||
-              isInlineStyleActive(editor, item.value);
-
-            if (isRequested && isActive) {
-              // nothing to do
-            } else if (isRequested && !isActive) {
-              if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
-                toggleBlockStyle(editor, item.value);
-              } else if (
-                !item.isBlock &&
-                !isInlineStyleActive(editor, item.value)
-              ) {
-                toggleInlineStyle(editor, item.value);
-              }
-            } else if (!isRequested && isActive) {
-              if (item.isBlock && isBlockStyleActive(editor, item.value)) {
-                toggleBlockStyle(editor, item.value);
-              } else if (
-                !item.isBlock &&
-                isInlineStyleActive(editor, item.value)
-              ) {
-                toggleInlineStyle(editor, item.value);
-              }
-            } else if (!isRequested && !isActive) {
-              // nothing to do
-            }
+          if (props.index === 0) {
+            const cond = val.length > 1;
+            const lbl = val[props.index].label + '...';
+            const lbl2 = val[props.index].label;
+            return <>{cond ? lbl : lbl2}</>;
           }
-        }}
-      ></Select>
-    </div>
+
+          return '';
+        },
+      }}
+      theme={(theme) => {
+        return {
+          ...theme,
+          colors: {
+            ...theme.colors,
+            primary: '#826A6AFF', // 100% opaque @brown
+            primary75: '#826A6Abf', // 75% opaque @brown
+            primary50: '#826A6A7f', // 50% opaque @brown
+            primary25: '#826A6A40', // 25% opaque @brown
+          },
+        };
+      }}
+      onChange={(selItem, meta) => {
+        // console.log('meta', meta);
+
+        for (const item of rawOpts) {
+          const isRequested = selItem.includes(item);
+          const isActive =
+            isBlockStyleActive(editor, item.value) ||
+            isInlineStyleActive(editor, item.value);
+
+          if (isRequested && isActive) {
+            // nothing to do
+          } else if (isRequested && !isActive) {
+            if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
+              toggleBlockStyle(editor, item.value);
+            } else if (
+              !item.isBlock &&
+              !isInlineStyleActive(editor, item.value)
+            ) {
+              toggleInlineStyle(editor, item.value);
+            }
+          } else if (!isRequested && isActive) {
+            if (item.isBlock && isBlockStyleActive(editor, item.value)) {
+              toggleBlockStyle(editor, item.value);
+            } else if (
+              !item.isBlock &&
+              isInlineStyleActive(editor, item.value)
+            ) {
+              toggleInlineStyle(editor, item.value);
+            }
+          } else if (!isRequested && !isActive) {
+            // nothing to do
+          }
+        }
+      }}
+    ></Select>
+  ) : (
+    ''
   );
 };
 

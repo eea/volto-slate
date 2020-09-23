@@ -48,6 +48,7 @@ const TextBlockEdit = (props) => {
     defaultSelection,
     saveSlateBlockSelection,
     allowedBlocks,
+    formDescription,
   } = props;
 
   const { slate } = settings;
@@ -143,12 +144,24 @@ const TextBlockEdit = (props) => {
     [defaultSelection, block, saveSlateBlockSelection],
   );
 
+  // Get editing instructions from block settings or props
+  let instructions = data?.instructions?.data || data?.instructions;
+  if (!instructions || instructions === '<p><br/></p>') {
+    instructions = formDescription;
+  }
+
   return (
     <>
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
-        <ShortcutListing />
-        <MarkdownIntroduction />
+        {instructions ? (
+          <div dangerouslySetInnerHTML={{ __html: instructions }} />
+        ) : (
+          <>
+            <ShortcutListing />
+            <MarkdownIntroduction />
+          </>
+        )}
       </SidebarPortal>
 
       {DEBUG ? <div>{block}</div> : ''}

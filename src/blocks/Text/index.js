@@ -28,6 +28,9 @@ export TextBlockView from './TextBlockView';
 export TextBlockEdit from './TextBlockEdit';
 export TextBlockSchema from './TextBlockSchema';
 
+/**
+ * Receives the Volto config object, changes it and returns it changed.
+ */
 export default (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
@@ -62,7 +65,7 @@ export default (config) => {
         goDown, // Select next block
       ],
       Tab: [
-        indentListItems, // <tab> and <c-tab> behaviour for list items
+        indentListItems, // <tab> and <c-tab> behaviour (eventually w/ Shift too) for list items
       ],
     },
 
@@ -78,6 +81,7 @@ export default (config) => {
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
 
+  // register the 'slate' block type in Volto
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',

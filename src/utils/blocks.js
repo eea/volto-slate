@@ -48,7 +48,7 @@ export const toggleInlineFormat = (editor, format) => {
   Transforms.wrapNodes(editor, block, { split: true });
 };
 
-export const changeBlockToList = (editor, format) => {
+const changeBlockToList = (editor, format) => {
   const { slate } = settings;
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === slate.listItemType,
@@ -68,7 +68,7 @@ export const changeBlockToList = (editor, format) => {
  * Applies a block format unto a list item. Will split the list and deconstruct the
  * block
  */
-export const toggleFormatAsListItem = (editor, format) => {
+const toggleFormatAsListItem = (editor, format) => {
   const { slate } = settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
@@ -85,7 +85,7 @@ export const toggleFormatAsListItem = (editor, format) => {
 /*
  * Toggles between list types by exploding the block
  */
-export const switchListType = (editor, format) => {
+const switchListType = (editor, format) => {
   const { slate } = settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),

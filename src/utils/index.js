@@ -1,6 +1,5 @@
 export * from './blocks';
 export * from './editor';
-export * from './hacks';
 export * from './internals';
 export * from './lists';
 export * from './marks';

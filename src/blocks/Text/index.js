@@ -1,6 +1,7 @@
 import codeSVG from '@plone/volto/icons/code.svg';
 import TextBlockView from './TextBlockView';
 import TextBlockEdit from './TextBlockEdit';
+import TextBlockSchema from './TextBlockSchema';
 
 import {
   goDown,
@@ -25,6 +26,7 @@ import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
 
 export TextBlockView from './TextBlockView';
 export TextBlockEdit from './TextBlockEdit';
+export TextBlockSchema from './TextBlockSchema';
 
 export default (config) => {
   config.settings.slate = {
@@ -83,6 +85,7 @@ export default (config) => {
     group: 'text',
     view: TextBlockView,
     edit: TextBlockEdit,
+    schema: TextBlockSchema,
     restricted: false,
     mostUsed: false,
     blockHasOwnFocusManagement: true,

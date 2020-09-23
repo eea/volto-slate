@@ -7,12 +7,13 @@ import { settings } from '~/config';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = ({ element, ...rest }) => {
+export const Element = ({ element, attributes, ...rest }) => {
   const { slate } = settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  return <El element={element} {...rest} />;
+  const attrs = { ...attributes, className: element.styleName };
+  return <El element={element} {...rest} attributes={{ ...attrs }} />;
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -25,10 +26,18 @@ export const Leaf = ({ children, ...rest }) => {
       : acc;
   }, children);
 
-  const klass = cx({
+  const obj = {
     [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
     'highlight-selection': mode !== 'view' && leaf.isSelection,
-  });
+  };
+
+  for (const prop in leaf) {
+    if (prop.startsWith('style-')) {
+      obj[prop.substring(6)] = true;
+    }
+  }
+
+  const klass = cx(obj);
 
   return mode === 'view' ? (
     typeof children === 'string' ? (
@@ -39,17 +48,17 @@ export const Leaf = ({ children, ...rest }) => {
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
-                {t}
+                {<span className={klass}>{t}</span>}
                 <br />
               </>
             ) : (
-              t
+              <span className={klass}>{t}</span>
             )}
           </React.Fragment>
         );
       })
     ) : (
-      children
+      <span className={klass}>{children}</span>
     )
   ) : (
     <span {...attributes} className={klass}>

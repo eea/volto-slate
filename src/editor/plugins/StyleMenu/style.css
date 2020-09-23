@@ -1,0 +1,16 @@
+.green-block-text {
+  color: green;
+}
+
+.underline-block-text {
+  text-decoration: underline;
+}
+
+.cool-inline-text {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.red-inline-text {
+  color: red;
+}

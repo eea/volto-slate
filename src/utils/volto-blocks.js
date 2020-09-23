@@ -99,12 +99,12 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
   // console.log('layout', blocksLayoutFieldname, newFormData);
 
-  // blockProps.saveSlateBlockSelection(blockId, 'start');
-  onChangeField(blocksFieldname, newFormData[blocksFieldname]);
-  onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
-  // onSelectBlock(blockId);
-  // ReactDOM.unstable_batchedUpdates(() => {
-  // });
+  ReactDOM.unstable_batchedUpdates(() => {
+    blockProps.saveSlateBlockSelection(blockId, 'start');
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(blockId);
+  });
 };
 
 export function getNextVoltoBlock(index, properties) {

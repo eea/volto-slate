@@ -60,9 +60,12 @@ export function goUp({ editor, event }) {
     // create a collapsed Range that represents the previously created Point
     const selection = { anchor: point, focus: point };
 
-    // when the user returns to the current editor, after the focus goes to the
-    // previous editor, the selection that was will be remembered because of
-    // this call
+    // 1. the selection is remembered by the following call
+    // 2. the focus goes to the previous editor because of the last return
+    //    statement
+    // 3. the user returns to the current editor by focusing it (w/ mouse or
+    //    keyboard)
+    // 4. the previously saved selection at (1) is restored
     props.saveSlateBlockSelection(id, selection);
 
     // focus the previous block
@@ -83,25 +86,51 @@ export function goUp({ editor, event }) {
 export function goDown({ editor, event }) {
   if (isCursorAtBlockEnd(editor)) {
     const props = editor.getBlockProps();
+
+    // onFocusNextBlock - focuses the next block
     const { onFocusNextBlock, block, blockNode } = props;
 
     // const { formContext } = editor;
     // const properties = formContext.contextData.formData;
-    const { properties } = editor.getBlockProps();
+    const { properties } = props;
 
     const next = getNextVoltoBlock(props.index, properties);
-    if (!next || next[0]?.['@type'] !== 'slate')
+    // if there isn't a directly following Volto block with type 'slate'
+    if (!next || next[0]?.['@type'] !== 'slate') {
+      // focus the next block as usual
       return onFocusNextBlock(block, blockNode.current);
+    }
 
+    // here it is assured that the next block exists and is of type 'slate'
+
+    // get its data and its ID
     const [slateBlock, id] = next;
+
+    // get the last node entry in the editor of the next block
     const pseudoEditor = { children: slateBlock.value };
     const match = Node.first(pseudoEditor, []);
+
+    // if there is no such entry just focus the next block which is empty
     if (!match) return onFocusNextBlock(block, blockNode.current);
 
-    const path = match[1];
+    // get the node path
+    const [, path] = match;
+
+    // create a Point that represents the first position the text cursor can
+    // take in the next editor
     const point = { path, offset: 0 };
+
+    // create a collapsed Range that represents the previously created Point
     const selection = { anchor: point, focus: point };
+
+    // 1. the selection is remembered by the following call
+    // 2. the focus goes to the next editor because of the last return statement
+    // 3. the user returns to the current editor by focusing it (w/ mouse or
+    //    keyboard)
+    // 4. the previously saved selection at (1) is restored
     props.saveSlateBlockSelection(id, selection);
+
+    // focus the next block
     return onFocusNextBlock(block, blockNode.current);
   }
 }

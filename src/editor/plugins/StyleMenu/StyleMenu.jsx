@@ -126,13 +126,14 @@ const StylingsButton = (props) => {
     return { value: def.cssClass, label: def.label, isBlock: def.isBlock };
   });
 
+  // TODO: i18n for the two strings used below
   const opts = [
     {
-      label: 'For blocks',
+      label: 'Paragraph Style',
       options: rawOpts.filter((x) => x.isBlock),
     },
     {
-      label: 'For inlines',
+      label: 'Font Style',
       options: rawOpts.filter((x) => !x.isBlock),
     },
   ];

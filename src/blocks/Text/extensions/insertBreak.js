@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { Editor } from 'slate';
 import { ReactEditor } from 'slate-react';
 import {
@@ -5,6 +6,7 @@ import {
   setEditorContent,
   createAndSelectNewBlockAfter,
   isRangeAtRoot,
+  deconstructToVoltoBlocks,
 } from 'volto-slate/utils';
 
 /**
@@ -30,16 +32,20 @@ export const withSplitBlocksOnBreak = (editor) => {
       if (block) {
         const blockProps = editor.getBlockProps();
         const { data } = blockProps;
-
         // Don't add new block if not allowed
         if (data?.disableNewBlocks) {
           return insertBreak();
         }
 
-        const [top, bottom] = splitEditorInTwoFragments(editor);
-        setEditorContent(editor, top);
-        ReactEditor.blur(editor);
-        createAndSelectNewBlockAfter(editor, bottom);
+        // console.log('insert block');
+        // insertBreak();
+        // deconstructToVoltoBlocks(editor);
+        ReactDOM.unstable_batchedUpdates(() => {
+          const [top, bottom] = splitEditorInTwoFragments(editor);
+          setEditorContent(editor, top);
+          // ReactEditor.blur(editor);
+          createAndSelectNewBlockAfter(editor, bottom);
+        });
       }
       return;
     }

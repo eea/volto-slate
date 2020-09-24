@@ -1,12 +1,12 @@
 import ReactDOM from 'react-dom';
 import { Editor } from 'slate';
-import { ReactEditor } from 'slate-react';
+// import { ReactEditor } from 'slate-react';
 import {
   splitEditorInTwoFragments,
   setEditorContent,
   createAndSelectNewBlockAfter,
   isRangeAtRoot,
-  deconstructToVoltoBlocks,
+  // deconstructToVoltoBlocks,
 } from 'volto-slate/utils';
 
 /**

@@ -32,6 +32,7 @@ export default (config) => {
   slate.htmlTagsToSlate.A = linkDeserializer;
 
   const opts = {
+    title: 'Link',
     pluginId: LINK,
     elementType: LINK,
     element: LinkElement,

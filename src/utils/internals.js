@@ -15,6 +15,7 @@ export const isPointAtRoot = (point) => point.path.length === 2;
 export const isRangeAtRoot = (range) => {
   return isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
 };
+
 /**
  * The block in a valid Slate document according to our schema can be here
  * either a Slate block that touches the root or a Slate inline (the other

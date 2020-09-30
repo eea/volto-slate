@@ -37,10 +37,9 @@ export function joinWithPreviousBlock({ editor, event }) {
   const blocksFieldname = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  const [otherBlock = {}, otherBlockId] = getPreviousVoltoBlock(
-    index,
-    properties,
-  );
+  const prev = getPreviousVoltoBlock(index, properties);
+  if (!prev) return;
+  const [otherBlock = {}, otherBlockId] = prev;
 
   // Don't join with required blocks
   if (data?.required || otherBlock?.required || otherBlock['@type'] !== 'slate')

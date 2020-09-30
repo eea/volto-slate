@@ -1,5 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
+import { TD } from './../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -12,7 +13,11 @@ export const deserialize = (editor, el) => {
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
-    return '\n';
+    return htmlTagsToSlate?.['BR'](editor, el);
+
+    // Not working because a block can't contain blocks && Text-s, it either
+    // contains just blocks, or inlines and Text-s
+    // return '\n';
   }
 
   if (el.getAttribute('data-slate-data')) {
@@ -40,7 +45,17 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  return jsx('element', { type: tagname }, deserializeChildren(el, editor));
+  let arr = deserializeChildren(el, editor);
+
+  // TODO: generalize this if needed for other deserializers
+  if ([TD].includes(tagname) && arr.length === 0) {
+    arr = [{ text: '' }];
+  } else if (['br'].includes(tagname) && arr.length === 0) {
+    arr = [{ text: ' ' }];
+    tagname = 'p';
+  }
+
+  return jsx('element', { type: tagname }, arr);
 };
 
 export const bodyTagDeserializer = (editor, el) => {

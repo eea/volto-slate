@@ -5,7 +5,7 @@ export const withDeleteSelectionOnEnter = (editor) => {
 
   editor.insertBreak = () => {
     // if selection is expanded, delete it
-    if (Range.isExpanded(editor.selection)) {
+    if (editor?.selection && Range.isExpanded(editor.selection)) {
       Transforms.delete(editor);
     }
     return insertBreak();

@@ -196,7 +196,9 @@ export const elements = {
   h4: ({ attributes, children }) => <h4 {...attributes}>{children}</h4>,
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
-  p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  p: ({ attributes, children }) => {
+    return <p {...attributes}>{children}</p>;
+  },
   ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
 
   // While usual slate editor consider these to be Leafs, we treat them as
@@ -271,6 +273,8 @@ export const htmlTagsToSlate = {
   SUP: blockTagDeserializer('sup'),
   U: blockTagDeserializer('u'),
   // STRONG: inlineTagDeserializer({ bold: true }),
+
+  BR: blockTagDeserializer('br'),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

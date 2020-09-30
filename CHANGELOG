@@ -1,0 +1,4 @@
+- Add Stylings menu @silviubogan
+- Improve display of inline decorated styles (for foreign elements that we want
+  to apply the slate styles)
+

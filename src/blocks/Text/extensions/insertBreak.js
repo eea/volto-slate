@@ -1,12 +1,12 @@
 import ReactDOM from 'react-dom';
 import { Editor } from 'slate';
-import { ReactEditor } from 'slate-react';
+// import { ReactEditor } from 'slate-react';
 import {
   splitEditorInTwoFragments,
   setEditorContent,
   createAndSelectNewBlockAfter,
-  isRangeAtRoot,
-  deconstructToVoltoBlocks,
+  rangeIsInSplittableNode,
+  // deconstructToVoltoBlocks,
 } from 'volto-slate/utils';
 
 /**
@@ -26,7 +26,7 @@ export const withSplitBlocksOnBreak = (editor) => {
 
   editor.insertBreak = () => {
     // if selection is expanded, delete it
-    if (editor.selection && isRangeAtRoot(editor.selection)) {
+    if (rangeIsInSplittableNode(editor, editor.selection)) {
       const block = Editor.parent(editor, editor.selection);
 
       if (block) {

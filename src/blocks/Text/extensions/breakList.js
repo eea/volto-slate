@@ -4,7 +4,9 @@ import {
   splitEditorInTwoFragments,
   setEditorContent,
   createAndSelectNewBlockAfter,
+  getCurrentListItem,
 } from 'volto-slate/utils';
+import _ from 'lodash';
 
 /**
  * Handles `Enter` key on empty and non-empty list items.
@@ -33,17 +35,16 @@ export const breakList = (editor) => {
     const { slate } = settings;
     const { anchor } = editor.selection;
 
+    let oldSelection = _.clone(editor.selection);
+
     // If the selection is inside a LI and it starts at a non-0 offset, split
     // the LI. (if one of the parents is a list item, break that list item)
-    const [listItem, listItemPath] = Editor.nodes(editor, {
-      at: editor.selection,
-      mode: 'lowest',
-      match: (node) => node.type === slate.listItemType,
-    });
+    const [listItem, listItemPath] = getCurrentListItem(editor);
     if (listItem) {
-      if (Editor.string(editor, editor.selection)) {
+      // if there is text in the selection
+      if (Editor.string(editor, listItemPath)) {
         Transforms.splitNodes(editor, {
-          at: listItemPath,
+          at: editor.selection,
           match: (node) => node.type === slate.listItemType,
           always: true, // in case cursor is at end of line
         });
@@ -77,7 +78,7 @@ export const breakList = (editor) => {
     // Volto blocks, based on the selection.
     Editor.deleteBackward(editor, { unit: 'line' });
 
-    const [top, bottom] = splitEditorInTwoFragments(editor);
+    const [top, bottom] = splitEditorInTwoFragments(editor, oldSelection);
     setEditorContent(editor, top);
     createAndSelectNewBlockAfter(editor, bottom);
 

@@ -12,7 +12,7 @@ export const LinkElement = ({ attributes, children, element }) => {
   const email = link?.email;
 
   const href = email
-    ? `mailto: ${email.email_address}${
+    ? `mailto:${email.email_address}${
         email.email_subject ? `?subject=${email.email_subject}` : ''
       }`
     : external_link || internal_link || url;

@@ -1,5 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
+import { TD } from './../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -40,7 +41,12 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  return jsx('element', { type: tagname }, deserializeChildren(el, editor));
+  let arr = deserializeChildren(el, editor);
+  if (tagname === TD && arr.length === 0) {
+    // TODO: generalize this if needed for other deserializers
+    arr = [{ text: '' }];
+  }
+  return jsx('element', { type: tagname }, arr);
 };
 
 export const bodyTagDeserializer = (editor, el) => {

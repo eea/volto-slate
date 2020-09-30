@@ -41,6 +41,7 @@ export const insertData = (editor) => {
       }
 
       console.log('deserialize body', body);
+      // debugger;
       let fragment = deserialize(editor, body);
       console.log('parsed body', parsed);
       console.log('parse fragment', fragment);

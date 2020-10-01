@@ -55,19 +55,12 @@ export const onImageLoad = (editor, reader, resolve) => {
 
     uploadContent(url, content, block)
       .then((data) => {
-        const dlUrl = data.image.download;
-        insertImage(editor, dlUrl);
         resolve();
       })
       .catch(() => {
         resolve();
       });
   };
-};
-
-export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
-  const image = { type: typeImg, url, children: [{ text: '' }] };
-  insertAtEnd(editor, image);
 };
 
 export const deserializeImageTag = (editor, el) => {

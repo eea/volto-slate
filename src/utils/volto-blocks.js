@@ -152,7 +152,6 @@ export function deconstructToVoltoBlocks(editor) {
   const blockProps = editor.getBlockProps();
   const { slate } = settings;
   const { voltoBlockEmiters } = slate;
-  console.log('blockProps', blockProps);
 
   return new Promise((resolve, reject) => {
     if (!editor?.children) return;

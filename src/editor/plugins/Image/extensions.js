@@ -4,11 +4,12 @@
 
 import isUrl from 'is-url';
 import imageExtensions from 'image-extensions';
-import { Transforms } from 'slate';
+import { Editor } from 'slate';
 import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
 import { v4 as uuid } from 'uuid';
+import { insertAtEnd } from '../../../utils/editor';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -18,41 +19,55 @@ export const isImageUrl = (url) => {
   return imageExtensions.includes(ext);
 };
 
-export const onImageLoad = (editor, reader) => () => {
-  const data = reader.result;
+/**
+ * @param {Editor} editor
+ * @param {FileReader} reader
+ * @param {Function} resolve Must be called after the image loading is
+ * completely handled (e.g. after inserting the respective image into the
+ * editor)
+ */
+export const onImageLoad = (editor, reader, resolve) => {
+  return () => {
+    const data = reader.result;
 
-  // if (url) insertImage(editor, url);
-  const fields = data.match(/^data:(.*);(.*),(.*)$/);
-  const blockProps = editor.getBlockProps();
-  const { block, uploadContent, pathname } = blockProps;
+    // if (url) insertImage(editor, url);
+    const fields = data.match(/^data:(.*);(.*),(.*)$/);
+    const blockProps = editor.getBlockProps();
+    const { block, uploadContent, pathname } = blockProps;
 
-  // TODO: we need a way to get the uploaded image URL
-  // This would be easier if we would have block transformers-based image
-  // blocks
-  const url = getBaseUrl(pathname);
-  const uploadId = uuid();
-  const uploadFileName = `clipboard-${uploadId}`;
-  const uploadTitle = `Clipboard image`;
-  const content = {
-    '@type': 'Image',
-    title: uploadTitle,
-    image: {
-      data: fields[3],
-      encoding: fields[2],
-      'content-type': fields[1],
-      filename: uploadFileName,
-    },
+    // TODO: we need a way to get the uploaded image URL
+    // This would be easier if we would have block transformers-based image
+    // blocks
+    const url = getBaseUrl(pathname);
+    const uploadId = uuid();
+    const uploadFileName = `clipboard-${uploadId}`;
+    const uploadTitle = `Clipboard image`;
+    const content = {
+      '@type': 'Image',
+      title: uploadTitle,
+      image: {
+        data: fields[3],
+        encoding: fields[2],
+        'content-type': fields[1],
+        filename: uploadFileName,
+      },
+    };
+
+    uploadContent(url, content, block)
+      .then((data) => {
+        const dlUrl = data.image.download;
+        insertImage(editor, dlUrl);
+        resolve();
+      })
+      .catch(() => {
+        resolve();
+      });
   };
-
-  uploadContent(url, content, block).then((data) => {
-    const dlUrl = data.image.download;
-    insertImage(editor, dlUrl);
-  });
 };
 
 export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
   const image = { type: typeImg, url, children: [{ text: '' }] };
-  Transforms.insertNodes(editor, image);
+  insertAtEnd(editor, image);
 };
 
 export const deserializeImageTag = (editor, el) => {
@@ -91,14 +106,19 @@ export const withImage = (editor) => {
     // const text = data.getData('text/plain');
     const { files } = data;
     if (files && files.length > 0) {
-      for (const file of files) {
-        const reader = new FileReader();
-        const [mime] = file.type.split('/');
-        if (mime === 'image') {
-          reader.addEventListener('load', onImageLoad(editor, reader));
-          reader.readAsDataURL(file);
+      return new Promise((resolve, reject) => {
+        for (const file of files) {
+          const reader = new FileReader();
+          const [mime] = file.type.split('/');
+          if (mime === 'image') {
+            reader.addEventListener(
+              'load',
+              onImageLoad(editor, reader, resolve),
+            );
+            reader.readAsDataURL(file);
+          }
         }
-      }
+      });
     } else {
       insertData(data);
     }

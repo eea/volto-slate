@@ -16,10 +16,11 @@ export const withInsertData = (editor) => {
   const { insertData } = editor;
 
   editor.insertData = (data) => {
-    // debugger;
-    insertData(data);
+    const promise = Promise.resolve(insertData(data));
 
-    deconstructToVoltoBlocks(editor);
+    promise.then(() => {
+      deconstructToVoltoBlocks(editor);
+    });
   };
 
   return editor;

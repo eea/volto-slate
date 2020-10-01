@@ -6,8 +6,8 @@ import { ToolbarButton } from 'volto-slate/editor/ui';
 import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
-import { Editor, Transforms } from 'slate';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+import { insertAtEnd } from 'volto-slate/utils/editor';
 
 const TableButton = ({ ...props }) => {
   const editor = useSlate();
@@ -72,9 +72,7 @@ const TableButton = ({ ...props }) => {
         ],
       };
 
-      Transforms.insertNodes(editor, [table], {
-        at: Editor.end(editor, []),
-      });
+      insertAtEnd(editor, [table]);
 
       deconstructToVoltoBlocks(editor);
     },

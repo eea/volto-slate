@@ -273,8 +273,6 @@ export const htmlTagsToSlate = {
   SUP: blockTagDeserializer('sup'),
   U: blockTagDeserializer('u'),
   // STRONG: inlineTagDeserializer({ bold: true }),
-
-  BR: blockTagDeserializer('br'),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

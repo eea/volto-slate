@@ -13,11 +13,7 @@ export const deserialize = (editor, el) => {
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
-    return htmlTagsToSlate?.['BR'](editor, el);
-
-    // Not working because a block can't contain blocks && Text-s, it either
-    // contains just blocks, or inlines and Text-s
-    // return '\n';
+    return null;
   }
 
   if (el.getAttribute('data-slate-data')) {
@@ -50,9 +46,6 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   // TODO: generalize this if needed for other deserializers
   if ([TD].includes(tagname) && arr.length === 0) {
     arr = [{ text: '' }];
-  } else if (['br'].includes(tagname) && arr.length === 0) {
-    arr = [{ text: ' ' }];
-    tagname = 'p';
   }
 
   return jsx('element', { type: tagname }, arr);

@@ -45,17 +45,6 @@ export const insertData = (editor) => {
       console.log('parsed body', parsed);
       console.log('parse fragment', fragment);
 
-      // To test empty P rendering for Return chars in the Slate document: Put
-      // this HTML somewhere you can copy from easily (br is rendered now as a P
-      // with a space in it):
-      //
-      // <Segment secondary attached style={{ fontFamily: 'monospace' }}>
-      //   <p>A</p>
-      //   <p>B</p>
-      //   <br />
-      //   <p>C</p>
-      // </Segment>
-
       // If there is no text in the editor
       if (!Editor.string(editor, [])) {
         if (

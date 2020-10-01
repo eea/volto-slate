@@ -14,7 +14,7 @@ import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
-import { uploadContent } from 'volto-slate/actions';
+import { createContent } from '@plone/volto/actions';
 import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
@@ -42,9 +42,9 @@ const TextBlockEdit = (props) => {
     pathname,
     properties,
     selected,
-    uploadRequest,
-    uploadContent,
-    uploadedContent,
+    createRequest,
+    createContent,
+    createdContent,
     defaultSelection,
     saveSlateBlockSelection,
     allowedBlocks,
@@ -82,7 +82,7 @@ const TextBlockEdit = (props) => {
 
         readAsDataURL(file).then((data) => {
           const fields = data.match(/^data:(.*);(.*),(.*)$/);
-          uploadContent(
+          createContent(
             getBaseUrl(pathname),
             {
               '@type': 'Image',
@@ -100,11 +100,11 @@ const TextBlockEdit = (props) => {
       });
       setShowDropzone(false);
     },
-    [pathname, uploadContent, block],
+    [pathname, createContent, block],
   );
 
-  const { loaded, loading } = uploadRequest;
-  const imageId = uploadedContent['@id'];
+  const { loaded, loading } = createRequest;
+  const imageId = createdContent['@id'];
   const prevLoaded = prevReq.current;
 
   React.useLayoutEffect(() => {
@@ -259,12 +259,12 @@ export default connect(
       defaultSelection: blockId
         ? state.slate_block_selections?.[blockId]
         : null,
-      uploadRequest: state.upload_content?.[props.block]?.upload || {},
-      uploadedContent: state.upload_content?.[props.block]?.data || {},
+      createRequest: state.content?.subrequests?.[props.block] || {},
+      createdContent: state.content?.subrequests?.[props.block]?.data || {},
     };
   },
   {
-    uploadContent,
+    createContent,
     saveSlateBlockSelection, // needed as editor blockProps
   },
 )(TextBlockEdit);

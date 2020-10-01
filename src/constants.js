@@ -1,7 +1,6 @@
 // action types
 export const SAVE_SLATE_BLOCK_SELECTION = 'SAVE_SLATE_BLOCK_SELECTION';
 export const SLATE_PLUGINS = 'SLATE_PLUGINS';
-export const UPLOAD_CONTENT = 'UPLOAD_CONTENT';
 
 // element 'types'. Useful to identify element types across codebase
 export const IMAGE = 'img';

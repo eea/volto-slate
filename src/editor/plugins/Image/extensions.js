@@ -9,7 +9,6 @@ import { IMAGE } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 import { getBaseUrl } from '@plone/volto/helpers';
 import { v4 as uuid } from 'uuid';
-import { insertAtEnd } from '../../../utils/editor';
 
 export const isImageUrl = (url) => {
   if (!isUrl(url)) return false;
@@ -33,7 +32,9 @@ export const onImageLoad = (editor, reader, resolve) => {
     // if (url) insertImage(editor, url);
     const fields = data.match(/^data:(.*);(.*),(.*)$/);
     const blockProps = editor.getBlockProps();
-    const { block, uploadContent, pathname } = blockProps;
+    const { block, createContent, pathname } = blockProps;
+
+    console.log('blockProps', blockProps);
 
     // TODO: we need a way to get the uploaded image URL
     // This would be easier if we would have block transformers-based image
@@ -53,7 +54,7 @@ export const onImageLoad = (editor, reader, resolve) => {
       },
     };
 
-    uploadContent(url, content, block)
+    createContent(url, content, block)
       .then((data) => {
         resolve();
       })

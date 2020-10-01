@@ -7,7 +7,7 @@ import {
 import { addBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { omit } from 'lodash';
+import { omit, clone } from 'lodash';
 import { settings } from '~/config';
 
 function fromEntries(pairs) {
@@ -152,6 +152,7 @@ export function deconstructToVoltoBlocks(editor) {
   const blockProps = editor.getBlockProps();
   const { slate } = settings;
   const { voltoBlockEmiters } = slate;
+  console.log('blockProps', blockProps);
 
   return new Promise((resolve, reject) => {
     if (!editor?.children) return;
@@ -182,6 +183,7 @@ export function deconstructToVoltoBlocks(editor) {
         const [childNode] = Editor.node(editor, pathRef.current);
         if (childNode && !Editor.isEmpty(editor, childNode))
           blocks.push(syncCreateSlateBlock([childNode]));
+        pathRef.unref();
       }
       blocks = [...blocks, ...extras];
     }

@@ -26,6 +26,8 @@ import addSVG from '@plone/volto/icons/circle-plus.svg';
 
 import './css/editor.css';
 
+import _ from 'lodash';
+
 // TODO: refactor dropzone to separate component wrapper
 
 const DEBUG = false;
@@ -132,10 +134,13 @@ const TextBlockEdit = (props) => {
       // split
       if (defaultSelection) {
         const selection = parseDefaultSelection(editor, defaultSelection);
+        // console.log('SELECTION', selection);
         if (selection) {
           setTimeout(() => {
-            Transforms.select(editor, selection);
-            saveSlateBlockSelection(block, null);
+            try {
+              Transforms.select(editor, selection);
+              saveSlateBlockSelection(block, null);
+            } catch (ex) {}
           }, 120);
           // without setTimeout, the join is not correct. Slate uses internally
           // a 100ms throttle, so setting to a bigger value seems to help
@@ -149,6 +154,12 @@ const TextBlockEdit = (props) => {
   let instructions = data?.instructions?.data || data?.instructions;
   if (!instructions || instructions === '<p><br/></p>') {
     instructions = formDescription;
+  }
+
+  if (block === 'fc0e3cec-19bc-4b20-be39-0d3550232759') {
+    if (value?.[0]?.children?.[0]?.type === 'ol') {
+      console.log('RENDERING TBE #2 w/ value', value);
+    }
   }
 
   const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
@@ -202,6 +213,7 @@ const TextBlockEdit = (props) => {
             onUpdate={handleUpdate}
             debug={DEBUG}
             onChange={(value, selection) => {
+              console.log('LATEST VALUE IN TBE.jsx', value);
               onChangeBlock(block, {
                 ...data,
                 value,

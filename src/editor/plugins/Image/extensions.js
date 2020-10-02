@@ -32,7 +32,14 @@ export const onImageLoad = (editor, reader, resolve) => {
     // if (url) insertImage(editor, url);
     const fields = data.match(/^data:(.*);(.*),(.*)$/);
     const blockProps = editor.getBlockProps();
-    const { block, createContent, pathname } = blockProps;
+    const {
+      block,
+      createContent,
+      pathname,
+      onDeleteBlock,
+      properties,
+      index,
+    } = blockProps;
 
     console.log('blockProps', blockProps);
 
@@ -54,12 +61,21 @@ export const onImageLoad = (editor, reader, resolve) => {
       },
     };
 
+    // resolve();
+
+    function doResolve() {
+      // TODO: use the object 'blocks_layout' also when it is called something else
+      onDeleteBlock(properties.blocks_layout.items[index + 1]).then(() => {
+        resolve();
+      });
+    }
+
     createContent(url, content, block)
       .then((data) => {
-        resolve();
+        doResolve();
       })
       .catch(() => {
-        resolve();
+        doResolve();
       });
   };
 };

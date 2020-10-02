@@ -209,7 +209,7 @@ export function hasRangeSelection(editor) {
 export function parseDefaultSelection(editor, defaultSelection) {
   if (defaultSelection) {
     if (defaultSelection === 'start') {
-      const [, path] = Node.first(editor, []);
+      const [, path] = Editor.first(editor, []);
       const newSel = {
         anchor: { path, offset: 0 },
         focus: { path, offset: 0 },
@@ -217,7 +217,7 @@ export function parseDefaultSelection(editor, defaultSelection) {
       return newSel;
     }
     if (defaultSelection === 'end') {
-      const [leaf, path] = Node.last(editor, []);
+      const [leaf, path] = Editor.last(editor, []);
       const newSel = {
         anchor: { path, offset: (leaf.text || '').length },
         focus: { path, offset: (leaf.text || '').length },

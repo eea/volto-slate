@@ -17,6 +17,8 @@ import EditorContext from './EditorContext';
 import isHotkey from 'is-hotkey';
 import { toggleMark } from 'volto-slate/utils';
 
+import _ from 'lodash';
+
 import './less/editor.less';
 
 class SlateEditor extends Component {
@@ -138,11 +140,18 @@ class SlateEditor extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { selected = true, value } = nextProps;
-    return (
+    const rv =
       selected ||
       this.props.selected !== selected ||
-      !isEqual(value, this.props.value)
-    );
+      !isEqual(value, this.props.value);
+    if (rv) {
+      if (this.props.block === 'fc0e3cec-19bc-4b20-be39-0d3550232759') {
+        // if (value?.[0]?.children?.[0]?.type === 'ol') {
+        console.log('RENDERING #2 SE w/ value', JSON.stringify(value, null, 2));
+        // }
+      } // console.log('->', _.clone(this.props.value), _.clone(value));
+    }
+    return rv;
     // console.log('nextProps', nextProps);
     // console.log('nextState', nextState);
   }

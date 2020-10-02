@@ -114,11 +114,15 @@ export const _getActiveElement = (elementType) => (
       selection.anchor.offset === 0 && selection.focus.offset === 0;
 
     if (isAtStart) {
-      let found = Editor.previous(editor, {
-        at: path,
-      });
-      if (found && found[0].type === elementType) {
-        return found;
+      try {
+        let found = Editor.previous(editor, {
+          at: path,
+        });
+        if (found && found[0].type === elementType) {
+          return found;
+        }
+      } catch {
+
       }
     }
   }

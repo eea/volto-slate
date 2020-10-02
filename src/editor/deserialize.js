@@ -9,7 +9,7 @@ export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
   if (el.nodeType === TEXT_NODE) {
-    return el.nodeValue === '\n' ? null : el.textContent;
+    return el.nodeValue === '\n' ? null : el.textContent.trim();
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
@@ -55,16 +55,23 @@ export const bodyTagDeserializer = (editor, el) => {
   return jsx('fragment', {}, deserializeChildren(el, editor));
 };
 
+const trimText = (child) => {
+  if (Text.isText(child)) {
+    return { ...child, text: child.text.trim() };
+  }
+  if (typeof child === 'string') {
+    return child.trim();
+  }
+  return child;
+};
+
 export const inlineTagDeserializer = (attrs) => (editor, el) => {
   return deserializeChildren(el, editor).map((child) => {
-    const res =
-      Text.isText(child) || typeof child === 'string'
-        ? jsx('text', attrs, child)
-        : {
-            ...child,
-            attrs, // pass the inline attrs as separate object
-          };
-    return res;
+    if (Text.isText(child) || typeof child === 'string') {
+      return jsx('text', attrs, trimText(child));
+    } else {
+      return { ...child, attrs /* pass the inline attrs as separate object */ };
+    }
   });
 };
 
@@ -77,7 +84,7 @@ export const spanTagDeserializer = (editor, el) => {
   if (style.replace(/\s/g, '').indexOf('vertical-align:sub') > -1) {
     const attrs = { sub: true };
     return children.map((child) => {
-      return jsx('text', attrs, child);
+      return jsx('text', attrs, trimText(child));
     });
   }
 
@@ -85,7 +92,7 @@ export const spanTagDeserializer = (editor, el) => {
   if (style.replace(/\s/g, '').indexOf('vertical-align:super') > -1) {
     const attrs = { sup: true };
     return children.map((child) => {
-      return jsx('text', attrs, child);
+      return jsx('text', attrs, trimText(child));
     });
   }
 

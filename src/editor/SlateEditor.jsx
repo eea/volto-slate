@@ -220,6 +220,9 @@ class SlateEditor extends Component {
               renderElement={(props) => <Element {...props} />}
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
+              style={{
+                whiteSpace: 'inherit',
+              }}
               spellCheck={false}
               onDoubleClick={() => {
                 // console.log('dbl');

@@ -19,6 +19,7 @@ export const linkDeserializer = (editor, el) => {
   const attrs = {
     type: LINK,
     url: el.getAttribute('href'),
+    data: {},
   };
 
   if (el.hasAttribute('title')) attrs.data.title = el.getAttribute('title');

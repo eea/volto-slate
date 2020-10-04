@@ -1,17 +1,25 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
+import { isEqual } from 'lodash';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
+const COMMENT = 8;
 
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
   // console.log('des:', el.nodeType, el);
-  if (el.nodeType === TEXT_NODE) {
-    return el.textContent === '\n'
-      ? ' '
-      : el.textContent.replace(/\n$/g, ' ').replace(/\n/g, ' ');
+  if (el.nodeType === COMMENT) {
+    return null;
+  } else if (el.nodeType === TEXT_NODE) {
+    if (el.textContent === '\n') {
+      // console.log('text node', el);
+      // el.parentNode && el.parentNode.tagname === 'SPAN'
+      //// if it's empty text between 2 tags, it should be ignored
+      return null;
+    }
+    return el.textContent.replace(/\n$/g, ' ').replace(/\n/g, ' ');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
@@ -45,6 +53,11 @@ export const deserializeChildren = (parent, editor) =>
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor);
+  // console.log('block tag des', el, children);
+  // TODO: filter children; strip the first child
+  if (children.length && isEqual(children[0], { text: '' })) {
+    children = [...children.splice(1)];
+  }
 
   // normalizes block elements so that they're never empty
   const hasValidChildren = children.find((c) => !!c);
@@ -74,7 +87,17 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 
 export const spanTagDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
-  const children = deserializeChildren(el, editor);
+  // console.log('span', el, el.childNodes);
+  let children = el.childNodes;
+  if (
+    // handle formatting from OpenOffice
+    children.length === 1 &&
+    children[0].nodeType === 3 &&
+    children[0].textContent === '\n'
+  ) {
+    return ' ';
+  }
+  children = deserializeChildren(el, editor);
 
   // TODO: handle sub/sup as <sub> and <sup>
   // Handle Google Docs' <sub> formatting

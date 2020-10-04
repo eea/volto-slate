@@ -35,7 +35,6 @@ export const insertData = (editor) => {
     fragment = deserialize(editor, body);
     console.log('deserialize body', body);
     console.log('parsed body', parsed);
-    console.log('parsed fragment', fragment);
 
     // If there is text in the editor, insert a fragment, otherwise insert
     // nodes
@@ -44,16 +43,14 @@ export const insertData = (editor) => {
         Array.isArray(fragment) &&
         fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
       ) {
-        console.log('insert fragment');
+        console.log('insert fragment', fragment);
         Transforms.insertFragment(editor, fragment);
         return;
       }
     }
-    console.log('insert nodes');
-    Transforms.insertNodes(
-      editor,
-      fragment.filter((n) => !Text.isText(n)),
-    );
+    const nodes = fragment.filter((n) => !Text.isText(n));
+    console.log('insert nodes', nodes);
+    Transforms.insertNodes(editor, nodes);
 
     // TODO: This used to solve a problem when pasting images. What is it?
     // Transforms.deselect(editor);

@@ -1,6 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import { TD } from './../constants';
+// import { TD } from './../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -8,11 +8,13 @@ const ELEMENT_NODE = 1;
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
+  console.log('des:', el.nodeType, el);
   if (el.nodeType === TEXT_NODE) {
-    return el.nodeValue === '\n' ? null : el.textContent;
+    return el.nodeValue === '\n' ? null : el.textContent.replace('\n', '');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
+    // TODO: handle <br> ?
     return null;
   }
 
@@ -41,14 +43,21 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  let arr = deserializeChildren(el, editor);
+  let children = deserializeChildren(el, editor);
 
-  // TODO: generalize this if needed for other deserializers
-  if ([TD].includes(tagname) && arr.length === 0) {
-    arr = [{ text: '' }];
+  // normalizes block elements so that they're never empty
+  // if (tagname === 'p') debugger;
+  // console.log('deserialize', tagname);
+  const hasValidChildren = children.find((c) => !!c);
+  if (!(editor.isInline(el) || editor.isVoid(el)) && !hasValidChildren) {
+    children = [{ text: '' }];
+    // console.log('adding children', el);
   }
+  // if ([TD].includes(tagname) && children.length === 0) {
+  //   children = [{ text: '' }];
+  // }
 
-  return jsx('element', { type: tagname }, arr);
+  return jsx('element', { type: tagname }, children);
 };
 
 export const bodyTagDeserializer = (editor, el) => {
@@ -93,12 +102,10 @@ export const spanTagDeserializer = (editor, el) => {
 };
 
 export const bTagDeserializer = (editor, el) => {
-  if ((el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1) {
-    // Google Docs does weird things with <b> tag
-    return deserializeChildren(el, editor);
-  }
-
-  return jsx('element', { type: 'b' }, deserializeChildren(el, editor));
+  // Google Docs does weird things with <b> tag
+  return (el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1
+    ? deserializeChildren(el, editor)
+    : jsx('element', { type: 'b' }, deserializeChildren(el, editor));
 };
 
 export const preTagDeserializer = (editor, el) => {

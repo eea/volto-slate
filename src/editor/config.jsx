@@ -98,12 +98,7 @@ export const buttons = {
     />
   ),
   'heading-four': (props) => (
-    <BlockButton
-      title="Heading 4"
-      format="h4"
-      icon={subTextIcon}
-      {...props}
-    />
+    <BlockButton title="Heading 4" format="h4" icon={subTextIcon} {...props} />
   ),
   'numbered-list': (props) => (
     <BlockButton

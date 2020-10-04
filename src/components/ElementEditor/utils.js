@@ -12,9 +12,9 @@ import { Editor, Transforms } from 'slate'; // Range,
  * editor)
  */
 export const _insertElement = (elementType) => (editor, data) => {
-  console.log('insert', data);
-  if (editor.savedSelection) {
-    const selection = editor.savedSelection;
+  // console.log('insert', data);
+  if (editor.getSavedSelection()) {
+    const selection = editor.getSavedSelection();
 
     const rangeRef = Editor.rangeRef(editor, selection);
 
@@ -44,8 +44,9 @@ export const _insertElement = (elementType) => (editor, data) => {
       );
     }
 
-    Transforms.select(editor, JSON.parse(JSON.stringify(rangeRef.current)));
-    editor.savedSelection = JSON.parse(JSON.stringify(rangeRef.current));
+    const sel = JSON.parse(JSON.stringify(rangeRef.current));
+    Transforms.select(editor, sel);
+    editor.setSavedSelection(sel);
 
     return true;
   }
@@ -54,7 +55,7 @@ export const _insertElement = (elementType) => (editor, data) => {
 };
 
 export const _unwrapElement = (elementType) => (editor) => {
-  const selection = editor.selection || editor.savedSelection;
+  const selection = editor.selection || editor.getSavedSelection();
   Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === elementType,
@@ -63,7 +64,7 @@ export const _unwrapElement = (elementType) => (editor) => {
 };
 
 export const _isActiveElement = (elementType) => (editor) => {
-  const selection = editor.selection || editor.savedSelection;
+  const selection = editor.selection || editor.getSavedSelection();
   let found = Array.from(
     Editor.nodes(editor, {
       match: (n) => n.type === elementType,
@@ -97,7 +98,7 @@ export const _getActiveElement = (elementType) => (
   editor,
   direction = 'any',
 ) => {
-  const selection = editor.selection || editor.savedSelection;
+  const selection = editor.selection || editor.getSavedSelection();
   let found = Array.from(
     Editor.nodes(editor, {
       match: (n) => n.type === elementType,

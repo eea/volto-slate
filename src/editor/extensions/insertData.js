@@ -2,16 +2,16 @@ import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const insertData = (editor) => {
-  const { insertData } = editor;
+  // const { insertData } = editor;
 
   editor.insertData = (data) => {
     // console.log('data in custom editor.insertData', data);
+    // TODO: use the rtf data to get the embedded images.
     // const text = data.getData('text/rtf');
     // console.log('text', text);
 
     let fragment;
 
-    const html = data.getData('text/html');
     fragment = data.getData('application/x-slate-fragment');
 
     if (fragment) {
@@ -21,55 +21,50 @@ export const insertData = (editor) => {
       return;
     }
 
-    if (html) {
-      const parsed = new DOMParser().parseFromString(html, 'text/html');
+    const html = data.getData('text/html');
+    // Avoid responding to drag/drop and others
+    if (!html) return; // insertData(data)
 
-      const body =
-        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
-          ? parsed.querySelector('google-sheets-html-origin > table')
-          : parsed.body;
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
 
-      fragment = deserialize(editor, body);
-      console.log('deserialize body', body);
-      console.log('parsed body', parsed);
-      console.log('parsed fragment', fragment);
+    const body =
+      parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+        ? parsed.querySelector('google-sheets-html-origin > table')
+        : parsed.body;
 
-      // If there is text in the editor, insert a fragment, otherwise insert
-      // nodes
-      if (Editor.string(editor, [])) {
-        if (
-          Array.isArray(fragment) &&
-          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
-        ) {
-          console.log('insert fragment');
-          Transforms.insertFragment(editor, fragment);
-          return;
-        }
+    fragment = deserialize(editor, body);
+    console.log('deserialize body', body);
+    console.log('parsed body', parsed);
+    console.log('parsed fragment', fragment);
+
+    // If there is text in the editor, insert a fragment, otherwise insert
+    // nodes
+    if (Editor.string(editor, [])) {
+      if (
+        Array.isArray(fragment) &&
+        fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+      ) {
+        console.log('insert fragment');
+        Transforms.insertFragment(editor, fragment);
+        return;
       }
-      console.log('insert nodes');
-      Transforms.insertNodes(
-        editor,
-        fragment.filter((n) => !Text.isText(n)),
-      );
-
-      // TODO: This used to solve a problem when pasting images. What is it?
-      // Transforms.deselect(editor);
-
-      return;
     }
+    console.log('insert nodes');
+    Transforms.insertNodes(
+      editor,
+      fragment.filter((n) => !Text.isText(n)),
+    );
 
-    // Don't respond to drag/drop and others
-    // insertData(data);
+    // TODO: This used to solve a problem when pasting images. What is it?
+    // Transforms.deselect(editor);
   };
 
   return editor;
 };
 
-//
 //   // Delete the empty placeholder paragraph, if we can
 //   // Transforms.deselect(editor);
 //   Transforms.removeNodes(editor);
-//
 //   // Wrap the text nodes of the fragment in paragraphs
 //   // fragment = Array.isArray(fragment)
 //   //   ? fragment.map((b) =>
@@ -77,12 +72,3 @@ export const insertData = (editor) => {
 //   //     )
 //   //   : fragment;
 //   // console.log('Pasting in empty block:', fragment);
-// }
-
-// TODO: use Editor.isEmpty(editor, editor);
-
-// TODO: insertNodes works a lot better then insertFragment (needs less cleanup)
-// but insertFragment is more reliable to get content inserted
-// We can't afford to insert a fragment, we want Slate to clean up
-// Editor.insertFragment(editor, fragment);
-// Transforms.insertFragment(editor, fragment);

@@ -1,6 +1,5 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-// import { TD } from './../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -9,13 +8,10 @@ export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
   // console.log('des:', el.nodeType, el);
-  if (el.textContent === '\n') {
-    console.log('el', el.textContent);
-  }
   if (el.nodeType === TEXT_NODE) {
     return el.textContent === '\n'
       ? ' '
-      : el.textContent.replace(/\n$/g, '').replace(/\n/g, ' ');
+      : el.textContent.replace(/\n$/g, ' ').replace(/\n/g, ' ');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
@@ -51,16 +47,10 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor);
 
   // normalizes block elements so that they're never empty
-  // if (tagname === 'p') debugger;
-  // console.log('deserialize', tagname);
   const hasValidChildren = children.find((c) => !!c);
   if (!(editor.isInline(el) || editor.isVoid(el)) && !hasValidChildren) {
     children = [{ text: '' }];
-    // console.log('adding children', el);
   }
-  // if ([TD].includes(tagname) && children.length === 0) {
-  //   children = [{ text: '' }];
-  // }
 
   return jsx('element', { type: tagname }, children);
 };

@@ -1,4 +1,4 @@
-import { Transforms } from 'slate'; // Editor, Text,
+import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const insertData = (editor) => {
@@ -34,7 +34,23 @@ export const insertData = (editor) => {
       console.log('parsed body', parsed);
       console.log('parsed fragment', fragment);
 
-      Transforms.insertNodes(editor, fragment);
+      // If there is text in the editor, insert a fragment, otherwise insert
+      // nodes
+      if (Editor.string(editor, [])) {
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          console.log('insert fragment');
+          Transforms.insertFragment(editor, fragment);
+          return;
+        }
+      }
+      console.log('insert nodes');
+      Transforms.insertNodes(
+        editor,
+        fragment.filter((n) => !Text.isText(n)),
+      );
 
       // TODO: This used to solve a problem when pasting images. What is it?
       // Transforms.deselect(editor);
@@ -42,21 +58,13 @@ export const insertData = (editor) => {
       return;
     }
 
-    insertData(data);
+    // Don't respond to drag/drop and others
+    // insertData(data);
   };
 
   return editor;
 };
 
-// If there is no text in the editor
-// if (!Editor.string(editor, [])) {
-//   if (
-//     Array.isArray(fragment) &&
-//     fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
-//   ) {
-//     Transforms.insertFragment(editor, fragment);
-//     return;
-//   }
 //
 //   // Delete the empty placeholder paragraph, if we can
 //   // Transforms.deselect(editor);

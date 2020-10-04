@@ -9,8 +9,13 @@ export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
   // console.log('des:', el.nodeType, el);
+  if (el.textContent === '\n') {
+    console.log('el', el.textContent);
+  }
   if (el.nodeType === TEXT_NODE) {
-    return el.nodeValue === '\n' ? null : el.textContent.replace(/\n/g, ' ');
+    return el.textContent === '\n'
+      ? ' '
+      : el.textContent.replace(/\n$/g, '').replace(/\n/g, ' ');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {

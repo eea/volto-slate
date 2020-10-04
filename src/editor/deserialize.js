@@ -8,9 +8,9 @@ const ELEMENT_NODE = 1;
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
-  console.log('des:', el.nodeType, el);
+  // console.log('des:', el.nodeType, el);
   if (el.nodeType === TEXT_NODE) {
-    return el.nodeValue === '\n' ? null : el.textContent.replace('\n', '');
+    return el.nodeValue === '\n' ? null : el.textContent.replace(/\n/g, ' ');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {

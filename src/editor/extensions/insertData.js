@@ -1,4 +1,4 @@
-import { Editor, Text, Transforms } from 'slate';
+import { Transforms } from 'slate'; // Editor, Text,
 import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const insertData = (editor) => {
@@ -7,6 +7,7 @@ export const insertData = (editor) => {
   editor.insertData = (data) => {
     // console.log('data in custom editor.insertData', data);
     // const text = data.getData('text/rtf');
+    // console.log('text', text);
 
     let fragment;
 

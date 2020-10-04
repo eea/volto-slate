@@ -1,6 +1,6 @@
 import { jsx } from 'slate-hyperscript';
-import { Text } from 'slate';
-import { isEqual } from 'lodash';
+import { Text, Editor } from 'slate';
+// import { isEqual } from 'lodash';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -14,12 +14,13 @@ export const deserialize = (editor, el) => {
     return null;
   } else if (el.nodeType === TEXT_NODE) {
     if (el.textContent === '\n') {
-      // console.log('text node', el);
-      // el.parentNode && el.parentNode.tagname === 'SPAN'
-      //// if it's empty text between 2 tags, it should be ignored
+      // if it's empty text between 2 tags, it should be ignored
       return null;
     }
-    return el.textContent.replace(/\n$/g, ' ').replace(/\n/g, ' ');
+    return el.textContent
+      .replace(/\n$/g, ' ')
+      .replace(/\n/g, ' ')
+      .replace(/\t/g, '');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
@@ -53,14 +54,28 @@ export const deserializeChildren = (parent, editor) =>
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor);
-  // console.log('block tag des', el, children);
-  // TODO: filter children; strip the first child
-  if (children.length && isEqual(children[0], { text: '' })) {
-    children = [...children.splice(1)];
+
+  // Is this block element mixing text items with block-level items?
+  // In this case, strip the text items, they're artifacts of imperfect paste
+  const hasBlockChild = children.find(
+    (c) => !(Text.isText(c) || typeof c === 'string' || Editor.isInline(c)),
+  );
+
+  if (hasBlockChild) {
+    children = children.filter((c) => {
+      if (c === null) return false;
+      if (
+        typeof c === 'string' &&
+        c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
+      )
+        return false;
+      return true;
+    });
   }
 
   // normalizes block elements so that they're never empty
-  const hasValidChildren = children.find((c) => !!c);
+  // Avoids a hard crash from the Slate editor
+  const hasValidChildren = children.length && children.find((c) => !!c);
   if (!(editor.isInline(el) || editor.isVoid(el)) && !hasValidChildren) {
     children = [{ text: '' }];
   }
@@ -87,7 +102,6 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 
 export const spanTagDeserializer = (editor, el) => {
   const style = el.getAttribute('style') || '';
-  // console.log('span', el, el.childNodes);
   let children = el.childNodes;
   if (
     // handle formatting from OpenOffice

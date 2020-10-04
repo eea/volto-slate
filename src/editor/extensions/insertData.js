@@ -48,6 +48,7 @@ export const insertData = (editor) => {
         return;
       }
     }
+    console.log('fragment', fragment);
     const nodes = fragment.filter((n) => !Text.isText(n));
     console.log('insert nodes', nodes);
     Transforms.insertNodes(editor, nodes);

@@ -58,9 +58,16 @@ export const insertImage = (editor, url, { typeImg = IMAGE } = {}) => {
 export const deserializeImageTag = (editor, el) => {
   const attrs = { type: IMAGE };
 
+  // TODO: not all of these attributes should be stored in the DB
   for (const name of el.getAttributeNames()) {
     attrs[name] = el.getAttribute(name);
   }
+
+  // TODO: recognize more unsupported protocols
+  if (attrs.src.startsWith('file:///')) {
+    return [jsx('text', {}, '')];
+  }
+
   return [jsx('element', attrs, [{ text: '' }])];
 };
 

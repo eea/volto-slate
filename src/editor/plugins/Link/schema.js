@@ -80,7 +80,7 @@ export const ExternalLinkSchema = {
     target: {
       title: 'Target',
       choices: [
-        ['', 'Open in this window / frame'],
+        ['_self', 'Open in this window / frame'],
         ['_blank', 'Open in new window'],
         ['_parent', 'Open in parent window / frame'],
         ['_top', 'Open in top frame (replaces all frames)'],

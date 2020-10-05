@@ -27,7 +27,10 @@ export const linkDeserializer = (editor, el) => {
   // We don't use this isExternalLink because links can come w/o a target from
   // outside of Volto Slate blocks and still be external.
   // let isExternalLink;
-  if (el.hasAttribute('target')) {
+  if (
+    el.hasAttribute('target') &&
+    ['_blank', '_self', '_parent', '_top'].includes(el.getAttribute('target'))
+  ) {
     attrs.data = attrs.data || {};
     attrs.data.link = attrs.data.link || {};
     attrs.data.link.external = { target: el.getAttribute('target') };

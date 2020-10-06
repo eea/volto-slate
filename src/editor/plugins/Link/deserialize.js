@@ -4,6 +4,16 @@ import { deserialize } from 'volto-slate/editor/deserialize';
 // import { Editor } from 'slate';
 
 /**
+ * @param {HTMLAnchorElement} aEl
+ */
+const hasValidTarget = (aEl) => {
+  return (
+    aEl.hasAttribute('target') &&
+    ['_blank', '_self', '_parent', '_top'].includes(aEl.getAttribute('target'))
+  );
+};
+
+/**
  * This is almost the inverse function of LinkElement render function at
  * src/editor/plugins/Link/render.jsx
  * @param {Editor} editor
@@ -24,10 +34,12 @@ export const linkDeserializer = (editor, el) => {
 
   if (el.hasAttribute('title')) attrs.data.title = el.getAttribute('title');
 
+  const targetSet = hasValidTarget(el);
+
   // We don't use this isExternalLink because links can come w/o a target from
   // outside of Volto Slate blocks and still be external.
   // let isExternalLink;
-  if (el.hasAttribute('target')) {
+  if (targetSet) {
     attrs.data = attrs.data || {};
     attrs.data.link = attrs.data.link || {};
     attrs.data.link.external = { target: el.getAttribute('target') };
@@ -61,6 +73,9 @@ export const linkDeserializer = (editor, el) => {
     attrs.data.link = attrs.data.link || {};
     attrs.data.link.external = attrs.data.link.external || {};
     attrs.data.link.external.external_link = attrs.url;
+    if (!targetSet) {
+      attrs.data.link.external.target = '_self';
+    }
   }
 
   return jsx('element', attrs, children);

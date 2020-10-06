@@ -61,14 +61,9 @@ class SlateEditor extends Component {
     // makes it impossible to have complex types of interactions (like filling
     // in another text box, operating a select menu, etc). For this reason we
     // save the active selection
-    //
-    // Note: this property is incompatible with some immmer operations (like
-    // Editor.fragment(). For those operations you might get away by passing:
-    // { children: editor.children } instead of editor.
-    Object.defineProperty(editor, 'savedSelection', {
-      get: this.getSavedSelection,
-      set: this.setSavedSelection,
-    });
+
+    editor.getSavedSelection = this.getSavedSelection;
+    editor.setSavedSelection = this.setSavedSelection;
 
     return editor;
   }
@@ -89,7 +84,6 @@ class SlateEditor extends Component {
   }
 
   onDOMSelectionChange(evt) {
-    // console.log('dom');
     const { activeElement } = window.document;
     const { editor } = this.state;
 
@@ -98,7 +92,7 @@ class SlateEditor extends Component {
 
     this.setSavedSelection(editor.selection);
     if (!this.mouseDown) {
-      this.setState({ update: true }); // just a dummy thing to trigger re-render
+      this.setState({ update: true }); // needed, triggers re-render
     }
   }
 
@@ -147,8 +141,6 @@ class SlateEditor extends Component {
       this.props.selected !== selected ||
       !isEqual(value, this.props.value)
     );
-    // console.log('nextProps', nextProps);
-    // console.log('nextState', nextState);
   }
 
   render() {
@@ -156,14 +148,11 @@ class SlateEditor extends Component {
       selected,
       value,
       placeholder,
-      // onFocus,
-      // onBlur,
       onKeyDown,
       testingEditorRef,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
-    // console.log(JSON.stringify(this.state.editor.children?.[0]));
 
     // renderExtensions is needed because the editor is memoized, so if these
     // extensions need an updated state (for example to insert updated
@@ -177,9 +166,11 @@ class SlateEditor extends Component {
       testingEditorRef.current = editor;
     }
 
+    // debug-values are `data-` HTML attributes in withTestingFeatures HOC
+
     return (
       <div
-        {...this.props['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
+        {...this.props['debug-values']}
         className={cx('slate-editor', {
           'show-toolbar': this.state.showToolbar,
           selected,
@@ -216,14 +207,8 @@ class SlateEditor extends Component {
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
-              onDoubleClick={() => {
-                // console.log('dbl');
-              }}
               onClick={() => {
-                this.setState({ update: true }); // just a dummy thing to trigger re-render
-              }}
-              onBlur={() => {
-                // console.log('blur', JSON.stringify(editor.selection));
+                this.setState({ update: true }); // needed, triggers re-render
               }}
               onMouseDown={() => {
                 this.mouseDown = true;
@@ -257,7 +242,9 @@ class SlateEditor extends Component {
             {this.props.debug ? (
               <ul>
                 <li>{selected ? 'selected' : 'no-selected'}</li>
-                <li>savedSelection: {JSON.stringify(editor.savedSelection)}</li>
+                <li>
+                  savedSelection: {JSON.stringify(editor.getSavedSelection())}
+                </li>
                 <li>live selection: {JSON.stringify(editor.selection)}</li>
                 <li>children: {JSON.stringify(editor.children)}</li>
               </ul>

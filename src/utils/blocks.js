@@ -74,8 +74,8 @@ export const toggleInlineFormat = (editor, format) => {
     const newSel = JSON.parse(JSON.stringify(rangeRef.current));
 
     Transforms.select(editor, newSel);
-    // editor.setSavedSelection(newSel);
-    editor.savedSelection = newSel;
+    editor.setSavedSelection(newSel);
+    // editor.savedSelection = newSel;
     return;
   }
   const block = { type: format, children: [] };

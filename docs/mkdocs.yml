@@ -21,6 +21,7 @@ nav:
   - The Plugin: 'index.md'
   - Directory Structure: 'directory-structure.md'
   - Volto Slate Plugins: 'volto-slate-plugins.md'
+  - The Slate document schema used: 'slate-document-schema.md'
   - Building the Docs: 'building-the-docs.md'
 
 plugins:

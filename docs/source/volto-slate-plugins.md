@@ -38,6 +38,8 @@ Their initializations can be found inside `/src/editor/config.jsx`.
 - `slate.nodeTypesToHighlight` - *List*. Slate.js type strings (e.g. `"paragraph"`, `"image"` etc.) for the types to be highlighted in the `SlateEditor`
 - `slate.htmlTagsToSlate` - *Object*. Contains properties like this: if the property's key is `A`, the value of this property is a function receiving an `editor` parameter of type (Slate.js) `Editor` and an `el` Slate Element and this function handles link deserialization (`A` is the HTML tag name for links).
 
+*TODO:* this list is not complete and actual.
+
 ### For all the extension points of List type listed above
 
 If replacing it with a new list reference, please take into account the old list stored in the previous reference.
@@ -45,3 +47,13 @@ If replacing it with a new list reference, please take into account the old list
 ### In addition to the above extension points
 
 Besides all these Volto Slate extension points there are all the other extension points of Volto for Volto Addons such as adding a new block type (the method of adding a new block type from a Volto Slate plugin is used in the `Footnote` plugin).
+
+### Useful functions available for plugins
+
+#### `deconstructToVoltoBlocks`
+
+```js
+import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+```
+
+For this function to work well, the new content that should be separated from the rest of the Slate document by this function must not be on the first index inside the editor, but in the second or a later position. If a Volto Slate Text block has just a single node (restriction: only of type block) in the root Editor node, `deconstructToVoltoBlocks` does nothing. This is how `deconstructToVoltoBlocks` works currently (1st of October, 2020).

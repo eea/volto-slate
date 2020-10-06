@@ -182,7 +182,7 @@ class SlateEditor extends Component {
               hasRangeSelection(editor) ? (
                 <SlateToolbar
                   selected={selected}
-                  showToolbar={this.showToolbar}
+                  showToolbar={this.state.showToolbar}
                   setShowToolbar={(value) =>
                     this.setState({ showToolbar: value })
                   }

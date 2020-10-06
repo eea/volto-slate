@@ -92,17 +92,6 @@ class SlateEditor extends Component {
     }
   }
 
-  /**
-   * This method exists because using directly the ReactEditor.focus method
-   * produces the issue: Enter key press in title block does not focus the newly
-   * created Slate Text block.
-   */
-  focusEditorAsync = () => {
-    return Promise.resolve().then(() => {
-      ReactEditor.focus(this.state.editor);
-    });
-  };
-
   componentDidMount() {
     // watch the dom change
     window.document.addEventListener(
@@ -112,7 +101,7 @@ class SlateEditor extends Component {
 
     if (this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        this.focusEditorAsync();
+        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
       }
     }
   }
@@ -132,9 +121,7 @@ class SlateEditor extends Component {
 
     if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        // TODO: should we use this.focusEditorAsync here too instead of the
-        // following line?
-        ReactEditor.focus(this.state.editor);
+        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
       }
     }
 

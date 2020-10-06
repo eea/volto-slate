@@ -2,6 +2,13 @@ import { Editor, Transforms, Range, RangeRef } from 'slate';
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
+export function createDefaultBlock(children) {
+  return {
+    type: settings.slate.defaultBlockType,
+    children: children || [{ text: '' }],
+  };
+}
+
 export function createEmptyParagraph() {
   // TODO: rename to createEmptyBlock
   return {

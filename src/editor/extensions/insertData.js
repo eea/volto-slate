@@ -1,5 +1,6 @@
 import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
+import { createDefaultBlock } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   // const { insertData } = editor;
@@ -49,7 +50,22 @@ export const insertData = (editor) => {
       }
     }
     console.log('fragment', fragment);
-    const nodes = fragment.filter((n) => !Text.isText(n));
+    const nodes = [];
+    let inlinesBlock = null;
+    const isInline = (n) => Text.isText(n) || editor.isInline(n);
+    fragment.forEach((node) => {
+      if (!isInline(node)) {
+        inlinesBlock = null;
+        nodes.push(node);
+      } else {
+        if (!inlinesBlock) {
+          inlinesBlock = createDefaultBlock([node]);
+          nodes.push(inlinesBlock);
+        } else {
+          inlinesBlock.children.push(node);
+        }
+      }
+    });
     console.log('insert nodes', nodes);
     Transforms.insertNodes(editor, nodes);
 

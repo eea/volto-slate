@@ -33,9 +33,10 @@ export const insertData = (editor) => {
         ? parsed.querySelector('google-sheets-html-origin > table')
         : parsed.body;
 
-    fragment = deserialize(editor, body);
     console.log('deserialize body', body);
     console.log('parsed body', parsed);
+
+    fragment = deserialize(editor, body);
 
     // If there is text in the editor, insert a fragment, otherwise insert
     // nodes
@@ -50,6 +51,7 @@ export const insertData = (editor) => {
       }
     }
     console.log('fragment', fragment);
+    // TODO: apply this logic in the deserializer blocks
     const nodes = [];
     let inlinesBlock = null;
     const isInline = (n) => Text.isText(n) || editor.isInline(n);

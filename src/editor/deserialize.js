@@ -52,6 +52,13 @@ export const deserializeChildren = (parent, editor) =>
     .map((el) => deserialize(editor, el))
     .flat();
 
+const isWhitespace = (c) => {
+  return (
+    typeof c === 'string' &&
+    c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
+  );
+};
+
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor);
 
@@ -63,12 +70,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
 
   if (hasBlockChild) {
     children = children.filter((c) => {
-      if (c === null) return false;
-      if (
-        typeof c === 'string' &&
-        c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
-      )
-        return false;
+      if (c === null || isWhitespace(c)) return false;
       return true;
     });
   }
@@ -101,6 +103,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 };
 
 export const spanTagDeserializer = (editor, el) => {
+  // debugger;
   const style = el.getAttribute('style') || '';
   let children = el.childNodes;
   if (
@@ -109,7 +112,7 @@ export const spanTagDeserializer = (editor, el) => {
     children[0].nodeType === 3 &&
     children[0].textContent === '\n'
   ) {
-    return ' ';
+    return jsx('text', {}, ' ');
   }
   children = deserializeChildren(el, editor);
 
@@ -130,7 +133,7 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return children;
+  return jsx('text', {}, children);
 };
 
 export const bTagDeserializer = (editor, el) => {

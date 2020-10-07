@@ -1,6 +1,6 @@
 import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { createDefaultBlock } from 'volto-slate/utils';
+import { normalizeBlockNodes } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   // const { insertData } = editor;
@@ -38,36 +38,21 @@ export const insertData = (editor) => {
 
     fragment = deserialize(editor, body);
 
-    // If there is text in the editor, insert a fragment, otherwise insert
-    // nodes
+    // When there's already text in the editor, insert a fragment, not nodes
     if (Editor.string(editor, [])) {
       if (
         Array.isArray(fragment) &&
         fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
       ) {
         console.log('insert fragment', fragment);
+        // TODO: we want normalization also when dealing with fragments
         Transforms.insertFragment(editor, fragment);
         return;
       }
     }
+
     console.log('fragment', fragment);
-    // TODO: apply this logic in the deserializer blocks
-    const nodes = [];
-    let inlinesBlock = null;
-    const isInline = (n) => Text.isText(n) || editor.isInline(n);
-    fragment.forEach((node) => {
-      if (!isInline(node)) {
-        inlinesBlock = null;
-        nodes.push(node);
-      } else {
-        if (!inlinesBlock) {
-          inlinesBlock = createDefaultBlock([node]);
-          nodes.push(inlinesBlock);
-        } else {
-          inlinesBlock.children.push(node);
-        }
-      }
-    });
+    const nodes = normalizeBlockNodes(editor, fragment);
     console.log('insert nodes', nodes);
     Transforms.insertNodes(editor, nodes);
 

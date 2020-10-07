@@ -1,5 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text, Editor } from 'slate';
+import { normalizeBlockNodes, isWhitespace } from 'volto-slate/utils';
 // import { isEqual } from 'lodash';
 
 const TEXT_NODE = 3;
@@ -52,27 +53,24 @@ export const deserializeChildren = (parent, editor) =>
     .map((el) => deserialize(editor, el))
     .flat();
 
-const isWhitespace = (c) => {
-  return (
-    typeof c === 'string' &&
-    c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
-  );
-};
-
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor);
 
   // Is this block element mixing text items with block-level items?
   // In this case, strip the text items, they're artifacts of imperfect paste
-  const hasBlockChild = children.find(
-    (c) => !(Text.isText(c) || typeof c === 'string' || Editor.isInline(c)),
-  );
+  // const hasBlockChild = children.find(
+  //   (c) => !(Text.isText(c) || typeof c === 'string' || Editor.isInline(c)),
+  // );
+  const isInline = (n) => Text.isText(n) || editor.isInline(n);
+  const hasBlockChild = children.filter((n) => !isInline(n)).length > 0;
 
   if (hasBlockChild) {
-    children = children.filter((c) => {
-      if (c === null || isWhitespace(c)) return false;
-      return true;
-    });
+    // debugger;
+    children = normalizeBlockNodes(editor, children);
+    // children = children.filter((c) => {
+    //   if (c === null || isWhitespace(c)) return false;
+    //   return true;
+    // });
   }
 
   // normalizes block elements so that they're never empty

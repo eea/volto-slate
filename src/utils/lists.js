@@ -88,5 +88,5 @@ export function getCurrentListItem(editor) {
     match: (n) => n.type === slate.listItemType,
     mode: 'lowest',
   });
-  return match;
+  return match || []; // empty entry if nothing is found
 }

@@ -1,18 +1,32 @@
 import { jsx } from 'slate-hyperscript';
-import { Text } from 'slate';
+import { Text, Editor } from 'slate';
+import { normalizeBlockNodes, isWhitespace } from 'volto-slate/utils';
+// import { isEqual } from 'lodash';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
+const COMMENT = 8;
 
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
-  if (el.nodeType === TEXT_NODE) {
-    return el.nodeValue === '\n' ? null : el.textContent;
+  // console.log('des:', el.nodeType, el);
+  if (el.nodeType === COMMENT) {
+    return null;
+  } else if (el.nodeType === TEXT_NODE) {
+    if (el.textContent === '\n') {
+      // if it's empty text between 2 tags, it should be ignored
+      return null;
+    }
+    return el.textContent
+      .replace(/\n$/g, ' ')
+      .replace(/\n/g, ' ')
+      .replace(/\t/g, '');
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
-    return '\n';
+    // TODO: handle <br> ?
+    return null;
   }
 
   if (el.getAttribute('data-slate-data')) {
@@ -40,7 +54,25 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  return jsx('element', { type: tagname }, deserializeChildren(el, editor));
+  let children = deserializeChildren(el, editor).filter((n) => n !== null);
+
+  const isInline = (n) =>
+    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
+  const hasBlockChild = children.filter((n) => !isInline(n)).length > 0;
+  // const isCurrentInline = editor.isInline(el);
+
+  if (hasBlockChild) {
+    children = normalizeBlockNodes(editor, children);
+  }
+
+  // normalizes block elements so that they're never empty
+  // Avoids a hard crash from the Slate editor
+  const hasValidChildren = children.length && children.find((c) => !!c);
+  if (!(editor.isInline(el) || editor.isVoid(el)) && !hasValidChildren) {
+    children = [{ text: '' }];
+  }
+
+  return jsx('element', { type: tagname }, children);
 };
 
 export const bodyTagDeserializer = (editor, el) => {
@@ -61,8 +93,18 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 };
 
 export const spanTagDeserializer = (editor, el) => {
+  // debugger;
   const style = el.getAttribute('style') || '';
-  const children = deserializeChildren(el, editor);
+  let children = el.childNodes;
+  if (
+    // handle formatting from OpenOffice
+    children.length === 1 &&
+    children[0].nodeType === 3 &&
+    children[0].textContent === '\n'
+  ) {
+    return jsx('text', {}, ' ');
+  }
+  children = deserializeChildren(el, editor);
 
   // TODO: handle sub/sup as <sub> and <sup>
   // Handle Google Docs' <sub> formatting
@@ -81,16 +123,14 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return children;
+  return jsx('text', {}, children);
 };
 
 export const bTagDeserializer = (editor, el) => {
-  if ((el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1) {
-    // Google Docs does weird things with <b> tag
-    return deserializeChildren(el, editor);
-  }
-
-  return jsx('element', { type: 'b' }, deserializeChildren(el, editor));
+  // Google Docs does weird things with <b> tag
+  return (el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1
+    ? deserializeChildren(el, editor)
+    : jsx('element', { type: 'b' }, deserializeChildren(el, editor));
 };
 
 export const preTagDeserializer = (editor, el) => {

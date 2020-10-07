@@ -51,8 +51,8 @@ export function highlightSelection(editor, [node, path], ranges) {
     selected = blockProps.selected;
   }
 
-  if (selected && !editor.selection && editor.savedSelection) {
-    const newSelection = editor.savedSelection;
+  if (selected && !editor.selection && editor.getSavedSelection()) {
+    const newSelection = editor.getSavedSelection();
     if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
       const range = {
         ...newSelection,

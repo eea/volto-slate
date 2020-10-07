@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "0.6.0",
+  "version": "0.7.1",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "scripts": {
@@ -18,11 +18,11 @@
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
     "jsdom": "16.2.2",
-    "slate": "^0.58.4",
-    "slate-history": "^0.58.4",
-    "slate-hyperscript": "^0.58.4",
+    "slate": "^0.59",
+    "slate-history": "^0.59",
+    "slate-hyperscript": "^0.59",
     "slate-plain-serializer": "0.7.13",
-    "slate-react": "^0.58.4",
+    "slate-react": "^0.59",
     "weak-key": "^1.0.2"
   },
   "devDependencies": {

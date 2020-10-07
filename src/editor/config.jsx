@@ -98,12 +98,7 @@ export const buttons = {
     />
   ),
   'heading-four': (props) => (
-    <BlockButton
-      title="Heading 4"
-      format="h4"
-      icon={subTextIcon}
-      {...props}
-    />
+    <BlockButton title="Heading 4" format="h4" icon={subTextIcon} {...props} />
   ),
   'numbered-list': (props) => (
     <BlockButton
@@ -196,7 +191,9 @@ export const elements = {
   h4: ({ attributes, children }) => <h4 {...attributes}>{children}</h4>,
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
-  p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+  p: ({ attributes, children }) => {
+    return <p {...attributes}>{children}</p>;
+  },
   ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
 
   // While usual slate editor consider these to be Leafs, we treat them as

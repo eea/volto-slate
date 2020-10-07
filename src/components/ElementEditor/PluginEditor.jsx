@@ -4,6 +4,7 @@ import { isEqual } from 'lodash';
 import { ReactEditor } from 'slate-react';
 import InlineForm from 'volto-slate/futurevolto/InlineForm';
 import { Icon as VoltoIcon } from '@plone/volto/components';
+import BaseSchemaProvider from './SchemaProvider';
 
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 import checkSVG from '@plone/volto/icons/check.svg';
@@ -14,7 +15,7 @@ import { setPluginOptions } from 'volto-slate/actions';
 export default (props) => {
   const {
     editor,
-    editSchema,
+    schemaProvider,
     pluginId,
     getActiveElement,
     isActiveElement,
@@ -53,47 +54,53 @@ export default (props) => {
     [editor, insertElement, unwrapElement, hasValue],
   );
 
+  const SchemaProvider = schemaProvider ? schemaProvider : BaseSchemaProvider;
+
   return (
-    <InlineForm
-      schema={editSchema}
-      title={editSchema.title}
-      icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
-      onChangeField={(id, value) => {
-        if (!onChangeValues) {
-          return setFormData({
-            ...formData,
-            [id]: value,
-          });
-        }
-        return onChangeValues(id, value, formData, setFormData);
-      }}
-      formData={formData}
-      headerActions={
-        <>
-          <button
-            onClick={() => {
-              saveDataToEditor(formData);
-              dispatch(
-                setPluginOptions(pluginId, { show_sidebar_editor: false }),
-              );
-              ReactEditor.focus(editor);
-            }}
-          >
-            <VoltoIcon size="24px" name={checkSVG} />
-          </button>
-          <button
-            onClick={() => {
-              dispatch(
-                setPluginOptions(pluginId, { show_sidebar_editor: false }),
-              );
-              setFormData({});
-              ReactEditor.focus(editor);
-            }}
-          >
-            <VoltoIcon size="24px" name={clearSVG} />
-          </button>
-        </>
-      }
-    />
+    <SchemaProvider {...props} data={formData}>
+      {(schema) => (
+        <InlineForm
+          schema={schema}
+          title={schema.title}
+          icon={<VoltoIcon size="24px" name={briefcaseSVG} />}
+          onChangeField={(id, value) => {
+            if (!onChangeValues) {
+              return setFormData({
+                ...formData,
+                [id]: value,
+              });
+            }
+            return onChangeValues(id, value, formData, setFormData);
+          }}
+          formData={formData}
+          headerActions={
+            <>
+              <button
+                onClick={() => {
+                  saveDataToEditor(formData);
+                  dispatch(
+                    setPluginOptions(pluginId, { show_sidebar_editor: false }),
+                  );
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <VoltoIcon size="24px" name={checkSVG} />
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(
+                    setPluginOptions(pluginId, { show_sidebar_editor: false }),
+                  );
+                  setFormData({});
+                  ReactEditor.focus(editor);
+                }}
+              >
+                <VoltoIcon size="24px" name={clearSVG} />
+              </button>
+            </>
+          }
+        />
+      )}
+    </SchemaProvider>
   );
 };

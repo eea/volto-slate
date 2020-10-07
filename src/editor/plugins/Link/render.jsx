@@ -1,25 +1,30 @@
 import React from 'react';
 
 export const LinkElement = ({ attributes, children, element }) => {
-  // TODO: use the element.data to decide how to compose the link
   // TODO: use Router Links to route to internal content
   // TODO: handle anchor links (#something)
 
-  let url;
-  if (element.data?.UID) {
-    // internal link
-    url = element.url;
-  } else if (element.data?.email_address) {
-    // email link
-    url = element.url;
-  } else {
-    // external link
-    url = element.url;
-  }
+  let url = element.url;
+  const { link } = element.data || {};
 
-  const { title, target } = element?.data || {};
+  const internal_link = link?.internal?.internal_link?.[0]?.['@id'];
+  const external_link = link?.external?.external_link;
+  const email = link?.email;
+
+  const href = email
+    ? `mailto:${email.email_address}${
+        email.email_subject ? `?subject=${email.email_subject}` : ''
+      }`
+    : external_link || internal_link || url;
+
+  const options = {
+    target: external_link ? link.external.target : null,
+    href,
+  };
+
+  const { title } = element?.data || {};
   return (
-    <a {...attributes} target={target} href={url} title={title}>
+    <a {...attributes} {...options} title={title}>
       {children}
     </a>
   );

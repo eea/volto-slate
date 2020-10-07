@@ -1,10 +1,12 @@
+import ReactDOM from 'react-dom';
 import { Editor } from 'slate';
-import { ReactEditor } from 'slate-react';
+// import { ReactEditor } from 'slate-react';
 import {
   splitEditorInTwoFragments,
   setEditorContent,
   createAndSelectNewBlockAfter,
-  isRangeAtRoot,
+  rangeIsInSplittableNode,
+  // deconstructToVoltoBlocks,
 } from 'volto-slate/utils';
 
 /**
@@ -24,22 +26,26 @@ export const withSplitBlocksOnBreak = (editor) => {
 
   editor.insertBreak = () => {
     // if selection is expanded, delete it
-    if (editor.selection && isRangeAtRoot(editor.selection)) {
+    if (rangeIsInSplittableNode(editor, editor.selection)) {
       const block = Editor.parent(editor, editor.selection);
 
       if (block) {
         const blockProps = editor.getBlockProps();
         const { data } = blockProps;
-
         // Don't add new block if not allowed
         if (data?.disableNewBlocks) {
           return insertBreak();
         }
 
-        const [top, bottom] = splitEditorInTwoFragments(editor);
-        setEditorContent(editor, top);
-        ReactEditor.blur(editor);
-        createAndSelectNewBlockAfter(editor, bottom);
+        // console.log('insert block');
+        // insertBreak();
+        // deconstructToVoltoBlocks(editor);
+        ReactDOM.unstable_batchedUpdates(() => {
+          const [top, bottom] = splitEditorInTwoFragments(editor);
+          setEditorContent(editor, top);
+          // ReactEditor.blur(editor);
+          createAndSelectNewBlockAfter(editor, bottom);
+        });
       }
       return;
     }

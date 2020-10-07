@@ -17,8 +17,14 @@ const Toolbar = ({ toggleButton, children }) => {
       return;
     }
 
-    const { selection, savedSelection } = editor;
+    const { selection } = editor;
+    const savedSelection = editor.getSavedSelection();
     if (!(selection || savedSelection)) {
+      el.removeAttribute('style');
+      return;
+    }
+
+    if (editor.isSidebarOpen) {
       el.removeAttribute('style');
       return;
     }

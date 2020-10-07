@@ -6,7 +6,6 @@ import { LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
 import { withLink } from './extensions';
 import { linkDeserializer } from './deserialize';
-import ObjectByTypeWidget from './ObjectByTypeWidget';
 import LinkEditSchema from './schema';
 
 const messages = defineMessages({
@@ -32,6 +31,7 @@ export default (config) => {
   slate.htmlTagsToSlate.A = linkDeserializer;
 
   const opts = {
+    title: 'Link',
     pluginId: LINK,
     elementType: LINK,
     element: LinkElement,
@@ -45,8 +45,6 @@ export default (config) => {
 
   const [installLinkEditor] = makeInlineElementPlugin(opts);
   config = installLinkEditor(config);
-
-  config.widgets.widget.object_by_type = ObjectByTypeWidget;
 
   return config;
 };

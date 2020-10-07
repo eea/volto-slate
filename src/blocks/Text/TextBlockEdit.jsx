@@ -4,7 +4,7 @@ import { readAsDataURL } from 'promise-file-reader';
 import Dropzone from 'react-dropzone';
 
 import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
-import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
+import { Button, Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
@@ -47,6 +47,9 @@ const TextBlockEdit = (props) => {
     uploadedContent,
     defaultSelection,
     saveSlateBlockSelection,
+    allowedBlocks,
+    formTitle,
+    formDescription,
   } = props;
 
   const { slate } = settings;
@@ -142,12 +145,27 @@ const TextBlockEdit = (props) => {
     [defaultSelection, block, saveSlateBlockSelection],
   );
 
+  // Get editing instructions from block settings or props
+  let instructions = data?.instructions?.data || data?.instructions;
+  if (!instructions || instructions === '<p><br/></p>') {
+    instructions = formDescription;
+  }
+
+  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
   return (
     <>
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
-        <ShortcutListing />
-        <MarkdownIntroduction />
+        {instructions ? (
+          <Segment secondary attached>
+            <div dangerouslySetInnerHTML={{ __html: instructions }} />
+          </Segment>
+        ) : (
+          <>
+            <ShortcutListing />
+            <MarkdownIntroduction />
+          </>
+        )}
       </SidebarPortal>
 
       {DEBUG ? <div>{block}</div> : ''}
@@ -201,7 +219,7 @@ const TextBlockEdit = (props) => {
             }}
             onKeyDown={handleKey}
             selected={selected}
-            placeholder={data.placeholder || 'Enter some rich text…'}
+            placeholder={placeholder}
           />
         )}
       </Dropzone>
@@ -227,6 +245,7 @@ const TextBlockEdit = (props) => {
             setAddNewBlockOpened(false);
           }}
           currentBlock={block}
+          allowedBlocks={allowedBlocks}
         />
       )}
     </>

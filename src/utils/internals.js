@@ -1,4 +1,4 @@
-import { Point, Range } from 'slate';
+import { Point, Range, Editor } from 'slate';
 
 /**
  * @param {Point} point The point to verify.
@@ -14,4 +14,21 @@ export const isPointAtRoot = (point) => point.path.length === 2;
  */
 export const isRangeAtRoot = (range) => {
   return isPointAtRoot(range.anchor) || isPointAtRoot(range.focus);
+};
+
+/**
+ * The block in a valid Slate document according to our schema can be here
+ * either a Slate block that touches the root or a Slate inline (the other
+ * possibility, a leaf Text node is excluded because we are taking the
+ * parent of the selection).
+ *
+ * @param {Editor} editor
+ * @param {Range} range
+ *
+ * @returns {boolean} true if the range (usually the selection) can be split
+ * into two editors (usually Volto Slate Text blocks)
+ */
+export const rangeIsInSplittableNode = (editor, range) => {
+  const [block] = Editor.parent(editor, range);
+  return range && (isRangeAtRoot(range) || editor.isInline(block));
 };

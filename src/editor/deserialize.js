@@ -56,21 +56,13 @@ export const deserializeChildren = (parent, editor) =>
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor).filter((n) => n !== null);
 
-  // Is this block element mixing text items with block-level items?
-  // In this case, strip the text items, they're artifacts of imperfect paste
-  // const hasBlockChild = children.find(
-  //   (c) => !(Text.isText(c) || typeof c === 'string' || Editor.isInline(c)),
-  // );
-  const isInline = (n) => Text.isText(n) || editor.isInline(n);
+  const isInline = (n) =>
+    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
   const hasBlockChild = children.filter((n) => !isInline(n)).length > 0;
+  // const isCurrentInline = editor.isInline(el);
 
   if (hasBlockChild) {
-    // debugger;
     children = normalizeBlockNodes(editor, children);
-    // children = children.filter((c) => {
-    //   if (c === null || isWhitespace(c)) return false;
-    //   return true;
-    // });
   }
 
   // normalizes block elements so that they're never empty

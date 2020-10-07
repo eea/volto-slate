@@ -13,7 +13,7 @@ import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 import subindexIcon from '@plone/volto/icons/subindex.svg';
 import superindexIcon from '@plone/volto/icons/superindex.svg';
 
-import { createEmptyParagraph } from 'volto-slate/utils';
+import { createDefaultBlock } from 'volto-slate/utils';
 
 import {
   MarkButton,
@@ -232,7 +232,7 @@ export const leafs = {
 };
 
 export const defaultValue = () => {
-  return [createEmptyParagraph()];
+  return [createDefaultBlock()];
 };
 
 // HTML deserialization (html -> slate data conversion)

@@ -44,14 +44,6 @@ export function createDefaultBlock(children) {
   };
 }
 
-export function createEmptyParagraph() {
-  // TODO: rename to createEmptyBlock
-  return {
-    type: settings.slate.defaultBlockType,
-    children: [{ text: '' }],
-  };
-}
-
 export const isBlockActive = (editor, format) => {
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === format,

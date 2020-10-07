@@ -312,3 +312,35 @@ function toggleBlockStyleInSelection(editor, style) {
     Transforms.setNodes(editor, { styleName: cn }, { at: p });
   }
 }
+
+/**
+ * Toggles a style (e.g. in the StyleMenu plugin).
+ * @param {Editor} editor
+ * @param {object} options
+ * @param {boolean} options.isRequested Whether the given style is requested by
+ * the user. The style is only applied if it is requested and only removed if it
+ * is not requested.
+ */
+export const toggleStyle = (editor, { cssClass, isBlock, isRequested }) => {
+  const isActive =
+    isBlockStyleActive(editor, cssClass) ||
+    isInlineStyleActive(editor, cssClass);
+
+  if (isRequested && isActive) {
+    // nothing to do
+  } else if (isRequested && !isActive) {
+    if (isBlock && !isBlockStyleActive(editor, cssClass)) {
+      toggleBlockStyle(editor, cssClass);
+    } else if (!isBlock && !isInlineStyleActive(editor, cssClass)) {
+      toggleInlineStyle(editor, cssClass);
+    }
+  } else if (!isRequested && isActive) {
+    if (isBlock && isBlockStyleActive(editor, cssClass)) {
+      toggleBlockStyle(editor, cssClass);
+    } else if (!isBlock && isInlineStyleActive(editor, cssClass)) {
+      toggleInlineStyle(editor, cssClass);
+    }
+  } else if (!isRequested && !isActive) {
+    // nothing to do
+  }
+};

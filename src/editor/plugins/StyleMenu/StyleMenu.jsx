@@ -5,10 +5,9 @@ import Select, { components } from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
 import {
-  toggleBlockStyle,
   isBlockStyleActive,
-  toggleInlineStyle,
   isInlineStyleActive,
+  toggleStyle,
 } from '../../../utils/blocks';
 
 const messages = defineMessages({
@@ -200,36 +199,13 @@ const StylingsButton = (props) => {
       }}
       onChange={(selItem, meta) => {
         // console.log('meta', meta);
-
         for (const item of rawOpts) {
           const isRequested = selItem.includes(item);
-          const isActive =
-            isBlockStyleActive(editor, item.value) ||
-            isInlineStyleActive(editor, item.value);
-
-          if (isRequested && isActive) {
-            // nothing to do
-          } else if (isRequested && !isActive) {
-            if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
-              toggleBlockStyle(editor, item.value);
-            } else if (
-              !item.isBlock &&
-              !isInlineStyleActive(editor, item.value)
-            ) {
-              toggleInlineStyle(editor, item.value);
-            }
-          } else if (!isRequested && isActive) {
-            if (item.isBlock && isBlockStyleActive(editor, item.value)) {
-              toggleBlockStyle(editor, item.value);
-            } else if (
-              !item.isBlock &&
-              isInlineStyleActive(editor, item.value)
-            ) {
-              toggleInlineStyle(editor, item.value);
-            }
-          } else if (!isRequested && !isActive) {
-            // nothing to do
-          }
+          toggleStyle(editor, {
+            cssClass: item.value,
+            isBlock: item.isBlock,
+            isRequested,
+          });
         }
       }}
     ></Select>

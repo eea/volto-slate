@@ -54,7 +54,7 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  let children = deserializeChildren(el, editor);
+  let children = deserializeChildren(el, editor).filter((n) => n !== null);
 
   // Is this block element mixing text items with block-level items?
   // In this case, strip the text items, they're artifacts of imperfect paste

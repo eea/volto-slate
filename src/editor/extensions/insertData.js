@@ -1,5 +1,6 @@
 import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
+import { createDefaultBlock, normalizeBlockNodes } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   // const { insertData } = editor;
@@ -22,34 +23,42 @@ export const insertData = (editor) => {
     }
 
     const html = data.getData('text/html');
-    // Avoid responding to drag/drop and others
-    if (!html) return; // insertData(data)
+    // TODO: Avoid responding to drag/drop and others
+    if (html) {
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
 
-    const parsed = new DOMParser().parseFromString(html, 'text/html');
+      const body =
+        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+          ? parsed.querySelector('google-sheets-html-origin > table')
+          : parsed.body;
 
-    const body =
-      parsed.getElementsByTagName('google-sheets-html-origin').length > 0
-        ? parsed.querySelector('google-sheets-html-origin > table')
-        : parsed.body;
+      console.log('deserialize body', body);
+      console.log('parsed body', parsed);
 
-    fragment = deserialize(editor, body);
-    console.log('deserialize body', body);
-    console.log('parsed body', parsed);
+      fragment = deserialize(editor, body);
+    } else {
+      const text = data.getData('text/plain');
+      if (!text) return;
+      const paras = text.split('\n');
+      fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
+      // return insertData(data);
+    }
 
-    // If there is text in the editor, insert a fragment, otherwise insert
-    // nodes
+    // When there's already text in the editor, insert a fragment, not nodes
     if (Editor.string(editor, [])) {
       if (
         Array.isArray(fragment) &&
         fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
       ) {
         console.log('insert fragment', fragment);
+        // TODO: we want normalization also when dealing with fragments
         Transforms.insertFragment(editor, fragment);
         return;
       }
     }
+
     console.log('fragment', fragment);
-    const nodes = fragment.filter((n) => !Text.isText(n));
+    const nodes = normalizeBlockNodes(editor, fragment);
     console.log('insert nodes', nodes);
     Transforms.insertNodes(editor, nodes);
 

@@ -1,6 +1,48 @@
-import { Editor, Transforms, Range, RangeRef } from 'slate';
+import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+
+/**
+ * Is it text? Is it whitespace (space, newlines, tabs) ?
+ *
+ */
+export const isWhitespace = (c) => {
+  return (
+    typeof c === 'string' &&
+    c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
+  );
+};
+
+export function normalizeBlockNodes(editor, children) {
+  const nodes = [];
+  let inlinesBlock = null;
+
+  const isInline = (n) =>
+    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
+
+  children.forEach((node) => {
+    if (!isInline(node)) {
+      inlinesBlock = null;
+      nodes.push(node);
+    } else {
+      node = typeof node === 'string' ? { text: node } : node;
+      if (!inlinesBlock) {
+        inlinesBlock = createDefaultBlock([node]);
+        nodes.push(inlinesBlock);
+      } else {
+        inlinesBlock.children.push(node);
+      }
+    }
+  });
+  return nodes;
+}
+
+export function createDefaultBlock(children) {
+  return {
+    type: settings.slate.defaultBlockType,
+    children: children || [{ text: '' }],
+  };
+}
 
 export function createEmptyParagraph() {
   // TODO: rename to createEmptyBlock

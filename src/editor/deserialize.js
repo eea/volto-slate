@@ -1,6 +1,6 @@
 import { jsx } from 'slate-hyperscript';
-import { Text, Editor } from 'slate';
-// import { isEqual } from 'lodash';
+import { Text } from 'slate';
+import { normalizeBlockNodes } from 'volto-slate/utils';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -53,24 +53,15 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
-  let children = deserializeChildren(el, editor);
+  let children = deserializeChildren(el, editor).filter((n) => n !== null);
 
-  // Is this block element mixing text items with block-level items?
-  // In this case, strip the text items, they're artifacts of imperfect paste
-  const hasBlockChild = children.find(
-    (c) => !(Text.isText(c) || typeof c === 'string' || Editor.isInline(c)),
-  );
+  const isInline = (n) =>
+    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
+  const hasBlockChild = children.filter((n) => !isInline(n)).length > 0;
+  // const isCurrentInline = editor.isInline(el);
 
   if (hasBlockChild) {
-    children = children.filter((c) => {
-      if (c === null) return false;
-      if (
-        typeof c === 'string' &&
-        c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
-      )
-        return false;
-      return true;
-    });
+    children = normalizeBlockNodes(editor, children);
   }
 
   // normalizes block elements so that they're never empty
@@ -101,6 +92,7 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 };
 
 export const spanTagDeserializer = (editor, el) => {
+  // debugger;
   const style = el.getAttribute('style') || '';
   let children = el.childNodes;
   if (
@@ -109,7 +101,7 @@ export const spanTagDeserializer = (editor, el) => {
     children[0].nodeType === 3 &&
     children[0].textContent === '\n'
   ) {
-    return ' ';
+    return jsx('text', {}, ' ');
   }
   children = deserializeChildren(el, editor);
 
@@ -130,7 +122,7 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return children;
+  return jsx('text', {}, children);
 };
 
 export const bTagDeserializer = (editor, el) => {

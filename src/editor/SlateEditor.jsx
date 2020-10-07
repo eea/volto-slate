@@ -69,7 +69,7 @@ class SlateEditor extends Component {
   }
 
   handleChange(value) {
-    if (!isEqual(value, this.props.value)) {
+    if (this.props.onChange && !isEqual(value, this.props.value)) {
       this.props.onChange(value);
     }
   }
@@ -105,7 +105,7 @@ class SlateEditor extends Component {
 
     if (this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        ReactEditor.focus(this.state.editor);
+        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
       }
     }
   }
@@ -125,7 +125,7 @@ class SlateEditor extends Component {
 
     if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        ReactEditor.focus(this.state.editor);
+        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
       }
     }
 
@@ -186,7 +186,7 @@ class SlateEditor extends Component {
               hasRangeSelection(editor) ? (
                 <SlateToolbar
                   selected={selected}
-                  showToolbar={this.showToolbar}
+                  showToolbar={this.state.showToolbar}
                   setShowToolbar={(value) =>
                     this.setState({ showToolbar: value })
                   }

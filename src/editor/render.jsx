@@ -2,12 +2,13 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
 import cx from 'classnames';
+import { isEqual } from 'lodash';
 
 import { settings } from '~/config';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = ({ element, attributes, ...rest }) => {
+export const Element = ({ element, attributes, extras, ...rest }) => {
   const { slate } = settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
@@ -31,6 +32,7 @@ export const Leaf = ({ children, ...rest }) => {
     'highlight-selection': mode !== 'view' && leaf.isSelection,
   };
 
+  // stylemenu support
   for (const prop in leaf) {
     if (prop.startsWith('style-')) {
       obj[prop.substring(6)] = true;
@@ -42,7 +44,7 @@ export const Leaf = ({ children, ...rest }) => {
   return mode === 'view' ? (
     typeof children === 'string' ? (
       children.split('\n').map((t, i) => {
-        // Softbreak support. Should do a plugin
+        // Softbreak support. Should do a plugin?
         return (
           <React.Fragment key={`${i}`}>
             {children.indexOf('\n') > -1 &&
@@ -71,7 +73,7 @@ const serializeData = (node) => {
   return JSON.stringify({ type: node.type, data: node.data });
 };
 
-export const serializeNodes = (nodes) => {
+export const serializeNodes = (nodes, id) => {
   const editor = { children: nodes || [] };
 
   // The reason for the closure is historic. We used to have key as the unique
@@ -100,6 +102,7 @@ export const serializeNodes = (nodes) => {
           mode="view"
           key={path}
           data-slate-data={node.data ? serializeData(node) : null}
+          attributes={isEqual(path, [0]) ? { id } : null}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

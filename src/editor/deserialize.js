@@ -122,7 +122,9 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return jsx('text', {}, children);
+  return children.find((c) => typeof c !== 'string')
+    ? children
+    : jsx('text', {}, children);
 };
 
 export const bTagDeserializer = (editor, el) => {

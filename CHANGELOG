@@ -2,9 +2,12 @@
 
 ## unreleased
 
+- Allow text blocks to override TOC entry
 - Improve paste handling @tiberiuichim
 - Replace savedSelection editor property with explicit editor.getSavedSelection
   and editor.setSavedSelection @tiberiuichim
+- When serializing text blocks, write the block id as id in the primary element
+- Integrate with volto-block-toc
 
 ## 0.7
 

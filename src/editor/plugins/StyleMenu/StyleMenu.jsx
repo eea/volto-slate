@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
 import Select from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
@@ -126,6 +126,7 @@ const selectStyles = {
 const StylingsButton = (props) => {
   const editor = useSlate();
   const intl = useIntl();
+  const [open, setOpen] = useState(false);
 
   // Converting the settings to a format that is required by react-select.
   const rawOpts = [
@@ -170,6 +171,10 @@ const StylingsButton = (props) => {
     <Select
       options={opts}
       value={toSelect}
+      menuIsOpen={open}
+      onBlur={() => {
+        setOpen(false);
+      }}
       isMulti={true}
       styles={selectStyles}
       placeholder={intl.formatMessage(messages.noStyle)}
@@ -179,6 +184,8 @@ const StylingsButton = (props) => {
       }
       components={{
         // Shows the most relevant part of the selection as a simple string of text.
+        // TODO: show all the styles selected with commas between them and
+        // ellipsis just at the end of the MultiValue right side limit
         MultiValue: (props) => {
           const val = props.getValue();
 
@@ -190,6 +197,43 @@ const StylingsButton = (props) => {
           }
 
           return '';
+        },
+        Control: (props) => {
+          const {
+            children,
+            cx,
+            getStyles,
+            className,
+            isDisabled,
+            isFocused,
+            innerRef,
+            innerProps,
+            menuIsOpen,
+          } = props;
+          return (
+            <div
+              ref={innerRef}
+              role="presentation"
+              style={getStyles('control', props)}
+              className={cx(
+                {
+                  control: true,
+                  'control--is-disabled': isDisabled,
+                  'control--is-focused': isFocused,
+                  'control--menu-is-open': menuIsOpen,
+                },
+                className,
+              )}
+              {...innerProps}
+              // The only difference from the initial React-Select's Control
+              // component:
+              onClick={() => {
+                setOpen(!open);
+              }}
+            >
+              {children}
+            </div>
+          );
         },
       }}
       theme={(theme) => {

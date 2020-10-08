@@ -7,6 +7,7 @@ import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import { Button, Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
+import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import { settings } from '~/config';
 
@@ -20,6 +21,7 @@ import { Transforms } from 'slate';
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
 import { handleKey } from './keyboard';
+import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
@@ -152,6 +154,7 @@ const TextBlockEdit = (props) => {
   }
 
   const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  const schema = TextBlockSchema(data);
   return (
     <>
       <SidebarPortal selected={selected}>
@@ -164,6 +167,17 @@ const TextBlockEdit = (props) => {
           <>
             <ShortcutListing />
             <MarkdownIntroduction />
+            <InlineForm
+              schema={schema}
+              title={schema.title}
+              onChangeField={(id, value) => {
+                onChangeBlock(block, {
+                  ...data,
+                  [id]: value,
+                });
+              }}
+              formData={data}
+            />
           </>
         )}
       </SidebarPortal>

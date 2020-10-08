@@ -194,7 +194,9 @@ export const elements = {
   p: ({ attributes, children }) => {
     return <p {...attributes}>{children}</p>;
   },
-  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+  ul: ({ attributes, children }) => {
+    return <ul {...attributes}>{children}</ul>;
+  },
 
   // While usual slate editor consider these to be Leafs, we treat them as
   // inline elements because they can sometimes contain elements (ex:

@@ -1,19 +1,26 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
-import { Editor } from 'slate';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-import {
-  isBlockStyleActive,
-  isInlineStyleActive,
-  toggleStyle,
-} from '../../../utils/blocks';
+import { isBlockStyleActive, isInlineStyleActive, toggleStyle } from './utils';
 
 const messages = defineMessages({
   allStylesApplied: {
     id: 'All Styles Applied',
     defaultMessage: 'All Styles Applied',
+  },
+  noStyle: {
+    id: 'No Style',
+    defaultMessage: 'No Style',
+  },
+  fontStyle: {
+    id: 'Font Style',
+    defaultMessage: 'Font Style',
+  },
+  paragraphStyle: {
+    id: 'Paragraph Style',
+    defaultMessage: 'Paragraph Style',
   },
 });
 
@@ -133,11 +140,11 @@ const StylingsButton = (props) => {
   // TODO: i18n for the two strings used below
   const opts = [
     {
-      label: 'Paragraph Style',
+      label: intl.formatMessage(messages.paragraphStyle),
       options: rawOpts.filter((x) => x.isBlock),
     },
     {
-      label: 'Font Style',
+      label: intl.formatMessage(messages.fontStyle),
       options: rawOpts.filter((x) => !x.isBlock),
     },
   ];
@@ -165,7 +172,7 @@ const StylingsButton = (props) => {
       value={toSelect}
       isMulti={true}
       styles={selectStyles}
-      placeholder="No Style"
+      placeholder={intl.formatMessage(messages.noStyle)}
       hideSelectedOptions={false}
       noOptionsMessage={({ inputValue }) =>
         intl.formatMessage(messages.allStylesApplied)

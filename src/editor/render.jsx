@@ -31,6 +31,7 @@ export const Leaf = ({ children, ...rest }) => {
     'highlight-selection': mode !== 'view' && leaf.isSelection,
   };
 
+  // stylemenu support
   for (const prop in leaf) {
     if (prop.startsWith('style-')) {
       obj[prop.substring(6)] = true;
@@ -42,7 +43,7 @@ export const Leaf = ({ children, ...rest }) => {
   return mode === 'view' ? (
     typeof children === 'string' ? (
       children.split('\n').map((t, i) => {
-        // Softbreak support. Should do a plugin
+        // Softbreak support. Should do a plugin?
         return (
           <React.Fragment key={`${i}`}>
             {children.indexOf('\n') > -1 &&

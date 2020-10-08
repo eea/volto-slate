@@ -1,6 +1,14 @@
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+import { LI } from 'volto-slate/constants';
+
+export const defaultListItemValue = () => {
+  const { slate } = settings;
+  const dv = slate.defaultValue();
+  dv[0].type = LI;
+  return dv;
+};
 
 /**
  * Is it text? Is it whitespace (space, newlines, tabs) ?

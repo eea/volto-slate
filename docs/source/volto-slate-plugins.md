@@ -48,12 +48,18 @@ If replacing it with a new list reference, please take into account the old list
 
 Besides all these Volto Slate extension points there are all the other extension points of Volto for Volto Addons such as adding a new block type (the method of adding a new block type from a Volto Slate plugin is used in the `Footnote` plugin).
 
-### Useful functions available for plugins
+### Useful variables available for plugins
 
-#### `deconstructToVoltoBlocks`
+First of all, the Slate source code and docs are very helpful. Then the variables inside import path `volto-slate/utils`. Example:
 
 ```js
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 ```
 
-For this function to work well, the new content that should be separated from the rest of the Slate document by this function must not be on the first index inside the editor, but in the second or a later position. If a Volto Slate Text block has just a single node (restriction: only of type block) in the root Editor node, `deconstructToVoltoBlocks` does nothing. This is how `deconstructToVoltoBlocks` works currently (1st of October, 2020).
+Some of them are:
+
+* `defaultListItemValue`
+
+* `deconstructToVoltoBlocks`
+
+  For this function to work well, the new content that should be separated from the rest of the Slate document by this function must not be on the first index inside the editor, but in the second or a later position. If a Volto Slate Text block has just a single node (restriction: only of type block) in the root Editor node, `deconstructToVoltoBlocks` does nothing. This is how `deconstructToVoltoBlocks` works currently (1st of October, 2020).

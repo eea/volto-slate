@@ -2,8 +2,7 @@ import { castArray } from 'lodash';
 import { Editor, Transforms, Range, Node } from 'slate';
 import { settings } from '~/config';
 import { ReactEditor } from 'slate-react';
-import { isCursorInList } from 'volto-slate/utils';
-import { LI } from 'volto-slate/constants';
+import { isCursorInList, defaultListItemValue } from 'volto-slate/utils';
 
 /**
  * Get the nodes with a type included in `types` in the selection (from root to leaf).
@@ -114,13 +113,6 @@ export function isCursorAtBlockEnd(editor) {
   }
   return false;
 }
-
-const defaultListItemValue = () => {
-  const { slate } = settings;
-  const dv = slate.defaultValue();
-  dv[0].type = LI;
-  return dv;
-};
 
 /**
  * getFragmentFromStartOfSelectionToEndOfEditor.

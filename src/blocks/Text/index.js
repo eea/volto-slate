@@ -104,9 +104,9 @@ export default (config) => {
       const { value, override_toc, entry_text, level, plaintext } = block;
       const type = value?.[0]?.type;
       return override_toc
-        ? [level.slice(1), entry_text]
+        ? [parseInt(level.slice(1)), entry_text]
         : headlines.includes(type)
-        ? [type.slice(1), plaintext]
+        ? [parseInt(type.slice(1)), plaintext]
         : null;
     },
   };

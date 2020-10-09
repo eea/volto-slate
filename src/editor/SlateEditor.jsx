@@ -11,11 +11,14 @@ import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
+import {
+  hasRangeSelection,
+  toggleInlineFormat,
+  toggleMark,
+} from 'volto-slate/utils'; // fixSelection,
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
-import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
@@ -215,11 +218,18 @@ class SlateEditor extends Component {
               onKeyDown={(event) => {
                 let wasHotkey = false;
 
-                for (const hotkey in slate.hotkeys) {
-                  if (isHotkey(hotkey, event)) {
+                for (const hk of Object.entries(slate.hotkeys)) {
+                  const [shortcut, { format, type }] = hk;
+                  if (isHotkey(shortcut, event)) {
                     event.preventDefault();
-                    const mark = slate.hotkeys[hotkey];
-                    toggleMark(editor, mark);
+
+                    if (type === 'inline') {
+                      toggleInlineFormat(editor, format);
+                    } else {
+                      // type === 'mark
+                      toggleMark(editor, format);
+                    }
+
                     wasHotkey = true;
                   }
                 }

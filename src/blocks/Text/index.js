@@ -78,6 +78,11 @@ export default (config) => {
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
 
+  config.settings.integratesBlockStyles = [
+    ...(config.settings.integratesBlockStyles || []),
+    'slate',
+  ];
+
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',

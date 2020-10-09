@@ -41,7 +41,12 @@ import {
 // Registry of available buttons
 export const buttons = {
   bold: (props) => (
-    <MarkElementButton title="Bold" format="b" icon={boldIcon} {...props} />
+    <MarkElementButton
+      title="Bold"
+      format="strong"
+      icon={boldIcon}
+      {...props}
+    />
   ),
   italic: (props) => (
     <MarkElementButton
@@ -167,10 +172,10 @@ export const extensions = [
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
+  'mod+b': { format: 'strong', type: 'inline' },
+  'mod+i': { format: 'em', type: 'inline' },
+  'mod+u': { format: 'u', type: 'inline' },
+  // 'mod+`': { format: 'code', type: 'inline' },
   // TODO: more hotkeys, including from plugins!
 };
 

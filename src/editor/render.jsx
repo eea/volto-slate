@@ -73,7 +73,6 @@ const serializeData = (node) => {
 };
 
 export const serializeNodes = (nodes, id, attrs) => {
-  console.log('attrs', attrs);
   const editor = { children: nodes || [] };
 
   // The reason for the closure is historic. We used to have key as the unique

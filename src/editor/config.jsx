@@ -175,7 +175,7 @@ export const hotkeys = {
   'mod+b': { format: 'strong', type: 'inline' },
   'mod+i': { format: 'em', type: 'inline' },
   'mod+u': { format: 'u', type: 'inline' },
-  'mod+`': { format: 'code', type: 'inline' },
+  // 'mod+`': { format: 'code', type: 'inline' },
   // TODO: more hotkeys, including from plugins!
 };
 

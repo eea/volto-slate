@@ -226,7 +226,7 @@ class SlateEditor extends Component {
                     if (type === 'inline') {
                       toggleInlineFormat(editor, format);
                     } else {
-                      // type === 'mark
+                      // type === 'mark'
                       toggleMark(editor, format);
                     }
 

@@ -60,7 +60,7 @@ export const insertData = (editor) => {
     console.log('fragment', fragment);
     const nodes = normalizeBlockNodes(editor, fragment);
     console.log('insert nodes', nodes);
-    Transforms.insertNodes(editor, nodes);
+    Transforms.insertFragment(editor, nodes);
 
     // TODO: This used to solve a problem when pasting images. What is it?
     // Transforms.deselect(editor);

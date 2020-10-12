@@ -8,6 +8,7 @@
   and editor.setSavedSelection @tiberiuichim
 - When serializing text blocks, write the block id as id in the primary element
 - Integrate with volto-block-toc
+- Remove (temporarily, hopefully) the support for Dropzone due to upgrade in volto core @tiberiuichim
 
 ## 0.7
 

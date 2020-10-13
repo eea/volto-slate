@@ -91,7 +91,8 @@ class SlateEditor extends Component {
 
     this.setSavedSelection(editor.selection);
     if (!this.mouseDown) {
-      this.setState({ update: true }); // needed, triggers re-render
+      // TODO: investigate why this is needed
+      // this.setState({ update: true }); // needed, triggers re-render
     }
   }
 

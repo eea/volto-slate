@@ -18,13 +18,13 @@
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
     "jsdom": "16.2.2",
+    "react-visibility-sensor": "5.1.1",
     "slate": "^0.59",
     "slate-history": "^0.59",
     "slate-hyperscript": "^0.59",
     "slate-plain-serializer": "0.7.13",
     "slate-react": "^0.59",
-    "weak-key": "^1.0.2",
-    "react-visibility-sensor": "^5.1.1"
+    "weak-key": "^1.0.2"
   },
   "devDependencies": {
     "babel-plugin-istanbul": "6.0.0",

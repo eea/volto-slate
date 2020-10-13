@@ -149,6 +149,7 @@ class SlateEditor extends Component {
       placeholder,
       onKeyDown,
       testingEditorRef,
+      readOnly,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
@@ -200,7 +201,7 @@ class SlateEditor extends Component {
               ''
             )}
             <Editable
-              readOnly={false}
+              readOnly={readOnly}
               placeholder={placeholder}
               renderElement={(props) => <Element {...props} />}
               renderLeaf={(props) => <Leaf {...props} />}

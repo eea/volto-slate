@@ -91,8 +91,11 @@ class SlateEditor extends Component {
 
     this.setSavedSelection(editor.selection);
     if (!this.mouseDown) {
-      // TODO: investigate why this is needed
+      // Having this makes the toolbar more responsive to selection changes
+      // made via regular text editing (shift+arrow keys)
       // this.setState({ update: true }); // needed, triggers re-render
+      // A better solution would be to improve performance of the toolbar
+      // editor
     }
   }
 

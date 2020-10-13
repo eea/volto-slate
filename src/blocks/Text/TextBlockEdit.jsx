@@ -64,10 +64,10 @@ const TextBlockEdit = (props) => {
   const [showDropzone, setShowDropzone] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
   const [newImageId, setNewImageId] = React.useState(null);
-  const [isEditorVisible, setIsEditorVisible] = React.useState(false);
+  const [isEditorVisible, setIsEditorVisible] = React.useState(true);
 
   const editorChange = (isVisible) => {
-    isVisible && setIsEditorVisible(isVisible);
+    isVisible && setIsEditorVisible(!isVisible);
   }
 
   const prevReq = React.useRef(null);
@@ -199,7 +199,7 @@ const TextBlockEdit = (props) => {
           return (
             <SlateEditor
               index={index}
-              readOnly={!isEditorVisible}
+              readOnly={selected ? isEditorVisible : true }
               properties={properties}
               extensions={textblockExtensions}
               renderExtensions={[withBlockProperties]}

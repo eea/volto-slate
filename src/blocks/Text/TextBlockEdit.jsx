@@ -222,6 +222,7 @@ const TextBlockEdit = (props) => {
                 ) : (
                   <SlateEditor
                     index={index}
+                    readOnly={selected ? isEditorVisible : true}
                     properties={properties}
                     extensions={textblockExtensions}
                     renderExtensions={[withBlockProperties]}

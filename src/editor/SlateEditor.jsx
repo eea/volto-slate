@@ -134,10 +134,11 @@ class SlateEditor extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { selected = true, value } = nextProps;
+    const { selected = true, value, readOnly } = nextProps;
     return (
       selected ||
       this.props.selected !== selected ||
+      this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value)
     );
   }

@@ -26,6 +26,8 @@ import TextBlockSchema from './schema';
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 
+import VisibilitySensor from 'react-visibility-sensor';
+
 import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
@@ -155,6 +157,7 @@ const TextBlockEdit = (props) => {
 
   const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
   const schema = TextBlockSchema(data);
+
   return (
     <>
       <SidebarPortal selected={selected}>
@@ -181,62 +184,68 @@ const TextBlockEdit = (props) => {
           </>
         )}
       </SidebarPortal>
-
       {DEBUG ? <div>{block}</div> : ''}
-      <Dropzone
-        disableClick
-        onDrop={onDrop}
-        className="dropzone"
-        onDragOver={() => setShowDropzone(true)}
-        onDragLeave={() => setShowDropzone(false)}
-      >
-        {showDropzone ? (
-          <div className="drop-indicator">
-            {uploading ? (
-              <Dimmer active>
-                <Loader indeterminate>Uploading image</Loader>
-              </Dimmer>
-            ) : (
-              <Message>
-                <center>
-                  <img src={imageBlockSVG} alt="" />
-                </center>
-              </Message>
-            )}
-          </div>
-        ) : (
-          <SlateEditor
-            index={index}
-            properties={properties}
-            extensions={textblockExtensions}
-            renderExtensions={[withBlockProperties]}
-            value={value}
-            block={block}
-            onFocus={() => onSelectBlock(block)}
-            onUpdate={handleUpdate}
-            debug={DEBUG}
-            onChange={(value, selection) => {
-              onChangeBlock(block, {
-                ...data,
-                value,
-                plaintext: serializeNodesToText(value || []),
-                // TODO: also add html serialized value
-              });
+      <VisibilitySensor partialVisibility={true}>
+        {({ isVisible }) => (
+          <Dropzone
+            disableClick
+            onDrop={onDrop}
+            className="dropzone"
+            onDragOver={() => setShowDropzone(true)}
+            onDragLeave={() => setShowDropzone(false)}
+          >
+            {({ getRootProps, getInputProps }) => {
+              return showDropzone ? (
+                <div className="drop-indicator">
+                  {uploading ? (
+                    <Dimmer active>
+                      <Loader indeterminate>Uploading image</Loader>
+                    </Dimmer>
+                  ) : (
+                    <Message>
+                      <center>
+                        <img src={imageBlockSVG} alt="" />
+                      </center>
+                    </Message>
+                  )}
+                </div>
+              ) : (
+                <SlateEditor
+                  index={index}
+                  readOnly={!isVisible}
+                  properties={properties}
+                  extensions={textblockExtensions}
+                  renderExtensions={[withBlockProperties]}
+                  value={value}
+                  block={block}
+                  onFocus={() => onSelectBlock(block)}
+                  onUpdate={handleUpdate}
+                  debug={DEBUG}
+                  onChange={(value, selection) => {
+                    onChangeBlock(block, {
+                      ...data,
+                      value,
+                      plaintext: serializeNodesToText(value || []),
+                      // TODO: also add html serialized value
+                    });
+                  }}
+                  onClick={(ev) => {
+                    // this is needed so that the click event does
+                    // not bubble up to the Blocks/Block/Edit.jsx component
+                    // which attempts to focus the TextBlockEdit on
+                    // click and this behavior breaks user selection, e.g.
+                    // when clicking once a selected word
+                    ev.stopPropagation();
+                  }}
+                  onKeyDown={handleKey}
+                  selected={selected}
+                  placeholder={placeholder}
+                />
+              );
             }}
-            onClick={(ev) => {
-              // this is needed so that the click event does
-              // not bubble up to the Blocks/Block/Edit.jsx component
-              // which attempts to focus the TextBlockEdit on
-              // click and this behavior breaks user selection, e.g.
-              // when clicking once a selected word
-              ev.stopPropagation();
-            }}
-            onKeyDown={handleKey}
-            selected={selected}
-            placeholder={placeholder}
-          />
+          </Dropzone>
         )}
-      </Dropzone>
+      </VisibilitySensor>
       {!detached && !data.plaintext && !data.disableNewBlocks && (
         <Button
           basic

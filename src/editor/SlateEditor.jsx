@@ -11,11 +11,14 @@ import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { hasRangeSelection } from 'volto-slate/utils';
+import {
+  hasRangeSelection,
+  toggleInlineFormat,
+  toggleMark,
+} from 'volto-slate/utils'; // fixSelection,
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
-import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
@@ -92,7 +95,11 @@ class SlateEditor extends Component {
 
     this.setSavedSelection(editor.selection);
     if (!this.mouseDown) {
-      this.setState({ update: true }); // needed, triggers re-render
+      // Having this makes the toolbar more responsive to selection changes
+      // made via regular text editing (shift+arrow keys)
+      // this.setState({ update: true }); // needed, triggers re-render
+      // A better solution would be to improve performance of the toolbar
+      // editor
     }
   }
 
@@ -135,10 +142,11 @@ class SlateEditor extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { selected = true, value } = nextProps;
+    const { selected = true, value, readOnly } = nextProps;
     return (
       selected ||
       this.props.selected !== selected ||
+      this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value)
     );
   }
@@ -150,6 +158,7 @@ class SlateEditor extends Component {
       placeholder,
       onKeyDown,
       testingEditorRef,
+      readOnly,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
@@ -201,7 +210,7 @@ class SlateEditor extends Component {
               ''
             )}
             <Editable
-              readOnly={false}
+              readOnly={readOnly}
               placeholder={placeholder}
               renderElement={(props) => <Element {...props} />}
               renderLeaf={(props) => <Leaf {...props} />}
@@ -219,11 +228,18 @@ class SlateEditor extends Component {
               onKeyDown={(event) => {
                 let wasHotkey = false;
 
-                for (const hotkey in slate.hotkeys) {
-                  if (isHotkey(hotkey, event)) {
+                for (const hk of Object.entries(slate.hotkeys)) {
+                  const [shortcut, { format, type }] = hk;
+                  if (isHotkey(shortcut, event)) {
                     event.preventDefault();
-                    const mark = slate.hotkeys[hotkey];
-                    toggleMark(editor, mark);
+
+                    if (type === 'inline') {
+                      toggleInlineFormat(editor, format);
+                    } else {
+                      // type === 'mark'
+                      toggleMark(editor, format);
+                    }
+
                     wasHotkey = true;
                   }
                 }

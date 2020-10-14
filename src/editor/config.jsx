@@ -41,7 +41,12 @@ import {
 // Registry of available buttons
 export const buttons = {
   bold: (props) => (
-    <MarkElementButton title="Bold" format="b" icon={boldIcon} {...props} />
+    <MarkElementButton
+      title="Bold"
+      format="strong"
+      icon={boldIcon}
+      {...props}
+    />
   ),
   italic: (props) => (
     <MarkElementButton
@@ -167,10 +172,10 @@ export const extensions = [
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
+  'mod+b': { format: 'strong', type: 'inline' },
+  'mod+i': { format: 'em', type: 'inline' },
+  'mod+u': { format: 'u', type: 'inline' },
+  // 'mod+`': { format: 'code', type: 'inline' },
   // TODO: more hotkeys, including from plugins!
 };
 
@@ -194,7 +199,9 @@ export const elements = {
   p: ({ attributes, children }) => {
     return <p {...attributes}>{children}</p>;
   },
-  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+  ul: ({ attributes, children }) => {
+    return <ul {...attributes}>{children}</ul>;
+  },
 
   // While usual slate editor consider these to be Leafs, we treat them as
   // inline elements because they can sometimes contain elements (ex:

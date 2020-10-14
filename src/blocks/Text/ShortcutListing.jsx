@@ -17,14 +17,14 @@ const ShortcutListing = (props) => {
 
       <Segment secondary attached>
         <List>
-          {Object.entries(hotkeys || {}).map(([shortcut, format]) => (
+          {Object.entries(hotkeys || {}).map(([shortcut, { format, type }]) => (
             <List.Item key={shortcut}>{`${shortcut}: ${format}`}</List.Item>
           ))}
         </List>
         {/* TODO: Eventually detect the OS automatically from the user agent
             and display just the relevant information in the following
             element: */}
-        <div>On Windows, the MOD key is Ctrl, on MacOSX it's Cmd.</div>
+        <div>On Windows, the MOD key is Ctrl, on Mac OS X it's Cmd.</div>
       </Segment>
     </div>
   );

@@ -81,7 +81,11 @@ export default (config) => {
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
 
-  // register the 'slate' block type in Volto
+  config.settings.integratesBlockStyles = [
+    ...(config.settings.integratesBlockStyles || []),
+    'slate',
+  ];
+
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',
@@ -102,7 +106,17 @@ export default (config) => {
       // TODO: this should be handled better
       return !!data.plaintext;
     },
+    tocEntry: (block = {}, tocData) => {
+      // integration with volto-block-toc
+      const headlines = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+      const { value, override_toc, entry_text, level, plaintext } = block;
+      const type = value?.[0]?.type;
+      return override_toc && level
+        ? [parseInt(level.slice(1)), entry_text]
+        : headlines.includes(type)
+        ? [parseInt(type.slice(1)), plaintext]
+        : null;
+    },
   };
-
   return config;
 };

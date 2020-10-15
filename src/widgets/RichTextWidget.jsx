@@ -14,7 +14,7 @@ const SlateRichTextWidget = (props) => {
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
         role="textbox"
-        tabindex="-1"
+        tabIndex="-1"
         style={{ boxSizing: 'initial' }}
         onClick={() => {
           setSelected(true);

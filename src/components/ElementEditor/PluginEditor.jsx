@@ -32,7 +32,7 @@ export default (props) => {
   const [elementNode] = active;
   const isElement = isActiveElement(editor);
 
-  // Update the form data based on the current footnote
+  // Update the form data based on the current element
   const elRef = React.useRef(null);
 
   if (isElement && !isEqual(elementNode, elRef.current)) {

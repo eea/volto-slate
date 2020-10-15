@@ -12,11 +12,9 @@ const SidebarEditor = (props) => {
   const { editor, pluginId, getActiveElement, pluginEditor } = props;
   const PluginEditor = pluginEditor;
   const showEditor = useSelector((state) => {
-    // console.log('state', state['slate_plugins']);
     return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
   });
 
-  // console.log('show editor', showEditor);
   const dispatch = useDispatch();
 
   const active = getActiveElement(editor);

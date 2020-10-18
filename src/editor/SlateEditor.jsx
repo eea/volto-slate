@@ -93,6 +93,7 @@ class SlateEditor extends Component {
 
     if (editor.selection)
       this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+
     if (!this.mouseDown) {
       // Having this makes the toolbar more responsive to selection changes
       // made via regular text editing (shift+arrow keys)

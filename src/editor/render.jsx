@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
 import cx from 'classnames';
-import { isEqual } from 'lodash';
+import { isEqual, omit } from 'lodash';
 
 import { settings } from '~/config';
 
@@ -13,7 +13,9 @@ export const Element = ({ element, attributes, extras, ...rest }) => {
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  return <El element={element} {...rest} attributes={attributes} />;
+  return (
+    <El element={element} {...omit(rest, ['editor'])} attributes={attributes} />
+  );
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -49,11 +51,13 @@ export const Leaf = ({ children, ...rest }) => {
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
-                {<span className={klass}>{t}</span>}
+                {klass ? <span className={klass}>{t}</span> : t}
                 <br />
               </>
-            ) : (
+            ) : klass ? (
               <span className={klass}>{t}</span>
+            ) : (
+              t
             )}
           </React.Fragment>
         );
@@ -83,19 +87,11 @@ export const serializeNodes = (nodes, id, attrs) => {
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
       return Text.isText(node) ? (
-        <Leaf
-          editor={editor}
-          path={path}
-          leaf={node}
-          text={node}
-          mode="view"
-          key={path}
-        >
+        <Leaf path={path} leaf={node} text={node} mode="view" key={path}>
           {node.text}
         </Leaf>
       ) : (
         <Element
-          editor={editor}
           path={path}
           element={node}
           mode="view"

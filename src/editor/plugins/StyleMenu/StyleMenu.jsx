@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
-import { Editor } from 'slate';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
-import {
-  toggleBlockStyle,
-  isBlockStyleActive,
-  toggleInlineStyle,
-  isInlineStyleActive,
-} from '../../../utils/blocks';
+import { isBlockStyleActive, isInlineStyleActive, toggleStyle } from './utils';
 
 const messages = defineMessages({
   allStylesApplied: {
     id: 'All Styles Applied',
     defaultMessage: 'All Styles Applied',
+  },
+  noStyle: {
+    id: 'No Style',
+    defaultMessage: 'No Style',
+  },
+  fontStyle: {
+    id: 'Font Style',
+    defaultMessage: 'Font Style',
+  },
+  paragraphStyle: {
+    id: 'Paragraph Style',
+    defaultMessage: 'Paragraph Style',
   },
 });
 
@@ -120,6 +126,7 @@ const selectStyles = {
 const StylingsButton = (props) => {
   const editor = useSlate();
   const intl = useIntl();
+  const [open, setOpen] = useState(false);
 
   // Converting the settings to a format that is required by react-select.
   const rawOpts = [
@@ -134,11 +141,11 @@ const StylingsButton = (props) => {
   // TODO: i18n for the two strings used below
   const opts = [
     {
-      label: 'Paragraph Style',
+      label: intl.formatMessage(messages.paragraphStyle),
       options: rawOpts.filter((x) => x.isBlock),
     },
     {
-      label: 'Font Style',
+      label: intl.formatMessage(messages.fontStyle),
       options: rawOpts.filter((x) => !x.isBlock),
     },
   ];
@@ -164,15 +171,21 @@ const StylingsButton = (props) => {
     <Select
       options={opts}
       value={toSelect}
+      menuIsOpen={open}
+      onBlur={() => {
+        setOpen(false);
+      }}
       isMulti={true}
       styles={selectStyles}
-      placeholder="No Style"
+      placeholder={intl.formatMessage(messages.noStyle)}
       hideSelectedOptions={false}
       noOptionsMessage={({ inputValue }) =>
         intl.formatMessage(messages.allStylesApplied)
       }
       components={{
         // Shows the most relevant part of the selection as a simple string of text.
+        // TODO: show all the styles selected with commas between them and
+        // ellipsis just at the end of the MultiValue right side limit
         MultiValue: (props) => {
           const val = props.getValue();
 
@@ -184,6 +197,43 @@ const StylingsButton = (props) => {
           }
 
           return '';
+        },
+        Control: (props) => {
+          const {
+            children,
+            cx,
+            getStyles,
+            className,
+            isDisabled,
+            isFocused,
+            innerRef,
+            innerProps,
+            menuIsOpen,
+          } = props;
+          return (
+            <div
+              ref={innerRef}
+              role="presentation"
+              style={getStyles('control', props)}
+              className={cx(
+                {
+                  control: true,
+                  'control--is-disabled': isDisabled,
+                  'control--is-focused': isFocused,
+                  'control--menu-is-open': menuIsOpen,
+                },
+                className,
+              )}
+              {...innerProps}
+              // The only difference from the initial React-Select's Control
+              // component:
+              onClick={() => {
+                setOpen(!open);
+              }}
+            >
+              {children}
+            </div>
+          );
         },
       }}
       theme={(theme) => {
@@ -200,36 +250,13 @@ const StylingsButton = (props) => {
       }}
       onChange={(selItem, meta) => {
         // console.log('meta', meta);
-
         for (const item of rawOpts) {
           const isRequested = selItem.includes(item);
-          const isActive =
-            isBlockStyleActive(editor, item.value) ||
-            isInlineStyleActive(editor, item.value);
-
-          if (isRequested && isActive) {
-            // nothing to do
-          } else if (isRequested && !isActive) {
-            if (item.isBlock && !isBlockStyleActive(editor, item.value)) {
-              toggleBlockStyle(editor, item.value);
-            } else if (
-              !item.isBlock &&
-              !isInlineStyleActive(editor, item.value)
-            ) {
-              toggleInlineStyle(editor, item.value);
-            }
-          } else if (!isRequested && isActive) {
-            if (item.isBlock && isBlockStyleActive(editor, item.value)) {
-              toggleBlockStyle(editor, item.value);
-            } else if (
-              !item.isBlock &&
-              isInlineStyleActive(editor, item.value)
-            ) {
-              toggleInlineStyle(editor, item.value);
-            }
-          } else if (!isRequested && !isActive) {
-            // nothing to do
-          }
+          toggleStyle(editor, {
+            cssClass: item.value,
+            isBlock: item.isBlock,
+            isRequested,
+          });
         }
       }}
     ></Select>

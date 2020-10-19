@@ -11,11 +11,14 @@ import { SlateToolbar, SlateContextToolbar } from './ui';
 import { settings } from '~/config';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { hasRangeSelection } from 'volto-slate/utils'; // fixSelection,
+import {
+  hasRangeSelection,
+  toggleInlineFormat,
+  toggleMark,
+} from 'volto-slate/utils'; // fixSelection,
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
-import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
@@ -37,6 +40,8 @@ class SlateEditor extends Component {
       editor: this.createEditor(),
       showToolbar: false,
     };
+
+    this.editor = null;
   }
 
   getSavedSelection() {
@@ -86,9 +91,15 @@ class SlateEditor extends Component {
     const el = ReactEditor.toDOMNode(editor, editor);
     if (activeElement !== el) return;
 
-    this.setSavedSelection(editor.selection);
+    if (editor.selection)
+      this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+
     if (!this.mouseDown) {
-      this.setState({ update: true }); // needed, triggers re-render
+      // Having this makes the toolbar more responsive to selection changes
+      // made via regular text editing (shift+arrow keys)
+      // this.setState({ update: true }); // needed, triggers re-render
+      // A better solution would be to improve performance of the toolbar
+      // editor
     }
   }
 
@@ -125,16 +136,21 @@ class SlateEditor extends Component {
       }
     }
 
+    if (this.editor && this.editor.selection) {
+      this.editor.setSavedSelection(this.editor.selection);
+    }
+
     if (this.props.onUpdate) {
       this.props.onUpdate(this.state.editor);
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { selected = true, value } = nextProps;
+    const { selected = true, value, readOnly } = nextProps;
     return (
       selected ||
       this.props.selected !== selected ||
+      this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value)
     );
   }
@@ -146,6 +162,7 @@ class SlateEditor extends Component {
       placeholder,
       onKeyDown,
       testingEditorRef,
+      readOnly,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
@@ -157,6 +174,7 @@ class SlateEditor extends Component {
       (acc, apply) => apply(acc),
       this.state.editor,
     );
+    this.editor = editor;
 
     if (testingEditorRef) {
       testingEditorRef.current = editor;
@@ -197,7 +215,7 @@ class SlateEditor extends Component {
               ''
             )}
             <Editable
-              readOnly={false}
+              readOnly={readOnly}
               placeholder={placeholder}
               renderElement={(props) => <Element {...props} />}
               renderLeaf={(props) => <Leaf {...props} />}
@@ -215,11 +233,18 @@ class SlateEditor extends Component {
               onKeyDown={(event) => {
                 let wasHotkey = false;
 
-                for (const hotkey in slate.hotkeys) {
-                  if (isHotkey(hotkey, event)) {
+                for (const hk of Object.entries(slate.hotkeys)) {
+                  const [shortcut, { format, type }] = hk;
+                  if (isHotkey(shortcut, event)) {
                     event.preventDefault();
-                    const mark = slate.hotkeys[hotkey];
-                    toggleMark(editor, mark);
+
+                    if (type === 'inline') {
+                      toggleInlineFormat(editor, format);
+                    } else {
+                      // type === 'mark'
+                      toggleMark(editor, format);
+                    }
+
                     wasHotkey = true;
                   }
                 }

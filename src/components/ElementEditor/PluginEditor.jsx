@@ -12,7 +12,7 @@ import clearSVG from '@plone/volto/icons/clear.svg';
 
 import { setPluginOptions } from 'volto-slate/actions';
 
-export default (props) => {
+const PluginEditor = (props) => {
   const {
     editor,
     schemaProvider,
@@ -29,10 +29,11 @@ export default (props) => {
   const [formData, setFormData] = React.useState({});
 
   const active = getActiveElement(editor);
+  if (!active) console.error('Active element not found, this will crash');
   const [elementNode] = active;
   const isElement = isActiveElement(editor);
 
-  // Update the form data based on the current footnote
+  // Update the form data based on the current element
   const elRef = React.useRef(null);
 
   if (isElement && !isEqual(elementNode, elRef.current)) {
@@ -104,3 +105,5 @@ export default (props) => {
     </SchemaProvider>
   );
 };
+
+export default PluginEditor;

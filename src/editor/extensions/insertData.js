@@ -1,6 +1,6 @@
 import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { normalizeBlockNodes } from 'volto-slate/utils';
+import { createDefaultBlock, normalizeBlockNodes } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   // const { insertData } = editor;
@@ -23,20 +23,26 @@ export const insertData = (editor) => {
     }
 
     const html = data.getData('text/html');
-    // Avoid responding to drag/drop and others
-    if (!html) return; // insertData(data)
+    // TODO: Avoid responding to drag/drop and others
+    if (html) {
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
 
-    const parsed = new DOMParser().parseFromString(html, 'text/html');
+      const body =
+        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+          ? parsed.querySelector('google-sheets-html-origin > table')
+          : parsed.body;
 
-    const body =
-      parsed.getElementsByTagName('google-sheets-html-origin').length > 0
-        ? parsed.querySelector('google-sheets-html-origin > table')
-        : parsed.body;
+      console.log('deserialize body', body);
+      console.log('parsed body', parsed);
 
-    console.log('deserialize body', body);
-    console.log('parsed body', parsed);
-
-    fragment = deserialize(editor, body);
+      fragment = deserialize(editor, body);
+    } else {
+      const text = data.getData('text/plain');
+      if (!text) return;
+      const paras = text.split('\n');
+      fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
+      // return insertData(data);
+    }
 
     // When there's already text in the editor, insert a fragment, not nodes
     if (Editor.string(editor, [])) {

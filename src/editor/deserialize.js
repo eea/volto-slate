@@ -1,7 +1,6 @@
 import { jsx } from 'slate-hyperscript';
-import { Text, Editor } from 'slate';
-import { normalizeBlockNodes, isWhitespace } from 'volto-slate/utils';
-// import { isEqual } from 'lodash';
+import { Text } from 'slate';
+import { normalizeBlockNodes } from 'volto-slate/utils';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -123,7 +122,9 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return jsx('text', {}, children);
+  return children.find((c) => typeof c !== 'string')
+    ? children
+    : jsx('text', {}, children);
 };
 
 export const bTagDeserializer = (editor, el) => {

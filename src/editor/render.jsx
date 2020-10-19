@@ -2,18 +2,24 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
 import cx from 'classnames';
+import { isEmpty, isEqual, omit } from 'lodash';
 
 import { settings } from '~/config';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = ({ element, attributes, ...rest }) => {
+export const Element = ({ element, attributes, extras, ...rest }) => {
   const { slate } = settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  const attrs = { ...attributes, className: element.styleName };
-  return <El element={element} {...rest} attributes={{ ...attrs }} />;
+  const out = Object.assign(
+    {},
+    ...Object.keys(attributes).map((k) =>
+      !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
+    ),
+  );
+  return <El element={element} {...omit(rest, ['editor'])} attributes={out} />;
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -31,6 +37,7 @@ export const Leaf = ({ children, ...rest }) => {
     'highlight-selection': mode !== 'view' && leaf.isSelection,
   };
 
+  // stylemenu support
   for (const prop in leaf) {
     if (prop.startsWith('style-')) {
       obj[prop.substring(6)] = true;
@@ -42,17 +49,19 @@ export const Leaf = ({ children, ...rest }) => {
   return mode === 'view' ? (
     typeof children === 'string' ? (
       children.split('\n').map((t, i) => {
-        // Softbreak support. Should do a plugin
+        // Softbreak support. Should do a plugin?
         return (
           <React.Fragment key={`${i}`}>
             {children.indexOf('\n') > -1 &&
             children.split('\n').length - 1 > i ? (
               <>
-                {<span className={klass}>{t}</span>}
+                {klass ? <span className={klass}>{t}</span> : t}
                 <br />
               </>
-            ) : (
+            ) : klass ? (
               <span className={klass}>{t}</span>
+            ) : (
+              t
             )}
           </React.Fragment>
         );
@@ -71,7 +80,7 @@ const serializeData = (node) => {
   return JSON.stringify({ type: node.type, data: node.data });
 };
 
-export const serializeNodes = (nodes) => {
+export const serializeNodes = (nodes, getAttributes) => {
   const editor = { children: nodes || [] };
 
   // The reason for the closure is historic. We used to have key as the unique
@@ -82,24 +91,17 @@ export const serializeNodes = (nodes) => {
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
       return Text.isText(node) ? (
-        <Leaf
-          editor={editor}
-          path={path}
-          leaf={node}
-          text={node}
-          mode="view"
-          key={path}
-        >
+        <Leaf path={path} leaf={node} text={node} mode="view" key={path}>
           {node.text}
         </Leaf>
       ) : (
         <Element
-          editor={editor}
           path={path}
           element={node}
           mode="view"
           key={path}
           data-slate-data={node.data ? serializeData(node) : null}
+          attributes={isEqual(path, [0]) ? getAttributes(node, path) : null}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

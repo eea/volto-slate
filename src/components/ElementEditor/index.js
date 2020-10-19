@@ -12,9 +12,21 @@ import messages from './messages';
 import ToolbarButton from './ToolbarButton';
 import tagSVG from '@plone/volto/icons/tag.svg';
 import SchemaProvider from './SchemaProvider';
+import { omit } from 'lodash';
 
 export const makeInlineElementPlugin = (options) => {
   const { elementType, isInlineElement, pluginId, title = 'Element' } = options;
+  const omittedProps = [
+    'pluginEditor',
+    'getActiveElement',
+    'unwrapElement',
+    'schemaProvider',
+    'hasValue',
+    'elementType',
+    'isInlineElement',
+    'editSchema',
+    'element',
+  ];
   const pluginOptions = {
     pluginEditor: PluginEditor,
     insertElement: _insertElement(elementType),
@@ -53,7 +65,11 @@ export const makeInlineElementPlugin = (options) => {
     }
 
     slate.buttons[pluginId] = (props) => (
-      <ToolbarButton {...props} title={title} {...pluginOptions} />
+      <ToolbarButton
+        {...props}
+        title={title}
+        {...omit(pluginOptions, omittedProps)}
+      />
     );
     slate.contextToolbarButtons.push(ElementContextButtons);
     slate.persistentHelpers.push(PersistentHelper);

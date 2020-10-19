@@ -2,12 +2,13 @@
 
 ## unreleased
 
-- Allow text blocks to override TOC entry
+- Optimize output of Text serializer @tiberiuichim
+- Allow text blocks to override TOC entry @tiberiuichim
 - Improve paste handling @tiberiuichim
 - Replace savedSelection editor property with explicit editor.getSavedSelection
   and editor.setSavedSelection @tiberiuichim
-- When serializing text blocks, write the block id as id in the primary element
-- Integrate with volto-block-toc
+- When serializing text blocks, write the block id as id in the primary element, if node type is included in `settings.slate.topLevelTargetElements` or the text block has override_toc_entry
+- Integrate with volto-block-toc @tiberiuichim
 - Remove (temporarily, hopefully) the support for Dropzone due to upgrade in volto core @tiberiuichim
 
 ## 0.7

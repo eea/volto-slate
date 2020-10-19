@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
 import cx from 'classnames';
-import { isEqual, omit } from 'lodash';
+import { isEmpty, isEqual, omit } from 'lodash';
 
 import { settings } from '~/config';
 
@@ -13,9 +13,13 @@ export const Element = ({ element, attributes, extras, ...rest }) => {
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
-  return (
-    <El element={element} {...omit(rest, ['editor'])} attributes={attributes} />
+  const out = Object.assign(
+    {},
+    ...Object.keys(attributes).map((k) =>
+      !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
+    ),
   );
+  return <El element={element} {...omit(rest, ['editor'])} attributes={out} />;
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -76,7 +80,7 @@ const serializeData = (node) => {
   return JSON.stringify({ type: node.type, data: node.data });
 };
 
-export const serializeNodes = (nodes, id, attrs) => {
+export const serializeNodes = (nodes, getAttributes) => {
   const editor = { children: nodes || [] };
 
   // The reason for the closure is historic. We used to have key as the unique
@@ -97,7 +101,7 @@ export const serializeNodes = (nodes, id, attrs) => {
           mode="view"
           key={path}
           data-slate-data={node.data ? serializeData(node) : null}
-          attributes={isEqual(path, [0]) ? { ...attrs, id } : null}
+          attributes={isEqual(path, [0]) ? getAttributes(node, path) : null}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

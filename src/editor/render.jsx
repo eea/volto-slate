@@ -101,7 +101,13 @@ export const serializeNodes = (nodes, getAttributes) => {
           mode="view"
           key={path}
           data-slate-data={node.data ? serializeData(node) : null}
-          attributes={isEqual(path, [0]) ? getAttributes(node, path) : null}
+          attributes={
+            isEqual(path, [0])
+              ? getAttributes
+                ? getAttributes(node, path)
+                : null
+              : null
+          }
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

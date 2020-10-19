@@ -8,14 +8,14 @@ import { settings } from '~/config';
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = ({ element, attributes, extras, ...rest }) => {
+export const Element = ({ element, attributes = {}, extras, ...rest }) => {
   const { slate } = settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
   const out = Object.assign(
     {},
-    ...Object.keys(attributes).map((k) =>
+    ...Object.keys(attributes || {}).map((k) =>
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
   );

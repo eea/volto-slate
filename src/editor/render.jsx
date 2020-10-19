@@ -6,6 +6,8 @@ import { isEmpty, isEqual, omit } from 'lodash';
 
 import { settings } from '~/config';
 
+const OMITTED = ['editor', 'path'];
+
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
 export const Element = ({ element, attributes = {}, extras, ...rest }) => {
@@ -19,7 +21,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
   );
-  return <El element={element} {...omit(rest, ['editor'])} attributes={out} />;
+  return <El element={element} {...omit(rest, OMITTED)} attributes={out} />;
 };
 
 export const Leaf = ({ children, ...rest }) => {

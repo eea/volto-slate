@@ -75,6 +75,9 @@ export default (config) => {
       extractTables,
     ],
 
+    // These elements will get an id, to make them targets in TOC
+    topLevelTargetElements: ['h1', 'h2', 'h3', 'h4'],
+
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
 

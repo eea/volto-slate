@@ -18,8 +18,8 @@ const Toolbar = ({ toggleButton, children }) => {
     }
 
     const { selection } = editor;
-    const savedSelection = editor.getSavedSelection();
-    if (!(selection || savedSelection)) {
+    // const savedSelection = editor.getSavedSelection();
+    if (!selection) {
       el.removeAttribute('style');
       return;
     }

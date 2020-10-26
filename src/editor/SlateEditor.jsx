@@ -44,6 +44,8 @@ class SlateEditor extends Component {
       editor: this.createEditor(),
       showToolbar: false,
     };
+
+    this.editor = null;
   }
 
   getSavedSelection() {
@@ -93,7 +95,9 @@ class SlateEditor extends Component {
     const el = ReactEditor.toDOMNode(editor, editor);
     if (activeElement !== el) return;
 
-    this.setSavedSelection(editor.selection);
+    if (editor.selection)
+      this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
+
     if (!this.mouseDown) {
       // Having this makes the toolbar more responsive to selection changes
       // made via regular text editing (shift+arrow keys)
@@ -136,6 +140,10 @@ class SlateEditor extends Component {
       }
     }
 
+    if (this.editor && this.editor.selection) {
+      this.editor.setSavedSelection(this.editor.selection);
+    }
+
     if (this.props.onUpdate) {
       this.props.onUpdate(this.state.editor);
     }
@@ -170,6 +178,7 @@ class SlateEditor extends Component {
       (acc, apply) => apply(acc),
       this.state.editor,
     );
+    this.editor = editor;
 
     if (testingEditorRef) {
       testingEditorRef.current = editor;

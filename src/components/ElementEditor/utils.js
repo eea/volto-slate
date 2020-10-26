@@ -12,9 +12,8 @@ import { Editor, Transforms } from 'slate'; // Range,
  * editor)
  */
 export const _insertElement = (elementType) => (editor, data) => {
-  // console.log('insert', data);
   if (editor.getSavedSelection()) {
-    const selection = editor.getSavedSelection();
+    const selection = editor.selection || editor.getSavedSelection();
 
     const rangeRef = Editor.rangeRef(editor, selection);
 
@@ -107,7 +106,7 @@ export const _getActiveElement = (elementType) => (
   );
   if (found.length) return found[0];
 
-  if (!selection) return false;
+  if (!selection) return null;
 
   if (direction === 'any' || direction === 'backward') {
     const { path } = selection.anchor;
@@ -138,4 +137,6 @@ export const _getActiveElement = (elementType) => (
       }
     }
   }
+
+  return null;
 };

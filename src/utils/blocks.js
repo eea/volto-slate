@@ -52,7 +52,7 @@ export function createEmptyParagraph() {
   };
 }
 
-export const isBlockActive = (editor, format) => {
+export const isSingleBlockTypeActive = (editor, format) => {
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === format,
   });
@@ -60,13 +60,51 @@ export const isBlockActive = (editor, format) => {
   return !!match;
 };
 
+export const isBlockActive = (editor, format) => {
+  let isActive;
+  if (format === 'em' || format === 'i') {
+    isActive =
+      isSingleBlockTypeActive(editor, 'em') ||
+      isSingleBlockTypeActive(editor, 'i');
+  } else if (format === 'strong' || format === 'b') {
+    isActive =
+      isSingleBlockTypeActive(editor, 'strong') ||
+      isSingleBlockTypeActive(editor, 'b');
+  } else {
+    isActive = isSingleBlockTypeActive(editor, format);
+  }
+  return isActive;
+};
+
+export const getBlockTypeContextData = (editor, format) => {
+  let isActive, defaultFormat, matcher;
+  if (format === 'em' || format === 'i') {
+    isActive = isBlockActive(editor, 'em');
+    defaultFormat = 'em';
+    matcher = (n) => n.type === 'em' || n.type === 'i';
+  } else if (format === 'strong' || format === 'b') {
+    isActive = isBlockActive(editor, 'strong');
+    defaultFormat = 'strong';
+    matcher = (n) => n.type === 'strong' || n.type === 'b';
+  } else {
+    isActive = isBlockActive(editor, format);
+    defaultFormat = format;
+    matcher = (n) => n.type === format;
+  }
+  return { isActive, defaultFormat, matcher };
+};
+
 export const toggleInlineFormat = (editor, format) => {
-  const isActive = isBlockActive(editor, format);
+  const { isActive, defaultFormat, matcher } = getBlockTypeContextData(
+    editor,
+    format,
+  );
+
   if (isActive) {
     const rangeRef = Editor.rangeRef(editor, editor.selection);
 
     Transforms.unwrapNodes(editor, {
-      match: (n) => n.type === format,
+      match: matcher,
       split: false,
     });
 
@@ -77,7 +115,7 @@ export const toggleInlineFormat = (editor, format) => {
     // editor.savedSelection = newSel;
     return;
   }
-  const block = { type: format, children: [] };
+  const block = { type: defaultFormat, children: [] };
   Transforms.wrapNodes(editor, block, { split: true });
 };
 

@@ -1,6 +1,14 @@
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+import _ from 'lodash';
+
+// case sensitive; first in an inner array is the default and preffered format
+// in that array of formats
+const formatAliases = [
+  ['strong', 'b'],
+  ['em', 'i'],
+];
 
 /**
  * Is it text? Is it whitespace (space, newlines, tabs) ?
@@ -61,36 +69,44 @@ export const isSingleBlockTypeActive = (editor, format) => {
 };
 
 export const isBlockActive = (editor, format) => {
-  let isActive;
-  if (format === 'em' || format === 'i') {
-    isActive =
-      isSingleBlockTypeActive(editor, 'em') ||
-      isSingleBlockTypeActive(editor, 'i');
-  } else if (format === 'strong' || format === 'b') {
-    isActive =
-      isSingleBlockTypeActive(editor, 'strong') ||
-      isSingleBlockTypeActive(editor, 'b');
-  } else {
-    isActive = isSingleBlockTypeActive(editor, format);
+  const aliasList = _.find(formatAliases, (x) => _.includes(x, format));
+
+  if (aliasList) {
+    const aliasFound = _.some(aliasList, (y) => {
+      return isSingleBlockTypeActive(editor, y);
+    });
+
+    if (aliasFound) {
+      return true;
+    }
   }
-  return isActive;
+
+  return isSingleBlockTypeActive(editor, format);
 };
 
 export const getBlockTypeContextData = (editor, format) => {
   let isActive, defaultFormat, matcher;
-  if (format === 'em' || format === 'i') {
-    isActive = isBlockActive(editor, 'em');
-    defaultFormat = 'em';
-    matcher = (n) => n.type === 'em' || n.type === 'i';
-  } else if (format === 'strong' || format === 'b') {
-    isActive = isBlockActive(editor, 'strong');
-    defaultFormat = 'strong';
-    matcher = (n) => n.type === 'strong' || n.type === 'b';
-  } else {
-    isActive = isBlockActive(editor, format);
-    defaultFormat = format;
-    matcher = (n) => n.type === format;
+
+  const aliasList = _.find(formatAliases, (x) => _.includes(x, format));
+
+  if (aliasList) {
+    const aliasFound = _.some(aliasList, (y) => {
+      return isSingleBlockTypeActive(editor, y);
+    });
+
+    if (aliasFound) {
+      isActive = true;
+      defaultFormat = _.first(aliasList);
+      matcher = (n) => _.includes(aliasList, n.type);
+
+      return { isActive, defaultFormat, matcher };
+    }
   }
+
+  isActive = isBlockActive(editor, format);
+  defaultFormat = format;
+  matcher = (n) => n.type === format;
+
   return { isActive, defaultFormat, matcher };
 };
 

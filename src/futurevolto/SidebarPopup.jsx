@@ -17,6 +17,9 @@ const SidebarPopup = ({ children, open }, ref) => {
         ref={ref}
         key="sidebarpopup"
         className="sidebar-container"
+        style={{
+          zIndex: 2000,
+        }}
       >
         {children}
       </aside>

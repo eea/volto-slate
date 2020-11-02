@@ -6,20 +6,22 @@ import { isEmpty, isEqual, omit } from 'lodash';
 
 import { settings } from '~/config';
 
+const OMITTED = ['editor', 'path'];
+
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
-export const Element = ({ element, attributes, extras, ...rest }) => {
+export const Element = ({ element, attributes = {}, extras, ...rest }) => {
   const { slate } = settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
   const out = Object.assign(
     {},
-    ...Object.keys(attributes).map((k) =>
+    ...Object.keys(attributes || {}).map((k) =>
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
   );
-  return <El element={element} {...omit(rest, ['editor'])} attributes={out} />;
+  return <El element={element} {...omit(rest, OMITTED)} attributes={out} />;
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -83,11 +85,6 @@ const serializeData = (node) => {
 export const serializeNodes = (nodes, getAttributes) => {
   const editor = { children: nodes || [] };
 
-  // The reason for the closure is historic. We used to have key as the unique
-  // global counter (but now we use the path, which is just as good), then
-  // tried to pass the fake editor (to have access to the global content), but
-  // it doesn't help a lot in practice
-
   const _serializeNodes = (nodes) => {
     return (nodes || []).map(([node, path], i) => {
       return Text.isText(node) ? (
@@ -101,7 +98,13 @@ export const serializeNodes = (nodes, getAttributes) => {
           mode="view"
           key={path}
           data-slate-data={node.data ? serializeData(node) : null}
-          attributes={isEqual(path, [0]) ? getAttributes(node, path) : null}
+          attributes={
+            isEqual(path, [0])
+              ? getAttributes
+                ? getAttributes(node, path)
+                : null
+              : null
+          }
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

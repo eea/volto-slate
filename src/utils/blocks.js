@@ -1,6 +1,14 @@
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
+import _ from 'lodash';
+
+// case sensitive; first in an inner array is the default and preffered format
+// in that array of formats
+const formatAliases = [
+  ['strong', 'b'],
+  ['em', 'i'],
+];
 
 /**
  * Is it text? Is it whitespace (space, newlines, tabs) ?
@@ -52,7 +60,7 @@ export function createEmptyParagraph() {
   };
 }
 
-export const isBlockActive = (editor, format) => {
+export const isSingleBlockTypeActive = (editor, format) => {
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === format,
   });
@@ -60,13 +68,59 @@ export const isBlockActive = (editor, format) => {
   return !!match;
 };
 
+export const isBlockActive = (editor, format) => {
+  const aliasList = _.find(formatAliases, (x) => _.includes(x, format));
+
+  if (aliasList) {
+    const aliasFound = _.some(aliasList, (y) => {
+      return isSingleBlockTypeActive(editor, y);
+    });
+
+    if (aliasFound) {
+      return true;
+    }
+  }
+
+  return isSingleBlockTypeActive(editor, format);
+};
+
+export const getBlockTypeContextData = (editor, format) => {
+  let isActive, defaultFormat, matcher;
+
+  const aliasList = _.find(formatAliases, (x) => _.includes(x, format));
+
+  if (aliasList) {
+    const aliasFound = _.some(aliasList, (y) => {
+      return isSingleBlockTypeActive(editor, y);
+    });
+
+    if (aliasFound) {
+      isActive = true;
+      defaultFormat = _.first(aliasList);
+      matcher = (n) => _.includes(aliasList, n.type);
+
+      return { isActive, defaultFormat, matcher };
+    }
+  }
+
+  isActive = isBlockActive(editor, format);
+  defaultFormat = format;
+  matcher = (n) => n.type === format;
+
+  return { isActive, defaultFormat, matcher };
+};
+
 export const toggleInlineFormat = (editor, format) => {
-  const isActive = isBlockActive(editor, format);
+  const { isActive, defaultFormat, matcher } = getBlockTypeContextData(
+    editor,
+    format,
+  );
+
   if (isActive) {
     const rangeRef = Editor.rangeRef(editor, editor.selection);
 
     Transforms.unwrapNodes(editor, {
-      match: (n) => n.type === format,
+      match: matcher,
       split: false,
     });
 
@@ -77,7 +131,7 @@ export const toggleInlineFormat = (editor, format) => {
     // editor.savedSelection = newSel;
     return;
   }
-  const block = { type: format, children: [] };
+  const block = { type: defaultFormat, children: [] };
   Transforms.wrapNodes(editor, block, { split: true });
 };
 

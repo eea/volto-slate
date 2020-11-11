@@ -1,4 +1,7 @@
 # volto-slate
+[![Releases](https://img.shields.io/github/v/release/eea/volto-slate)](https://github.com/eea/volto-slate/releases)
+[![Pipeline](https://ci.eionet.europa.eu/buildStatus/icon?job=volto-addons%2Fvolto-slate%2Fmaster&subject=master)](https://ci.eionet.europa.eu/view/Github/job/volto-addons/job/volto-slate/job/master/display/redirect)
+[![Pipeline](https://ci.eionet.europa.eu/buildStatus/icon?job=volto-addons%2Fvolto-slate%2Fdevelop&subject=develop)](https://ci.eionet.europa.eu/view/Github/job/volto-addons/job/volto-slate/job/develop/display/redirect)
 
 An alternative text editor for Volto, capable of completely replacing the default richtext editor while offering enhanced functionality and behavior. We believe that, in order to succeed, Volto's richtext form editor (the Volto Composite Page editor) needs strong integration between the rich text capabilities and the rest of the Volto blocks. Some examples of the kind of strong integration we have in mind:
 

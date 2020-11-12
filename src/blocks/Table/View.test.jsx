@@ -14,20 +14,17 @@ test('renders a view table component', () => {
                 {
                   type: 'data',
                   key: 'b',
-                  value: {
-                    blocks: [
-                      {
-                        data: {},
-                        depth: 0,
-                        entityRanges: [],
-                        inlineStyleRanges: [],
-                        key: 'fgm98',
-                        text: 'My header',
-                        type: 'header-two',
-                      },
-                    ],
-                    entityMap: {},
-                  },
+                  value: [
+                    // {
+                    //   type: 'p',
+                    //   children: [
+                        {
+                          type: 'h2',
+                          children: [{ text: 'My header' }],
+                        },
+                    //   ],
+                    // },
+                  ],
                 },
               ],
             },

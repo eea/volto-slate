@@ -6,6 +6,8 @@ import installTableBlock from './blocks/Table';
 import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
 
+console.log('Installing Volto Slate...');
+
 export default (config) => {
   config = [
     installSlate,

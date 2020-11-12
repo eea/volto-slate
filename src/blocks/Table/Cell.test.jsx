@@ -17,7 +17,7 @@ test('renders a cell component', () => {
   });
   const component = renderer.create(
     <Provider store={store}>
-      <Cell onChange={() => {}} onSelectCell={() => {}} />,
+      <Cell onChange={() => {}} onSelectCell={() => {}} />
     </Provider>,
   );
   const json = component.toJSON();

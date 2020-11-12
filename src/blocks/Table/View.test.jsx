@@ -15,15 +15,10 @@ test('renders a view table component', () => {
                   type: 'data',
                   key: 'b',
                   value: [
-                    // {
-                    //   type: 'p',
-                    //   children: [
-                        {
-                          type: 'h2',
-                          children: [{ text: 'My header' }],
-                        },
-                    //   ],
-                    // },
+                    {
+                      type: 'h2',
+                      children: [{ text: 'My header' }],
+                    },
                   ],
                 },
               ],

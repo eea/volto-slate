@@ -20,6 +20,8 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 ## Features
 
+Note: the preview images here are old, volto-slate now has an almost identical look to the default Volto editor.
+
 #### 1. Hovering (floating) toolbar
 ![1. Hovering (floating) toolbar](/docs/source/images/1.gif)
 

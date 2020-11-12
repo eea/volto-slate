@@ -1,3 +1,4 @@
+/* eslint no-console: ["error", { allow: ["error"] }] */
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
@@ -29,7 +30,10 @@ const PluginEditor = (props) => {
   const [formData, setFormData] = React.useState({});
 
   const active = getActiveElement(editor);
-  if (!active) console.error('Active element not found, this will crash');
+
+  if (!active) {
+    console.error('Active element not found, this will crash');
+  }
   const [elementNode] = active;
   const isElement = isActiveElement(editor);
 

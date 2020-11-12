@@ -8,10 +8,6 @@ An alternative text editor for Volto, capable of completely replacing the defaul
 
 While this addon is still in an early alpha stage, we've solved most of the big issues, the API starts to stabilize and we've already started several addons based on it: https://github.com/eea/volto-slate-metadata-mentions/ and https://github.com/eea/volto-slate-zotero
 
-## Note!
-
-For maximum compatibility you should use this for Volto: `https://github.com/eea/volto/tree/modern_kitchen_sink` and register `volto-slate:asDefault` as an addon loader in package.json. See https://github.com/eea/volto-slate-project the demo project that we use to develop this addon.
-
 ## Why
 
 Some of the main reasons that drove us to create volto-slate instead of enhancing Volto's draftjs implementation:

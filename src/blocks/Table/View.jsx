@@ -21,7 +21,6 @@ import '../../editor/plugins/Table/less/public.less';
  * @param {object} data The table data to render as a table.
  */
 const View = ({ data }) => {
-  console.log('Rendering Table block view...');
   return (
     <>
       {data && data.table && (

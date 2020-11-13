@@ -7,6 +7,35 @@ import { Provider } from 'react-intl-redux';
 const mockStore = configureStore();
 
 global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
+global.__CLIENT__ = false; // eslint-disable-line no-underscore-dangle
+
+jest.mock('~/config', () => {
+  const createEmptyParagraph = () => {
+    return {
+      type: 'p',
+      children: [{ text: '' }],
+    };
+  };
+  return {
+    settings: {
+      supportedLanguages: [],
+      slate: {
+        elements: {
+          default: ({ attributes, children }) => (
+            <p {...attributes}>{children}</p>
+          ),
+        },
+        leafs: {},
+        defaultBlockType: 'p',
+        textblockExtensions: [],
+        extensions: [],
+        defaultValue: () => {
+          return [createEmptyParagraph()];
+        },
+      },
+    },
+  };
+});
 
 test('renders a cell component', () => {
   const store = mockStore({

@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * Slate Table block's View component.
  * @module volto-slate/blocks/Table/View

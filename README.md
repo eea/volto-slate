@@ -84,5 +84,56 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 #### 19. The content rendered to the end-user
 ![19. The content rendered to the end-user](/docs/source/images/19.gif)
 
+## Getting started
+
+1. Create new volto project if you don't already have one:
+
+   ```
+   $ npm install -g yo @plone/generator-volto
+   $ yo @plone/volto my-volto-project --addon @eeacms/volto-slate:asDefault
+
+   $ cd my-volto-project
+   $ yarn add -W @eeacms/volto-slate
+   ```
+
+1. If you already have a volto project, just update `package.json`:
+
+   ```JSON
+   "addons": [
+       "@eeacms/volto-slate:asDefault"
+   ],
+
+   "dependencies": {
+       "@eeacms/volto-slate": "^1.0.0"
+   }
+   ```
+
+1. Install new add-ons and restart Volto:
+
+   ```
+   $ yarn
+   $ yarn start
+   ```
+
+1. Go to http://localhost:3000
+
+1. Happy editing!
+
+## How to contribute
+
+See [DEVELOP.md](https://github.com/eea/volto-slate/blob/master/DEVELOP.md).
+
 ## Credit
+
 A lot of inspiration from the great [Slate Plugins repository](https://github.com/udecode/slate-plugins/), especially the autoformat handlers.
+
+## Copyright and license
+
+The Initial Owner of the Original Code is European Environment Agency (EEA).
+All Rights Reserved.
+
+See [LICENSE.md](https://github.com/eea/volto-slate/blob/master/LICENSE.md) for details.
+
+## Funding
+
+[European Environment Agency (EU)](http://eea.europa.eu)

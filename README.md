@@ -90,21 +90,21 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
    ```
    $ npm install -g yo @plone/generator-volto
-   $ yo @plone/volto my-volto-project --addon @eeacms/volto-slate:asDefault
+   $ yo @plone/volto my-volto-project --addon volto-slate:asDefault
 
    $ cd my-volto-project
-   $ yarn add -W @eeacms/volto-slate
+   $ yarn add -W volto-slate
    ```
 
 1. If you already have a volto project, just update `package.json`:
 
    ```JSON
    "addons": [
-       "@eeacms/volto-slate:asDefault"
+       "volto-slate:asDefault"
    ],
 
    "dependencies": {
-       "@eeacms/volto-slate": "^1.0.0"
+       "volto-slate": "^1.0.0"
    }
    ```
 

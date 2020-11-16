@@ -12,7 +12,7 @@ Before starting make sure your development environment is properly set. See [Vol
 
 1.  Create new volto app
 
-        $ yo @plone/volto my-volto-project --addon @eeacms/volto-slate
+        $ yo @plone/volto my-volto-project --addon /volto-slate:asDefault
         $ cd my-volto-project
 
 1.  Add the following to `mrs.developer.json`:
@@ -20,7 +20,7 @@ Before starting make sure your development environment is properly set. See [Vol
         {
             "volto-slate": {
                 "url": "https://github.com/eea/volto-slate.git",
-                "package": "@eeacms/volto-slate",
+                "package": "volto-slate",
                 "branch": "develop",
                 "path": "src"
             }

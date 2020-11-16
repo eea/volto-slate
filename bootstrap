@@ -1,0 +1,30 @@
+const path = require('path');
+const fs = require('fs');
+
+const currentDir = path.basename(process.cwd());
+
+const bootstrap = function (ofile) {
+    fs.readFile(ofile, 'utf8', function (err, data) {
+        if (err) {
+            return console.log(err);
+        }
+        var result = data.replace(/volto-addon-template/g, currentDir);
+
+        fs.writeFile(ofile, result, 'utf8', function (err) {
+            if (err) {
+                return console.log(err);
+            }
+        });
+    });
+}
+
+fs.readdir(".", { withFileTypes: true }, (err, dirents) => {
+    const files = dirents
+        .filter(dirent => dirent.isFile())
+        .map(dirent => dirent.name);
+    files.forEach(function (file) {
+        if (file != 'bootstrap') {
+            bootstrap(file);
+        }
+    });
+});

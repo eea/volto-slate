@@ -1,4 +1,4 @@
-import { Point, Range, Editor } from 'slate';
+import { Editor } from 'slate';
 
 /**
  * @param {Point} point The point to verify.

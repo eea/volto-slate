@@ -1,3 +1,4 @@
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 import { settings } from '~/config';
 import { Editor, Transforms } from 'slate';
 import { isBlockActive, deconstructToVoltoBlocks } from 'volto-slate/utils';

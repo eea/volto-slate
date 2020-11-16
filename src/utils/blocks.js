@@ -1,3 +1,4 @@
+/* eslint no-console: ["error", { allow: ["error", "warn"] }] */
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import { settings } from '~/config';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';

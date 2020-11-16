@@ -26,7 +26,7 @@ const messages = defineMessages({
   },
 });
 
-const brownColor = '#826A6A';
+// const brownColor = '#826A6A';
 
 const selectStyles = {
   valueContainer: (provided, state) => {

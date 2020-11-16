@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a cell component 1`] = `
+<div
+  onFocus={[Function]}
+  tabIndex={0}
+/>
+`;

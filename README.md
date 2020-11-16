@@ -24,61 +24,61 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 ## Features
 
 #### 1. Hovering (floating) toolbar that shows up on selection
-![Screen Recording](docs/source/images/1.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/1.gif)
 
 #### 2. Optional expanded (fixed) toolbar
-![Screen Recording](docs/source/images/2.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/2.gif)
 
 #### 3. Working with links (internal, external, email)
-![Screen Recording](docs/source/images/3.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/3.gif)
 
 #### 4. Removing links
-![Screen Recording](docs/source/images/4.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/4.gif)
 
 #### 5. Editing links
-![Screen Recording](docs/source/images/5.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/5.gif)
 
 #### 6. Block-quotes
-![Screen Recording](docs/source/images/6.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/6.gif)
 
 #### 7. Split paragraph block in two with `Enter` key and join them back with `Backspace` key
-![Screen Recording](docs/source/images/7.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/7.gif)
 
 #### 8. Breaking and joining list items
-![Screen Recording](docs/source/images/8.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/8.gif)
 
 #### 9. Breaking (with expanded selection) and joining list items
-![Screen Recording](docs/source/images/9.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/9.gif)
 
 #### 10. Inserting a new list item at the end
-![Screen Recording](docs/source/images/10.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/10.gif)
 
 #### 11. Two `Enter` key presses in the last empty list item creates a new list
-![Screen Recording](docs/source/images/11.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/11.gif)
 
 #### 12. Using `Up` and `Down` keys to go through the blocks in both directions
-![Screen Recording](docs/source/images/12.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/12.gif)
 
 #### 13. Changing indent level of list items using `Tab` and `Shift-Tab` keys
-![Screen Recording](docs/source/images/13.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/13.gif)
 
 #### 14. Splitting a list block with `Enter` into two list blocks
-![Screen Recording](docs/source/images/14.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/14.gif)
 
 #### 15. Support for markdown bulleted lists with `*`, `-` and `+`
-![Screen Recording](docs/source/images/15.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/15.gif)
 
 #### 16. Support for markdown numbered lists with `1.` - `9.`
-![Screen Recording](docs/source/images/16.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/16.gif)
 
 #### 17. `Backspace` with cursor on first position inside a list with just one item converts the list to a paragraph
-![Screen Recording](docs/source/images/17.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/17.gif)
 
 #### 18. Creating a new text block with `Enter` at the end of a text block and removing it with `Backspace`
-![Screen Recording](docs/source/images/18.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/18.gif)
 
 #### 19. Switching the list type (numbered list to/from bulleted list)
-![Screen Recording](docs/source/images/19.gif)
+![Screen Recording](https://raw.githubusercontent.com/eea/volto-slate/master/docs/source/images/19.gif)
 
 ## Getting started
 

@@ -155,6 +155,7 @@ class SlateEditor extends Component {
       onKeyDown,
       testingEditorRef,
       readOnly,
+      className,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
@@ -190,6 +191,7 @@ class SlateEditor extends Component {
             {selected ? (
               hasRangeSelection(editor) ? (
                 <SlateToolbar
+                  className={className}
                   selected={selected}
                   showToolbar={this.state.showToolbar}
                   setShowToolbar={(value) =>
@@ -272,6 +274,7 @@ class SlateEditor extends Component {
 
 SlateEditor.defaultProps = {
   extensions: [],
+  className: '',
 };
 
 export default connect((state, props) => {

@@ -5,7 +5,7 @@ import { useSlate } from 'slate-react';
 import Separator from './Separator';
 import BasicToolbar from './BasicToolbar';
 
-const Toolbar = ({ toggleButton, children }) => {
+const Toolbar = ({ toggleButton, className, children }) => {
   const ref = useRef();
   const editor = useSlate();
 
@@ -50,7 +50,7 @@ const Toolbar = ({ toggleButton, children }) => {
 
   return (
     <Portal>
-      <BasicToolbar className="slate-inline-toolbar" ref={ref}>
+      <BasicToolbar className={`slate-inline-toolbar ${className}`} ref={ref}>
         {children}
         {toggleButton && (
           <>

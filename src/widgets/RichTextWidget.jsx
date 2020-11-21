@@ -10,7 +10,7 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 import './style.css';
 
 const SlateRichTextWidget = (props) => {
-  const { id, onChange, value, focus } = props;
+  const { id, onChange, value, focus, className } = props;
   const [selected, setSelected] = React.useState(focus);
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
@@ -25,6 +25,7 @@ const SlateRichTextWidget = (props) => {
         onKeyDown={() => {}}
       >
         <SlateEditor
+          className={className}
           id={id}
           name={id}
           value={value}

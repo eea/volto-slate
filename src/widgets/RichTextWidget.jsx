@@ -10,8 +10,25 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 import './style.css';
 
 const SlateRichTextWidget = (props) => {
-  const { id, onChange, value, focus, className } = props;
+  const {
+    id,
+    onChange,
+    value,
+    focus,
+    className,
+    block,
+    placeholder,
+    properties,
+  } = props;
   const [selected, setSelected] = React.useState(focus);
+  // make editor.getBlockProps available for extensions
+  const withBlockProperties = React.useCallback(
+    (editor) => {
+      editor.getBlockProps = () => props;
+      return editor;
+    },
+    [props],
+  );
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -32,7 +49,11 @@ const SlateRichTextWidget = (props) => {
           onChange={(newValue) => {
             onChange(id, newValue);
           }}
+          block={block}
+          renderExtensions={[withBlockProperties]}
           selected={selected}
+          properties={properties}
+          placeholder={placeholder}
         />
       </div>
     </FormFieldWrapper>

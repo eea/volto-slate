@@ -1,6 +1,5 @@
 import { toggleList, unwrapList } from './utils';
 import { isBlockActive } from 'volto-slate/utils';
-import { Editor } from 'slate';
 import { UL, OL, LI } from 'volto-slate/constants';
 
 /**

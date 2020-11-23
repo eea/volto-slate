@@ -1,18 +1,21 @@
 {
   "name": "volto-slate",
-  "version": "0.7.1",
+  "version": "1.0.1",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "prettier:fix": "./node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
-    "lint:fix": "./node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'"
-  },
-  "author": "Tiberiu Ichim",
-  "license": "ISC",
+  "author": "European Environment Agency: IDM2 A-Team",
+  "license": "MIT",
+  "homepage": "https://github.com/eea/volto-slate",
+  "keywords": [
+    "volto-addon",
+    "volto-slate",
+    "volto-slate-addon",
+    "volto",
+    "plone",
+    "react"
+  ],
   "dependencies": {
+    "@eeacms/volto-object-widget": "eea/volto-object-widget",
     "@types/jest": "^25.2.3",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
@@ -26,10 +29,19 @@
     "slate-react": "^0.59",
     "weak-key": "^1.0.2"
   },
-  "devDependencies": {
-    "babel-plugin-istanbul": "6.0.0",
-    "eslint": "7.3.1",
-    "eslint-plugin-react": "^7.20.3",
-    "prettier": "2.0.5"
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eea/volto-slate.git"
+  },
+  "scripts": {
+    "release": "release-it",
+    "bootstrap": "node bootstrap",
+    "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",
+    "stylelint:overrides": "../../../node_modules/.bin/stylelint --syntax less --allow-empty-input 'theme/**/*.overrides' 'src/**/*.overrides'",
+    "stylelint:fix": "yarn stylelint --fix && yarn stylelint:overrides --fix",
+    "prettier": "../../../node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,json,css,less,md}'",
+    "prettier:fix": "../../../node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,json,css,less,md}'",
+    "lint": "../../../node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
+    "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'"
   }
 }

@@ -4,6 +4,7 @@
 import React from 'react';
 import { useSlate } from 'slate-react';
 import { useDispatch } from 'react-redux';
+import { omit } from 'lodash';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import { hasRangeSelection } from 'volto-slate/utils';
@@ -15,11 +16,18 @@ const ElementToolbarButton = (props) => {
   const isElement = isActiveElement(editor);
   const dispatch = useDispatch();
 
+  const omittedProps = [
+    'insertElement',
+    'pluginId',
+    'toolbarButtonIcon',
+    'isActiveElement',
+  ];
+
   return (
     <>
       {hasRangeSelection(editor) && (
         <ToolbarButton
-          {...props}
+          {...omit(props, ...omittedProps)}
           active={isElement}
           onMouseDown={() => {
             if (!isElement) insertElement(editor, {});

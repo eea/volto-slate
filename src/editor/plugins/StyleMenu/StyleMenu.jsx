@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
-import Select from 'react-select';
+import loadable from '@loadable/component';
 import { useIntl, defineMessages } from 'react-intl';
 import { settings } from '~/config';
 import { isBlockStyleActive, isInlineStyleActive, toggleStyle } from './utils';
+
+const Select = loadable(() => import('react-select'));
 
 const messages = defineMessages({
   allStylesApplied: {
@@ -24,7 +26,7 @@ const messages = defineMessages({
   },
 });
 
-const brownColor = '#826A6A';
+// const brownColor = '#826A6A';
 
 const selectStyles = {
   valueContainer: (provided, state) => {

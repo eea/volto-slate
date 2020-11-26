@@ -123,13 +123,15 @@ class Cell extends Component {
       // The tabIndex is required for the keyboard navigation
       /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
       <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
-        <SlateEditor
-          onChange={this.onChange.bind(this)}
-          value={this.props.value}
-          selected={this.state.selected}
-          onFocus={this.handleFocus.bind(this)}
-          onBlur={this.handleBlur.bind(this)}
-        />
+        {__CLIENT__ && (
+          <SlateEditor
+            onChange={this.onChange.bind(this)}
+            value={this.props.value}
+            selected={this.state.selected}
+            onFocus={this.handleFocus.bind(this)}
+            onBlur={this.handleBlur.bind(this)}
+          />
+        )}
       </div>
     );
   }

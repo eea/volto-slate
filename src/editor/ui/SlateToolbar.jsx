@@ -18,7 +18,7 @@ import ToolbarButton from './ToolbarButton';
 import { settings } from '~/config';
 
 const SlateToolbar = (props) => {
-  const { selected, showToolbar, setShowToolbar } = props;
+  const { selected, showToolbar, setShowToolbar, className } = props;
   const { slate } = settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
@@ -43,6 +43,7 @@ const SlateToolbar = (props) => {
               active={showToolbar}
             />
           }
+          className={className}
         >
           {toolbarButtons?.map(renderButton)}
         </Toolbar>

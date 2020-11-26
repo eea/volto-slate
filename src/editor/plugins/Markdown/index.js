@@ -1,7 +1,7 @@
-import React from 'react';
+// import React from 'react';
 import { withAutoformat } from './extensions';
 import { autoformatRules } from './constants';
-import PluginSidebar from 'volto-slate/blocks/Text/PluginSidebar';
+// import PluginSidebar from 'volto-slate/blocks/Text/PluginSidebar';
 
 export default function install(config) {
   const { slate } = config.settings;

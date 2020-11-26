@@ -32,8 +32,8 @@ export const insertData = (editor) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
 
-      console.log('deserialize body', body);
-      console.log('parsed body', parsed);
+      // console.log('deserialize body', body);
+      // console.log('parsed body', parsed);
 
       fragment = deserialize(editor, body);
     } else {
@@ -50,16 +50,16 @@ export const insertData = (editor) => {
         Array.isArray(fragment) &&
         fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
       ) {
-        console.log('insert fragment', fragment);
+        // console.log('insert fragment', fragment);
         // TODO: we want normalization also when dealing with fragments
         Transforms.insertFragment(editor, fragment);
         return;
       }
     }
 
-    console.log('fragment', fragment);
+    // console.log('fragment', fragment);
     const nodes = normalizeBlockNodes(editor, fragment);
-    console.log('insert nodes', nodes);
+    // console.log('insert nodes', nodes);
     Transforms.insertNodes(editor, nodes);
 
     // TODO: This used to solve a problem when pasting images. What is it?

@@ -1,4 +1,31 @@
 import { Editor, Transforms, Point, Text } from 'slate';
+import {
+  convertAllToParagraph,
+  createEmptyParagraph,
+  selectAll,
+  getSelectionNodesArrayByType,
+  unwrapList,
+} from 'volto-slate/utils';
+
+export function createEmptyListItem() {
+  return {
+    type: 'list-item',
+    children: [{ text: '' }],
+  };
+}
+
+export function insertEmptyListItem(editor) {
+  // insert a new list item at the selection
+  Transforms.insertNodes(editor, createEmptyListItem());
+}
+
+export function getValueFromEditor(editor) {
+  const nodes = Editor.fragment(editor, []);
+
+  const value = JSON.parse(JSON.stringify(nodes || [createEmptyParagraph()]));
+
+  return { value, nodes };
+}
 
 export function getCollapsedRangeAtBeginningOfEditor(editor) {
   return {

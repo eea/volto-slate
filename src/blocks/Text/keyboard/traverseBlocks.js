@@ -1,4 +1,4 @@
-import { Node, Editor } from 'slate';
+import { Node } from 'slate';
 import {
   isCursorAtBlockStart,
   isCursorAtBlockEnd,

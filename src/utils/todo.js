@@ -1,11 +1,5 @@
 import { Editor, Transforms, Point, Text } from 'slate';
-import {
-  convertAllToParagraph,
-  createEmptyParagraph,
-  selectAll,
-  getSelectionNodesArrayByType,
-  unwrapList,
-} from 'volto-slate/utils';
+import { createEmptyParagraph } from 'volto-slate/utils';
 
 export function createEmptyListItem() {
   return {

@@ -52,6 +52,7 @@ export const getSelectedSlateEditor = () => {
 };
 
 export const createSlateBlock = () => {
+  cy.get('[data-rbd-droppable-id=edit-form] > div').last().click();
   cy.get('button.block-add-button').last().click();
   cy.get('.blocks-chooser .title').contains('Text').click();
   cy.get('.ui.basic.icon.button.slate').contains('Slate').click();

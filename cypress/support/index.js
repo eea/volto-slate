@@ -37,7 +37,7 @@ export const slateBeforeEach = () => {
   cy.waitForResourceToLoad('@breadcrumbs');
   cy.waitForResourceToLoad('@actions');
   cy.waitForResourceToLoad('@types');
-  cy.waitForResourceToLoad('my-page?fullobjects');
+  cy.waitForResourceToLoad('my-page');
   cy.navigate('/cypress/my-page/edit');
   cy.get(`.block.title [data-contents]`);
 };

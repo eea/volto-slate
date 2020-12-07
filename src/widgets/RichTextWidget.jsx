@@ -8,6 +8,7 @@ import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 
 import './style.css';
+import { createEmptyParagraph } from '../utils/blocks';
 
 const SlateRichTextWidget = (props) => {
   const {
@@ -45,7 +46,13 @@ const SlateRichTextWidget = (props) => {
           className={className}
           id={id}
           name={id}
-          value={value}
+          value={
+            typeof value === 'undefined' ||
+            typeof value.data !==
+              'undefined' /* previously this was a Draft block */
+              ? [createEmptyParagraph()]
+              : value
+          }
           onChange={(newValue) => {
             onChange(id, newValue);
           }}

@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -15,7 +15,7 @@
     "react"
   ],
   "dependencies": {
-    "@eeacms/volto-object-widget": "eea/volto-object-widget",
+    "@eeacms/volto-object-widget": "^1.0.0",
     "@types/jest": "^25.2.3",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
@@ -42,6 +42,8 @@
     "prettier": "../../../node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,json,css,less,md}'",
     "prettier:fix": "../../../node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,json,css,less,md}'",
     "lint": "../../../node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
-    "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'"
+    "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'",
+    "cypress:run": "../../../node_modules/cypress/bin/cypress run",
+    "cypress:open": "../../../node_modules/cypress/bin/cypress open"
   }
 }

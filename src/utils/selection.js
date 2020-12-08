@@ -1,5 +1,5 @@
 import { castArray } from 'lodash';
-import { Editor, Transforms, Range, Node, Path } from 'slate';
+import { Editor, Transforms, Range, Node } from 'slate';
 import { settings } from '~/config';
 import { ReactEditor } from 'slate-react';
 import { isCursorInList, defaultListItemValue } from 'volto-slate/utils';

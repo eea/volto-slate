@@ -1,5 +1,6 @@
 import { Editor, Range, Transforms, Path } from 'slate';
 import { settings } from '~/config';
+import { pointIsAtStart } from './selection';
 
 export function isCursorInList(editor) {
   const { slate } = settings;
@@ -24,10 +25,7 @@ export function isCursorInList(editor) {
 export function isCursorAtListBlockStart(editor) {
   if (editor.selection && Range.isCollapsed(editor.selection)) {
     const { anchor } = editor.selection;
-    return anchor.offset > 0
-      ? false
-      : anchor.path.length === 3 &&
-          anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+    return pointIsAtStart(anchor) && anchor.path.length === 3;
   }
 }
 

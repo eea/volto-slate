@@ -1,5 +1,5 @@
 import { castArray } from 'lodash';
-import { Editor, Transforms, Range, Node } from 'slate';
+import { Editor, Transforms, Range, Node, Path } from 'slate';
 import { settings } from '~/config';
 import { ReactEditor } from 'slate-react';
 import { isCursorInList, defaultListItemValue } from 'volto-slate/utils';
@@ -69,6 +69,14 @@ export function selectAll(editor) {
 // Range.isCollapsed(editor.selection) &&
 // Point.equals(editor.selection.anchor, Editor.start(editor, []))
 
+export function pathIsAtStart(path) {
+  return path.every((x) => x === 0);
+}
+
+export function pointIsAtStart(point) {
+  return point.offset > 0 ? false : pathIsAtStart(point.path);
+}
+
 /**
  * isCursorAtBlockStart.
  *
@@ -79,9 +87,7 @@ export function isCursorAtBlockStart(editor) {
 
   if (editor.selection && Range.isCollapsed(editor.selection)) {
     const { anchor } = editor.selection;
-    return anchor.offset > 0
-      ? false
-      : anchor.path.reduce((acc, x) => acc + x, 0) === 0;
+    return pointIsAtStart(anchor);
     // anchor.path.length === 2 &&
   }
   return false;

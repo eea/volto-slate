@@ -1,4 +1,5 @@
 import { Editor, Transforms, Point, Text } from 'slate';
+import { cloneDeep } from 'lodash';
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 export function createEmptyListItem() {
@@ -16,7 +17,7 @@ export function insertEmptyListItem(editor) {
 export function getValueFromEditor(editor) {
   const nodes = Editor.fragment(editor, []);
 
-  const value = JSON.parse(JSON.stringify(nodes || [createEmptyParagraph()]));
+  const value = cloneDeep(nodes || [createEmptyParagraph()]);
 
   return { value, nodes };
 }

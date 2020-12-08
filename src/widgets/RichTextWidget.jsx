@@ -1,6 +1,6 @@
 /**
  * WysiwygWidget container.
- * @module components/manage/WysiwygWidget/WysiwygWidget
+ * @module widgets/RichTextWidget
  */
 
 import React from 'react';
@@ -9,6 +9,12 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
+
+const isValueValid = (value) => {
+  return (
+    typeof value !== 'undefined' && typeof value.data === 'undefined' // `data` is specific to Draft blocks that could be transformed into volto-slate blocks
+  );
+};
 
 const SlateRichTextWidget = (props) => {
   const {
@@ -46,13 +52,7 @@ const SlateRichTextWidget = (props) => {
           className={className}
           id={id}
           name={id}
-          value={
-            typeof value === 'undefined' ||
-            typeof value.data !==
-              'undefined' /* previously this was a Draft block */
-              ? [createEmptyParagraph()]
-              : value
-          }
+          value={isValueValid(value) ? value : [createEmptyParagraph()]}
           onChange={(newValue) => {
             onChange(id, newValue);
           }}

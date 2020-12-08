@@ -7,16 +7,8 @@ import {
 import { addBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { omit } from 'lodash';
+import { omit, fromPairs, cloneDeep } from 'lodash';
 import { settings } from '~/config';
-
-function fromEntries(pairs) {
-  const res = {};
-  pairs.forEach((p) => {
-    res[p[0]] = p[1];
-  });
-  return res;
-}
 
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
@@ -59,7 +51,7 @@ export function syncCreateSlateBlock(value) {
   const id = uuid();
   const block = {
     '@type': 'slate',
-    value: JSON.parse(JSON.stringify(value)),
+    value: cloneDeep(value),
     plaintext: serializeNodesToText(value),
   };
   return [id, block];
@@ -89,7 +81,7 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
 
   const options = {
     '@type': 'slate',
-    value: JSON.parse(JSON.stringify(blockValue)),
+    value: cloneDeep(blockValue),
     plaintext: serializeNodesToText(blockValue),
   };
 
@@ -154,7 +146,9 @@ export function deconstructToVoltoBlocks(editor) {
   const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
-    if (!editor?.children) return;
+    if (!editor?.children) {
+      return resolve([]);
+    }
     if (editor.children.length === 1) {
       return resolve([blockProps.block]);
     }
@@ -194,7 +188,7 @@ export function deconstructToVoltoBlocks(editor) {
     const blocksData = omit(
       {
         ...properties[blocksFieldname],
-        ...fromEntries(blocks),
+        ...fromPairs(blocks),
       },
       blockProps.block,
     );

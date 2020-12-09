@@ -1,6 +1,8 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
 import { normalizeBlockNodes } from 'volto-slate/utils';
+import { createEmptyParagraph } from '../utils/blocks';
+import { TD, TH } from '../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
@@ -57,6 +59,18 @@ export const deserializeChildren = (parent, editor) =>
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor).filter((n) => n !== null);
+
+  if (
+    [TD, TH].includes(tagname) &&
+    children.length > 0 &&
+    typeof children[0] === 'string'
+  ) {
+    // TODO: should here be handled the cases when there are more strings in
+    // `children` or when there are besides strings other types of nodes too?
+    const p = createEmptyParagraph();
+    p.children[0].text = children[0];
+    children = [p];
+  }
 
   const isInline = (n) =>
     typeof n === 'string' || Text.isText(n) || editor.isInline(n);

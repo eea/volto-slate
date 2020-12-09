@@ -1,7 +1,7 @@
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { wait, render } from '@testing-library/react';
+import { waitFor, render } from '@testing-library/react';
 
 import ToolbarButton from './ToolbarButton';
 

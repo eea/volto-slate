@@ -35,7 +35,8 @@ export const insertData = (editor) => {
       // console.log('deserialize body', body);
       // console.log('parsed body', parsed);
 
-      fragment = deserialize(editor, body);
+      const val = deserialize(editor, body);
+      fragment = Array.isArray(val) ? val : [val];
     } else {
       const text = data.getData('text/plain');
       if (!text) return;

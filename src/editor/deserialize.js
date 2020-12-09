@@ -6,6 +6,9 @@ const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
 const COMMENT = 8;
 
+/**
+ * Deserializes to an object or an Array.
+ */
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 

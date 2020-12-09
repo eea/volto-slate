@@ -78,12 +78,14 @@ export const _isActiveElement = (elementType) => (editor) => {
       selection.anchor.offset === 0 && selection.focus.offset === 0;
 
     if (isAtStart) {
-      found = Array.from(
-        Editor.previous(editor, {
+      try {
+        found = Editor.previous(editor, {
           at: path,
           // match: (n) => n.type === MENTION,
-        }) || [],
-      );
+        });
+      } catch (ex) {
+        found = [];
+      }
       if (found && found[0] && found[0].type === elementType) {
         return true;
       }
@@ -114,10 +116,15 @@ export const _getActiveElement = (elementType) => (
       selection.anchor.offset === 0 && selection.focus.offset === 0;
 
     if (isAtStart) {
-      let found = Editor.previous(editor, {
-        at: path,
-      });
-      if (found && found[0].type === elementType) {
+      let found;
+      try {
+        found = Editor.previous(editor, {
+          at: path,
+        });
+      } catch (ex) {
+        found = [];
+      }
+      if (found && found[0] && found[0].type === elementType) {
         return found;
       }
     }

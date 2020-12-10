@@ -77,7 +77,7 @@ export const deserializeImageTag = (editor, el) => {
  * @param typeImg
  */
 export const withImage = (editor) => {
-  const { insertData, isVoid, isInline } = editor;
+  const { isVoid, isInline } = editor;
 
   editor.isVoid = (element) => {
     return element.type === IMAGE ? true : isVoid(element);
@@ -94,25 +94,19 @@ export const withImage = (editor) => {
     IMG: deserializeImageTag,
   };
 
-  editor.insertData = (data) => {
-    // const text = data.getData('text/plain');
-    if (data.types.includes('text/html')) {
-      insertData(data);
-    } else {
-      const { files } = data;
-      if (files && files.length > 0) {
-        for (const file of files) {
-          const reader = new FileReader();
-          const [mime] = file.type.split('/');
-          if (mime === 'image') {
-            reader.addEventListener('load', onImageLoad(editor, reader));
-            reader.readAsDataURL(file);
-          }
+  editor.dataTransferHandlers = {
+    ...editor.dataTransferHandlers,
+    files: (files) => {
+      for (const file of files) {
+        const reader = new FileReader();
+        const [mime] = file.type.split('/');
+        if (mime === 'image') {
+          reader.addEventListener('load', onImageLoad(editor, reader));
+          reader.readAsDataURL(file);
         }
-      } else {
-        insertData(data);
       }
-    }
+      return true;
+    },
   };
 
   return editor;

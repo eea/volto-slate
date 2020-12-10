@@ -5,7 +5,8 @@ import { ReactEditor } from 'slate-react';
 import { isCursorInList, defaultListItemValue } from 'volto-slate/utils';
 
 /**
- * Get the nodes with a type included in `types` in the selection (from root to leaf).
+ * Get the nodes with a type included in `types` in the selection (from root to
+ * leaf).
  *
  * @param {} editor
  * @param {} types
@@ -23,7 +24,8 @@ export function getSelectionNodesByType(editor, types, options = {}) {
 }
 
 /**
- * Is there a node with a type included in `types` in the selection (from root to leaf).
+ * Is there a node with a type included in `types` in the selection (from root
+ * to leaf)?
  */
 export function isNodeInSelection(editor, types, options = {}) {
   const [match] = getSelectionNodesByType(editor, types, options);
@@ -45,8 +47,6 @@ export function getSelectionNodesArrayByType(editor, types, options = {}) {
  * getMaxRange.
  *
  * @param {} editor
- *
- * TODO: is [0] ok as a path?
  */
 export function getMaxRange(editor) {
   const maxRange = {

@@ -10,7 +10,10 @@ export function isMarkActive(editor, format) {
   try {
     marks = Editor.marks(editor);
   } catch (ex) {
-    // bug in Slate, recently appears only in Cypress context, more exactly when I press Enter inside a numbered list first item to produce a split (resulting two list items) (not sure if manually inside the Cypress browser but automatically it surely appears)
+    // bug in Slate, recently appears only in Cypress context, more exactly when
+    // I press Enter inside a numbered list first item to produce a split
+    // (resulting two list items) (not sure if manually inside the Cypress
+    // browser but automatically it surely appears)
     // if (
     //   ex.message ===
     //   'Cannot get the leaf node at path [0,0] because it refers to a non-leaf node: [object Object]' // also with [0,1]

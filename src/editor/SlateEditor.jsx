@@ -15,6 +15,7 @@ import {
   hasRangeSelection,
   toggleInlineFormat,
   toggleMark,
+  MIMETypeName,
 } from 'volto-slate/utils'; // fixSelection,
 import EditorContext from './EditorContext';
 
@@ -55,6 +56,11 @@ class SlateEditor extends Component {
     const { slate } = settings;
     const defaultExtensions = slate.extensions;
     const raw = withHistory(withReact(createEditor()));
+
+    // TODO: also look for MIME Types in the files case
+    raw.dataTransferFormatsOrder = ['text/html', 'files', 'text/plain'];
+    raw.dataTransferHandlers = {};
+
     const plugins = [...defaultExtensions, ...this.props.extensions];
     const editor = plugins.reduce((acc, apply) => apply(acc), raw);
 
@@ -65,6 +71,40 @@ class SlateEditor extends Component {
 
     editor.getSavedSelection = this.getSavedSelection;
     editor.setSavedSelection = this.setSavedSelection;
+
+    const { insertData } = editor;
+
+    // TODO: update and improve comments & docs related to
+    // `dataTransferFormatsOrder` and `dataTransferHandlers` features
+    editor.insertData = (data) => {
+      if (editor.beforeInsertData) {
+        editor.beforeInsertData(data);
+      }
+
+      for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
+        const x = editor.dataTransferFormatsOrder[i];
+        if (x === 'files') {
+          const { files } = data;
+          if (files && files.length > 0) {
+            // or handled here
+            return editor.dataTransferHandlers['files'](files);
+          }
+          continue;
+        }
+        const satisfyingFormats = data.types.filter((y) =>
+          new MIMETypeName(x).matches(y),
+        );
+        for (let j = 0; j < satisfyingFormats.length; ++j) {
+          const y = satisfyingFormats[j];
+          if (editor.dataTransferHandlers[x](data.getData(y), y)) {
+            // handled here
+            return true;
+          }
+        }
+      }
+      // not handled until this point
+      return insertData(data);
+    };
 
     return editor;
   }
@@ -163,6 +203,7 @@ class SlateEditor extends Component {
       onKeyDown,
       testingEditorRef,
       readOnly,
+      className,
       renderExtensions = [],
     } = this.props;
     const { slate } = settings;
@@ -199,6 +240,7 @@ class SlateEditor extends Component {
             {selected ? (
               hasRangeSelection(editor) ? (
                 <SlateToolbar
+                  className={className}
                   selected={selected}
                   showToolbar={this.state.showToolbar}
                   setShowToolbar={(value) =>
@@ -281,6 +323,7 @@ class SlateEditor extends Component {
 
 SlateEditor.defaultProps = {
   extensions: [],
+  className: '',
 };
 
 export default connect((state, props) => {

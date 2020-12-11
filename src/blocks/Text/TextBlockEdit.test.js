@@ -5,14 +5,42 @@ import { render } from '@testing-library/react';
 
 import TextBlockEdit from './TextBlockEdit';
 
-// TODO: use this instead of expecting some props to be undefined
-// import { settings } from '~/config';
-
 const mockStore = configureStore();
 
 // ReactDOM.createPortal = (node) => node;
 
 window.getSelection = () => null;
+
+global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
+global.__CLIENT__ = false; // eslint-disable-line no-underscore-dangle
+
+jest.mock('~/config', () => {
+  return {
+    widgets: {
+      id: {
+        default: () => <div />,
+      },
+      type: {
+        boolean: () => <div />,
+      },
+    },
+    settings: {
+      supportedLanguages: [],
+      slate: {
+        elements: {
+          default: ({ attributes, children }) => (
+            <p {...attributes}>{children}</p>
+          ),
+        },
+        leafs: {},
+        persistentHelpers: [],
+        contextToolbarButtons: [],
+        textblockExtensions: [],
+        extensions: [],
+      },
+    },
+  };
+});
 
 describe('TextBlockEdit', () => {
   it('renders w/o errors', async () => {
@@ -43,7 +71,7 @@ describe('TextBlockEdit', () => {
           data={{
             value: [
               {
-                type: 'paragraph',
+                type: 'p',
                 children: [{ text: '' /* My first paragraph. */ }],
               },
             ],

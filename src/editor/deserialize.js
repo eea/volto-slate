@@ -1,11 +1,19 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import { normalizeBlockNodes } from 'volto-slate/utils';
+import {
+  normalizeBlockNodes,
+  isWhitespace,
+  createEmptyParagraph,
+} from 'volto-slate/utils';
+import { TD, TH } from '../constants';
 
 const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
 const COMMENT = 8;
 
+/**
+ * Deserializes to an object or an Array.
+ */
 export const deserialize = (editor, el) => {
   const { htmlTagsToSlate } = editor;
 
@@ -13,7 +21,9 @@ export const deserialize = (editor, el) => {
   if (el.nodeType === COMMENT) {
     return null;
   } else if (el.nodeType === TEXT_NODE) {
-    if (el.textContent === '\n') {
+    // instead of === '\n' we use isWhitespace for when deserializing tables
+    // from Calc and other similar cases
+    if (isWhitespace(el.textContent)) {
       // if it's empty text between 2 tags, it should be ignored
       return null;
     }
@@ -54,6 +64,18 @@ export const deserializeChildren = (parent, editor) =>
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   let children = deserializeChildren(el, editor).filter((n) => n !== null);
+
+  if (
+    [TD, TH].includes(tagname) &&
+    children.length > 0 &&
+    typeof children[0] === 'string'
+  ) {
+    // TODO: should here be handled the cases when there are more strings in
+    // `children` or when there are besides strings other types of nodes too?
+    const p = createEmptyParagraph();
+    p.children[0].text = children[0];
+    children = [p];
+  }
 
   const isInline = (n) =>
     typeof n === 'string' || Text.isText(n) || editor.isInline(n);

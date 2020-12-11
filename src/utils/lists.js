@@ -1,4 +1,4 @@
-import { Editor, Range, Transforms, Path, Text, Node } from 'slate';
+import { Editor, Range, Transforms, Path } from 'slate';
 import { settings } from '~/config';
 
 export function isCursorInList(editor) {

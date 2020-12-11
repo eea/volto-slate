@@ -137,6 +137,23 @@ export function getPreviousVoltoBlock(index, properties) {
   return [prevBlock, prevBlockId];
 }
 
+/**
+ * The editor has the properties `dataTransferHandlers` (object) and
+ * `dataTransferFormatsOrder` and in `dataTransferHandlers` are functions which
+ * sometimes must call this function. Some types of data storeable in Slate
+ * documents can be and should be put into separate Volto blocks. The
+ * `deconstructToVoltoBlocks` function scans the contents of the Slate document
+ * and, through configured Volto block emitters, it outputs separate Volto
+ * blocks into the same Volto page form. The `deconstructToVoltoBlocks` function
+ * should be called only in key places where it is necessary.
+ *
+ * @example See the `src/editor/extensions/insertData.js` file.
+ *
+ * @param {Editor} editor The Slate editor object which should be deconstructed
+ * if possible.
+ *
+ * @returns {Promise}
+ */
 export function deconstructToVoltoBlocks(editor) {
   // Explodes editor content into separate blocks
   // If the editor has multiple top-level children, split the current block

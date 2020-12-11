@@ -1,7 +1,10 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import { normalizeBlockNodes } from 'volto-slate/utils';
-import { createEmptyParagraph } from '../utils/blocks';
+import {
+  normalizeBlockNodes,
+  isWhitespace,
+  createEmptyParagraph,
+} from 'volto-slate/utils';
 import { TD, TH } from '../constants';
 
 const TEXT_NODE = 3;
@@ -18,7 +21,9 @@ export const deserialize = (editor, el) => {
   if (el.nodeType === COMMENT) {
     return null;
   } else if (el.nodeType === TEXT_NODE) {
-    if (el.textContent === '\n') {
+    // instead of === '\n' we use isWhitespace for when deserializing tables
+    // from Calc and other similar cases
+    if (isWhitespace(el.textContent)) {
       // if it's empty text between 2 tags, it should be ignored
       return null;
     }

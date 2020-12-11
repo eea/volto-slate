@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "@eeacms/volto-object-widget": "^1.0.0",
+    "@testing-library/react": "9.5.0",
     "@types/jest": "^25.2.3",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",

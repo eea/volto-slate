@@ -16,7 +16,6 @@ import {
 } from './keyboard';
 import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
-  withInsertData,
   withSplitBlocksOnBreak,
   withDeserializers,
   breakList,
@@ -35,7 +34,6 @@ export default (config) => {
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
       withDeserializers,
-      withInsertData,
       breakList,
     ],
 

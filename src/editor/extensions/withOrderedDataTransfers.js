@@ -23,8 +23,13 @@ export class MIMETypeName {
 }
 
 export const withOrderedDataTransfers = (editor) => {
-  editor.dataTransferFormatsOrder = ['text/html', 'files', 'text/plain'];
-  editor.dataTransferHandlers = {};
+  editor.dataTransferFormatsOrder = [
+    ...(editor.dataTransferFormatsOrder || []),
+    'text/html',
+    'files',
+    'text/plain',
+  ];
+  editor.dataTransferHandlers = { ...(editor.dataTransferHandlers || {}) };
 
   const { insertData } = editor;
 
@@ -41,7 +46,7 @@ export const withOrderedDataTransfers = (editor) => {
         // TODO: also look for MIME Types in the 'files' case
         const { files } = data;
         if (files && files.length > 0) {
-          if (editor.dataTransferHandlers['files'](files)) {
+          if (editor.dataTransferHandlers?.['files']?.(files)) {
             // or handled here
             return true;
           }
@@ -49,11 +54,11 @@ export const withOrderedDataTransfers = (editor) => {
         continue;
       }
       const satisfyingFormats = data.types.filter((y) =>
-        new MIMETypeName(x).matches(y),
+        new MIMETypeName(x).matches(new MIMETypeName(y)),
       );
       for (let j = 0; j < satisfyingFormats.length; ++j) {
         const y = satisfyingFormats[j];
-        if (editor.dataTransferHandlers[x](data.getData(y), y)) {
+        if (editor.dataTransferHandlers?.[x]?.(data.getData(y), y)) {
           // handled here
           return true;
         }

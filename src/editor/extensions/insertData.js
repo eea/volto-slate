@@ -10,7 +10,7 @@ export const insertData = (editor) => {
   // const { insertData } = editor;
 
   editor.dataTransferHandlers = {
-    ...editor.dataTransferHandlers,
+    ...(editor.dataTransferHandlers || {}),
     'application/x-slate-fragment': (dt, fullMime) => {
       const decoded = decodeURIComponent(window.atob(dt));
       const parsed = JSON.parse(decoded);

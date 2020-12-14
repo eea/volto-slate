@@ -95,7 +95,7 @@ export const withImage = (editor) => {
   };
 
   editor.dataTransferHandlers = {
-    ...editor.dataTransferHandlers,
+    ...(editor.dataTransferHandlers || {}),
     files: (files) => {
       for (const file of files) {
         const reader = new FileReader();

@@ -1,70 +1,96 @@
 import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { createDefaultBlock, normalizeBlockNodes } from 'volto-slate/utils';
+import {
+  createDefaultBlock,
+  normalizeBlockNodes,
+  deconstructToVoltoBlocks,
+} from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   // const { insertData } = editor;
 
-  editor.insertData = (data) => {
-    // console.log('data in custom editor.insertData', data);
-    // TODO: use the rtf data to get the embedded images.
-    // const text = data.getData('text/rtf');
-    // console.log('text', text);
-
-    let fragment;
-
-    fragment = data.getData('application/x-slate-fragment');
-
-    if (fragment) {
-      const decoded = decodeURIComponent(window.atob(fragment));
+  editor.dataTransferHandlers = {
+    ...editor.dataTransferHandlers,
+    'application/x-slate-fragment': (dt, fullMime) => {
+      const decoded = decodeURIComponent(window.atob(dt));
       const parsed = JSON.parse(decoded);
       editor.insertFragment(parsed);
-      return;
-    }
-
-    const html = data.getData('text/html');
-    // TODO: Avoid responding to drag/drop and others
-    if (html) {
-      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      deconstructToVoltoBlocks(editor);
+      return true;
+    },
+    'text/html': (dt, fullMime) => {
+      const parsed = new DOMParser().parseFromString(dt, 'text/html');
 
       const body =
         parsed.getElementsByTagName('google-sheets-html-origin').length > 0
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
 
+      let fragment = deserialize(editor, body);
+
       // console.log('deserialize body', body);
       // console.log('parsed body', parsed);
 
-      fragment = deserialize(editor, body);
-    } else {
-      const text = data.getData('text/plain');
+      const val = deserialize(editor, body);
+      fragment = Array.isArray(val) ? val : [val];
+
+      // When there's already text in the editor, insert a fragment, not nodes
+      if (Editor.string(editor, [])) {
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          // console.log('insert fragment', fragment);
+          // TODO: we want normalization also when dealing with fragments
+          Transforms.insertFragment(editor, fragment);
+          return true;
+        }
+      }
+
+      // console.log('fragment', fragment);
+      const nodes = normalizeBlockNodes(editor, fragment);
+      // console.log('insert nodes', nodes);
+      Transforms.insertNodes(editor, nodes);
+
+      // TODO: This used to solve a problem when pasting images. What is it?
+      // Transforms.deselect(editor);
+      deconstructToVoltoBlocks(editor);
+      return true;
+    },
+    'text/plain': (dt, fullMime) => {
+      const text = dt;
       if (!text) return;
       const paras = text.split('\n');
-      fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
+      const fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
       // return insertData(data);
-    }
 
-    // When there's already text in the editor, insert a fragment, not nodes
-    if (Editor.string(editor, [])) {
-      if (
-        Array.isArray(fragment) &&
-        fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
-      ) {
-        // console.log('insert fragment', fragment);
-        // TODO: we want normalization also when dealing with fragments
-        Transforms.insertFragment(editor, fragment);
-        return;
+      // When there's already text in the editor, insert a fragment, not nodes
+      if (Editor.string(editor, [])) {
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          // console.log('insert fragment', fragment);
+          // TODO: we want normalization also when dealing with fragments
+          Transforms.insertFragment(editor, fragment);
+          return true;
+        }
       }
-    }
 
-    // console.log('fragment', fragment);
-    const nodes = normalizeBlockNodes(editor, fragment);
-    // console.log('insert nodes', nodes);
-    Transforms.insertNodes(editor, nodes);
+      // console.log('fragment', fragment);
+      const nodes = normalizeBlockNodes(editor, fragment);
+      // console.log('insert nodes', nodes);
+      Transforms.insertNodes(editor, nodes);
 
-    // TODO: This used to solve a problem when pasting images. What is it?
-    // Transforms.deselect(editor);
+      // TODO: This used to solve a problem when pasting images. What is it?
+      // Transforms.deselect(editor);
+      deconstructToVoltoBlocks(editor);
+      return true;
+    },
   };
+
+  // TODO: use the rtf data to get the embedded images.
+  // const text = data.getData('text/rtf');
 
   return editor;
 };

@@ -245,7 +245,7 @@ class WysiwygWidget extends Component {
     function fn() {
       const parsed = new DOMParser().parseFromString(value.data, 'text/html');
 
-      // TODO: maybe these isInline, isVoid is not enough:
+      // TODO: maybe these isInline, isVoid are not enough:
       const editor = {
         htmlTagsToSlate,
         isInline: (n) => Editor.isInline(n),
@@ -253,17 +253,8 @@ class WysiwygWidget extends Component {
       };
 
       let fragment = deserialize(editor, parsed.body);
-
-      // console.log('deserialize body', body);
-      // console.log('parsed body', parsed);
-
       fragment = Array.isArray(fragment) ? fragment : [fragment];
-
-      // console.log('fragment', fragment);
       const nodes = normalizeBlockNodes(editor, fragment);
-      // console.log('insert nodes', nodes);
-
-      // Transforms.insertNodes(editor, nodes);
 
       return nodes;
     }

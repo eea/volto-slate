@@ -9,6 +9,7 @@ import {
 export const insertData = (editor) => {
   // const { insertData } = editor;
 
+  // TODO: don't overwrite old functions, here and in the Image plugin
   editor.dataTransferHandlers = {
     ...(editor.dataTransferHandlers || {}),
     'application/x-slate-fragment': (dt, fullMime) => {
@@ -26,13 +27,11 @@ export const insertData = (editor) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
 
-      let fragment = deserialize(editor, body);
-
       // console.log('deserialize body', body);
       // console.log('parsed body', parsed);
 
       const val = deserialize(editor, body);
-      fragment = Array.isArray(val) ? val : [val];
+      let fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
       if (Editor.string(editor, [])) {

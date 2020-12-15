@@ -256,6 +256,8 @@ class WysiwygWidget extends Component {
       fragment = Array.isArray(fragment) ? fragment : [fragment];
       const nodes = normalizeBlockNodes(editor, fragment);
 
+      console.log('nodes', nodes);
+
       return nodes;
     }
 
@@ -286,8 +288,8 @@ class WysiwygWidget extends Component {
             block={`block-${id}`}
             renderExtensions={[withBlockProperties]}
             selected={this.state.selected}
-            properties={{} /* properties */}
-            placeholder={'' /* placeholder */}
+            properties={/* {} */ properties}
+            placeholder={/* '' */ placeholder}
           />
         </div>
       </FormFieldWrapper>

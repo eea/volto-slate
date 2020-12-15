@@ -165,11 +165,11 @@ export const persistentHelpers = [];
 // extensions to the end of this list, to rely on default behavior implemented
 // here.
 export const extensions = [
-  withDeleteSelectionOnEnter,
-  withDeserializers,
-  insertData,
-  isInline,
-  withOrderedDataTransfers,
+  // withDeleteSelectionOnEnter,
+  // withDeserializers,
+  // insertData,
+  // isInline,
+  // withOrderedDataTransfers,
 ];
 
 // Default hotkeys and the format they trigger

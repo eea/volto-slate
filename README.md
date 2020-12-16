@@ -88,7 +88,13 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
    ```
    $ npm install -g yo @plone/generator-volto
-   $ yo @plone/volto my-volto-project --addon volto-slate:asDefault
+   $ yo @plone/volto \
+        my-volto-project \
+        --addon @eeacms/volto-blocks-form \
+        --addon @eeacms/volto-object-widget \
+        --addon volto-slate:asDefault \
+        --no-interactive  \
+        --skip-install
 
    $ cd my-volto-project
    $ yarn add -W volto-slate
@@ -98,6 +104,8 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
    ```JSON
    "addons": [
+       "@eeacms/volto-blocks-form",
+       "@eeacms/volto-object-widget",
        "volto-slate:asDefault"
    ],
 

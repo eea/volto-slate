@@ -200,27 +200,10 @@ class WysiwygWidget extends Component {
     };
 
     if (__SERVER__) {
-      // TODO: rewrite this if branch
-      // return (
-      //   <Form.Field
-      //     inline
-      //     required={required}
-      //     error={error.length > 0}
-      //     className={description ? 'help' : ''}
-      //     id={`${fieldSet || 'field'}-${id}`}
-      //   >
-      //     <div className="wrapper">
-      //       <label htmlFor={`field-${id}`}>{title}</label>
-      //       <TextArea id={id} name={id} value={value ? value.data : ''} />
-      //       {description && <p className="help">{description}</p>}
-      //       {map(error, (message) => (
-      //         <Label key={message} basic color="red" pointing>
-      //           {message}
-      //         </Label>
-      //       ))}
-      //     </div>
-      //   </Form.Field>
-      // );
+      // TODO: fill this if statement with something useful if the SlateEditor
+      // component used below is not enough for good SSR
+      //
+      // return ...
     }
 
     return (

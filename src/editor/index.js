@@ -6,6 +6,6 @@ export default (config) => {
   config.settings.slate = {
     ...slateConfig,
   };
-  // config = installDefaultPlugins(config);
+  config = installDefaultPlugins(config);
   return config;
 };

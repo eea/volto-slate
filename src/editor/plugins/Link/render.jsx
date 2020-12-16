@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export const LinkElement = ({ attributes, children, element }) => {
-  // TODO: use Router Links to route to internal content
   // TODO: handle anchor links (#something)
 
   let url = element.url;
@@ -23,7 +23,9 @@ export const LinkElement = ({ attributes, children, element }) => {
   };
 
   const { title } = element?.data || {};
-  return (
+  return internal_link ? (
+    <Link to={internal_link}>{children}</Link>
+  ) : (
     <a {...attributes} {...options} title={title}>
       {children}
     </a>

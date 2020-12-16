@@ -3,6 +3,8 @@
 [![Pipeline](https://ci.eionet.europa.eu/buildStatus/icon?job=volto-addons%2Fvolto-slate%2Fmaster&subject=master)](https://ci.eionet.europa.eu/view/Github/job/volto-addons/job/volto-slate/job/master/display/redirect)
 [![Pipeline](https://ci.eionet.europa.eu/buildStatus/icon?job=volto-addons%2Fvolto-slate%2Fdevelop&subject=develop)](https://ci.eionet.europa.eu/view/Github/job/volto-addons/job/volto-slate/job/develop/display/redirect)
 
+[Watch a 5 minutes "elevator pitch" for volto-slate](https://www.youtube.com/watch?v=SOz-rk5e4_w)
+
 An alternative text editor for Volto, capable of completely replacing the default richtext editor while offering enhanced functionality and behavior. We believe that, in order to succeed, Volto's richtext form editor (the Volto Composite Page editor) needs strong integration between the rich text capabilities and the rest of the Volto blocks. Some examples of the kind of strong integration we have in mind:
 
 - Pasting complex documents inside a volto-slate text block will create multiple Volto blocks: images will be converted to Volto Image blocks, tables will be converted to Volto Table blocks, etc.

@@ -11,10 +11,10 @@ import { FormFieldWrapper } from '@plone/volto/components';
 
 import SlateEditor from '../editor/SlateEditor';
 import { serializeNodesToHtml } from '../editor/render';
-import { normalizeBlockNodes } from 'volto-slate/utils';
+import { normalizeBlockNodes, getMaxRange } from 'volto-slate/utils';
 import { htmlTagsToSlate } from 'volto-slate/editor/config';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { Transforms, Editor } from 'slate';
+import { Transforms, Editor, Range, Node } from 'slate';
 
 import './style.css';
 
@@ -98,20 +98,42 @@ class WysiwygWidget extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    // console.log('old', prevProps.value.data, 'new', this.props.value.data);
+    const editor = this.editorRef.current;
+    // console.log('crăpat');
     if (this.props.value.data !== prevProps.value.data) {
       let rr = null;
+      let sel;
       try {
         this.setState(
           (state, props) => {
             if (rr !== null) {
               return state;
             }
-            rr = Editor.rangeRef(
-              this.editorRef.current,
-              this.editorRef.current.selection,
-              { affinity: 'backward' },
-            );
+            rr = Editor.rangeRef(editor, editor.selection, {
+              affinity: 'forward',
+            });
+
+            // debugger;
+
+            // setTimeout(() => {
+            // console.log('rr.current', rr.current);
+            // setTimeout(() => {
+            //   sel = Range.intersection(
+            //     cloneDeep(rr.current) /* .current */,
+            //     getMaxRange(editor),
+            //   );
+
+            //   const [fNode] = Editor.node(editor, sel.focus);
+            //   const [aNode] = Editor.node(editor, sel.anchor);
+
+            //   if (sel.focus.offset >= Node.string(fNode).length - 1) {
+            //     --sel.focus.offset;
+            //   }
+            //   if (sel.anchor.offset >= Node.string(aNode).length - 1) {
+            //     --sel.anchor.offset;
+            //   }
+            // }, 1000);
+            // });
             // console.log('rr.current before', rr.current);
 
             const parsed = new DOMParser().parseFromString(
@@ -120,11 +142,11 @@ class WysiwygWidget extends Component {
             );
 
             // TODO: maybe these isInline, isVoid are not enough:
-            const editor = {
-              htmlTagsToSlate,
-              isInline: (n) => Editor.isInline(this.editorRef.current, n),
-              isVoid: (n) => Editor.isVoid(this.editorRef.current, n),
-            };
+            // const editorMock = {
+            //   htmlTagsToSlate,
+            //   isInline: (n) => Editor.isInline(editorMock, n),
+            //   isVoid: (n) => Editor.isVoid(editorMock, n),
+            // };
 
             let fragment = deserialize(editor, parsed.body);
             fragment = Array.isArray(fragment) ? fragment : [fragment];
@@ -142,9 +164,10 @@ class WysiwygWidget extends Component {
               return;
             }
             try {
-              // console.log('rr.current', rr.current);
-              Transforms.select(this.editorRef.current, rr.current);
+              // setTimeout(() => {
+              Transforms.select(editor, sel);
               rr.unref();
+              // }, 2000);
             } catch (ex) {}
             rr = null;
           },
@@ -173,7 +196,7 @@ class WysiwygWidget extends Component {
       // return ...
     }
 
-    return (
+    const rv = (
       <FormFieldWrapper
         {...this.props}
         draggable={false}
@@ -197,14 +220,22 @@ class WysiwygWidget extends Component {
             block={`block-${id}`}
             renderExtensions={[withBlockProperties]}
             selected={this.state.selected}
-            properties={/* {} */ properties}
-            placeholder={/* '' */ placeholder}
+            properties={{} /* properties */}
+            placeholder={'' /* placeholder */}
             testingEditorRef={this.editorRef}
             onChange={this.onChange}
           />
         </div>
       </FormFieldWrapper>
     );
+
+    console.log('randat!');
+
+    return rv;
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log('getSnapshotBeforeUpdate successfully run');
   }
 }
 

@@ -5,13 +5,8 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { Form, Label, TextArea } from 'semantic-ui-react';
-import { map } from 'lodash';
-import { defineMessages, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 
-// import { settings } from '~/config';
 import { FormFieldWrapper } from '@plone/volto/components';
 
 import SlateEditor from '../editor/SlateEditor';
@@ -19,40 +14,9 @@ import { serializeNodesToHtml } from '../editor/render';
 import { normalizeBlockNodes } from 'volto-slate/utils';
 import { htmlTagsToSlate } from 'volto-slate/editor/config';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { Transforms, Editor, Text } from 'slate';
+import { Transforms, Editor } from 'slate';
 
 import './style.css';
-
-const messages = defineMessages({
-  default: {
-    id: 'Default',
-    defaultMessage: 'Default',
-  },
-  idTitle: {
-    id: 'Short Name',
-    defaultMessage: 'Short Name',
-  },
-  idDescription: {
-    id: 'Used for programmatic access to the fieldset.',
-    defaultMessage: 'Used for programmatic access to the fieldset.',
-  },
-  title: {
-    id: 'Title',
-    defaultMessage: 'Title',
-  },
-  description: {
-    id: 'Description',
-    defaultMessage: 'Description',
-  },
-  required: {
-    id: 'Required',
-    defaultMessage: 'Required',
-  },
-  delete: {
-    id: 'Delete',
-    defaultMessage: 'Delete',
-  },
-});
 
 /**
  * WysiwygWidget container class.
@@ -154,37 +118,6 @@ class WysiwygWidget extends Component {
       value: [{ type: 'p', children: [{ text: 'Dummy initial text' }] }],
     };
 
-    this.schema = {
-      fieldsets: [
-        {
-          id: 'default',
-          title: props.intl.formatMessage(messages.default),
-          fields: ['title', 'id', 'description', 'required'],
-        },
-      ],
-      properties: {
-        id: {
-          type: 'string',
-          title: props.intl.formatMessage(messages.idTitle),
-          description: props.intl.formatMessage(messages.idDescription),
-        },
-        title: {
-          type: 'string',
-          title: props.intl.formatMessage(messages.title),
-        },
-        description: {
-          type: 'string',
-          widget: 'textarea',
-          title: props.intl.formatMessage(messages.description),
-        },
-        required: {
-          type: 'boolean',
-          title: props.intl.formatMessage(messages.required),
-        },
-      },
-      required: ['id', 'title'],
-    };
-
     this.editorRef = React.createRef(null);
   }
 
@@ -212,7 +145,7 @@ class WysiwygWidget extends Component {
               this.editorRef.current.selection,
               { affinity: 'backward' },
             );
-            console.log('rr.current before', rr.current);
+            // console.log('rr.current before', rr.current);
 
             const parsed = new DOMParser().parseFromString(
               props.value.data,
@@ -289,9 +222,6 @@ class WysiwygWidget extends Component {
       //   </Form.Field>
       // );
     }
-
-    // TODO: use lodash to memoize this depending on something (alternative to React useMemo hook)
-    // TODO: in TextBlockEdit.jsx and SlateEditor.jsx (first the latter!) put default prop values and prop types! helps a lot!
 
     return (
       <FormFieldWrapper

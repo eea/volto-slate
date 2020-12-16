@@ -149,7 +149,10 @@ class WysiwygWidget extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { selected: this.props.focus };
+    this.state = {
+      selected: this.props.focus,
+      value: [{ type: 'p', children: [{ text: 'Dummy initial text' }] }],
+    };
 
     this.schema = {
       fieldsets: [
@@ -182,7 +185,7 @@ class WysiwygWidget extends Component {
       required: ['id', 'title'],
     };
 
-    this.onChange = this.onChange.bind(this);
+    this.editorRef = React.createRef(null);
   }
 
   /**
@@ -190,8 +193,64 @@ class WysiwygWidget extends Component {
    * @method onChange
    * @returns {undefined}
    */
-  onChange(data) {
+  onChange = (data) => {
     this.props.onChange(this.props.id, { data: serializeNodesToHtml(data) });
+  };
+
+  componentDidUpdate(prevProps) {
+    // console.log('old', prevProps.value.data, 'new', this.props.value.data);
+    if (this.props.value.data !== prevProps.value.data) {
+      let rr = null;
+      try {
+        this.setState(
+          (state, props) => {
+            if (rr !== null) {
+              return state;
+            }
+            rr = Editor.rangeRef(
+              this.editorRef.current,
+              this.editorRef.current.selection,
+              { affinity: 'backward' },
+            );
+            console.log('rr.current before', rr.current);
+
+            const parsed = new DOMParser().parseFromString(
+              props.value.data,
+              'text/html',
+            );
+
+            // TODO: maybe these isInline, isVoid are not enough:
+            const editor = {
+              htmlTagsToSlate,
+              isInline: (n) => Editor.isInline(this.editorRef.current, n),
+              isVoid: (n) => Editor.isVoid(this.editorRef.current, n),
+            };
+
+            let fragment = deserialize(editor, parsed.body);
+            fragment = Array.isArray(fragment) ? fragment : [fragment];
+            const nodes = normalizeBlockNodes(editor, fragment);
+
+            // setTimeout(() => {
+            //   this.setState({value: nodes});
+            // }, 100);
+            return { ...state, value: nodes };
+
+            // return state;
+          },
+          () => {
+            if (rr === null) {
+              return;
+            }
+            try {
+              // console.log('rr.current', rr.current);
+              Transforms.select(this.editorRef.current, rr.current);
+              rr.unref();
+            } catch (ex) {}
+            rr = null;
+          },
+        );
+      } catch (ex) {}
+    }
   }
 
   /**
@@ -200,18 +259,7 @@ class WysiwygWidget extends Component {
    * @returns {React.ReactElement} Markup for the component.
    */
   render() {
-    const {
-      id,
-      title,
-      description,
-      required,
-      value,
-      className,
-      properties,
-      placeholder,
-      error,
-      fieldSet,
-    } = this.props;
+    const { id, className, properties, placeholder } = this.props;
 
     const withBlockProperties = (editor) => {
       editor.getBlockProps = () => this.props;
@@ -242,26 +290,7 @@ class WysiwygWidget extends Component {
       // );
     }
 
-    function fn() {
-      const parsed = new DOMParser().parseFromString(value.data, 'text/html');
-
-      // TODO: maybe these isInline, isVoid are not enough:
-      const editor = {
-        htmlTagsToSlate,
-        isInline: (n) => Editor.isInline(n),
-        isVoid: (n) => Editor.isVoid(n),
-      };
-
-      let fragment = deserialize(editor, parsed.body);
-      fragment = Array.isArray(fragment) ? fragment : [fragment];
-      const nodes = normalizeBlockNodes(editor, fragment);
-
-      console.log('nodes', nodes);
-
-      return nodes;
-    }
-
-    const val = fn(); // TODO: use lodash to memoize this depending on something (alternative to React useMemo hook)
+    // TODO: use lodash to memoize this depending on something (alternative to React useMemo hook)
     // TODO: in TextBlockEdit.jsx and SlateEditor.jsx (first the latter!) put default prop values and prop types! helps a lot!
 
     return (
@@ -284,12 +313,14 @@ class WysiwygWidget extends Component {
             id={id}
             className={className}
             name={id}
-            value={val}
+            value={this.state.value}
             block={`block-${id}`}
             renderExtensions={[withBlockProperties]}
             selected={this.state.selected}
             properties={/* {} */ properties}
             placeholder={/* '' */ placeholder}
+            testingEditorRef={this.editorRef}
+            onChange={this.onChange}
           />
         </div>
       </FormFieldWrapper>
@@ -297,12 +328,4 @@ class WysiwygWidget extends Component {
   }
 }
 
-export default compose(
-  injectIntl,
-  connect(
-    (state, props) => ({
-      token: state.userSession.token,
-    }),
-    {},
-  ),
-)(WysiwygWidget);
+export default injectIntl(WysiwygWidget);

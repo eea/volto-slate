@@ -11,10 +11,9 @@ import { FormFieldWrapper } from '@plone/volto/components';
 
 import SlateEditor from '../editor/SlateEditor';
 import { serializeNodesToHtml } from '../editor/render';
-import { normalizeBlockNodes, getMaxRange } from 'volto-slate/utils';
-import { htmlTagsToSlate } from 'volto-slate/editor/config';
+import { normalizeBlockNodes } from 'volto-slate/utils';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { Transforms, Editor, Range, Node } from 'slate';
+import { Editor } from 'slate';
 
 import './style.css';
 
@@ -82,7 +81,7 @@ class WysiwygWidget extends Component {
 
     this.state = {
       selected: this.props.focus,
-      value: [{ type: 'p', children: [{ text: 'Dummy initial text' }] }],
+      value: null,
     };
 
     this.editorRef = React.createRef(null);
@@ -94,87 +93,60 @@ class WysiwygWidget extends Component {
    * @returns {undefined}
    */
   onChange = (data) => {
+    this.setState({ value: data });
     this.props.onChange(this.props.id, { data: serializeNodesToHtml(data) });
+  };
+
+  convertHTMLToNodes = (editor, html) => {
+    return new Promise((resolve, reject) => {
+      let rr = null;
+      let nodes = [];
+      this.setState(
+        (state, props) => {
+          if (rr !== null) {
+            resolve([]);
+            return state;
+          }
+
+          rr = Editor.rangeRef(editor, editor.selection, {
+            affinity: 'forward',
+          });
+
+          const parsed = new DOMParser().parseFromString(html, 'text/html');
+
+          let fragment = deserialize(editor, parsed.body);
+          fragment = Array.isArray(fragment) ? fragment : [fragment];
+          nodes = normalizeBlockNodes(editor, fragment);
+
+          return { ...state, value: nodes };
+        },
+        () => {
+          if (rr === null) {
+            resolve([]);
+            return;
+          }
+          // TODO: pt should be obtained from the rr above and passed to Transforms.select
+          // call commented below.
+          const pt = /* rr?.current || Editor.start(editor) ||  */ {};
+          pt.anchor = { path: [0, 0], offset: 0 };
+          pt.focus = { path: [0, 0], offset: 0 };
+          // Transforms.select(editor, /* html.length === 0 ?  */pt/*  : rr.current */);
+          rr.unref();
+          rr = null;
+          resolve(nodes);
+        },
+      );
+    });
   };
 
   componentDidUpdate(prevProps) {
     const editor = this.editorRef.current;
-    // console.log('crăpat');
     if (this.props.value.data !== prevProps.value.data) {
-      let rr = null;
-      let sel;
-      try {
-        this.setState(
-          (state, props) => {
-            if (rr !== null) {
-              return state;
-            }
-            rr = Editor.rangeRef(editor, editor.selection, {
-              affinity: 'forward',
-            });
-
-            // debugger;
-
-            // setTimeout(() => {
-            // console.log('rr.current', rr.current);
-            // setTimeout(() => {
-            //   sel = Range.intersection(
-            //     cloneDeep(rr.current) /* .current */,
-            //     getMaxRange(editor),
-            //   );
-
-            //   const [fNode] = Editor.node(editor, sel.focus);
-            //   const [aNode] = Editor.node(editor, sel.anchor);
-
-            //   if (sel.focus.offset >= Node.string(fNode).length - 1) {
-            //     --sel.focus.offset;
-            //   }
-            //   if (sel.anchor.offset >= Node.string(aNode).length - 1) {
-            //     --sel.anchor.offset;
-            //   }
-            // }, 1000);
-            // });
-            // console.log('rr.current before', rr.current);
-
-            const parsed = new DOMParser().parseFromString(
-              props.value.data,
-              'text/html',
-            );
-
-            // TODO: maybe these isInline, isVoid are not enough:
-            // const editorMock = {
-            //   htmlTagsToSlate,
-            //   isInline: (n) => Editor.isInline(editorMock, n),
-            //   isVoid: (n) => Editor.isVoid(editorMock, n),
-            // };
-
-            let fragment = deserialize(editor, parsed.body);
-            fragment = Array.isArray(fragment) ? fragment : [fragment];
-            const nodes = normalizeBlockNodes(editor, fragment);
-
-            // setTimeout(() => {
-            //   this.setState({value: nodes});
-            // }, 100);
-            return { ...state, value: nodes };
-
-            // return state;
-          },
-          () => {
-            if (rr === null) {
-              return;
-            }
-            try {
-              // setTimeout(() => {
-              Transforms.select(editor, sel);
-              rr.unref();
-              // }, 2000);
-            } catch (ex) {}
-            rr = null;
-          },
-        );
-      } catch (ex) {}
+      this.convertHTMLToNodes(editor, this.props.value.data).then(() => {});
     }
   }
+
+  firstRenderWithEditorRef = true;
 
   /**
    * Render method.
@@ -196,7 +168,17 @@ class WysiwygWidget extends Component {
       // return ...
     }
 
-    const rv = (
+    if (this.firstRenderWithEditorRef && this.editorRef.current) {
+      this.firstRenderWithEditorRef = false;
+      this.convertHTMLToNodes(
+        this.editorRef.current,
+        this.props.value.data,
+      ).then((nodes) => {
+        this.setState({ value: nodes });
+      });
+    }
+
+    return (
       <FormFieldWrapper
         {...this.props}
         draggable={false}
@@ -220,22 +202,14 @@ class WysiwygWidget extends Component {
             block={`block-${id}`}
             renderExtensions={[withBlockProperties]}
             selected={this.state.selected}
-            properties={{} /* properties */}
-            placeholder={'' /* placeholder */}
+            properties={properties}
+            placeholder={placeholder}
             testingEditorRef={this.editorRef}
             onChange={this.onChange}
           />
         </div>
       </FormFieldWrapper>
     );
-
-    console.log('randat!');
-
-    return rv;
-  }
-
-  getSnapshotBeforeUpdate(prevProps, prevState) {
-    console.log('getSnapshotBeforeUpdate successfully run');
   }
 }
 

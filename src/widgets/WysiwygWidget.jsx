@@ -35,18 +35,6 @@ class WysiwygWidget extends Component {
      */
     id: PropTypes.string.isRequired,
     /**
-     * Title of the field
-     */
-    title: PropTypes.string.isRequired,
-    /**
-     * Description of the field
-     */
-    description: PropTypes.string,
-    /**
-     * True if field is required
-     */
-    required: PropTypes.bool,
-    /**
      * Value of the field
      */
     value: PropTypes.shape({
@@ -64,25 +52,9 @@ class WysiwygWidget extends Component {
       // encoding: PropTypes.string,
     }),
     /**
-     * List of error messages
-     */
-    error: PropTypes.arrayOf(PropTypes.string),
-    /**
      * On change handler
      */
     onChange: PropTypes.func,
-    /**
-     * On delete handler
-     */
-    onDelete: PropTypes.func,
-    /**
-     * On edit handler
-     */
-    onEdit: PropTypes.func,
-    /**
-     * Wrapped form component
-     */
-    wrapped: PropTypes.bool,
   };
 
   /**
@@ -91,16 +63,11 @@ class WysiwygWidget extends Component {
    * @static
    */
   static defaultProps = {
-    description: null,
-    required: false,
     value: {
       'content-type': 'text/html',
       data: '',
       encoding: 'utf8',
     },
-    error: [],
-    onEdit: null,
-    onDelete: null,
     onChange: null,
   };
 

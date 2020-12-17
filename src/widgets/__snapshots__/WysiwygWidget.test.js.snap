@@ -1,0 +1,118 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders a WysiwygWidget component 1`] = `
+<div
+  className="inline required field help slate_wysiwyg"
+  id="field-qwertyu"
+>
+  <div
+    className="ui grid"
+  >
+    <div
+      className="stretched row"
+    >
+      <div
+        className="four wide column"
+      >
+        <div
+          className="wrapper"
+        >
+          <label
+            htmlFor="field-qwertyu"
+          >
+            My Widget
+          </label>
+        </div>
+      </div>
+      <div
+        className="eight wide column"
+      >
+        <div
+          className="slate_wysiwyg_box"
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          role="textbox"
+          style={
+            Object {
+              "boxSizing": "initial",
+            }
+          }
+          tabIndex="-1"
+        >
+          <div
+            className="slate-editor"
+          >
+            
+            <div
+              contentEditable={true}
+              data-gramm={false}
+              data-slate-editor={true}
+              data-slate-node="value"
+              onBeforeInput={[Function]}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onCompositionEnd={[Function]}
+              onCompositionStart={[Function]}
+              onCopy={[Function]}
+              onCut={[Function]}
+              onDragOver={[Function]}
+              onDragStart={[Function]}
+              onDrop={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              onPaste={[Function]}
+              role="textbox"
+              spellCheck={false}
+              style={
+                Object {
+                  "outline": "none",
+                  "whiteSpace": "pre-wrap",
+                  "wordWrap": "break-word",
+                }
+              }
+              suppressContentEditableWarning={true}
+            >
+              <p
+                data-slate-node="element"
+              >
+                <span
+                  data-slate-node="text"
+                >
+                  <span
+                    className=""
+                    data-slate-leaf={true}
+                  >
+                    <span
+                      data-slate-length={0}
+                      data-slate-zero-width="n"
+                    >
+                      ﻿
+                      <br />
+                    </span>
+                  </span>
+                </span>
+              </p>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="stretched row"
+    >
+      <div
+        className="stretched twelve wide column"
+      >
+        <p
+          className="help"
+        >
+          My little description.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;

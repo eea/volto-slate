@@ -24,6 +24,40 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+Cypress.Commands.add(
+  'justVisible',
+  { prevSubject: 'element' },
+  (subject, options) => {
+    // let arr = [];
+    for (let el of subject) {
+      if (Cypress.dom.isVisible(el)) {
+        return el;
+        // arr.push(el);
+      }
+    }
+    // return arr;
+  },
+);
+
+/**
+ * Checks if the subject (expected to be a slate editor element) contains focus or is focused itself.
+ */
+Cypress.Commands.add(
+  'slateEditorShouldBeFocused',
+  { prevSubject: 'element' },
+  (subject, options) => {
+    // the last Slate block should be focused
+    return cy
+      .wrap(subject)
+      .then((editorElement) => {
+        return cy.focused().then((focusedEl) => {
+          return Cypress.$.contains(editorElement[0], focusedEl[0]);
+        });
+      })
+      .should('eq', true);
+  },
+);
+
 /**
  * Slate commands taken from this page because of that issue:
  * https://github.com/ianstormtaylor/slate/issues/3476
@@ -33,24 +67,28 @@ Cypress.Commands.add('getEditor', (selector) => {
   return cy.get(selector).click();
 });
 
-Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
-  return (
-    cy
-      .wrap(subject)
-      .then((subject) => {
-        subject[0].dispatchEvent(
-          new InputEvent('beforeinput', {
-            inputType: 'insertText',
-            data: text,
-          }),
-        );
-        return subject;
-      })
-      // TODO: do this only for Electron-based browser which does not understand instantaneously
-      // that the user inserted some text in the block
-      .wait(1000)
-  );
-});
+Cypress.Commands.add(
+  'typeInSlate',
+  { prevSubject: 'element' },
+  (subject, text) => {
+    return (
+      cy
+        .wrap(subject)
+        .then((subject) => {
+          subject[0].dispatchEvent(
+            new InputEvent('beforeinput', {
+              inputType: 'insertText',
+              data: text,
+            }),
+          );
+          return subject;
+        })
+        // TODO: do this only for Electron-based browser which does not understand instantaneously
+        // that the user inserted some text in the block
+        .wait(1000)
+    );
+  },
+);
 
 Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
   return cy.wrap(subject).then((subject) => {

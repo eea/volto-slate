@@ -166,6 +166,7 @@ export const selectSlateNodeOfWord = (el) => {
   });
 };
 
+// TODO: WIP
 export const createSlateBlockWithList = ({
   firstInPage = false,
   numbered,
@@ -182,15 +183,25 @@ export const createSlateBlockWithList = ({
 
   // select all contents of slate block
   // - this opens hovering toolbar
-  /* cy.contains(firstItemText + secondItemText).dblclick(5, 5, {
-    force: true,
-    multiple: false,
-    ctrlKey: true,
-    shiftKey: true,
-  }) */
-  cy.contains(firstItemText + secondItemText).then((el) => {
-    selectSlateNodeOfWord(el);
-  });
+
+  //cy.contains(firstItemText + secondItemText).trigger('mouseup'); //type('{selectall}');
+
+  cy.contains(firstItemText + secondItemText)
+    .trigger('mouseover', { force: true })
+    .trigger('mousedown', {which: 1, force: true})
+    .trigger('mousemove', {clientX: 1, clientY: 10, force: true})
+    // .xpath(PageElements.workflow.x_initial_drop_target_area)
+    // .trigger('mousemove')
+    .trigger('mouseup', {force: true, clientX: 50, clientY: 10});
+  // .dblclick(5, 5, {
+  //   force: true,
+  //   multiple: false,
+  //   ctrlKey: true,
+  //   shiftKey: true,
+  // });
+  // cy.contains(firstItemText + secondItemText).then((el) => {
+  //   selectSlateNodeOfWord(el);
+  // });
 
   cy.wait(1000);
 

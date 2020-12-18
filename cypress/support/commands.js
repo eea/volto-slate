@@ -1,11 +1,117 @@
-/* eslint no-console: ["error", { allow: ["log"] }] */
+// ***********************************************
+// This example commands.js shows you how to
+// create various custom commands and overwrite
+// existing commands.
+//
+// For more comprehensive examples of custom
+// commands please read more here:
+// https://on.cypress.io/custom-commands
+// ***********************************************
+//
+//
+// -- This is a parent command --
+// Cypress.Commands.add("login", (email, password) => { ... })
+//
+//
+// -- This is a child command --
+// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+//
+//
+// -- This is a dual command --
+// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
+//
+//
+// -- This will overwrite an existing command --
+// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+/**
+ * Slate commands taken from this page because of that issue:
+ * https://github.com/ianstormtaylor/slate/issues/3476
+ */
+
+Cypress.Commands.add('getEditor', (selector) => {
+  return cy.get(selector).click();
+});
+
+Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
+  return (
+    cy
+      .wrap(subject)
+      .then((subject) => {
+        subject[0].dispatchEvent(
+          new InputEvent('beforeinput', {
+            inputType: 'insertText',
+            data: text,
+          }),
+        );
+        return subject;
+      })
+      // TODO: do this only for Electron-based browser which does not understand instantaneously
+      // that the user inserted some text in the block
+      .wait(1000)
+  );
+});
+
+Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
+  return cy.wrap(subject).then((subject) => {
+    subject[0].dispatchEvent(
+      new InputEvent('beforeinput', { inputType: 'deleteHardLineBackward' }),
+    );
+    return subject;
+  });
+});
+
+// TODO: make this command chainable (so that it passes the `subject` to the next chained command)
+Cypress.Commands.add('lineBreakInSlate', { prevSubject: true }, (subject) => {
+  return (
+    cy
+      .wrap(subject)
+      .then((subject) => {
+        subject[0].dispatchEvent(
+          new InputEvent('beforeinput', { inputType: 'insertLineBreak' }),
+        );
+        return subject;
+      })
+      // TODO: do this only for Electron-based browser which does not understand instantaneously
+      // that the block was split
+      .wait(1000)
+  );
+});
+
+Cypress.Commands.add('clearAllInSlate', { prevSubject: true }, (subject) => {
+  // TODO: do not hardcode this 10 here
+  for (let i = 0; i < 10; ++i) {
+    cy.wrap(subject).then((subject) => {
+      subject[0].dispatchEvent(
+        new InputEvent('beforeinput', { inputType: 'deleteHardLineBackward' }),
+      );
+      return subject;
+    });
+  }
+});
+
+const myUser = 'admin';
+const myPassword = 'secret';
+const apiUrl = Cypress.env('BACKEND_URL') || 'http://localhost:55001/plone';
+
+/**
+ * Volto commands as on 09.06.2020 from
+ * Source: https://github.com/plone/volto/blob/master/cypress/support/commands.js
+ * (replaced localhost:55001/plone with localhost:3000/api and started using myUser and myPassword from above)
+ */
 
 // --- AUTOLOGIN -------------------------------------------------------------
 Cypress.Commands.add('autologin', () => {
   let api_url, user, password;
-  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
-  user = 'admin';
-  password = 'admin';
+  if (Cypress.env('API') === 'guillotina') {
+    api_url = 'http://localhost:8081/db/container';
+    user = 'root';
+    password = 'root';
+  } else {
+    api_url = apiUrl;
+    user = myUser;
+    password = myPassword;
+  }
 
   return cy
     .request({
@@ -14,7 +120,9 @@ Cypress.Commands.add('autologin', () => {
       headers: { Accept: 'application/json' },
       body: { login: user, password: password },
     })
-    .then((response) => cy.setCookie('auth_token', response.body.token));
+    .then((response) => {
+      return cy.setCookie('auth_token', response.body.token);
+    });
 });
 
 // --- CREATE CONTENT --------------------------------------------------------
@@ -28,11 +136,19 @@ Cypress.Commands.add(
     allow_discussion = false,
   }) => {
     let api_url, auth;
-    api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
-    auth = {
-      user: 'admin',
-      pass: 'admin',
-    };
+    if (Cypress.env('API') === 'guillotina') {
+      api_url = 'http://localhost:8081/db/container';
+      auth = {
+        user: 'root',
+        pass: 'root',
+      };
+    } else {
+      api_url = apiUrl;
+      auth = {
+        user: myUser,
+        pass: myPassword,
+      };
+    }
     if (contentType === 'File') {
       return cy.request({
         method: 'POST',
@@ -125,62 +241,6 @@ Cypress.Commands.add(
   },
 );
 
-// --- REMOVE CONTENT --------------------------------------------------------
-Cypress.Commands.add('removeContent', (path) => {
-  let api_url, auth;
-  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
-  auth = {
-    user: 'admin',
-    pass: 'admin',
-  };
-  return cy
-    .request({
-      method: 'DELETE',
-      url: `${api_url}/${path}`,
-      headers: {
-        Accept: 'application/json',
-      },
-      auth: auth,
-      body: {},
-    })
-    .then(() => console.log(`${path} removed`));
-});
-
-Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
-  return (
-    cy
-      .wrap(subject)
-      .then((subject) => {
-        subject[0].dispatchEvent(
-          new InputEvent('beforeinput', {
-            inputType: 'insertText',
-            data: text,
-          }),
-        );
-        return subject;
-      })
-      // TODO: do this only for Electron-based browser which does not understand instantaneously
-      // that the user inserted some text in the block
-      .wait(1000)
-  );
-});
-
-Cypress.Commands.add('lineBreakInSlate', { prevSubject: true }, (subject) => {
-  return (
-    cy
-      .wrap(subject)
-      .then((subject) => {
-        subject[0].dispatchEvent(
-          new InputEvent('beforeinput', { inputType: 'insertLineBreak' }),
-        );
-        return subject;
-      })
-      // TODO: do this only for Electron-based browser which does not understand instantaneously
-      // that the block was split
-      .wait(1000)
-  );
-});
-
 // --- SET WORKFLOW ----------------------------------------------------------
 Cypress.Commands.add(
   'setWorkflow',
@@ -196,10 +256,10 @@ Cypress.Commands.add(
     include_children = true,
   }) => {
     let api_url, auth;
-    api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+    api_url = apiUrl;
     auth = {
-      user: 'admin',
-      pass: 'admin',
+      user: myUser,
+      pass: myPassword,
     };
     return cy.request({
       method: 'POST',
@@ -222,9 +282,10 @@ Cypress.Commands.add(
   },
 );
 
-// --- waitForResourceToLoad ----------------------------------------------------------
 Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
-  const resourceCheckInterval = 40;
+  const resourceCheckInterval = 200;
+  const maxChecks = 50;
+  const count = [0];
 
   return new Cypress.Promise((resolve) => {
     const checkIfResourceHasBeenLoaded = () => {
@@ -240,10 +301,39 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
         return;
       }
 
+      count[0] += 1;
       setTimeout(checkIfResourceHasBeenLoaded, resourceCheckInterval);
+
+      if (count[0] > maxChecks) {
+        throw new Error(
+          `Timeout resolving resource: ${fileName} (type ${type})`,
+        );
+      }
     };
 
     checkIfResourceHasBeenLoaded();
+  });
+});
+
+// --- CREATE CONTENT --------------------------------------------------------
+Cypress.Commands.add('setRegistry', (record, value) => {
+  let api_url, auth;
+  api_url = apiUrl;
+  auth = {
+    user: myUser,
+    pass: myPassword,
+  };
+
+  return cy.request({
+    method: 'PATCH',
+    url: `${api_url}/@registry/`,
+    headers: {
+      Accept: 'application/json',
+    },
+    auth: auth,
+    body: {
+      [record]: value,
+    },
   });
 });
 

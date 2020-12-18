@@ -13,55 +13,60 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import 'cypress-plugin-tab';
+
 // Import commands.js using ES2015 syntax:
 import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-export const slateBeforeEach = () => {
-  cy.autologin();
-  cy.createContent({
-    contentType: 'Folder',
-    contentId: 'cypress',
-    contentTitle: 'Cypress',
-  });
-  cy.createContent({
-    contentType: 'Document',
-    contentId: 'my-page',
-    contentTitle: 'My Page',
-    path: 'cypress',
-  });
-  cy.visit('/cypress/my-page');
-  cy.waitForResourceToLoad('@navigation');
-  cy.waitForResourceToLoad('@breadcrumbs');
-  cy.waitForResourceToLoad('@actions');
-  cy.waitForResourceToLoad('@types');
-  cy.waitForResourceToLoad('my-page');
-  cy.navigate('/cypress/my-page/edit');
-  cy.get(`.block.title [data-contents]`);
-};
+//https://docs.cypress.io/guides/tooling/code-coverage.htm
+import '@cypress/code-coverage/support'
 
-export const slateAfterEach = () => {
-  cy.autologin();
-  cy.removeContent('cypress');
+export const createSlateBlock = () => {
+  // click the add block button
+  cy.get('.inner > .block > .ui > .icon').click();
+
+  // Text section in block type selector
+  cy.get('.accordion > :nth-child(3)').click();
+
+  // click the Slate block button (the first one is in the Most Used section, the last one is surely the good one)
+  cy.get('button.ui.basic.icon.button.slate').last().click();
+
+  return getSelectedSlateEditor();
 };
 
 export const getSelectedSlateEditor = () => {
   return cy.get('.slate-editor.selected [contenteditable=true]');
 };
 
-export const createSlateBlock = () => {
-  cy.get('[data-rbd-droppable-id=edit-form] > div').last().click();
-  cy.get('button.block-add-button').last().click();
-  cy.get('.blocks-chooser .title').contains('Text').click();
-  cy.get('.ui.basic.icon.button.slate').contains('Slate').click();
-  return getSelectedSlateEditor();
+export const getSelectedUneditableSlateEditor = () => {
+  return cy.get('.slate-editor.selected'); // [contenteditable=true] fails sometimes
+};
+
+export const getSlateBlockPlaintext = (sb) => {
+  return sb.invoke('text');
 };
 
 export const getSlateBlockValue = (sb) => {
   return sb.invoke('attr', 'data-slate-value').then((str) => {
     return typeof str === 'undefined' ? [] : JSON.parse(str);
+  });
+};
+
+export const getSlateBlockSelection = (sb) => {
+  return sb.invoke('attr', 'data-slate-selection').then((str) => {
+    return str ? JSON.parse(str) : null;
+  });
+};
+
+export const selectSlateNodeOfWord = (el) => {
+  return cy.window().then((win) => {
+    var event = new CustomEvent('Test_SelectWord', {
+      detail: el[0],
+    });
+    win.document.dispatchEvent(event);
   });
 };
 
@@ -102,11 +107,38 @@ export const createSlateBlockWithList = ({
   return s1;
 };
 
-export const selectSlateNodeOfWord = (el) => {
-  return cy.window().then((win) => {
-    var event = new CustomEvent('Test_SelectWord', {
-      detail: el[0],
-    });
-    win.document.dispatchEvent(event);
+export const slateBefore = () => {
+  // if I use these 2 calls as in https://github.com/plone/volto/blob/master/cypress/support/index.js the tests fail for sure
+  // cy.exec('yarn ci:test:fixture:teardown');
+  // cy.exec('yarn ci:test:fixture:setup');
+
+  // Translated from above commands:
+  cy.exec('node cypress/support/reset-fixture.js teardown');
+  cy.exec('node cypress/support/reset-fixture.js');
+
+  cy.autologin();
+  cy.createContent({
+    contentType: 'Document',
+    contentId: 'my-page',
+    contentTitle: 'My Page',
   });
+
+  cy.visit('/my-page/edit');
+
+  cy.waitForResourceToLoad('@navigation');
+  cy.waitForResourceToLoad('@breadcrumbs');
+  cy.waitForResourceToLoad('@actions');
+  cy.waitForResourceToLoad('@types');
+
+  // times out on latest Volto as of 18 dec 2020:
+  // cy.waitForResourceToLoad('my-page?fullobjects');
+};
+
+export const slateBeforeEach = () => {
+  // TODO: do not autologin before each test, just once,
+  // in slateBefore function, and run slateBefore just at the
+  // beginning of the testing session.
+  // cy.autologin();
+  slateBefore();
+  // cy.visit('/my-page/edit');
 };

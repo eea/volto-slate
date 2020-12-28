@@ -12,7 +12,9 @@ import {
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe('Slate.js Volto blocks', () => {
+  // NOTE: skipped because the footnotes block is not in the default
+  // installation of volto-slate
+  describe.skip('Slate.js Volto blocks 11', () => {
     beforeEach(slateBeforeEach);
 
     it('should create two slate blocks, one slate text and the other slate footnotes, create one footnote and type something in the field for its reference text', () => {

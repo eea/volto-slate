@@ -28,9 +28,9 @@ import '@cypress/code-coverage/support';
 // (e.g. NUMBERED_LIST_BUTTON_INDEX & co. below)
 
 // in the hovering toolbar
-export const NUMBERED_LIST_BUTTON_INDEX = 12;
-export const BULLETED_LIST_BUTTON_INDEX = 13;
-export const FOOTNOTE_BUTTON_INDEX = 16;
+export const NUMBERED_LIST_BUTTON_INDEX = 13;
+export const BULLETED_LIST_BUTTON_INDEX = 14;
+export const FOOTNOTE_BUTTON_INDEX = 16; // TODO: update this
 
 export const clickCheckSidebarButton = () => {
   return cy.get('.header > :nth-child(3)').click();
@@ -38,6 +38,10 @@ export const clickCheckSidebarButton = () => {
 
 // TODO: use this in all tests instead of the code in it
 export const clickHoveringToolbarButton = (buttonIndex) => {
+  cy.contains('hello, world').type('{selectall}').dblclick();
+
+  cy.wait(1000);
+
   cy.get(`.slate-inline-toolbar .button-wrapper:nth-child(${buttonIndex})`)
     .justVisible()
     .click();
@@ -134,6 +138,7 @@ export const getAllSlateTextBlocks = () => {
 };
 
 export const getSelectedSlateEditor = () => {
+  cy.get('.slate-editor.selected').scrollIntoView();
   return cy.get('.slate-editor.selected [contenteditable=true]');
 };
 
@@ -187,12 +192,14 @@ export const createSlateBlockWithList = ({
   //cy.contains(firstItemText + secondItemText).trigger('mouseup'); //type('{selectall}');
 
   cy.contains(firstItemText + secondItemText)
-    .trigger('mouseover', { force: true })
-    .trigger('mousedown', {which: 1, force: true})
-    .trigger('mousemove', {clientX: 1, clientY: 10, force: true})
-    // .xpath(PageElements.workflow.x_initial_drop_target_area)
-    // .trigger('mousemove')
-    .trigger('mouseup', {force: true, clientX: 50, clientY: 10});
+    .type('{selectall}')
+    .dblclick();
+  // .trigger('mouseover', { force: true })
+  // .trigger('mousedown', {which: 1, force: true})
+  // .trigger('mousemove', {clientX: 1, clientY: 10, force: true})
+  // // .xpath(PageElements.workflow.x_initial_drop_target_area)
+  // // .trigger('mousemove')
+  // .trigger('mouseup', {force: true, clientX: 50, clientY: 10});
   // .dblclick(5, 5, {
   //   force: true,
   //   multiple: false,

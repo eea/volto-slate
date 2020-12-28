@@ -12,21 +12,11 @@ const indent0 = [
     children: [
       {
         type: 'li',
-        children: [
-          {
-            type: 'p',
-            children: [{ text: 'hello world' }],
-          },
-        ],
+        children: [{ text: 'hello world' }],
       },
       {
         type: 'li',
-        children: [
-          {
-            type: 'p',
-            children: [{ text: 'welcome aboard' }],
-          },
-        ],
+        children: [{ text: 'welcome aboard' }],
       },
     ],
   },
@@ -38,24 +28,14 @@ const indent1 = [
     children: [
       {
         type: 'li',
-        children: [
-          {
-            type: 'p',
-            children: [{ text: 'hello world' }],
-          },
-        ],
+        children: [{ text: 'hello world' }],
       },
       {
         type: 'ol',
         children: [
           {
             type: 'li',
-            children: [
-              {
-                type: 'p',
-                children: [{ text: 'welcome aboard' }],
-              },
-            ],
+            children: [{ text: 'welcome aboard' }],
           },
         ],
       },
@@ -64,7 +44,7 @@ const indent1 = [
 ];
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe.skip('Slate.js Volto blocks', () => {
+  describe('Slate.js Volto blocks 9', () => {
     beforeEach(slateBeforeEach);
 
     // TODO: should create a slate block after a normal block, after a title block etc.
@@ -104,12 +84,7 @@ if (Cypress.env('API') !== 'guillotina') {
           children: [
             {
               type: 'li',
-              children: [
-                {
-                  type: 'p',
-                  children: [{ text: 'hello world' }],
-                },
-              ],
+              children: [{ text: 'hello world' }],
             },
             {
               type: 'ol',
@@ -119,12 +94,7 @@ if (Cypress.env('API') !== 'guillotina') {
                   children: [
                     {
                       type: 'li',
-                      children: [
-                        {
-                          type: 'p',
-                          children: [{ text: 'welcome aboard' }],
-                        },
-                      ],
+                      children: [{ text: 'welcome aboard' }],
                     },
                   ],
                 },

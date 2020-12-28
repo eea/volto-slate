@@ -5,7 +5,7 @@ import {
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe('Slate.js Volto blocks', () => {
+  describe('Slate.js Volto blocks 8', () => {
     beforeEach(slateBeforeEach);
 
     // TODO: should create a slate block after a normal block, after a title block etc.

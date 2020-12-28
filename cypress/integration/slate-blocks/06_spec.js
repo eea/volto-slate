@@ -7,7 +7,7 @@ import {
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe('Slate.js Volto blocks', () => {
+  describe('Slate.js Volto blocks 6', () => {
     beforeEach(slateBeforeEach);
 
     // TODO: should create a slate block after a normal block, after a title block etc.
@@ -20,7 +20,9 @@ if (Cypress.env('API') !== 'guillotina') {
       createSlateBlocks([s1, s2]);
 
       // move the text cursor
-      getSelectedSlateEditor().type(
+      const e = getSelectedSlateEditor();
+      // const e = cy.contains(s1);
+      e.type(
         '{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}{uparrow}',
       );
 
@@ -32,7 +34,9 @@ if (Cypress.env('API') !== 'guillotina') {
         focus: { path: [0, 0], offset: 0 },
       });
 
+      // const e2 = cy.contains(s2);
       getSelectedSlateEditor().type('{uparrow}');
+      // e2.type('{uparrow}');
 
       // the first Slate block should be focused
       cy.get('.slate-editor').eq(0).slateEditorShouldBeFocused();

@@ -6,7 +6,7 @@ import {
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe('Slate.js Volto blocks', () => {
+  describe('Slate.js Volto blocks 2', () => {
     beforeEach(slateBeforeEach);
 
     it('should create a block with some text, move the cursor in the middle of the text, insert a line break, and then have 2 blocks with the two parts of the initial text', () => {

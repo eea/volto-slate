@@ -5,7 +5,7 @@ import {
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
-  describe('Slate.js Volto blocks', () => {
+  describe('Slate.js Volto blocks 1', () => {
     beforeEach(slateBeforeEach);
 
     it('should create 4 slate blocks, first 3 with mouse, the last with an Enter in the third block', () => {

@@ -99,6 +99,15 @@ Cypress.Commands.add('clearInSlate', { prevSubject: true }, (subject) => {
   });
 });
 
+Cypress.Commands.add(
+  'selectAllAndOpenHoveringToolbar',
+  { prevSubject: true },
+  (subject) => {
+    // select all contents of slate block and open hovering toolbar
+    return cy.wrap(subject).find('span:first').type('{selectall}').dblclick();
+  },
+);
+
 // TODO: make this command chainable (so that it passes the `subject` to the next chained command)
 Cypress.Commands.add('lineBreakInSlate', { prevSubject: true }, (subject) => {
   return (

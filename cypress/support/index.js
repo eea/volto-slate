@@ -191,48 +191,11 @@ export const createSlateBlockWithList = ({
 
   //cy.contains(firstItemText + secondItemText).trigger('mouseup'); //type('{selectall}');
 
-  cy.contains(firstItemText + secondItemText)
-    .type('{selectall}')
-    .dblclick();
-  // .trigger('mouseover', { force: true })
-  // .trigger('mousedown', {which: 1, force: true})
-  // .trigger('mousemove', {clientX: 1, clientY: 10, force: true})
-  // // .xpath(PageElements.workflow.x_initial_drop_target_area)
-  // // .trigger('mousemove')
-  // .trigger('mouseup', {force: true, clientX: 50, clientY: 10});
-  // .dblclick(5, 5, {
-  //   force: true,
-  //   multiple: false,
-  //   ctrlKey: true,
-  //   shiftKey: true,
-  // });
-  // cy.contains(firstItemText + secondItemText).then((el) => {
-  //   selectSlateNodeOfWord(el);
-  // });
+  s1.selectAllAndOpenHoveringToolbar();
 
-  cy.wait(1000);
-
-  // cy.get('div.active.section').dblclick();
-
-  // cy.contains(firstItemText + secondItemText).then((el) => {
-  //   var event = new MouseEvent('dblclick', {
-  //     view: window,
-  //     bubbles: true,
-  //     cancelable: true,
-  //     x: 10,
-  //     y: 10,
-  //     offsetX: 10,
-  //     offsetY: 10,
-  //     screenX: 1000,
-  //     screenY: 1000,
-  //   });
-  //   el[0].dispatchEvent(event);
-  // }); //dblclick(/* 5, 5, {
-  //   force: true,
-  //   multiple: false,
-  //   ctrlKey: true,
-  //   shiftKey: true,
-  // } */);
+  // cy.contains(firstItemText + secondItemText)
+  //   .type('{selectall}')
+  //   .dblclick();
 
   cy.wait(1000);
 

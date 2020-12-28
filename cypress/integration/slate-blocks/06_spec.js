@@ -21,7 +21,6 @@ if (Cypress.env('API') !== 'guillotina') {
 
       // move the text cursor
       const e = getSelectedSlateEditor();
-      // const e = cy.contains(s1);
       e.type(
         '{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}{uparrow}',
       );
@@ -34,9 +33,7 @@ if (Cypress.env('API') !== 'guillotina') {
         focus: { path: [0, 0], offset: 0 },
       });
 
-      // const e2 = cy.contains(s2);
       getSelectedSlateEditor().type('{uparrow}');
-      // e2.type('{uparrow}');
 
       // the first Slate block should be focused
       cy.get('.slate-editor').eq(0).slateEditorShouldBeFocused();

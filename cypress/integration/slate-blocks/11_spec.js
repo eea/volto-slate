@@ -1,9 +1,6 @@
 import {
-  getSelectedSlateEditor,
   slateBeforeEach,
-  slateBlockSelectionShouldBe,
   createSlateBlocks,
-  getAllSlateTextBlocks,
   clickHoveringToolbarButton,
   FOOTNOTE_BUTTON_INDEX,
   selectSlateNodeOfWord,

@@ -1,7 +1,6 @@
 import {
   createSlateBlock,
   getSelectedSlateEditor,
-  selectSlateNodeOfWord,
   slateBeforeEach,
   getAllSlateTextBlocks,
   slateTextBlockValueShouldBe,

@@ -41,7 +41,7 @@ Before starting make sure your development environment is properly set. See [Vol
 
 1.  Start backend
 
-        $ docker run -d --name plone -p 8080:8080 -e SITE=Plone plone
+        $ docker run -d --name plone -p 8080:8080 -e SITE=Plone -e PROFILES="profile-plone.restapi:blocks" plone
 
     ...wait for backend to setup and start - `Ready to handle requests`:
 

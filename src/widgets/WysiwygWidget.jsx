@@ -14,6 +14,7 @@ import { serializeNodesToHtml } from '../editor/render';
 import { normalizeBlockNodes } from 'volto-slate/utils';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import { Editor } from 'slate';
+import { htmlTagsToSlate } from 'volto-slate/editor/config';
 
 import './style.css';
 
@@ -93,8 +94,16 @@ class WysiwygWidget extends Component {
    * @returns {undefined}
    */
   onChange = (data) => {
-    this.setState({ value: data });
-    this.props.onChange(this.props.id, { data: serializeNodesToHtml(data) });
+    this.setState(
+      (state, props) => {
+        return { ...state, value: data };
+      },
+      () => {
+        this.props.onChange(this.props.id, {
+          data: serializeNodesToHtml(data),
+        });
+      },
+    );
   };
 
   convertHTMLToNodes = (editor, html) => {
@@ -141,9 +150,25 @@ class WysiwygWidget extends Component {
 
   componentDidUpdate(prevProps) {
     const editor = this.editorRef.current;
-    if (this.props.value.data !== prevProps.value.data) {
+    if (
+      this.props.value.data !== prevProps.value.data &&
+      !this.firstRenderWithEditorRef
+    ) {
       this.convertHTMLToNodes(editor, this.props.value.data).then(() => {});
     }
+  }
+
+  componentDidMount() {
+    if (this.editorRef.current) {
+      this.editorRef.current.htmlTagsToSlate = htmlTagsToSlate;
+    }
+    this.convertHTMLToNodes(this.editorRef.current, this.props.value.data).then(
+      (nodes) => {
+        this.setState((state, props) => {
+          return { ...state, value: nodes };
+        });
+      },
+    );
   }
 
   firstRenderWithEditorRef = true;
@@ -168,13 +193,18 @@ class WysiwygWidget extends Component {
       // return ...
     }
 
-    if (this.firstRenderWithEditorRef && this.editorRef.current) {
+    if (
+      this.firstRenderWithEditorRef &&
+      (__SERVER__ ? false : this.editorRef.current)
+    ) {
       this.firstRenderWithEditorRef = false;
       this.convertHTMLToNodes(
         this.editorRef.current,
         this.props.value.data,
       ).then((nodes) => {
-        this.setState({ value: nodes });
+        this.setState((state, props) => {
+          return { ...state, value: nodes };
+        });
       });
     }
 

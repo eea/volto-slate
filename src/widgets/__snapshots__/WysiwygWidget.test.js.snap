@@ -116,3 +116,108 @@ exports[`renders a WysiwygWidget component 1`] = `
   </div>
 </div>
 `;
+
+exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
+<DocumentFragment>
+  <div
+    class="inline required field help slate_wysiwyg"
+    id="field-qwertyu"
+  >
+    <div
+      class="ui grid"
+    >
+      <div
+        class="stretched row"
+      >
+        <div
+          class="four wide column"
+        >
+          <div
+            class="wrapper"
+          >
+            <label
+              for="field-qwertyu"
+            >
+              My Widget
+            </label>
+          </div>
+        </div>
+        <div
+          class="eight wide column"
+        >
+          <div
+            class="slate_wysiwyg_box"
+            role="textbox"
+            style="box-sizing: initial;"
+            tabindex="-1"
+          >
+            <div
+              class="slate-editor"
+            >
+              <div
+                contenteditable="true"
+                data-gramm="false"
+                data-slate-editor="true"
+                data-slate-node="value"
+                role="textbox"
+                spellcheck="false"
+                style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
+              >
+                <p
+                  data-slate-node="element"
+                >
+                  <span
+                    data-slate-node="text"
+                  >
+                    <span
+                      class=""
+                      data-slate-leaf="true"
+                    >
+                      <span
+                        data-slate-string="true"
+                      >
+                        def 
+                      </span>
+                    </span>
+                  </span>
+                </p>
+                <p
+                  data-slate-node="element"
+                >
+                  <span
+                    data-slate-node="text"
+                  >
+                    <span
+                      class=""
+                      data-slate-leaf="true"
+                    >
+                      <span
+                        data-slate-string="true"
+                      >
+                        abc
+                      </span>
+                    </span>
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="stretched row"
+      >
+        <div
+          class="stretched twelve wide column"
+        >
+          <p
+            class="help"
+          >
+            My little description.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

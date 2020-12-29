@@ -1,10 +1,9 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
+// import renderer from 'react-test-renderer';
 import WysiwygWidget from './WysiwygWidget';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { Simulate } from 'react-dom/test-utils';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 const mockStore = configureStore();
 
@@ -52,7 +51,7 @@ test('renders a WysiwygWidget component', () => {
       messages: {},
     },
   });
-  const component = renderer.create(
+  const { asFragment } = render(
     <Provider store={store}>
       <WysiwygWidget
         id="qwertyu"
@@ -67,11 +66,11 @@ test('renders a WysiwygWidget component', () => {
       />
     </Provider>,
   );
-  const json = component.toJSON();
-  expect(json).toMatchSnapshot();
+  const f = asFragment();
+  expect(f).toMatchSnapshot();
 });
 
-test('renders a WysiwygWidget component with working onChange prop', () => {
+test('renders a WysiwygWidget component with working onChange prop', async () => {
   const onChangeMock = jest.fn();
 
   // TODO: make this test capture in the snapshot the ~second render which loads
@@ -85,8 +84,8 @@ test('renders a WysiwygWidget component with working onChange prop', () => {
     },
   });
 
-  let v = { data: 'abc <strong>def</strong>' };
-  const { asFragment, rerender, getByText } = render(
+  let v = { data: 'def <strong>abc</strong>' };
+  const { asFragment, rerender, getByText, findByText, debug } = render(
     <Provider store={store}>
       <WysiwygWidget
         id="qwertyu"
@@ -95,16 +94,44 @@ test('renders a WysiwygWidget component with working onChange prop', () => {
         required={true}
         value={v}
         onChange={
+          // (id, data) => {
+          //   v = { data: data };
+          //   rerender();
+          // }
           onChangeMock /*(id, data) => {
           // console.log('changed', data.data);
           // setHtml(data.data);
-        }*/
+          // }*/
         }
       />
     </Provider>,
   );
 
-  Simulate.keyPress(getByText('def'), { key: 'A' });
-  expect(asFragment()).toMatchSnapshot();
-  expect(onChangeMock).toHaveBeenCalledWith();
+  // screen.debug();
+
+  // rerender();
+
+  // await new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve();
+  //   }, 1000);
+  // });
+
+  // rerender();
+
+  // v = { data: 'def' };
+  // rerender();
+  await screen.findByText(/def/);
+
+  // rerender();
+
+  // debug();
+
+  screen.debug();
+  
+  const f = asFragment();
+  expect(f).toMatchSnapshot();
+  // Simulate.keyPress(findByText('def'), { key: 'A' });
+  // expect(asFragment()).toMatchSnapshot();
+  // expect(onChangeMock).toHaveBeenCalledWith();
 });

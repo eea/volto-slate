@@ -139,7 +139,7 @@ Cypress.Commands.add('clearAllInSlate', { prevSubject: true }, (subject) => {
 
 const myUser = 'admin';
 const myPassword = 'admin';
-const apiUrl = 'http://localhost:8080/Plone';
+const apiUrl =  Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
 
 /**
  * Volto commands as on 09.06.2020 from

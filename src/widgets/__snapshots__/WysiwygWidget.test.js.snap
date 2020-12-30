@@ -1,120 +1,108 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders a WysiwygWidget component 1`] = `
-<div
-  className="inline required field help slate_wysiwyg"
-  id="field-qwertyu"
->
+<DocumentFragment>
   <div
-    className="ui grid"
+    class="inline required field help slate_wysiwyg"
+    id="field-qwertyu"
   >
     <div
-      className="stretched row"
+      class="ui grid"
     >
       <div
-        className="four wide column"
+        class="stretched row"
       >
         <div
-          className="wrapper"
-        >
-          <label
-            htmlFor="field-qwertyu"
-          >
-            My Widget
-          </label>
-        </div>
-      </div>
-      <div
-        className="eight wide column"
-      >
-        <div
-          className="slate_wysiwyg_box"
-          onClick={[Function]}
-          onKeyDown={[Function]}
-          role="textbox"
-          style={
-            Object {
-              "boxSizing": "initial",
-            }
-          }
-          tabIndex="-1"
+          class="four wide column"
         >
           <div
-            className="slate-editor"
+            class="wrapper"
           >
-            
-            <div
-              contentEditable={true}
-              data-gramm={false}
-              data-slate-editor={true}
-              data-slate-node="value"
-              onBeforeInput={[Function]}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onCompositionEnd={[Function]}
-              onCompositionStart={[Function]}
-              onCopy={[Function]}
-              onCut={[Function]}
-              onDragOver={[Function]}
-              onDragStart={[Function]}
-              onDrop={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              onMouseDown={[Function]}
-              onMouseUp={[Function]}
-              onPaste={[Function]}
-              role="textbox"
-              spellCheck={false}
-              style={
-                Object {
-                  "outline": "none",
-                  "whiteSpace": "pre-wrap",
-                  "wordWrap": "break-word",
-                }
-              }
-              suppressContentEditableWarning={true}
+            <label
+              for="field-qwertyu"
             >
-              <p
-                data-slate-node="element"
+              My Widget
+            </label>
+          </div>
+        </div>
+        <div
+          class="eight wide column"
+        >
+          <div
+            class="slate_wysiwyg_box"
+            role="textbox"
+            style="box-sizing: initial;"
+            tabindex="-1"
+          >
+            <div
+              class="slate-editor"
+            >
+              <div
+                contenteditable="true"
+                data-gramm="false"
+                data-slate-editor="true"
+                data-slate-node="value"
+                role="textbox"
+                spellcheck="false"
+                style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
               >
-                <span
-                  data-slate-node="text"
+                <p
+                  data-slate-node="element"
                 >
                   <span
-                    className=""
-                    data-slate-leaf={true}
+                    data-slate-node="text"
                   >
                     <span
-                      data-slate-length={0}
-                      data-slate-zero-width="n"
+                      class=""
+                      data-slate-leaf="true"
                     >
-                      ﻿
-                      <br />
+                      <span
+                        data-slate-string="true"
+                      >
+                        first 
+                      </span>
                     </span>
                   </span>
-                </span>
-              </p>
+                </p>
+                <p
+                  data-slate-node="element"
+                >
+                  <span
+                    data-slate-node="text"
+                  >
+                    <span
+                      class=""
+                      data-slate-leaf="true"
+                    >
+                      <span
+                        data-slate-string="true"
+                      >
+                        render
+                      </span>
+                    </span>
+                  </span>
+                </p>
+              </div>
             </div>
-            
           </div>
         </div>
       </div>
-    </div>
-    <div
-      className="stretched row"
-    >
       <div
-        className="stretched twelve wide column"
+        class="stretched row"
       >
-        <p
-          className="help"
+        <div
+          class="stretched twelve wide column"
         >
-          My little description.
-        </p>
+          <p
+            class="help"
+          >
+            My little description.
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</DocumentFragment>
 `;
 
 exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
@@ -176,7 +164,7 @@ exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
                       <span
                         data-slate-string="true"
                       >
-                        def 
+                        second 
                       </span>
                     </span>
                   </span>
@@ -194,7 +182,112 @@ exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
                       <span
                         data-slate-string="true"
                       >
-                        abc
+                        render
+                      </span>
+                    </span>
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="stretched row"
+      >
+        <div
+          class="stretched twelve wide column"
+        >
+          <p
+            class="help"
+          >
+            My little description.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`renders a WysiwygWidget component with working onChange prop 2`] = `
+<DocumentFragment>
+  <div
+    class="inline required field help slate_wysiwyg"
+    id="field-qwertyu"
+  >
+    <div
+      class="ui grid"
+    >
+      <div
+        class="stretched row"
+      >
+        <div
+          class="four wide column"
+        >
+          <div
+            class="wrapper"
+          >
+            <label
+              for="field-qwertyu"
+            >
+              My Widget
+            </label>
+          </div>
+        </div>
+        <div
+          class="eight wide column"
+        >
+          <div
+            class="slate_wysiwyg_box"
+            role="textbox"
+            style="box-sizing: initial;"
+            tabindex="-1"
+          >
+            <div
+              class="slate-editor"
+            >
+              <div
+                contenteditable="true"
+                data-gramm="false"
+                data-slate-editor="true"
+                data-slate-node="value"
+                role="textbox"
+                spellcheck="false"
+                style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
+              >
+                <p
+                  data-slate-node="element"
+                >
+                  <span
+                    data-slate-node="text"
+                  >
+                    <span
+                      class=""
+                      data-slate-leaf="true"
+                    >
+                      <span
+                        data-slate-string="true"
+                      >
+                        second 
+                      </span>
+                    </span>
+                  </span>
+                </p>
+                <p
+                  data-slate-node="element"
+                >
+                  <span
+                    data-slate-node="text"
+                  >
+                    <span
+                      class=""
+                      data-slate-leaf="true"
+                    >
+                      <span
+                        data-slate-string="true"
+                      >
+                        renderA
                       </span>
                     </span>
                   </span>

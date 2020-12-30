@@ -3,7 +3,9 @@ import React from 'react';
 import WysiwygWidget from './WysiwygWidget';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { render, screen } from '@testing-library/react';
+// import { Simulate } from 'react-dom/test-utils';
+import { fireEvent, render, screen } from '@testing-library/react';
+// import userEvent from '@testing-library/user-event';
 
 const mockStore = configureStore();
 
@@ -33,6 +35,8 @@ jest.mock('~/config', () => {
         defaultValue: () => {
           return [createEmptyParagraph()];
         },
+        persistentHelpers: [],
+        contextToolbarButtons: [],
       },
     },
   };
@@ -58,7 +62,7 @@ test('renders a WysiwygWidget component', () => {
         title="My Widget"
         description="My little description."
         required={true}
-        value={{ data: 'abc <strong>def</strong>' }}
+        value={{ data: 'first <strong>render</strong>' }}
         onChange={(id, data) => {
           // console.log('changed', data.data);
           // setHtml(data.data);
@@ -84,7 +88,7 @@ test('renders a WysiwygWidget component with working onChange prop', async () =>
     },
   });
 
-  let v = { data: 'def <strong>abc</strong>' };
+  let v = { data: 'second <strong>render</strong>' };
   const { asFragment, rerender, getByText, findByText, debug } = render(
     <Provider store={store}>
       <WysiwygWidget
@@ -105,6 +109,7 @@ test('renders a WysiwygWidget component with working onChange prop', async () =>
         }
       />
     </Provider>,
+    { hydrate: true },
   );
 
   // screen.debug();
@@ -121,17 +126,34 @@ test('renders a WysiwygWidget component with working onChange prop', async () =>
 
   // v = { data: 'def' };
   // rerender();
-  await screen.findByText(/def/);
 
   // rerender();
 
   // debug();
+  // screen.debug();
 
-  screen.debug();
-  
   const f = asFragment();
   expect(f).toMatchSnapshot();
-  // Simulate.keyPress(findByText('def'), { key: 'A' });
-  // expect(asFragment()).toMatchSnapshot();
-  // expect(onChangeMock).toHaveBeenCalledWith();
+
+  const thing = await screen.findByText(/render/);
+
+  // fireEvent.keyDown(thing, { key: 'A', code: 'KeyA' });
+  fireEvent.blur(thing, {
+    target: { innerHTML: 'renderA' },
+  });
+
+  // userEvent.type(thing, '{selectall}renderA');
+  // Simulate.focus(thing);
+  // Simulate.keyPress(thing, { key: 'A' });
+  // fireEvent.focusIn(thing);
+  // fireEvent.keyPress(thing, { key: 'A', code: 'KeyA' });
+  // fireEvent.input(thing, { target: { value: 'renderA' } });
+  // fireEvent.change(thing, { target: { value: 'renderA' } });
+
+  await screen.findByText(/A/);
+
+  const f2 = asFragment();
+  expect(f2).toMatchSnapshot();
+
+  expect(onChangeMock).toHaveBeenCalledTimes(1);
 });

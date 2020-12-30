@@ -87,7 +87,12 @@ pipeline {
                   sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
                   stash name: "cypress-reports", includes: "cypress-reports/**/*"
                   archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
-                  sh '''echo "$(docker stop $BUILD_TAG-plone; docker rm -v $BUILD_TAG-plone; docker rm -v $BUILD_TAG-cypress)" '''
+                  catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                     sh '''docker stop $BUILD_TAG-plone'''
+                  }
+                  catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                  sh '''docker rm -v $BUILD_TAG-plone $BUILD_TAG-cypress'''
+                  }  
                 }
               }
             }

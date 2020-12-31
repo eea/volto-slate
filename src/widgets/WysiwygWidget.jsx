@@ -41,7 +41,7 @@ class WysiwygWidget extends Component {
       /**
        * Content type of the value
        */
-      // 'content-type': PropTypes.string,
+      'content-type': PropTypes.string,
       /**
        * Data of the value
        */
@@ -49,7 +49,7 @@ class WysiwygWidget extends Component {
       /**
        * Encoding of the value
        */
-      // encoding: PropTypes.string,
+      encoding: PropTypes.string,
     }),
     /**
      * On change handler
@@ -185,13 +185,6 @@ class WysiwygWidget extends Component {
       editor.getBlockProps = () => this.props;
       return editor;
     };
-
-    if (__SERVER__) {
-      // TODO: fill this if statement with something useful if the SlateEditor
-      // component used below is not enough for good SSR
-      //
-      // return ...
-    }
 
     if (
       this.firstRenderWithEditorRef &&

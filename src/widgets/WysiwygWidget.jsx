@@ -14,7 +14,6 @@ import { serializeNodesToHtml } from '../editor/render';
 import { normalizeBlockNodes } from 'volto-slate/utils';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import { Editor } from 'slate';
-import { htmlTagsToSlate } from 'volto-slate/editor/config';
 
 import './style.css';
 
@@ -99,6 +98,8 @@ class WysiwygWidget extends Component {
         return { ...state, value: data };
       },
       () => {
+        if (this.unmounting) return;
+
         this.props.onChange(this.props.id, {
           data: serializeNodesToHtml(data),
         });
@@ -130,6 +131,10 @@ class WysiwygWidget extends Component {
           return { ...state, value: nodes };
         },
         () => {
+          if (this.unmounting) {
+            reject();
+            return;
+          }
           if (rr === null) {
             resolve([]);
             return;
@@ -159,16 +164,20 @@ class WysiwygWidget extends Component {
   }
 
   componentDidMount() {
-    if (this.editorRef.current) {
-      this.editorRef.current.htmlTagsToSlate = htmlTagsToSlate;
-    }
     this.convertHTMLToNodes(this.editorRef.current, this.props.value.data).then(
       (nodes) => {
+        if (this.unmounting) return;
+
         this.setState((state, props) => {
           return { ...state, value: nodes };
         });
       },
     );
+  }
+
+  componentWillUnmount() {
+    this.unmounting = true;
+    this.setState(null);
   }
 
   firstRenderWithEditorRef = true;
@@ -185,21 +194,6 @@ class WysiwygWidget extends Component {
       editor.getBlockProps = () => this.props;
       return editor;
     };
-
-    if (
-      this.firstRenderWithEditorRef &&
-      (__SERVER__ ? false : this.editorRef.current)
-    ) {
-      this.firstRenderWithEditorRef = false;
-      this.convertHTMLToNodes(
-        this.editorRef.current,
-        this.props.value.data,
-      ).then((nodes) => {
-        this.setState((state, props) => {
-          return { ...state, value: nodes };
-        });
-      });
-    }
 
     return (
       <FormFieldWrapper
@@ -227,7 +221,26 @@ class WysiwygWidget extends Component {
             selected={this.state.selected}
             properties={properties}
             placeholder={placeholder}
-            testingEditorRef={this.editorRef}
+            testingEditorRef={(val) => {
+              this.editorRef.current = val;
+
+              if (
+                this.firstRenderWithEditorRef &&
+                (__SERVER__ ? false : this.editorRef.current)
+              ) {
+                this.firstRenderWithEditorRef = false;
+                this.convertHTMLToNodes(
+                  this.editorRef.current,
+                  this.props.value.data,
+                ).then((nodes) => {
+                  if (this.unmounting) return { ...state };
+
+                  this.setState((state, props) => {
+                    return { ...state, value: nodes };
+                  });
+                });
+              }
+            }}
             onChange={this.onChange}
           />
         </div>

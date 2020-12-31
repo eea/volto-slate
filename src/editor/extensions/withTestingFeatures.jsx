@@ -1,8 +1,10 @@
 import React from 'react';
+import { htmlTagsToSlate } from 'volto-slate/editor/config';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
-    let ref = React.useRef();
+    const ref = React.useRef();
+    const [pleaseRerender, setPleaseRerender] = React.useState(false);
 
     // Source: https://stackoverflow.com/a/53623568/258462
     const onTestSelectWord = (val) => {
@@ -39,6 +41,12 @@ const withTestingFeatures = (WrappedComponent) => {
       };
     });
 
+    React.useEffect(() => {
+      return () => {
+        ref.current = null;
+      };
+    });
+
     return (
       <WrappedComponent
         debug-values={{
@@ -49,7 +57,26 @@ const withTestingFeatures = (WrappedComponent) => {
             2,
           ),
         }}
-        testingEditorRef={ref}
+        testingEditorRef={(val) => {
+          // console.log('testingEditorRef called', val);
+
+          // TODO: rerandează aici cu useState!
+
+          // Jest (JSDOM) environment
+          // console.log('in jest? ', __JEST__);
+          ref.current = val;
+          if (val && global.__JEST__) {
+            // for Jest (JSDOM) unit tests that should have access to a reasonable set
+            // of htmlTagsToSlate default value
+            val.htmlTagsToSlate = { ...htmlTagsToSlate };
+            // console.log('YES!', val, val.htmlTagsToSlate);
+
+            // setTestingEditorRefLoaded(true);
+
+            // console.log('DONE ! BEAUTIFUL !');
+            setPleaseRerender(true);
+          }
+        }}
         {...props}
       />
     );

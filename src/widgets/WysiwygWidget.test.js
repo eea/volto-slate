@@ -1,11 +1,8 @@
 import React from 'react';
-// import renderer from 'react-test-renderer';
 import WysiwygWidget from './WysiwygWidget';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-// import { Simulate } from 'react-dom/test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
 
 const mockStore = configureStore();
 
@@ -25,7 +22,10 @@ jest.mock('~/config', () => {
       slate: {
         elements: {
           default: ({ attributes, children }) => (
-            <p {...attributes}>{children}</p>
+            <span {...attributes}>{children}</span>
+          ),
+          strong: ({ attributes, children }) => (
+            <strong {...attributes}>{children}</strong>
           ),
         },
         leafs: {},
@@ -42,13 +42,9 @@ jest.mock('~/config', () => {
   };
 });
 
-window.getSelection = () => ({});
+window.getSelection = jest.fn();
 
 test('renders a WysiwygWidget component', () => {
-  // TODO: make this test capture in the snapshot the ~second render which loads
-  // the data given through props (currently it displays a Slate Editable in the
-  // snapshot which has the default contents defined above in the jest.mock
-  // call).
   const store = mockStore({
     intl: {
       locale: 'en',
@@ -63,10 +59,7 @@ test('renders a WysiwygWidget component', () => {
         description="My little description."
         required={true}
         value={{ data: 'first <strong>render</strong>' }}
-        onChange={(id, data) => {
-          // console.log('changed', data.data);
-          // setHtml(data.data);
-        }}
+        onChange={() => {}}
       />
     </Provider>,
   );
@@ -77,10 +70,6 @@ test('renders a WysiwygWidget component', () => {
 test('renders a WysiwygWidget component with working onChange prop', async () => {
   const onChangeMock = jest.fn();
 
-  // TODO: make this test capture in the snapshot the ~second render which loads
-  // the data given through props (currently it displays a Slate Editable in the
-  // snapshot which has the default contents defined above in the jest.mock
-  // call).
   const store = mockStore({
     intl: {
       locale: 'en',
@@ -89,7 +78,7 @@ test('renders a WysiwygWidget component with working onChange prop', async () =>
   });
 
   let v = { data: 'second <strong>render</strong>' };
-  const { asFragment, rerender, getByText, findByText, debug } = render(
+  const { asFragment } = render(
     <Provider store={store}>
       <WysiwygWidget
         id="qwertyu"
@@ -97,63 +86,25 @@ test('renders a WysiwygWidget component with working onChange prop', async () =>
         description="My little description."
         required={true}
         value={v}
-        onChange={
-          // (id, data) => {
-          //   v = { data: data };
-          //   rerender();
-          // }
-          onChangeMock /*(id, data) => {
-          // console.log('changed', data.data);
-          // setHtml(data.data);
-          // }*/
-        }
+        onChange={onChangeMock}
       />
     </Provider>,
-    { hydrate: true },
   );
-
-  // screen.debug();
-
-  // rerender();
-
-  // await new Promise((resolve, reject) => {
-  //   setTimeout(() => {
-  //     resolve();
-  //   }, 1000);
-  // });
-
-  // rerender();
-
-  // v = { data: 'def' };
-  // rerender();
-
-  // rerender();
-
-  // debug();
-  // screen.debug();
 
   const f = asFragment();
   expect(f).toMatchSnapshot();
 
   const thing = await screen.findByText(/render/);
 
-  // fireEvent.keyDown(thing, { key: 'A', code: 'KeyA' });
   fireEvent.blur(thing, {
     target: { innerHTML: 'renderA' },
   });
-
-  // userEvent.type(thing, '{selectall}renderA');
-  // Simulate.focus(thing);
-  // Simulate.keyPress(thing, { key: 'A' });
-  // fireEvent.focusIn(thing);
-  // fireEvent.keyPress(thing, { key: 'A', code: 'KeyA' });
-  // fireEvent.input(thing, { target: { value: 'renderA' } });
-  // fireEvent.change(thing, { target: { value: 'renderA' } });
 
   await screen.findByText(/A/);
 
   const f2 = asFragment();
   expect(f2).toMatchSnapshot();
 
+  // TODO: repair: this always fails:
   expect(onChangeMock).toHaveBeenCalledTimes(1);
 });

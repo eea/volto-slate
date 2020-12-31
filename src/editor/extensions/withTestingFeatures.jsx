@@ -2,7 +2,7 @@ import React from 'react';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
-    let ref = /* props.testingEditorRef ? props.testingEditorRef : */ React.useRef();
+    let ref = React.useRef();
 
     // Source: https://stackoverflow.com/a/53623568/258462
     const onTestSelectWord = (val) => {
@@ -50,10 +50,6 @@ const withTestingFeatures = (WrappedComponent) => {
           ),
         }}
         testingEditorRef={ref}
-        // testingEditorRef={(v) => {
-        //   v.htmlTagsToSlate = {};
-        //   ref.current = v;
-        // }}
         {...props}
       />
     );

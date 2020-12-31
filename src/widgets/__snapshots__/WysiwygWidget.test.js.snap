@@ -46,7 +46,7 @@ exports[`renders a WysiwygWidget component 1`] = `
                 spellcheck="false"
                 style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
               >
-                <p
+                <span
                   data-slate-node="element"
                 >
                   <span
@@ -63,8 +63,8 @@ exports[`renders a WysiwygWidget component 1`] = `
                       </span>
                     </span>
                   </span>
-                </p>
-                <p
+                </span>
+                <strong
                   data-slate-node="element"
                 >
                   <span
@@ -81,7 +81,7 @@ exports[`renders a WysiwygWidget component 1`] = `
                       </span>
                     </span>
                   </span>
-                </p>
+                </strong>
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
                 spellcheck="false"
                 style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
               >
-                <p
+                <span
                   data-slate-node="element"
                 >
                   <span
@@ -168,8 +168,8 @@ exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
                       </span>
                     </span>
                   </span>
-                </p>
-                <p
+                </span>
+                <strong
                   data-slate-node="element"
                 >
                   <span
@@ -186,7 +186,7 @@ exports[`renders a WysiwygWidget component with working onChange prop 1`] = `
                       </span>
                     </span>
                   </span>
-                </p>
+                </strong>
               </div>
             </div>
           </div>
@@ -256,7 +256,7 @@ exports[`renders a WysiwygWidget component with working onChange prop 2`] = `
                 spellcheck="false"
                 style="outline: none; white-space: pre-wrap; word-wrap: break-word;"
               >
-                <p
+                <span
                   data-slate-node="element"
                 >
                   <span
@@ -273,8 +273,8 @@ exports[`renders a WysiwygWidget component with working onChange prop 2`] = `
                       </span>
                     </span>
                   </span>
-                </p>
-                <p
+                </span>
+                <strong
                   data-slate-node="element"
                 >
                   <span
@@ -291,7 +291,7 @@ exports[`renders a WysiwygWidget component with working onChange prop 2`] = `
                       </span>
                     </span>
                   </span>
-                </p>
+                </strong>
               </div>
             </div>
           </div>

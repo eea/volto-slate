@@ -91,8 +91,11 @@ pipeline {
                      sh '''docker stop $BUILD_TAG-plone'''
                   }
                   catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    sh '''docker inspect $BUILD_TAG-plone'''  
                     sh '''docker volume ls'''
                     sh '''docker rm -v $BUILD_TAG-plone $BUILD_TAG-cypress'''
+                    sh '''docker volume ls'''
+
                     
                   }  
                 }

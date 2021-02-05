@@ -1,6 +1,7 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Node, Text } from 'slate';
+import { Node, Text, Editor } from 'slate';
+import { ReactEditor } from 'slate-react';
 import cx from 'classnames';
 import { isEmpty, isEqual, omit } from 'lodash';
 
@@ -115,8 +116,33 @@ export const serializeNodes = (nodes, getAttributes) => {
   return _serializeNodes(Array.from(Node.children(editor, [])));
 };
 
-export const serializeNodesToText = (nodes) => {
-  return nodes.map((n) => Node.string(n)).join('\n');
+export const serializeNodeToText = (editor, n) => {
+  if (
+    !Text.isText(n) ||
+    settings.slate.plaintextSerializers.hasOwnProperty(n.type)
+  ) {
+    return settings.slate.plaintextSerializers[n.type](editor, n);
+  } else if (editor === n) {
+    return settings.slate.plaintextSerializers['default'](editor, n);
+  } else {
+    return Node.string(n);
+  }
+};
+
+export const serializeNodesToText = (editor, nodes) => {
+  const o = nodes.map((n) => serializeNodeToText(editor, n));
+  // TODO: join with \n only when nodes are at root level (blocks) or when all
+  // in nodes array are blocks (currently it treats nodes as direct children of
+  // editor which is the case for the current usages of serializeNodesToText)
+  return o.join('\n');
+};
+
+export const defaultPlaintextSerializerForInlineChildren = (editor, n) => {
+  return n.children.map((n) => serializeNodeToText(editor, n)).join('');
+};
+
+export const defaultPlaintextSerializerForBlockChildren = (editor, n) => {
+  return n.children.map((n) => serializeNodeToText(editor, n)).join('\n');
 };
 
 export const serializeNodesToHtml = (nodes) =>

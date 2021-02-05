@@ -55,12 +55,12 @@ export function mergeSlateWithBlockForward(editor, nextBlock, event) {
   Editor.deleteForward(editor, { unit: 'character' });
 }
 
-export function syncCreateSlateBlock(value) {
+export function syncCreateSlateBlock(editor, value) {
   const id = uuid();
   const block = {
     '@type': 'slate',
     value: JSON.parse(JSON.stringify(value)),
-    plaintext: serializeNodesToText(value),
+    plaintext: serializeNodesToText(editor, value),
   };
   return [id, block];
 }
@@ -90,7 +90,7 @@ export const createAndSelectNewBlockAfter = (editor, blockValue) => {
   const options = {
     '@type': 'slate',
     value: JSON.parse(JSON.stringify(blockValue)),
-    plaintext: serializeNodesToText(blockValue),
+    plaintext: serializeNodesToText(editor, blockValue),
   };
 
   const newFormData = changeBlock(formData, blockId, options);
@@ -198,7 +198,7 @@ export function deconstructToVoltoBlocks(editor) {
       if (pathRef.current) {
         const [childNode] = Editor.node(editor, pathRef.current);
         if (childNode && !Editor.isEmpty(editor, childNode))
-          blocks.push(syncCreateSlateBlock([childNode]));
+          blocks.push(syncCreateSlateBlock(editor, [childNode]));
       }
       blocks = [...blocks, ...extras];
     }

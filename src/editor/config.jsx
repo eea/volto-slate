@@ -13,6 +13,11 @@ import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 import subindexIcon from '@plone/volto/icons/subindex.svg';
 import superindexIcon from '@plone/volto/icons/superindex.svg';
 
+import {
+  defaultPlaintextSerializerForBlockChildren,
+  defaultPlaintextSerializerForInlineChildren,
+} from './render';
+
 import { createEmptyParagraph } from 'volto-slate/utils';
 
 import {
@@ -286,3 +291,25 @@ export const nodeTypesToHighlight = [];
 // are useful for example to highlight search results or a certain type of node
 // Signature: ([node, path], ranges) => ranges
 export const runtimeDecorators = [highlightSelection]; // , highlightByType
+
+export const plaintextSerializers = {
+  default: defaultPlaintextSerializerForInlineChildren,
+  h2: defaultPlaintextSerializerForInlineChildren,
+  h3: defaultPlaintextSerializerForInlineChildren,
+  h4: defaultPlaintextSerializerForInlineChildren,
+  li: defaultPlaintextSerializerForInlineChildren,
+  ol: defaultPlaintextSerializerForBlockChildren,
+  p: defaultPlaintextSerializerForInlineChildren,
+  ul: defaultPlaintextSerializerForBlockChildren,
+  // While usual slate editor consider these to be Leafs, we treat them as
+  // inline elements because they can sometimes contain elements (ex:
+  // <b><a/></b>
+  em: defaultPlaintextSerializerForInlineChildren,
+  i: defaultPlaintextSerializerForInlineChildren,
+  b: defaultPlaintextSerializerForInlineChildren,
+  strong: defaultPlaintextSerializerForInlineChildren,
+  u: defaultPlaintextSerializerForInlineChildren,
+  s: defaultPlaintextSerializerForInlineChildren,
+  sub: defaultPlaintextSerializerForInlineChildren,
+  sup: defaultPlaintextSerializerForInlineChildren,
+};

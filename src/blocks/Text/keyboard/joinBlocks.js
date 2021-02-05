@@ -81,7 +81,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   const formData = changeBlock(properties, otherBlockId, {
     '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
     value: combined,
-    plaintext: serializeNodesToText(combined || []),
+    plaintext: serializeNodesToText(editor, combined || []),
   });
   const newFormData = deleteBlock(formData, block);
 
@@ -138,7 +138,7 @@ export function joinWithNextBlock({ editor, event }) {
     // TODO: use a constant specified in src/constants.js instead of 'slate'
     '@type': 'slate',
     value: combined,
-    plaintext: serializeNodesToText(combined || []),
+    plaintext: serializeNodesToText(editor, combined || []),
   });
   const newFormData = deleteBlock(formData, block);
 

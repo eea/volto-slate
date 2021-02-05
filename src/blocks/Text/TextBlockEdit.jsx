@@ -121,6 +121,8 @@ const TextBlockEdit = (props) => {
     prevReq.current = loaded;
   }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
 
+  const editorRef = React.useRef(null);
+
   // This event handler unregisters itself after its first call.
   const handleClickOutside = React.useCallback((e) => {
     const blockChooser = document.querySelector('.blocks-chooser');
@@ -221,11 +223,15 @@ const TextBlockEdit = (props) => {
                   onFocus={() => onSelectBlock(block)}
                   onUpdate={handleUpdate}
                   debug={DEBUG}
+                  editorRef={editorRef}
                   onChange={(value, selection) => {
                     onChangeBlock(block, {
                       ...data,
                       value,
-                      plaintext: serializeNodesToText(value || []),
+                      plaintext: serializeNodesToText(
+                        editorRef.current,
+                        value || [],
+                      ),
                       // TODO: also add html serialized value
                     });
                   }}

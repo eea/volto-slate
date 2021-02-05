@@ -202,6 +202,7 @@ class SlateEditor extends Component {
       placeholder,
       onKeyDown,
       testingEditorRef,
+      editorRef,
       readOnly,
       className,
       renderExtensions = [],
@@ -217,6 +218,14 @@ class SlateEditor extends Component {
     );
     this.editor = editor;
 
+    if (typeof editorRef === 'object') {
+      editorRef.current = editor;
+    } else if (typeof editorRef === 'function') {
+      editorRef(editor);
+    }
+
+    // TODO: this code should be converted (deleted) to use editorRef prop, like
+    // above:
     if (testingEditorRef) {
       testingEditorRef.current = editor;
     }

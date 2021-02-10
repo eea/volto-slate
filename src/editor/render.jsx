@@ -1,7 +1,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Node, Text, Editor } from 'slate';
-import { ReactEditor } from 'slate-react';
+import { Node, Text } from 'slate';
 import cx from 'classnames';
 import { isEmpty, isEqual, omit } from 'lodash';
 

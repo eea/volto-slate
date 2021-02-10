@@ -23,8 +23,8 @@ export const LinkElement = ({ attributes, children, element }) => {
   };
 
   const { title } = element?.data || {};
-  return internal_link ? (
-    <Link to={internal_link}>{children}</Link>
+  return external_link?.startsWith('/') || internal_link ? (
+    <Link to={external_link || internal_link}>{children}</Link>
   ) : (
     <a {...attributes} {...options} title={title}>
       {children}

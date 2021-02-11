@@ -92,7 +92,7 @@ class SlateEditor extends Component {
           continue;
         }
         const satisfyingFormats = data.types.filter((y) =>
-          new MIMETypeName(x).matches(y),
+          new MIMETypeName(x).matches(new MIMETypeName(y)),
         );
         for (let j = 0; j < satisfyingFormats.length; ++j) {
           const y = satisfyingFormats[j];

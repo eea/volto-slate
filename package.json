@@ -17,7 +17,7 @@
   "dependencies": {
     "@eeacms/volto-object-widget": "^1.0.0",
     "classnames": "2.2.6",
-    "cypress": "6.2.0",
+    "cypress": "6.4.0",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
     "jsdom": "16.2.2",

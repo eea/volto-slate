@@ -235,10 +235,12 @@ export const slateBefore = () => {
   // cy.exec('yarn ci:test:fixture:setup');
 
   // Translated from above commands:
-  cy.exec('node cypress/support/reset-fixture.js teardown');
-  cy.exec('node cypress/support/reset-fixture.js');
+
+  // cy.exec('node cypress/support/reset-fixture.js teardown');
+  // cy.exec('node cypress/support/reset-fixture.js');
 
   cy.autologin();
+
   cy.createContent({
     contentType: 'Document',
     contentId: 'my-page',
@@ -263,4 +265,8 @@ export const slateBeforeEach = () => {
   // cy.autologin();
   slateBefore();
   // cy.visit('/my-page/edit');
+};
+
+export const slateAfterEach = () => {
+  cy.removeContent('my-page');
 };

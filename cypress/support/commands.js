@@ -1,28 +1,4 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+/* eslint no-console: ["error", { allow: ["log"] }] */
 
 Cypress.Commands.add(
   'justVisible',
@@ -137,28 +113,12 @@ Cypress.Commands.add('clearAllInSlate', { prevSubject: true }, (subject) => {
   }
 });
 
-const myUser = 'admin';
-const myPassword = 'admin';
-const apiUrl =  Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
-
-/**
- * Volto commands as on 09.06.2020 from
- * Source: https://github.com/plone/volto/blob/master/cypress/support/commands.js
- * (replaced localhost:55001/plone with localhost:3000/api and started using myUser and myPassword from above)
- */
-
 // --- AUTOLOGIN -------------------------------------------------------------
 Cypress.Commands.add('autologin', () => {
   let api_url, user, password;
-  if (Cypress.env('API') === 'guillotina') {
-    api_url = 'http://localhost:8081/db/container';
-    user = 'root';
-    password = 'root';
-  } else {
-    api_url = apiUrl;
-    user = myUser;
-    password = myPassword;
-  }
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  user = 'admin';
+  password = 'admin';
 
   return cy
     .request({
@@ -167,9 +127,7 @@ Cypress.Commands.add('autologin', () => {
       headers: { Accept: 'application/json' },
       body: { login: user, password: password },
     })
-    .then((response) => {
-      return cy.setCookie('auth_token', response.body.token);
-    });
+    .then((response) => cy.setCookie('auth_token', response.body.token));
 });
 
 // --- CREATE CONTENT --------------------------------------------------------
@@ -183,19 +141,11 @@ Cypress.Commands.add(
     allow_discussion = false,
   }) => {
     let api_url, auth;
-    if (Cypress.env('API') === 'guillotina') {
-      api_url = 'http://localhost:8081/db/container';
-      auth = {
-        user: 'root',
-        pass: 'root',
-      };
-    } else {
-      api_url = apiUrl;
-      auth = {
-        user: myUser,
-        pass: myPassword,
-      };
-    }
+    api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+    auth = {
+      user: 'admin',
+      pass: 'admin',
+    };
     if (contentType === 'File') {
       return cy.request({
         method: 'POST',
@@ -288,6 +238,27 @@ Cypress.Commands.add(
   },
 );
 
+// --- REMOVE CONTENT --------------------------------------------------------
+Cypress.Commands.add('removeContent', (path) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'DELETE',
+      url: `${api_url}/${path}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {},
+    })
+    .then(() => console.log(`${path} removed`));
+});
+
 // --- SET WORKFLOW ----------------------------------------------------------
 Cypress.Commands.add(
   'setWorkflow',
@@ -303,10 +274,10 @@ Cypress.Commands.add(
     include_children = true,
   }) => {
     let api_url, auth;
-    api_url = apiUrl;
+    api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
     auth = {
-      user: myUser,
-      pass: myPassword,
+      user: 'admin',
+      pass: 'admin',
     };
     return cy.request({
       method: 'POST',
@@ -329,10 +300,9 @@ Cypress.Commands.add(
   },
 );
 
+// --- waitForResourceToLoad ----------------------------------------------------------
 Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
-  const resourceCheckInterval = 200;
-  const maxChecks = 50;
-  const count = [0];
+  const resourceCheckInterval = 40;
 
   return new Cypress.Promise((resolve) => {
     const checkIfResourceHasBeenLoaded = () => {
@@ -348,39 +318,10 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
         return;
       }
 
-      count[0] += 1;
       setTimeout(checkIfResourceHasBeenLoaded, resourceCheckInterval);
-
-      if (count[0] > maxChecks) {
-        throw new Error(
-          `Timeout resolving resource: ${fileName} (type ${type})`,
-        );
-      }
     };
 
     checkIfResourceHasBeenLoaded();
-  });
-});
-
-// --- CREATE CONTENT --------------------------------------------------------
-Cypress.Commands.add('setRegistry', (record, value) => {
-  let api_url, auth;
-  api_url = apiUrl;
-  auth = {
-    user: myUser,
-    pass: myPassword,
-  };
-
-  return cy.request({
-    method: 'PATCH',
-    url: `${api_url}/@registry/`,
-    headers: {
-      Accept: 'application/json',
-    },
-    auth: auth,
-    body: {
-      [record]: value,
-    },
   });
 });
 

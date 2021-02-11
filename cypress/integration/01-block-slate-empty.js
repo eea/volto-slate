@@ -1,8 +1,8 @@
-import { slateBeforeEach, createSlateBlock } from '../support';
+import { slateBeforeEach, createSlateBlock, slateAfterEach } from '../support';
 
 describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
-  // afterEach(slateAfterEach);
+  afterEach(slateAfterEach);
 
   it('Slate Block: Empty', () => {
     cy.get('.documentFirstHeading > .public-DraftStyleDefault-block')

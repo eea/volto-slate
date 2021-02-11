@@ -1,7 +1,8 @@
-import { slateBeforeEach, createSlateBlock } from '../support';
+import { slateBeforeEach, createSlateBlock, slateAfterEach } from '../support';
 
 describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
+  afterEach(slateAfterEach);
 
   it('should create 4 slate blocks, first 3 with mouse, the last with an Enter in the third block', () => {
     let s1 = createSlateBlock();

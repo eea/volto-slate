@@ -1,5 +1,6 @@
 import {
   slateBeforeEach,
+  slateAfterEach,
   createSlateBlocks,
   clickHoveringToolbarButton,
   FOOTNOTE_BUTTON_INDEX,
@@ -13,6 +14,7 @@ if (Cypress.env('API') !== 'guillotina') {
   // installation of volto-slate
   describe.skip('Slate.js Volto blocks 11', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     it('should create two slate blocks, one slate text and the other slate footnotes, create one footnote and type something in the field for its reference text', () => {
       const fs1 = 'hello, world';

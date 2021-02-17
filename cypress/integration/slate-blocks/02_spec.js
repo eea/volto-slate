@@ -1,6 +1,7 @@
 import {
   createSlateBlock,
   slateBeforeEach,
+  slateAfterEach,
   getAllSlateTextBlocks,
   slateTextBlockValueShouldBe,
 } from '../../support';
@@ -8,6 +9,7 @@ import {
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 2', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     it('should create a block with some text, move the cursor in the middle of the text, insert a line break, and then have 2 blocks with the two parts of the initial text', () => {
       let s1 = createSlateBlock(true);

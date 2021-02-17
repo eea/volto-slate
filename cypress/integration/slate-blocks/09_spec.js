@@ -1,6 +1,7 @@
 import {
   getSlateBlockValue,
   slateBeforeEach,
+  slateAfterEach,
   getSelectedUneditableSlateEditor,
   createSlateBlockWithList,
   getAllSlateTextBlocks,
@@ -46,6 +47,7 @@ const indent1 = [
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 9', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     // TODO: should create a slate block after a normal block, after a title block etc.
     // TODO: test numbered list context as well

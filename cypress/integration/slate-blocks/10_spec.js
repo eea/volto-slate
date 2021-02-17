@@ -1,8 +1,9 @@
-import { slateBeforeEach } from '../../support';
+import { slateBeforeEach, slateAfterEach } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
   describe('Not implemented tests', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     it.skip('should increase indent level of current list item on tab', () => {});
 

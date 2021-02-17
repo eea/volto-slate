@@ -1,12 +1,14 @@
 import {
   getSelectedSlateEditor,
   slateBeforeEach,
+  slateAfterEach,
   createSlateBlocks,
 } from '../../support';
 
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 8', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     // TODO: should create a slate block after a normal block, after a title
     // block etc.

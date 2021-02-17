@@ -2,6 +2,7 @@ import {
   createSlateBlock,
   getSelectedSlateEditor,
   slateBeforeEach,
+  slateAfterEach,
   getAllSlateTextBlocks,
   slateTextBlockValueShouldBe,
   clickHoveringToolbarButton,
@@ -11,6 +12,7 @@ import {
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 5', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     it('should create a block with a numbered list with a single item, move the cursor to the end of the item, insert line break, have two items, the cursor on the last one, which is empty, and then another line break should create a new block which is of type `li`', () => {
       let s1 = createSlateBlock(true);

@@ -1,6 +1,7 @@
 import {
   getSelectedSlateEditor,
   slateBeforeEach,
+  slateAfterEach,
   createSlateBlocks,
   getAllSlateTextBlocks,
   slateBlockSelectionShouldBe,
@@ -9,6 +10,7 @@ import {
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 6', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     // TODO: should create a slate block after a normal block, after a title block etc.
     // TODO: test numbered list context as well

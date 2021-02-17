@@ -1,5 +1,6 @@
 import {
   slateBeforeEach,
+  slateAfterEach,
   createSlateBlockWithList,
   getAllSlateTextBlocks,
   slateTextBlockValueShouldBe,
@@ -8,6 +9,7 @@ import {
 if (Cypress.env('API') !== 'guillotina') {
   describe('Slate.js Volto blocks 3', () => {
     beforeEach(slateBeforeEach);
+    afterEach(slateAfterEach);
 
     it('should create a block with a numbered list with a single item, move the cursor in approximatively the middle of the item, insert a line break, and then have 2 items with the two parts of the initial item: two items in a single numbered list: 1. and 2.', () => {
       // TODO: make a test with numbered: false

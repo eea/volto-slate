@@ -1,7 +1,7 @@
-import codeSVG from "@plone/volto/icons/code.svg";
-import TableEdit from "./Edit";
-import TableView from "./View";
-import { extractTables } from "./deconstruct";
+import codeSVG from '@plone/volto/icons/code.svg';
+import TableEdit from './Edit';
+import TableView from './View';
+import { extractTables } from './deconstruct';
 
 /**
  * @summary Called from Volto to configure new or existing Volto block types.
@@ -17,10 +17,10 @@ export default function install(config) {
     ],
   };
   config.blocks.blocksConfig.slateTable = {
-    id: "slateTable",
-    title: "Table",
+    id: 'slateTable',
+    title: 'Table',
     icon: codeSVG,
-    group: "text",
+    group: 'text',
     view: TableView,
     edit: TableEdit,
     restricted: false,

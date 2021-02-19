@@ -1,7 +1,7 @@
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
-import { waitFor, render } from '@testing-library/react';
+import { wait, render } from '@testing-library/react';
 
 import ToolbarButton from './ToolbarButton';
 
@@ -20,6 +20,6 @@ describe('ToolbarButton', () => {
         <ToolbarButton />
       </Provider>,
     );
-    await waitFor(() => expect(asFragment()).toMatchSnapshot());
+    await wait(() => expect(asFragment()).toMatchSnapshot());
   });
 });

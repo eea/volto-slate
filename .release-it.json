@@ -1,6 +1,6 @@
 {
   "npm": {
-    "publish": true
+    "publish": false
   },
   "git": {
     "changelog": "npx auto-changelog --stdout --commit-limit true -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
@@ -9,7 +9,7 @@
   "github": {
     "release": true,
     "releaseName": "${version}",
-    "releaseNotes": "npx auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
+    "releaseNotes": "npx auto-changelog --stdout --commit-limit true -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
   },
   "hooks": {
     "before:init": "echo 'DISABLE: yarn test'",

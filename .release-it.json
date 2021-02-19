@@ -3,7 +3,7 @@
     "publish": true
   },
   "git": {
-    "changelog": "npx auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs",
+    "changelog": "Removed Slate from Text and Table block title in asDefault profile #59",
     "tagName": "${version}"
   },
   "github": {

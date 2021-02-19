@@ -1,7 +1,7 @@
-import codeSVG from '@plone/volto/icons/code.svg';
-import TextBlockView from './TextBlockView';
-import TextBlockEdit from './TextBlockEdit';
-import TextBlockSchema from './TextBlockSchema';
+import codeSVG from "@plone/volto/icons/code.svg";
+import TextBlockView from "./TextBlockView";
+import TextBlockEdit from "./TextBlockEdit";
+import TextBlockSchema from "./TextBlockSchema";
 
 import {
   goDown,
@@ -13,19 +13,19 @@ import {
   softBreak,
   moveListItemDown,
   moveListItemUp,
-} from './keyboard';
-import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
+} from "./keyboard";
+import { withDeleteSelectionOnEnter } from "volto-slate/editor/extensions";
 import {
   withSplitBlocksOnBreak,
   withDeserializers,
   breakList,
-} from './extensions';
-import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
-import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
+} from "./extensions";
+import { extractImages } from "volto-slate/editor/plugins/Image/deconstruct";
+import { extractTables } from "volto-slate/blocks/Table/deconstruct";
 
-export TextBlockView from './TextBlockView';
-export TextBlockEdit from './TextBlockEdit';
-export TextBlockSchema from './TextBlockSchema';
+export TextBlockView from "./TextBlockView";
+export TextBlockEdit from "./TextBlockEdit";
+export TextBlockSchema from "./TextBlockSchema";
 
 export default (config) => {
   config.settings.slate = {
@@ -74,21 +74,21 @@ export default (config) => {
     ],
 
     // These elements will get an id, to make them targets in TOC
-    topLevelTargetElements: ['h1', 'h2', 'h3', 'h4'],
+    topLevelTargetElements: ["h1", "h2", "h3", "h4"],
 
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
 
   config.settings.integratesBlockStyles = [
     ...(config.settings.integratesBlockStyles || []),
-    'slate',
+    "slate",
   ];
 
   config.blocks.blocksConfig.slate = {
-    id: 'slate',
-    title: 'Slate',
+    id: "slate",
+    title: "Text",
     icon: codeSVG,
-    group: 'text',
+    group: "text",
     view: TextBlockView,
     edit: TextBlockEdit,
     schema: TextBlockSchema,
@@ -106,7 +106,7 @@ export default (config) => {
     },
     tocEntry: (block = {}, tocData) => {
       // integration with volto-block-toc
-      const headlines = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+      const headlines = ["h1", "h2", "h3", "h4", "h5", "h6"];
       const { value, override_toc, entry_text, level, plaintext } = block;
       const type = value?.[0]?.type;
       return override_toc && level

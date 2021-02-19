@@ -20,8 +20,6 @@ describe('ToolbarButton', () => {
         <ToolbarButton />
       </Provider>,
     );
-    await waitFor(() => {
-      expect(asFragment()).toMatchSnapshot();
-    });
+    await waitFor(() => expect(asFragment()).toMatchSnapshot());
   });
 });

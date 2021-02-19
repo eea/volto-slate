@@ -18,7 +18,7 @@ export default function install(config) {
   };
   config.blocks.blocksConfig.slateTable = {
     id: 'slateTable',
-    title: 'Table',
+    title: 'Slate Table',
     icon: codeSVG,
     group: 'text',
     view: TableView,

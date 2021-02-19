@@ -33,6 +33,9 @@ export default (config) => {
 export function asDefault(config) {
   config.settings.defaultBlockType = 'slate';
 
+  config.blocks.blocksConfig.slateTable.title = 'Table';
+  config.blocks.blocksConfig.slate.title = 'Text';
+
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
 

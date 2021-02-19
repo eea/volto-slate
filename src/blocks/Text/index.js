@@ -86,7 +86,7 @@ export default (config) => {
 
   config.blocks.blocksConfig.slate = {
     id: 'slate',
-    title: 'Text',
+    title: 'Slate',
     icon: codeSVG,
     group: 'text',
     view: TextBlockView,

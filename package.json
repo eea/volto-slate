@@ -30,8 +30,10 @@
   },
   "devDependencies": {
     "@testing-library/react": "11.2.5",
-    "@testing-library/dom": "7.29.4",
     "@types/jest": "26.0.20"
+  },
+  "resolutions": {
+    "jest-environment-jsdom": "^26.0.1"
   },
   "repository": {
     "type": "git",

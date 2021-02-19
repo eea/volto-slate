@@ -29,8 +29,9 @@
     "weak-key": "^1.0.2"
   },
   "devDependencies": {
-    "@testing-library/react": "9.5.0",
-    "@types/jest": "^25.2.3"
+    "@testing-library/react": "11.2.5",
+    "@testing-library/dom": "7.29.4",
+    "@types/jest": "26.0.20"
   },
   "repository": {
     "type": "git",

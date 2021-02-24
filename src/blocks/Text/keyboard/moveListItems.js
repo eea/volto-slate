@@ -1,6 +1,6 @@
 import { Editor, Path, Transforms, Node } from 'slate';
 import { isCursorInList, getCurrentListItem } from 'volto-slate/utils';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 /**
  * Move up a list with with `Ctrl+Up`. (The Up key is supposed here to be
@@ -15,7 +15,7 @@ export function moveListItemUp({ editor, event }) {
   // Else prevent the default behavior of Slate, React and DOM and stop the
   // propagation of this event.
   const { anchor } = editor.selection;
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   event.preventDefault();
   event.stopPropagation();
@@ -83,7 +83,7 @@ export function moveListItemDown({ editor, event }) {
   if (!isCursorInList(editor)) return false;
 
   // Else
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   // Take the Node in the selection that is LI and is farthest-from-root.
   const [match] = Editor.nodes(editor, {

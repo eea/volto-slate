@@ -1,7 +1,7 @@
 import { Node, Range } from 'slate';
 import { ReactEditor } from 'slate-react';
 
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 /**
  * highlightByType.
@@ -11,7 +11,7 @@ import { settings } from '~/config';
  * @param {} ranges
  */
 export const highlightByType = (editor, [node, path], ranges) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {

@@ -15,11 +15,11 @@ import Toolbar from './Toolbar';
 import ExpandedToolbar from './ExpandedToolbar';
 import ToolbarButton from './ToolbarButton';
 
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 const SlateToolbar = (props) => {
   const { selected, showToolbar, setShowToolbar, className } = props;
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
   function renderButton(name, index) {

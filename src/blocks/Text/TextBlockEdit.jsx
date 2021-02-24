@@ -9,7 +9,7 @@ import { Button, Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
@@ -56,7 +56,7 @@ const TextBlockEdit = (props) => {
     formDescription,
   } = props;
 
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { textblockExtensions } = slate;
   const { value } = data;
 

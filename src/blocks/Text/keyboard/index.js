@@ -1,4 +1,4 @@
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 export * from './backspaceInList';
 export * from './breakBlocks';
@@ -17,7 +17,7 @@ export * from './traverseBlocks';
  * @param {KeyboardEvent} event
  */
 export function handleKey({ editor, event }) {
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   const handlers = slate.textblockKeyboardHandlers[event.key];
 

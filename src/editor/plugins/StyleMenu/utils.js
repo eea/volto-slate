@@ -1,7 +1,7 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import { settings } from '~/config';
 import { Editor, Transforms } from 'slate';
 import { isBlockActive, deconstructToVoltoBlocks } from 'volto-slate/utils';
+import config from '@plone/volto/registry';
 
 /**
  * Toggles a style (e.g. in the StyleMenu plugin).
@@ -38,7 +38,7 @@ export const toggleStyle = (editor, { cssClass, isBlock, isRequested }) => {
 export const toggleBlockStyle = (editor, style) => {
   // We have 6 boolean variables which need to be accounted for.
   // See https://docs.google.com/spreadsheets/d/1mVeMuqSTMABV2BhoHPrPAFjn7zUksbNgZ9AQK_dcd3U/edit?usp=sharing
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   const isListItem = isBlockActive(editor, slate.listItemType);
   const isActive = isBlockStyleActive(editor, style);
@@ -64,7 +64,7 @@ export const toggleBlockStyle = (editor, style) => {
 export const toggleInlineStyle = (editor, style) => {
   // We have 6 boolean variables which need to be accounted for.
   // See https://docs.google.com/spreadsheets/d/1mVeMuqSTMABV2BhoHPrPAFjn7zUksbNgZ9AQK_dcd3U/edit?usp=sharing
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   const isListItem = isBlockActive(editor, slate.listItemType);
   const isActive = isInlineStyleActive(editor, style);
@@ -126,7 +126,7 @@ export const internalToggleInlineStyle = (editor, style) => {
  * block
  */
 export const toggleBlockStyleAsListItem = (editor, style) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
     split: true,

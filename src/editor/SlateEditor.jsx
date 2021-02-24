@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 
 import { Element, Leaf } from './render';
 import { SlateToolbar, SlateContextToolbar } from './ui';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import {
@@ -53,7 +53,7 @@ class SlateEditor extends Component {
   }
 
   createEditor() {
-    const { slate } = settings;
+    const { slate } = config.settings;
     const defaultExtensions = slate.extensions;
     const raw = withHistory(withReact(createEditor()));
 
@@ -117,7 +117,7 @@ class SlateEditor extends Component {
 
   multiDecorator([node, path]) {
     // Decorations (such as higlighting node types, selection, etc).
-    const { runtimeDecorators = [] } = settings.slate;
+    const { runtimeDecorators = [] } = config.settings.slate;
     return runtimeDecorators.reduce(
       (acc, deco) => deco(this.state.editor, [node, path], acc),
       [],
@@ -206,7 +206,7 @@ class SlateEditor extends Component {
       className,
       renderExtensions = [],
     } = this.props;
-    const { slate } = settings;
+    const { slate } = config.settings;
 
     // renderExtensions is needed because the editor is memoized, so if these
     // extensions need an updated state (for example to insert updated

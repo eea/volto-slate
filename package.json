@@ -18,7 +18,7 @@
     "@eeacms/volto-object-widget"
   ],
   "dependencies": {
-    "@eeacms/volto-object-widget": "^1.0.0",
+    "@eeacms/volto-object-widget": "^2.0.0",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",

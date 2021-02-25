@@ -2,7 +2,7 @@ import React from 'react';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
 import { render } from '@testing-library/react';
-
+import config from '@plone/volto/registry';
 import TextBlockEdit from './TextBlockEdit';
 
 const mockStore = configureStore();
@@ -14,30 +14,29 @@ window.getSelection = () => null;
 global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
 global.__CLIENT__ = false; // eslint-disable-line no-underscore-dangle
 
-jest.mock('~/config', () => {
-  return {
-    widgets: {
-      id: {
-        default: () => <div />,
-      },
-      type: {
-        boolean: () => <div />,
-      },
+beforeAll(() => {
+  config.widgets = {
+    id: {
+      default: () => <div />,
     },
-    settings: {
-      supportedLanguages: [],
-      slate: {
-        elements: {
-          default: ({ attributes, children }) => (
-            <p {...attributes}>{children}</p>
-          ),
-        },
-        leafs: {},
-        persistentHelpers: [],
-        contextToolbarButtons: [],
-        textblockExtensions: [],
-        extensions: [],
+    type: {
+      boolean: () => <div />,
+    },
+  };
+
+  config.settings = {
+    supportedLanguages: [],
+    slate: {
+      elements: {
+        default: ({ attributes, children }) => (
+          <p {...attributes}>{children}</p>
+        ),
       },
+      leafs: {},
+      persistentHelpers: [],
+      contextToolbarButtons: [],
+      textblockExtensions: [],
+      extensions: [],
     },
   };
 });

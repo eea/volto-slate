@@ -3,35 +3,35 @@ import renderer from 'react-test-renderer';
 import Cell from './Cell';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-intl-redux';
+import config from '@plone/volto/registry';
 
 const mockStore = configureStore();
 
 global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
 global.__CLIENT__ = false; // eslint-disable-line no-underscore-dangle
 
-jest.mock('~/config', () => {
+beforeAll(() => {
   const createEmptyParagraph = () => {
     return {
       type: 'p',
       children: [{ text: '' }],
     };
   };
-  return {
-    settings: {
-      supportedLanguages: [],
-      slate: {
-        elements: {
-          default: ({ attributes, children }) => (
-            <p {...attributes}>{children}</p>
-          ),
-        },
-        leafs: {},
-        defaultBlockType: 'p',
-        textblockExtensions: [],
-        extensions: [],
-        defaultValue: () => {
-          return [createEmptyParagraph()];
-        },
+
+  config.settings = {
+    supportedLanguages: [],
+    slate: {
+      elements: {
+        default: ({ attributes, children }) => (
+          <p {...attributes}>{children}</p>
+        ),
+      },
+      leafs: {},
+      defaultBlockType: 'p',
+      textblockExtensions: [],
+      extensions: [],
+      defaultValue: () => {
+        return [createEmptyParagraph()];
       },
     },
   };

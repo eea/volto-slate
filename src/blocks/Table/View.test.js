@@ -1,9 +1,10 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import View from './View';
+import config from '@plone/volto/registry';
 
-jest.mock('~/config', () => ({
-  settings: {
+beforeAll(() => {
+  config.settings = {
     slate: {
       elements: {
         default: ({ attributes, children }) => (
@@ -13,8 +14,8 @@ jest.mock('~/config', () => ({
       },
       leafs: {},
     },
-  },
-}));
+  };
+});
 
 test('renders a view table component', () => {
   const component = renderer.create(

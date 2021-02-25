@@ -3,15 +3,14 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Node, Text } from 'slate';
 import cx from 'classnames';
 import { isEmpty, isEqual, omit } from 'lodash';
-
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 const OMITTED = ['editor', 'path'];
 
 // TODO: read, see if relevant
 // https://reactjs.org/docs/higher-order-components.html#dont-use-hocs-inside-the-render-method
 export const Element = ({ element, attributes = {}, extras, ...rest }) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { elements } = slate;
   const El = elements[element.type] || elements['default'];
 
@@ -26,7 +25,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
 
 export const Leaf = ({ children, ...rest }) => {
   const { attributes, leaf, mode } = rest;
-  let { leafs } = settings.slate;
+  let { leafs } = config.settings.slate;
 
   children = Object.keys(leafs).reduce((acc, name) => {
     return Object.keys(leaf).includes(name)

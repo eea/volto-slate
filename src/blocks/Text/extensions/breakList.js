@@ -1,5 +1,5 @@
 import { Editor, Range, Transforms } from 'slate';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 import {
   splitEditorInTwoFragments,
   setEditorContent,
@@ -32,7 +32,7 @@ export const breakList = (editor) => {
       return false;
     }
 
-    const { slate } = settings;
+    const { slate } = config.settings;
     const { anchor } = editor.selection;
 
     let oldSelection = _.clone(editor.selection);

@@ -1,9 +1,9 @@
 import { Segment, List } from 'semantic-ui-react';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 import React from 'react';
 
 const ShortcutListing = (props) => {
-  const hotkeys = settings?.slate?.hotkeys;
+  const hotkeys = config.settings?.slate?.hotkeys;
   return (
     <div>
       <header className="header">

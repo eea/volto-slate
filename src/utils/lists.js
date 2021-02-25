@@ -1,8 +1,8 @@
 import { Editor, Range, Transforms, Path } from 'slate';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 export function isCursorInList(editor) {
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   const result = Editor.above(editor, {
     match: (n) => n.type === slate.listItemType,
@@ -43,7 +43,7 @@ const getPreviousSiblingPath = function (path) {
 };
 
 export function mergeWithPreviousList(editor, listPath) {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const prevSiblingPath = getPreviousSiblingPath(listPath);
   const [currentList] = Editor.node(editor, listPath);
   if (prevSiblingPath) {
@@ -61,7 +61,7 @@ export function mergeWithPreviousList(editor, listPath) {
 }
 
 export function mergeWithNextList(editor, listPath) {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const [currentList] = Editor.node(editor, listPath);
   const [parent] = Editor.parent(editor, listPath);
 
@@ -82,7 +82,7 @@ export function mergeWithNextList(editor, listPath) {
 }
 
 export function getCurrentListItem(editor) {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const [match] = Editor.nodes(editor, {
     at: editor.selection.anchor.path,
     match: (n) => n.type === slate.listItemType,

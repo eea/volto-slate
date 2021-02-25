@@ -13,7 +13,7 @@ import { omit, without, endsWith, find, keys } from 'lodash';
 import move from 'lodash-move';
 import { v4 as uuid } from 'uuid';
 
-import { settings, blocks } from '~/config';
+import config from '@plone/volto/registry';
 
 /**
  * Get blocks field.

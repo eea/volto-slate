@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import * as slateReducers from './reducers';
 
 import installSlate from './editor';

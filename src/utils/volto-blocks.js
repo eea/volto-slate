@@ -8,7 +8,7 @@ import { addBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 function fromEntries(pairs) {
   const res = {};
@@ -167,7 +167,7 @@ export function deconstructToVoltoBlocks(editor) {
   // form state, as that ensures a better performance (no un-needed UI updates)
 
   const blockProps = editor.getBlockProps();
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {

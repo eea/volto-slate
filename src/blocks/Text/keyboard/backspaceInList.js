@@ -1,5 +1,5 @@
 import { Transforms } from 'slate';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 import {
   isCursorInList,
   isCursorAtListBlockStart,
@@ -31,7 +31,7 @@ export function backspaceInList({ editor, event }) {
 
   // If the cursor is at list block start, do something different:
   if (isCursorAtListBlockStart(editor)) {
-    const { slate } = settings;
+    const { slate } = config.settings;
     const blockProps = editor.getBlockProps();
     const { data } = blockProps;
 

@@ -1,5 +1,5 @@
 import { serializeNodes } from 'volto-slate/editor/render';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 const TextBlockView = (props) => {
   const { id, data, styling = {} } = props;
@@ -8,7 +8,7 @@ const TextBlockView = (props) => {
     const res = { ...styling };
     if (node.type) {
       if (
-        settings.slate.topLevelTargetElements.includes(node.type) ||
+        config.settings.slate.topLevelTargetElements.includes(node.type) ||
         override_toc
       ) {
         res.id = id;

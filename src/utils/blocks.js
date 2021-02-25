@@ -1,6 +1,6 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 import _ from 'lodash';
 
@@ -48,7 +48,7 @@ export function normalizeBlockNodes(editor, children) {
 
 export function createDefaultBlock(children) {
   return {
-    type: settings.slate.defaultBlockType,
+    type: config.settings.slate.defaultBlockType,
     children: children || [{ text: '' }],
   };
 }
@@ -56,7 +56,7 @@ export function createDefaultBlock(children) {
 export function createEmptyParagraph() {
   // TODO: rename to createEmptyBlock
   return {
-    type: settings.slate.defaultBlockType,
+    type: config.settings.slate.defaultBlockType,
     children: [{ text: '' }],
   };
 }
@@ -139,7 +139,7 @@ export const toggleInlineFormat = (editor, format) => {
 export const toggleBlock = (editor, format) => {
   // We have 6 boolean variables which need to be accounted for.
   // See https://docs.google.com/spreadsheets/d/1mVeMuqSTMABV2BhoHPrPAFjn7zUksbNgZ9AQK_dcd3U/edit?usp=sharing
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { listTypes } = slate;
 
   const isListItem = isBlockActive(editor, slate.listItemType);
@@ -168,7 +168,7 @@ export const toggleBlock = (editor, format) => {
  * block
  */
 export const toggleFormatAsListItem = (editor, format) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
     split: true,
@@ -185,7 +185,7 @@ export const toggleFormatAsListItem = (editor, format) => {
  * Toggles between list types by exploding the block
  */
 export const switchListType = (editor, format) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
     split: true,
@@ -197,7 +197,7 @@ export const switchListType = (editor, format) => {
 };
 
 export const changeBlockToList = (editor, format) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const [match] = Editor.nodes(editor, {
     match: (n) => n.type === slate.listItemType,
   });
@@ -213,7 +213,7 @@ export const changeBlockToList = (editor, format) => {
 };
 
 export const toggleFormat = (editor, format) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const isActive = isBlockActive(editor, format);
   const type = isActive ? slate.defaultBlockType : format;
   Transforms.setNodes(editor, {

@@ -6,7 +6,7 @@ import {
   mergeWithNextList,
   mergeWithPreviousList,
 } from 'volto-slate/utils';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 /**
  * @function indentListItems
@@ -80,7 +80,7 @@ const handleNewVoltoBlocks = (editor, blockIds) => {
  * @param {Event} event
  */
 export function decreaseItemDepth(editor, event) {
-  const { slate } = settings;
+  const { slate } = config.settings;
 
   // Current list item being unindented
   const [listItemNode, listItemPath] = getCurrentListItem(editor);
@@ -166,7 +166,7 @@ export function increaseItemDepth(editor, event) {
   // Get the current list item's parent Node.
   const [parentList] = Editor.parent(editor, listItemPath);
 
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { type } = parentList;
 
   // If the parent is not a list

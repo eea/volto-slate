@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useSlate } from 'slate-react';
 import loadable from '@loadable/component';
 import { useIntl, defineMessages } from 'react-intl';
-import { settings } from '~/config';
 import { isBlockStyleActive, isInlineStyleActive, toggleStyle } from './utils';
+import config from '@plone/volto/registry';
 
 const Select = loadable(() => import('react-select'));
 
@@ -132,10 +132,10 @@ const StylingsButton = (props) => {
 
   // Converting the settings to a format that is required by react-select.
   const rawOpts = [
-    ...settings.slate.styleMenu.inlineStyles.map((def) => {
+    ...config.settings.slate.styleMenu.inlineStyles.map((def) => {
       return { value: def.cssClass, label: def.label, isBlock: false };
     }),
-    ...settings.slate.styleMenu.blockStyles.map((def) => {
+    ...config.settings.slate.styleMenu.blockStyles.map((def) => {
       return { value: def.cssClass, label: def.label, isBlock: true };
     }),
   ];

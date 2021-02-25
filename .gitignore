@@ -1,4 +1,5 @@
 .vscode/
+.eslintrc.js
 .history
 logs
 *.log

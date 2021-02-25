@@ -68,7 +68,7 @@ export function hasBlocksData(props) {
  */
 export function blockHasValue(data) {
   const blockType = data['@type'];
-  const check = blocks.blocksConfig[blockType]?.blockHasValue;
+  const check = config.blocks.blocksConfig[blockType]?.blockHasValue;
   if (!check) {
     return true;
   }
@@ -131,7 +131,9 @@ export function addBlock(formData, type, index) {
         items: [
           ...formData[blocksLayoutFieldname].items.slice(0, insert),
           id,
-          ...(type !== settings.defaultBlockType ? [idTrailingBlock] : []),
+          ...(type !== config.settings.defaultBlockType
+            ? [idTrailingBlock]
+            : []),
           ...formData[blocksLayoutFieldname].items.slice(insert),
         ],
       },
@@ -140,9 +142,9 @@ export function addBlock(formData, type, index) {
         [id]: {
           '@type': type,
         },
-        ...(type !== settings.defaultBlockType && {
+        ...(type !== config.settings.defaultBlockType && {
           [idTrailingBlock]: {
-            '@type': settings.defaultBlockType,
+            '@type': config.settings.defaultBlockType,
           },
         }),
       },
@@ -177,7 +179,7 @@ export function mutateBlock(formData, id, value) {
       ...formData[blocksFieldname],
       [id]: value || null,
       [idTrailingBlock]: {
-        '@type': settings.defaultBlockType,
+        '@type': config.settings.defaultBlockType,
       },
     },
     [blocksLayoutFieldname]: {
@@ -235,7 +237,7 @@ export function emptyBlocksForm() {
   return {
     blocks: {
       [id]: {
-        '@type': settings.defaultBlockType,
+        '@type': config.settings.defaultBlockType,
       },
     },
     blocks_layout: { items: [id] },

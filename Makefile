@@ -9,6 +9,7 @@ all:
 	npm install -g mrs-developer
 	yo @plone/volto project --addon ${ADDON} --workspace "src/addons/${DIR}" --no-interactive
 	ln -sf $$(pwd) project/src/addons/
+	cp .project.eslintrc.js .eslintrc.js
 	cd project && yarn
 	@echo "-------------------"
 	@echo "Project is ready!"

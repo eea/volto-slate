@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { UniversalLink } from '@plone/volto/components';
+import './styles.less';
 
-export const LinkElement = ({ attributes, children, element }) => {
+export const LinkElement = ({ attributes, children, element, mode }) => {
   // TODO: handle anchor links (#something)
 
   let url = element.url;
@@ -17,17 +18,30 @@ export const LinkElement = ({ attributes, children, element }) => {
       }`
     : external_link || internal_link || url;
 
-  const options = {
-    target: external_link ? link.external.target : null,
-    href,
-  };
-
   const { title } = element?.data || {};
-  return external_link?.startsWith('/') || internal_link ? (
-    <Link to={external_link || internal_link}>{children}</Link>
-  ) : (
-    <a {...attributes} {...options} title={title}>
+  return mode === 'view' ? (
+    <UniversalLink
+      href={href}
+      openLinkInNewTab={link?.external?.target}
+      title={title}
+    >
       {children}
-    </a>
+    </UniversalLink>
+  ) : (
+    <span {...attributes} className="slate-editor-link">
+      {children}
+    </span>
   );
+
+  // const options = {
+  //   target: external_link ? link.external.target : null,
+  //   href,
+  // };
+  // return external_link?.startsWith('/') || internal_link ? (
+  //   <Link to={external_link || internal_link}>{children}</Link>
+  // ) : (
+  //   <a {...attributes} {...options} title={title}>
+  //     {children}
+  //   </a>
+  // );
 };

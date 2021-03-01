@@ -57,6 +57,8 @@ export const PageLinkSchema = {
       widget: 'object_browser',
       title: 'Internal link',
       default: [],
+      selectedItemAttrs: [],
+      multiple: false,
     },
   },
   required: [],
@@ -96,10 +98,13 @@ const LinkEditSchema = {
     {
       id: 'default',
       title: 'Internal link',
-      fields: ['link'],
+      fields: ['link', 'title'],
     },
   ],
   properties: {
+    title: {
+      title: 'Link Title',
+    },
     link: {
       title: 'Link',
       widget: 'object_by_type',

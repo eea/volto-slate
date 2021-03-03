@@ -84,6 +84,8 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 ## Getting started
 
+1. Install the [Plone integration package](https://github.com/eea/eea.volto.slate)
+
 1. Create new volto project if you don't already have one:
 
    ```

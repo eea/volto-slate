@@ -35,9 +35,11 @@ export const InternalLinkSchema = {
   ],
   properties: {
     internal_link: {
+      // widget: 'url',
       widget: 'object_browser',
       title: 'Internal link',
-      default: [],
+      multiple: false,
+      selectedItemAttrs: [],
     },
   },
   required: [],

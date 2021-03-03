@@ -4,6 +4,7 @@ import './styles.less';
 
 export const LinkElement = ({ attributes, children, element, mode }) => {
   // TODO: handle anchor links (#something)
+  // TODO: handle title on internal links
 
   let url = element.url;
   const { link } = element.data || {};
@@ -32,16 +33,4 @@ export const LinkElement = ({ attributes, children, element, mode }) => {
       {children}
     </span>
   );
-
-  // const options = {
-  //   target: external_link ? link.external.target : null,
-  //   href,
-  // };
-  // return external_link?.startsWith('/') || internal_link ? (
-  //   <Link to={external_link || internal_link}>{children}</Link>
-  // ) : (
-  //   <a {...attributes} {...options} title={title}>
-  //     {children}
-  //   </a>
-  // );
 };

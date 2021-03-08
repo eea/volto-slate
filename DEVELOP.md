@@ -14,8 +14,6 @@ Before starting make sure your development environment is properly set. See [Vol
 
         $ yo @plone/volto \
              my-dev-project \
-             --addon @eeacms/volto-blocks-form \
-             --addon @eeacms/volto-object-widget \
              --addon volto-slate:asDefault \
              --workspace src/addons/volto-slate \
              --no-interactive \

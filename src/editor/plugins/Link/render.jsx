@@ -22,7 +22,7 @@ export const LinkElement = ({ attributes, children, element, mode }) => {
   const { title } = element?.data || {};
   return mode === 'view' ? (
     <UniversalLink
-      href={href}
+      href={href || '#'}
       openLinkInNewTab={link?.external?.target}
       title={title}
     >

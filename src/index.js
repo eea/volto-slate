@@ -5,6 +5,7 @@ import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
 import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
+import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 
 export default (config) => {
   config = [
@@ -24,6 +25,7 @@ export default (config) => {
   };
 
   config.widgets.widget.slate_richtext = RichTextWidget;
+  config.widgets.widget.blocks_browser = BlocksBrowserWidget;
 
   return config;
 };

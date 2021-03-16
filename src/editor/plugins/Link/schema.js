@@ -45,6 +45,26 @@ export const InternalLinkSchema = {
   required: [],
 };
 
+export const InternalHashSchema = {
+  title: 'Internal hash link',
+  fieldsets: [
+    {
+      id: 'hash',
+      title: 'Hash link',
+      fields: ['internal_hash'],
+    },
+  ],
+  properties: {
+    internal_hash: {
+      widget: 'blocks_browser',
+      title: 'Hash link',
+      multiple: false,
+      selectedItemAttrs: [],
+    },
+  },
+  required: [],
+};
+
 export const PageLinkSchema = {
   title: 'Section in this page',
   fieldsets: [
@@ -115,6 +135,11 @@ const LinkEditSchema = {
           id: 'internal',
           icon: internalSVG,
           schema: InternalLinkSchema,
+        },
+        {
+          id: 'hash',
+          icon: internalSVG,
+          schema: InternalHashSchema,
         },
         {
           id: 'external',

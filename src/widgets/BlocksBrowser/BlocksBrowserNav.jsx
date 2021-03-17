@@ -31,6 +31,7 @@ const getBlocks = (data) => {
   return data.blocks_layout.items.map((block, index) => {
     const type = data.blocks[block]['@type'];
     return {
+      type: type || `unknown_${index}`,
       title:
         config.blocks.blocksConfig[type]?.title || type || `unknown_${index}`,
       id: data.blocks[block].id || block,

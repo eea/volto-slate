@@ -6,6 +6,7 @@ import installTableBlock from './blocks/Table';
 import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
+import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 
 export default (config) => {
   config = [
@@ -14,6 +15,14 @@ export default (config) => {
     installTableBlock,
     installVoltoProposals,
   ].reduce((acc, apply) => apply(acc), config);
+
+  config.settings.appExtras = [
+    ...(config.settings.appExtras || []),
+    {
+      match: '',
+      component: HashLink,
+    },
+  ];
 
   config.addonReducers = {
     ...config.addonReducers,

@@ -128,6 +128,7 @@ class BlocksBrowserWidget extends Component {
           // Add the required attributes for the widget to work
           'id',
           'title',
+          'type',
         ];
         resultantItem = Object.keys(item)
           .filter((key) => allowedItemKeys.includes(key))

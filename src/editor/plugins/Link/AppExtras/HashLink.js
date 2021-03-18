@@ -4,6 +4,17 @@ import { withHashLink } from 'volto-slate/hooks';
 
 import config from '@plone/volto/registry';
 
+const scrollToTarget = (target, offsetHeight = 0) => {
+  const bodyRect = document.body.getBoundingClientRect().top;
+  const targetRect = target.getBoundingClientRect().top;
+  const targetPosition = targetRect - bodyRect - offsetHeight;
+
+  return window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth',
+  });
+};
+
 const HashLink = ({
   data,
   history,
@@ -32,8 +43,10 @@ const HashLink = ({
   React.useEffect(() => {
     if (hashlink.counter > 0 && blacklist.indexOf(type) === -1) {
       const element = document.getElementById(id);
+      const headerWrapper = document.querySelector('.header-wrapper');
+      const offsetHeight = headerWrapper?.offsetHeight || 0;
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        scrollToTarget(element, offsetHeight);
       }
     }
     /* eslint-disable-next-line */

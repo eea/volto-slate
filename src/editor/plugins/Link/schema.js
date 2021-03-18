@@ -1,6 +1,7 @@
 import externalSVG from '@plone/volto/icons/link.svg';
 import internalSVG from '@plone/volto/icons/nav.svg';
 import emailSVG from '@plone/volto/icons/email.svg';
+import hashlinkSVG from 'volto-slate/icons/hashlink.svg';
 // import pageLinkSVG from '@plone/volto/icons/show-blocks.svg';
 
 export const EmailLinkSchema = {
@@ -138,7 +139,7 @@ const LinkEditSchema = {
         },
         {
           id: 'hash',
-          icon: internalSVG,
+          icon: hashlinkSVG,
           schema: InternalHashSchema,
         },
         {

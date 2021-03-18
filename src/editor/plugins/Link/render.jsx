@@ -27,14 +27,16 @@ export const LinkElement = withHashLink(
     return mode === 'view' ? (
       <>
         {internal_hash ? (
-          <button
-            className="hash-link"
-            onClick={() => {
+          <a
+            href={`#${internal_hash}`}
+            title={title}
+            onClick={(event) => {
+              event.preventDefault();
               setHashLink(internal_hash, link.hash.internal_hash[0]);
             }}
           >
             {children}
-          </button>
+          </a>
         ) : (
           <UniversalLink
             href={href || '#'}

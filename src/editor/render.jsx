@@ -20,6 +20,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
   );
+
   return <El element={element} {...omit(rest, OMITTED)} attributes={out} />;
 };
 

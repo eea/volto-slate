@@ -163,7 +163,7 @@ const TextBlockEdit = (props) => {
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
         {instructions ? (
-          <Segment secondary attached>
+          <Segment attached>
             <div dangerouslySetInnerHTML={{ __html: instructions }} />
           </Segment>
         ) : (

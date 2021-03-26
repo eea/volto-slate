@@ -4,7 +4,7 @@
  * a variable number of hooks in a component
  */
 import React from 'react';
-import SidebarPopup from 'volto-slate/futurevolto/SidebarPopup';
+import { SidebarPopup } from '@plone/volto/components';
 import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
 

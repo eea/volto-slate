@@ -84,23 +84,38 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 ## Getting started
 
-1. Install the [Plone integration package](https://github.com/eea/eea.volto.slate)
+### Try volto-slate with Docker
 
-1. Create new volto project if you don't already have one:
-
+1. Start Plone backend
    ```
-   $ npm install -g yo @plone/generator-volto
-   $ yo @plone/volto \
-        my-volto-project \
-        --addon volto-slate:asDefault \
-        --no-interactive  \
-        --skip-install
-
-   $ cd my-volto-project
-   $ yarn add -W volto-slate
+   $ docker run -d --name plone -p 8080:8080 \
+                -e SITE=Plone \
+                -e ADDONS="eea.volto.slate" \
+                -e PROFILES="profile-plone.restapi:blocks" \
+            plone
    ```
 
-1. If you already have a volto project, just update `package.json`:
+1. Start Volto frontend
+
+   ```
+   $ docker run -it --rm -p 3000:3000 \
+                -e ADDONS="volto-slate:asDefault" \
+            plone/volto
+   ```
+
+1. Go to http://localhost:3000
+
+1. Login with **admin:admin**
+
+1. Create a new **Page** and add a new **Text** block.
+
+### Add volto-slate to your Volto project
+
+1. Make sure you have a [Plone backend](https://plone.org/download) up-and-running at http://localhost:8080/Plone
+
+1. Start Volto frontend
+
+* If you already have a Volto project, just update `package.json`:
 
    ```JSON
    "addons": [
@@ -108,14 +123,22 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
    ],
 
    "dependencies": {
-       "volto-slate": "^3.0.0"
+       "volto-slate": "*"
    }
    ```
 
-1. Install new add-ons and restart Volto:
+* If not, create one:
 
    ```
-   $ yarn
+   $ npm install -g yo @plone/generator-volto
+   $ yo @plone/volto my-volto-project --addon volto-slate:asDefault
+   $ cd my-volto-project
+   ```
+
+* Install new add-ons and restart Volto:
+
+   ```
+   $ yarn install
    $ yarn start
    ```
 

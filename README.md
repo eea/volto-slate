@@ -90,7 +90,6 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
    ```
    $ docker run -d --name plone -p 8080:8080 \
                 -e SITE=Plone \
-                -e ADDONS="eea.volto.slate" \
                 -e PROFILES="profile-plone.restapi:blocks" \
             plone
    ```

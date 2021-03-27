@@ -39,7 +39,6 @@ Before starting make sure your development environment is properly set. See [Vol
 
         $ docker run -d --name plone -p 8080:8080 \
                         -e SITE=Plone \
-                        -e ADDONS="eea.volto.slate" \
                         -e PROFILES="profile-plone.restapi:blocks" \
                 plone
 

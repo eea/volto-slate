@@ -86,20 +86,22 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 
 ### Try volto-slate with Docker
 
+1. Get the latest Docker images
+
+   ```
+   docker pull plone
+   docker pull plone/volto
+   ```
+
 1. Start Plone backend
    ```
-   $ docker run -d --name plone -p 8080:8080 \
-                -e SITE=Plone \
-                -e PROFILES="profile-plone.restapi:blocks" \
-            plone
+   docker run -d --name plone -p 8080:8080 -e SITE=Plone -e PROFILES="profile-plone.restapi:blocks" plone
    ```
 
 1. Start Volto frontend
 
    ```
-   $ docker run -it --rm -p 3000:3000 \
-                -e ADDONS="volto-slate:asDefault" \
-            plone/volto
+   docker run -it --rm -p 3000:3000 --link plone -e ADDONS="volto-slate:asDefault" plone/volto
    ```
 
 1. Go to http://localhost:3000
@@ -129,16 +131,16 @@ Some of the main reasons that drove us to create volto-slate instead of enhancin
 * If not, create one:
 
    ```
-   $ npm install -g yo @plone/generator-volto
-   $ yo @plone/volto my-volto-project --addon volto-slate:asDefault
-   $ cd my-volto-project
+   npm install -g yo @plone/generator-volto
+   yo @plone/volto my-volto-project --addon volto-slate:asDefault
+   cd my-volto-project
    ```
 
 * Install new add-ons and restart Volto:
 
    ```
-   $ yarn install
-   $ yarn start
+   yarn install
+   yarn start
    ```
 
 1. Go to http://localhost:3000

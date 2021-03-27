@@ -6,18 +6,17 @@ Before starting make sure your development environment is properly set. See [Vol
 
 1.  Make sure you have installed needed dev tools
 
-        $ npm install -g yo @plone/generator-volto mrs-developer
+        npm install -g yo @plone/generator-volto mrs-developer
 
 1.  Create new volto app
 
-        $ yo @plone/volto \
+        yo @plone/volto \
              my-dev-project \
              --addon volto-slate:asDefault \
              --workspace src/addons/volto-slate \
-             --no-interactive \
              --skip-install
 
-        $ cd my-dev-project
+        cd my-dev-project
 
 1.  Add the following to `mrs.developer.json`:
 
@@ -32,25 +31,22 @@ Before starting make sure your development environment is properly set. See [Vol
 
 1.  Install
 
-        $ yarn develop
-        $ yarn
+        yarn develop
+        yarn
 
 1.  Start backend
 
-        $ docker run -d --name plone -p 8080:8080 \
-                        -e SITE=Plone \
-                        -e PROFILES="profile-plone.restapi:blocks" \
-                plone
+        docker run -d --name plone -p 8080:8080 -e SITE=Plone -e PROFILES="profile-plone.restapi:blocks" plone
 
     ...wait for backend to setup and start - `Ready to handle requests`:
 
-        $ docker logs -f plone
+        docker logs -f plone
 
     ...you can also check http://localhost:8080/Plone
 
 1.  Start frontend
 
-        $ yarn start
+        yarn start
 
 1.  Go to http://localhost:3000
 
@@ -60,4 +56,4 @@ Before starting make sure your development environment is properly set. See [Vol
 
 1.  Happy hacking!
 
-        $ cd src/addons/volto-slate/
+        cd src/addons/volto-slate/

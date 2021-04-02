@@ -37,6 +37,7 @@ const DEBUG = false;
 const TextBlockEdit = (props) => {
   const {
     block,
+    blocksConfig,
     data,
     detached,
     index,
@@ -267,6 +268,7 @@ const TextBlockEdit = (props) => {
             onMutateBlock(...args);
             setAddNewBlockOpened(false);
           }}
+          blocksConfig={blocksConfig}
           currentBlock={block}
           allowedBlocks={allowedBlocks}
         />

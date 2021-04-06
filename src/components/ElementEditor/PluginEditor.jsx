@@ -3,8 +3,8 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
 import { ReactEditor } from 'slate-react';
-import InlineForm from 'volto-slate/futurevolto/InlineForm';
 import { Icon as VoltoIcon } from '@plone/volto/components';
+import { InlineForm } from '@plone/volto/components';
 import BaseSchemaProvider from './SchemaProvider';
 
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';

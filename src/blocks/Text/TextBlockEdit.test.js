@@ -63,6 +63,7 @@ describe('TextBlockEdit', () => {
           onDeleteBlock={() => {}}
           onFocusNextBlock={() => {}}
           onFocusPreviousBlock={() => {}}
+          onInsertBlock={() => {}}
           onMutateBlock={() => {}}
           onSelectBlock={() => {}}
           properties={{}}

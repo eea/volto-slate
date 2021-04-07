@@ -264,9 +264,8 @@ const TextBlockEdit = (props) => {
       {addNewBlockOpened && (
         <BlockChooser
           onMutateBlock={(...args) => {
+            onMutateBlock(...args);
             setAddNewBlockOpened(false);
-            const newId = onMutateBlock(...args);
-            newId && onSelectBlock(newId);
           }}
           currentBlock={block}
           allowedBlocks={allowedBlocks}

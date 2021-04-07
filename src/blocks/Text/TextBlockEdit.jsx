@@ -42,6 +42,7 @@ const TextBlockEdit = (props) => {
     detached,
     index,
     onChangeBlock,
+    onInsertBlock,
     onMutateBlock,
     onSelectBlock,
     pathname,
@@ -269,6 +270,10 @@ const TextBlockEdit = (props) => {
             setAddNewBlockOpened(false);
           }}
           blocksConfig={blocksConfig}
+          onInsertBlock={(id, value) => {
+            onSelectBlock(onInsertBlock(id, value));
+            setAddNewBlockOpened(false);
+          }}
           currentBlock={block}
           allowedBlocks={allowedBlocks}
         />

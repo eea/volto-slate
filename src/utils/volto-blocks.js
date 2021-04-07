@@ -1,10 +1,11 @@
 import ReactDOM from 'react-dom';
 import { v4 as uuid } from 'uuid';
 import {
+  addBlock,
+  changeBlock,
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { addBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
 import { Transforms, Editor, Node } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';

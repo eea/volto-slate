@@ -10,11 +10,11 @@ import {
   mergeSlateWithBlockForward,
 } from 'volto-slate/utils';
 import {
+  changeBlock,
+  deleteBlock,
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { deleteBlock, changeBlock } from 'volto-slate/futurevolto/Blocks';
-
 /**
  * Joins the current block with the previous block to make a single block.
  * @param {Editor} editor

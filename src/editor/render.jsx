@@ -115,8 +115,30 @@ export const serializeNodes = (nodes, getAttributes) => {
   return _serializeNodes(Array.from(Node.children(editor, [])));
 };
 
+/**
+ * Get the concatenated text string of a node's content.
+ *
+ * Note that this WILL include spaces between block node leaves in contrary to the original slate method.
+ * This function joins text of nodes with separating spaces to produce a string for indexing purposes.
+ *
+ */
+const ConcatenatedString = (node) => {
+  if (Text.isText(node)) {
+    return node.text.trim();
+  } else {
+    return node.children.map(ConcatenatedString).join(' ');
+  }
+};
+
+/**
+ * @function serializeNodesToText
+ *
+ * @param {Array[Node]} nodes
+ *
+ * @returns {string}
+ */
 export const serializeNodesToText = (nodes) => {
-  return nodes.map((n) => Node.string(n)).join('\n');
+  return nodes.map(ConcatenatedString).join('\n');
 };
 
 export const serializeNodesToHtml = (nodes) =>

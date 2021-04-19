@@ -24,10 +24,10 @@
     "is-url": "1.2.4",
     "jsdom": "16.2.2",
     "react-visibility-sensor": "5.1.1",
-    "slate": "^0.59",
-    "slate-history": "^0.59",
-    "slate-hyperscript": "^0.59",
-    "slate-react": "^0.59",
+    "slate": "^0.62.0",
+    "slate-history": "^0.62.0",
+    "slate-hyperscript": "^0.62.0",
+    "slate-react": "^0.62.0",
     "weak-key": "^1.0.2"
   },
   "peerDependencies": {

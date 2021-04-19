@@ -1,7 +1,13 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { createEditor } from 'slate'; // , Transforms
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import {
+  Slate,
+  Editable,
+  withReact,
+  ReactEditor,
+  // useSelected,
+} from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -23,6 +29,34 @@ import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
 
+const Toolbar = (props) => {
+  const {
+    editor,
+    className,
+    showToolbar,
+    setShowToolbar,
+    hasDomSelection,
+  } = props;
+  const { slate } = config.settings;
+  const isRangeSelection = hasRangeSelection(editor);
+
+  // console.log('render', isRangeSelection, hasDomSelection);
+
+  return isRangeSelection || hasDomSelection ? (
+    <SlateToolbar
+      className={className}
+      selected={true}
+      showToolbar={showToolbar}
+      setShowToolbar={setShowToolbar}
+    />
+  ) : (
+    <SlateContextToolbar
+      editor={editor}
+      plugins={slate.contextToolbarButtons}
+    />
+  );
+};
+
 class SlateEditor extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +74,7 @@ class SlateEditor extends Component {
     this.state = {
       editor: this.createEditor(),
       showToolbar: false,
+      hasDomSelection: false,
     };
 
     this.editor = null;
@@ -187,12 +222,13 @@ class SlateEditor extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { selected = true, value, readOnly } = nextProps;
-    return (
+    const res =
       selected ||
       this.props.selected !== selected ||
       this.props.readOnly !== readOnly ||
-      !isEqual(value, this.props.value)
-    );
+      !isEqual(value, this.props.value);
+    // console.log('do update', res);
+    return res;
   }
 
   render() {
@@ -238,21 +274,15 @@ class SlateEditor extends Component {
             onChange={this.handleChange}
           >
             {selected ? (
-              hasRangeSelection(editor) ? (
-                <SlateToolbar
-                  className={className}
-                  selected={selected}
-                  showToolbar={this.state.showToolbar}
-                  setShowToolbar={(value) =>
-                    this.setState({ showToolbar: value })
-                  }
-                />
-              ) : (
-                <SlateContextToolbar
-                  editor={editor}
-                  plugins={slate.contextToolbarButtons}
-                />
-              )
+              <Toolbar
+                editor={editor}
+                className={className}
+                showToolbar={this.state.showToolbar}
+                hasDomSelection={this.state.hasDomSelection}
+                setShowToolbar={(value) =>
+                  this.setState({ showToolbar: value })
+                }
+              />
             ) : (
               ''
             )}
@@ -273,6 +303,22 @@ class SlateEditor extends Component {
                 this.mouseDown = false;
               }}
               onKeyDown={(event) => {
+                if (
+                  !this.state.hasDomSelection &&
+                  event.shiftKey &&
+                  event.key !== 'Shift'
+                ) {
+                  console.log(
+                    'onkeydown',
+                    event.key,
+                    event.keyCode,
+                    editor.selection,
+                  );
+                  this.setState({ hasDomSelection: true });
+                } else if (this.state.hasDomSelection && !event.shiftKey) {
+                  this.setState({ hasDomSelection: false });
+                }
+
                 let wasHotkey = false;
 
                 for (const hk of Object.entries(slate.hotkeys)) {

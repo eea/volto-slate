@@ -64,7 +64,7 @@ class SlateEditor extends Component {
 
     this.state = {
       editor: this.createEditor(),
-      showExpandedToolbar: config.settings.slate.showToolbar,
+      showExpandedToolbar: config.settings.slate.showExpandedToolbar,
       hasDomSelection: false,
     };
 

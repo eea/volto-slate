@@ -1,13 +1,7 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { createEditor } from 'slate'; // , Transforms
-import {
-  Slate,
-  Editable,
-  withReact,
-  ReactEditor,
-  // useSelected,
-} from 'slate-react';
+import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -21,8 +15,7 @@ import {
   hasRangeSelection,
   toggleInlineFormat,
   toggleMark,
-  MIMETypeName,
-} from 'volto-slate/utils'; // fixSelection,
+} from 'volto-slate/utils';
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
@@ -39,8 +32,6 @@ const Toolbar = (props) => {
   } = props;
   const { slate } = config.settings;
   const isRangeSelection = hasRangeSelection(editor);
-
-  // console.log('render', isRangeSelection, hasDomSelection);
 
   return isRangeSelection || hasDomSelection ? (
     <SlateToolbar
@@ -107,41 +98,6 @@ class SlateEditor extends Component {
     editor.getSavedSelection = this.getSavedSelection;
     editor.setSavedSelection = this.setSavedSelection;
 
-    const { insertData } = editor;
-
-    // TODO: move this to extensions/insertData
-    // TODO: update and improve comments & docs related to
-    // `dataTransferFormatsOrder` and `dataTransferHandlers` features
-    editor.insertData = (data) => {
-      if (editor.beforeInsertData) {
-        editor.beforeInsertData(data);
-      }
-
-      for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
-        const x = editor.dataTransferFormatsOrder[i];
-        if (x === 'files') {
-          const { files } = data;
-          if (files && files.length > 0) {
-            // or handled here
-            return editor.dataTransferHandlers['files'](files);
-          }
-          continue;
-        }
-        const satisfyingFormats = data.types.filter((y) =>
-          new MIMETypeName(x).matches(new MIMETypeName(y)),
-        );
-        for (let j = 0; j < satisfyingFormats.length; ++j) {
-          const y = satisfyingFormats[j];
-          if (editor.dataTransferHandlers[x](data.getData(y), y)) {
-            // handled here
-            return true;
-          }
-        }
-      }
-      // not handled until this point
-      return insertData(data);
-    };
-
     return editor;
   }
 
@@ -167,16 +123,10 @@ class SlateEditor extends Component {
     const el = ReactEditor.toDOMNode(editor, editor);
     if (activeElement !== el) return;
 
+    // TODO: we should give up on maintaining savedSelection like this
+    // we should only create it on blur
     if (editor.selection)
       this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
-
-    if (!this.mouseDown) {
-      // Having this makes the toolbar more responsive to selection changes
-      // made via regular text editing (shift+arrow keys)
-      // this.setState({ update: true }); // needed, triggers re-render
-      // A better solution would be to improve performance of the toolbar
-      // editor
-    }
   }
 
   componentDidMount() {
@@ -228,7 +178,6 @@ class SlateEditor extends Component {
       this.props.selected !== selected ||
       this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value);
-    // console.log('do update', res);
     return res;
   }
 

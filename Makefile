@@ -10,7 +10,7 @@ GREEN=`tput setaf 2`
 RESET=`tput sgr0`
 YELLOW=`tput setaf 3`
 
-make-frontend:
+build-frontend:
 	npm install -g yo
 	npm install -g @plone/generator-volto
 	npm install -g mrs-developer

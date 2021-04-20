@@ -5,6 +5,7 @@ export SlateEditor from './SlateEditor';
 export default (config) => {
   config.settings.slate = {
     ...slateConfig,
+    showExpandedToolbar: false,
   };
   config = installDefaultPlugins(config);
   return config;

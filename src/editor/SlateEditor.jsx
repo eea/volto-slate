@@ -15,13 +15,38 @@ import {
   hasRangeSelection,
   toggleInlineFormat,
   toggleMark,
-  MIMETypeName,
-} from 'volto-slate/utils'; // fixSelection,
+} from 'volto-slate/utils';
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
+
+const Toolbar = (props) => {
+  const {
+    editor,
+    className,
+    showExpandedToolbar,
+    setShowExpandedToolbar,
+    hasDomSelection,
+  } = props;
+  const { slate } = config.settings;
+  const isRangeSelection = hasRangeSelection(editor);
+
+  return isRangeSelection || hasDomSelection ? (
+    <SlateToolbar
+      className={className}
+      selected={true}
+      showExpandedToolbar={showExpandedToolbar}
+      setShowExpandedToolbar={setShowExpandedToolbar}
+    />
+  ) : (
+    <SlateContextToolbar
+      editor={editor}
+      plugins={slate.contextToolbarButtons}
+    />
+  );
+};
 
 class SlateEditor extends Component {
   constructor(props) {
@@ -39,7 +64,8 @@ class SlateEditor extends Component {
 
     this.state = {
       editor: this.createEditor(),
-      showToolbar: false,
+      showExpandedToolbar: false,
+      hasDomSelection: false,
     };
 
     this.editor = null;
@@ -72,40 +98,6 @@ class SlateEditor extends Component {
     editor.getSavedSelection = this.getSavedSelection;
     editor.setSavedSelection = this.setSavedSelection;
 
-    const { insertData } = editor;
-
-    // TODO: update and improve comments & docs related to
-    // `dataTransferFormatsOrder` and `dataTransferHandlers` features
-    editor.insertData = (data) => {
-      if (editor.beforeInsertData) {
-        editor.beforeInsertData(data);
-      }
-
-      for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
-        const x = editor.dataTransferFormatsOrder[i];
-        if (x === 'files') {
-          const { files } = data;
-          if (files && files.length > 0) {
-            // or handled here
-            return editor.dataTransferHandlers['files'](files);
-          }
-          continue;
-        }
-        const satisfyingFormats = data.types.filter((y) =>
-          new MIMETypeName(x).matches(new MIMETypeName(y)),
-        );
-        for (let j = 0; j < satisfyingFormats.length; ++j) {
-          const y = satisfyingFormats[j];
-          if (editor.dataTransferHandlers[x](data.getData(y), y)) {
-            // handled here
-            return true;
-          }
-        }
-      }
-      // not handled until this point
-      return insertData(data);
-    };
-
     return editor;
   }
 
@@ -131,16 +123,10 @@ class SlateEditor extends Component {
     const el = ReactEditor.toDOMNode(editor, editor);
     if (activeElement !== el) return;
 
+    // TODO: we should give up on maintaining savedSelection like this
+    // we should only create it on blur
     if (editor.selection)
       this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
-
-    if (!this.mouseDown) {
-      // Having this makes the toolbar more responsive to selection changes
-      // made via regular text editing (shift+arrow keys)
-      // this.setState({ update: true }); // needed, triggers re-render
-      // A better solution would be to improve performance of the toolbar
-      // editor
-    }
   }
 
   componentDidMount() {
@@ -187,12 +173,12 @@ class SlateEditor extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const { selected = true, value, readOnly } = nextProps;
-    return (
+    const res =
       selected ||
       this.props.selected !== selected ||
       this.props.readOnly !== readOnly ||
-      !isEqual(value, this.props.value)
-    );
+      !isEqual(value, this.props.value);
+    return res;
   }
 
   render() {
@@ -227,7 +213,7 @@ class SlateEditor extends Component {
       <div
         {...this.props['debug-values']}
         className={cx('slate-editor', {
-          'show-toolbar': this.state.showToolbar,
+          'show-toolbar': this.state.showExpandedToolbar,
           selected,
         })}
       >
@@ -238,21 +224,15 @@ class SlateEditor extends Component {
             onChange={this.handleChange}
           >
             {selected ? (
-              hasRangeSelection(editor) ? (
-                <SlateToolbar
-                  className={className}
-                  selected={selected}
-                  showToolbar={this.state.showToolbar}
-                  setShowToolbar={(value) =>
-                    this.setState({ showToolbar: value })
-                  }
-                />
-              ) : (
-                <SlateContextToolbar
-                  editor={editor}
-                  plugins={slate.contextToolbarButtons}
-                />
-              )
+              <Toolbar
+                editor={editor}
+                className={className}
+                showExpandedToolbar={this.state.showExpandedToolbar}
+                hasDomSelection={this.state.hasDomSelection}
+                setShowExpandedToolbar={(value) =>
+                  this.setState({ showExpandedToolbar: value })
+                }
+              />
             ) : (
               ''
             )}
@@ -273,6 +253,22 @@ class SlateEditor extends Component {
                 this.mouseDown = false;
               }}
               onKeyDown={(event) => {
+                // we handle selection events to show the toolbar
+                if (
+                  !this.state.hasDomSelection &&
+                  ((event.shiftKey && event.key !== 'Shift') ||
+                    (event.ctrlKey && event.key === 'a'))
+                ) {
+                  this.setState({ hasDomSelection: true });
+                } else if (
+                  (this.state.hasDomSelection ||
+                    event.key === 'Left' ||
+                    event.key === 'Right') &&
+                  !event.shiftKey
+                ) {
+                  this.setState({ hasDomSelection: false });
+                }
+
                 let wasHotkey = false;
 
                 for (const hk of Object.entries(slate.hotkeys)) {

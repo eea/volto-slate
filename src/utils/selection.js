@@ -196,14 +196,16 @@ export function hasRangeSelection(editor) {
   const savedSelection = editor.getSavedSelection();
 
   const range = ReactEditor.isFocused(editor)
-    ? selection || savedSelection
+    ? selection || savedSelection // TODO: check if this needs to be used
     : savedSelection;
 
   if (!range) {
     // console.log('no range', editor);
     return;
   }
+
   const res = Range.isExpanded(range);
+  // console.log('call hasRange', res);
   return res;
 }
 

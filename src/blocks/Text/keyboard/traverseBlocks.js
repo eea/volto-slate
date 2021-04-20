@@ -4,6 +4,7 @@ import {
   isCursorAtBlockEnd,
   getNextVoltoBlock,
   getPreviousVoltoBlock,
+  createDefaultBlock,
 } from 'volto-slate/utils';
 
 /**
@@ -25,7 +26,9 @@ export function goUp({ editor, event }) {
       return onFocusPreviousBlock(block, blockNode.current);
 
     const [slateBlock, id] = prev;
-    const pseudoEditor = { children: slateBlock.value };
+    const pseudoEditor = {
+      children: slateBlock.value || [createDefaultBlock()],
+    };
     const match = Node.last(pseudoEditor, []);
     if (!match) return onFocusPreviousBlock(block, blockNode.current);
 
@@ -56,7 +59,9 @@ export function goDown({ editor, event }) {
       return onFocusNextBlock(block, blockNode.current);
 
     const [slateBlock, id] = next;
-    const pseudoEditor = { children: slateBlock.value };
+    const pseudoEditor = {
+      children: slateBlock.value || [createDefaultBlock()],
+    };
     const match = Node.first(pseudoEditor, []);
     if (!match) return onFocusNextBlock(block, blockNode.current);
 
@@ -66,4 +71,9 @@ export function goDown({ editor, event }) {
     props.saveSlateBlockSelection(id, selection);
     return onFocusNextBlock(block, blockNode.current);
   }
+}
+
+export function traverseBlocks(opts) {
+  const { event } = opts;
+  return event.shiftKey ? goUp(opts) : goDown(opts);
 }

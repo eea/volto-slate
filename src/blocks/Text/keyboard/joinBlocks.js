@@ -15,6 +15,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
+
 /**
  * Joins the current block with the previous block to make a single block.
  * @param {Editor} editor

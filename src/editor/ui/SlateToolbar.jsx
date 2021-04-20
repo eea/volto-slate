@@ -18,7 +18,12 @@ import ToolbarButton from './ToolbarButton';
 import config from '@plone/volto/registry';
 
 const SlateToolbar = (props) => {
-  const { selected, showToolbar, setShowToolbar, className } = props;
+  const {
+    selected,
+    showExpandedToolbar,
+    setShowExpandedToolbar,
+    className,
+  } = props;
   const { slate } = config.settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
@@ -30,17 +35,17 @@ const SlateToolbar = (props) => {
 
   return (
     <>
-      {!showToolbar && (
+      {!showExpandedToolbar && (
         <Toolbar
           toggleButton={
             <ToolbarButton
               title="More..."
               onMouseDown={(event) => {
-                setShowToolbar(!showToolbar);
+                setShowExpandedToolbar(!showExpandedToolbar);
                 event.preventDefault();
               }}
               icon={toggleIcon}
-              active={showToolbar}
+              active={showExpandedToolbar}
             />
           }
           className={className}
@@ -49,19 +54,21 @@ const SlateToolbar = (props) => {
         </Toolbar>
       )}
       <div
-        className={cx('toolbar-wrapper', { active: showToolbar && selected })}
+        className={cx('toolbar-wrapper', {
+          active: showExpandedToolbar && selected,
+        })}
       >
-        {selected && showToolbar && (
+        {selected && showExpandedToolbar && (
           <ExpandedToolbar
             toggleButton={
               <ToolbarButton
                 title="Less..."
                 onMouseDown={(event) => {
-                  setShowToolbar(!showToolbar);
+                  setShowExpandedToolbar(!showExpandedToolbar);
                   event.preventDefault();
                 }}
                 icon={toggleIcon}
-                active={showToolbar}
+                active={showExpandedToolbar}
               />
             }
           >

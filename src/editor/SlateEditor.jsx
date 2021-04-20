@@ -26,8 +26,8 @@ const Toolbar = (props) => {
   const {
     editor,
     className,
-    showToolbar,
-    setShowToolbar,
+    showExpandedToolbar,
+    setShowExpandedToolbar,
     hasDomSelection,
   } = props;
   const { slate } = config.settings;
@@ -37,8 +37,8 @@ const Toolbar = (props) => {
     <SlateToolbar
       className={className}
       selected={true}
-      showToolbar={showToolbar}
-      setShowToolbar={setShowToolbar}
+      showExpandedToolbar={showExpandedToolbar}
+      setShowExpandedToolbar={setShowExpandedToolbar}
     />
   ) : (
     <SlateContextToolbar
@@ -64,7 +64,7 @@ class SlateEditor extends Component {
 
     this.state = {
       editor: this.createEditor(),
-      showToolbar: false,
+      showExpandedToolbar: false,
       hasDomSelection: false,
     };
 
@@ -213,7 +213,7 @@ class SlateEditor extends Component {
       <div
         {...this.props['debug-values']}
         className={cx('slate-editor', {
-          'show-toolbar': this.state.showToolbar,
+          'show-toolbar': this.state.showExpandedToolbar,
           selected,
         })}
       >
@@ -227,10 +227,10 @@ class SlateEditor extends Component {
               <Toolbar
                 editor={editor}
                 className={className}
-                showToolbar={this.state.showToolbar}
+                showExpandedToolbar={this.state.showExpandedToolbar}
                 hasDomSelection={this.state.hasDomSelection}
-                setShowToolbar={(value) =>
-                  this.setState({ showToolbar: value })
+                setShowExpandedToolbar={(value) =>
+                  this.setState({ showExpandedToolbar: value })
                 }
               />
             ) : (

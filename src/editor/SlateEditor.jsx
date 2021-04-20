@@ -260,7 +260,12 @@ class SlateEditor extends Component {
                     (event.ctrlKey && event.key === 'a'))
                 ) {
                   this.setState({ hasDomSelection: true });
-                } else if (this.state.hasDomSelection && !event.shiftKey) {
+                } else if (
+                  (this.state.hasDomSelection ||
+                    event.key === 'Left' ||
+                    event.key === 'Right') &&
+                  !event.shiftKey
+                ) {
                   this.setState({ hasDomSelection: false });
                 }
 

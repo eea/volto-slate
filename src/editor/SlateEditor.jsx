@@ -109,6 +109,7 @@ class SlateEditor extends Component {
 
     const { insertData } = editor;
 
+    // TODO: move this to extensions/insertData
     // TODO: update and improve comments & docs related to
     // `dataTransferFormatsOrder` and `dataTransferHandlers` features
     editor.insertData = (data) => {
@@ -303,17 +304,12 @@ class SlateEditor extends Component {
                 this.mouseDown = false;
               }}
               onKeyDown={(event) => {
+                // we handle selection events to show the toolbar
                 if (
                   !this.state.hasDomSelection &&
-                  event.shiftKey &&
-                  event.key !== 'Shift'
+                  ((event.shiftKey && event.key !== 'Shift') ||
+                    (event.ctrlKey && event.key === 'a'))
                 ) {
-                  console.log(
-                    'onkeydown',
-                    event.key,
-                    event.keyCode,
-                    editor.selection,
-                  );
                   this.setState({ hasDomSelection: true });
                 } else if (this.state.hasDomSelection && !event.shiftKey) {
                   this.setState({ hasDomSelection: false });

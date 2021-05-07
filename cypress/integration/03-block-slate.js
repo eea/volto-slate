@@ -14,13 +14,9 @@ describe('Block Tests', () => {
 
     s1.typeInSlate('hello, world');
 
-    s1.type('{leftarrow}');
-    s1.type('{leftarrow}');
-    s1.type('{leftarrow}');
-    s1.type('{leftarrow}');
-    s1.type('{leftarrow}');
+    s1.type('{leftarrow}{leftarrow}{leftarrow}{leftarrow}{leftarrow}{enter}');
 
-    s1.lineBreakInSlate();
+    // s1.lineBreakInSlate();
 
     getSlateBlockValue(cy.get('.slate-editor').first()).then((val) => {
       expect(val).to.deep.eq([

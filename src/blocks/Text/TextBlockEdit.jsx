@@ -219,7 +219,7 @@ const TextBlockEdit = (props) => {
                   extensions={textblockExtensions}
                   renderExtensions={[withBlockProperties]}
                   value={value}
-                  block={block}
+                  block={block /* is this needed? */}
                   onFocus={() => onSelectBlock(block)}
                   onUpdate={handleUpdate}
                   debug={DEBUG}

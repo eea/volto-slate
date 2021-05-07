@@ -92,7 +92,7 @@ Cypress.Commands.add(
             title: contentTitle,
             blocks: {
               'd3f1c443-583f-4e8e-a682-3bf25752a300': { '@type': 'title' },
-              '7624cf59-05d0-4055-8f55-5fd6597d84b0': { '@type': 'text' },
+              '7624cf59-05d0-4055-8f55-5fd6597d84b0': { '@type': 'slate' },
             },
             blocks_layout: {
               items: [

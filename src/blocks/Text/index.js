@@ -13,6 +13,7 @@ import {
   softBreak,
   moveListItemDown,
   moveListItemUp,
+  traverseBlocks,
 } from './keyboard';
 import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
@@ -61,6 +62,7 @@ export default (config) => {
       ],
       Tab: [
         indentListItems, // <tab> and <c-tab> behaviour for list items
+        traverseBlocks,
       ],
     },
 

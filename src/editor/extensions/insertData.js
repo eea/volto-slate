@@ -4,11 +4,10 @@ import {
   createDefaultBlock,
   normalizeBlockNodes,
   deconstructToVoltoBlocks,
+  MIMETypeName,
 } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
-  // const { insertData } = editor;
-
   editor.dataTransferHandlers = {
     ...editor.dataTransferHandlers,
     'application/x-slate-fragment': (dt, fullMime) => {
@@ -91,6 +90,41 @@ export const insertData = (editor) => {
 
   // TODO: use the rtf data to get the embedded images.
   // const text = data.getData('text/rtf');
+
+  const { insertData } = editor;
+
+  // TODO: move this to extensions/insertData
+  // TODO: update and improve comments & docs related to
+  // `dataTransferFormatsOrder` and `dataTransferHandlers` features
+  editor.insertData = (data) => {
+    if (editor.beforeInsertData) {
+      editor.beforeInsertData(data);
+    }
+
+    for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
+      const dt = editor.dataTransferFormatsOrder[i];
+      if (dt === 'files') {
+        const { files } = data;
+        if (files && files.length > 0) {
+          // or handled here
+          return editor.dataTransferHandlers['files'](files);
+        }
+        continue;
+      }
+      const satisfyingFormats = data.types.filter((y) =>
+        new MIMETypeName(dt).matches(new MIMETypeName(y)),
+      );
+      for (let j = 0; j < satisfyingFormats.length; ++j) {
+        const y = satisfyingFormats[j];
+        if (editor.dataTransferHandlers[dt](data.getData(y), y)) {
+          // handled here
+          return true;
+        }
+      }
+    }
+    // not handled until this point
+    return insertData(data);
+  };
 
   return editor;
 };

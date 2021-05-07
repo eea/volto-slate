@@ -1,5 +1,19 @@
 # volto-slate
 
+## The fast way to develop this addon
+
+1. Assuming everything is right about your development environment, make
+   a clone of this repo, then:
+
+    make build-frontend
+
+1. This will create a `project` folder with a bootstrapped Volto.
+
+    cd project
+    yarn start
+
+Just change the code in your clone and it will automatically refresh Volto!
+
 ## Develop
 
 Before starting make sure your development environment is properly set. See [Volto Developer Documentation](https://docs.voltocms.com/getting-started/install/)

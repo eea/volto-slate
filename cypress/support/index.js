@@ -48,14 +48,13 @@ export const slateAfterEach = () => {
 };
 
 export const getSelectedSlateEditor = () => {
-  return cy.get('.slate-editor.selected [contenteditable=true]');
+  return cy.get('.slate-editor.selected [contenteditable=true]').click();
 };
 
 export const createSlateBlock = () => {
-  cy.get('[data-rbd-droppable-id=edit-form] > div').last().click();
-  cy.get('button.block-add-button').last().click();
+  cy.get('.ui.basic.icon.button.block-add-button').first().click();
   cy.get('.blocks-chooser .title').contains('Text').click();
-  cy.get('.ui.basic.icon.button.slate').contains('Slate').click();
+  cy.get('.ui.basic.icon.button.slate').contains('Text').click();
   return getSelectedSlateEditor();
 };
 

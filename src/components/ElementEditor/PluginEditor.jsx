@@ -1,17 +1,14 @@
 /* eslint no-console: ["error", { allow: ["error"] }] */
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { isEqual } from 'lodash';
-import { ReactEditor } from 'slate-react';
-import { Icon as VoltoIcon } from '@plone/volto/components';
-import { InlineForm } from '@plone/volto/components';
-import BaseSchemaProvider from './SchemaProvider';
-
+import { Icon as VoltoIcon, InlineForm } from '@plone/volto/components';
 import briefcaseSVG from '@plone/volto/icons/briefcase.svg';
 import checkSVG from '@plone/volto/icons/check.svg';
 import clearSVG from '@plone/volto/icons/clear.svg';
-
+import { isEqual } from 'lodash';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { ReactEditor } from 'slate-react';
 import { setPluginOptions } from 'volto-slate/actions';
+import BaseSchemaProvider from './SchemaProvider';
 
 const PluginEditor = (props) => {
   const {
@@ -59,6 +56,12 @@ const PluginEditor = (props) => {
     [editor, insertElement, unwrapElement, hasValue],
   );
 
+  const checkForCancel = () => {
+    if (!hasValue(elementNode.data)) {
+      unwrapElement(editor);
+    }
+  };
+
   const SchemaProvider = schemaProvider ? schemaProvider : BaseSchemaProvider;
 
   return (
@@ -93,6 +96,7 @@ const PluginEditor = (props) => {
               </button>
               <button
                 onClick={() => {
+                  checkForCancel();
                   dispatch(
                     setPluginOptions(pluginId, { show_sidebar_editor: false }),
                   );

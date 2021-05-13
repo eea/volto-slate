@@ -177,7 +177,7 @@ pipeline {
           sh '''mkdir -p junit'''
           try {
             unstash "xunit-reports"
-            sh '''cp -p xunit-reports/* junit/'''       
+            sh '''cp -p xunit-reports/junit.xml junit/'''       
           }
           catch (Exception e) {
             sh '''echo "No Unit Tests junit results"'''

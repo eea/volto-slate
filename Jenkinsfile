@@ -177,7 +177,7 @@ pipeline {
           sh '''mkdir -p junit'''
           try {
             unstash "xunit-reports"
-            sh '''cp -p xunit-reports/junit.xml junit/'''       
+            sh '''cp -p xunit-reports/*.xml junit/'''       
           }
           catch (Exception e) {
             sh '''echo "No Unit Tests junit results"'''
@@ -185,7 +185,7 @@ pipeline {
         
           try {
             unstash "cypress-results"
-            sh '''cp -p cypress-results/* junit/'''       
+            sh '''cp -p cypress-results/*.xml junit/'''       
           }
           catch (Exception e) {
             sh '''echo "No cypress junit results"'''

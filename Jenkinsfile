@@ -49,8 +49,7 @@ pipeline {
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/coverage xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/junit.xml xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/unit_tests_log.txt xunit-reports/'''
-                  stash name: "xunit-reports", includes: "xunit-reports/**/*"
-                  junit 'xunit-reports/junit.xml'
+                  stash name: "xunit-reports", includes: "xunit-reports/**"
                   archiveArtifacts artifacts: 'xunit-reports/unit_tests_log.txt', fingerprint: true
                   archiveArtifacts artifacts: 'xunit-reports/coverage/lcov.info', fingerprint: true
                   publishHTML (target : [
@@ -63,7 +62,7 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  sh '''docker rm -v $BUILD_TAG-volto'''
+                  sh '''docker rm -v $BUILD_TAG-volto || true'''
                 }
               }
             }
@@ -87,10 +86,15 @@ pipeline {
                     sh '''mkdir -p cypress-reports'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
                     stash name: "cypress-reports", includes: "cypress-reports/**/*"
+                    sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
+                    stash name: "cypress-results", includes: "cypress-results/**"
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
+
                   }
                   finally {
-                    sh '''echo "$(docker stop $BUILD_TAG-plone; docker rm -v $BUILD_TAG-plone; docker rm -v $BUILD_TAG-cypress)" '''
+                    sh '''docker stop $BUILD_TAG-plone || true'''
+                    sh '''docker rm -v $BUILD_TAG-plone || true'''
+                    sh '''docker rm -v $BUILD_TAG-cypress || true'''
                   }
                 }
               }
@@ -117,7 +121,7 @@ pipeline {
             def nodeJS = tool 'NodeJS11';
             withSonarQubeEnv('Sonarqube') {
               sh '''sed -i "s#/opt/frontend/my-volto-project/src/addons/${GIT_NAME}/##g" xunit-reports/coverage/lcov.info'''
-              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info -Dsonar.sources=./src -Dsonar.coverage.exclusions=**/*.test.js -Dsonar.exclusions=**/*.test.js -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
+              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info -Dsonar.sources=./src -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
               sh '''try=2; while [ \$try -gt 0 ]; do curl -s -XPOST -u "${SONAR_AUTH_TOKEN}:" "${SONAR_HOST_URL}api/project_tags/set?project=${GIT_NAME}-${BRANCH_NAME}&tags=${SONARQUBE_TAGS},${BRANCH_NAME}" > set_tags_result; if [ \$(grep -ic error set_tags_result ) -eq 0 ]; then try=0; else cat set_tags_result; echo "... Will retry"; sleep 60; try=\$(( \$try - 1 )); fi; done'''
             }
           }
@@ -167,6 +171,33 @@ pipeline {
   }
 
   post {
+    always {
+      script{
+        try{
+          sh '''mkdir -p junit'''
+          try {
+            unstash "xunit-reports"
+            sh '''cp -p xunit-reports/* junit/'''       
+          }
+          catch (Exception e) {
+            sh '''echo "No Unit Tests junit results"'''
+          }
+        
+          try {
+            unstash "cypress-results"
+            sh '''cp -p cypress-results/* junit/'''       
+          }
+          catch (Exception e) {
+            sh '''echo "No cypress junit results"'''
+          }
+          junit 'junit/*.xml'
+        }
+        catch (Exception e) {
+          sh '''echo "No junit results"'''
+        }
+      }
+      cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
+    }
     changed {
       script {
         def url = "${env.BUILD_URL}/display/redirect"

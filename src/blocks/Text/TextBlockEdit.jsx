@@ -25,6 +25,7 @@ import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
+import { Pluggable, Plug } from '@plone/volto/components/manage/Pluggable';
 
 import VisibilitySensor from 'react-visibility-sensor';
 
@@ -187,6 +188,12 @@ const TextBlockEdit = (props) => {
         )}
       </SidebarPortal>
       {DEBUG ? <div>{block}</div> : ''}
+      {selected && (
+        <Plug pluggable="block-toolbar" id="slate-editor-toolbar">
+          a
+          <Pluggable name="slate-editor-toolbar" />b
+        </Plug>
+      )}
       <VisibilitySensor partialVisibility={true}>
         {({ isVisible }) => (
           <Dropzone

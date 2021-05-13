@@ -17,12 +17,14 @@ import {
   toggleMark,
 } from 'volto-slate/utils';
 import EditorContext from './EditorContext';
+import { Plug } from '@plone/volto/components/manage/Pluggable';
 
 import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
 
 const Toolbar = (props) => {
+  console.log('render toolbar');
   const {
     editor,
     className,
@@ -224,15 +226,17 @@ class SlateEditor extends Component {
             onChange={this.handleChange}
           >
             {selected ? (
-              <Toolbar
-                editor={editor}
-                className={className}
-                showExpandedToolbar={this.state.showExpandedToolbar}
-                hasDomSelection={this.state.hasDomSelection}
-                setShowExpandedToolbar={(value) =>
-                  this.setState({ showExpandedToolbar: value })
-                }
-              />
+              <Plug pluggable="slate-editor-toolbar" id="toolbar">
+                <Toolbar
+                  editor={editor}
+                  className={className}
+                  showExpandedToolbar={this.state.showExpandedToolbar}
+                  hasDomSelection={this.state.hasDomSelection}
+                  setShowExpandedToolbar={(value) =>
+                    this.setState({ showExpandedToolbar: value })
+                  }
+                />
+              </Plug>
             ) : (
               ''
             )}

@@ -6,6 +6,7 @@
 import React from 'react';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
+import { Pluggable } from '@plone/volto/components/manage/Pluggable';
 
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
@@ -42,6 +43,7 @@ const SlateRichTextWidget = (props) => {
         }}
         onKeyDown={() => {}}
       >
+        <Pluggable name="slate-editor-toolbar" />
         <SlateEditor
           className={className}
           id={id}

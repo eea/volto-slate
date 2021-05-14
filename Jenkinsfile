@@ -45,15 +45,13 @@ pipeline {
                 try {
                   sh '''docker pull plone/volto-addon-ci'''
                   sh '''docker run -i --name="$BUILD_TAG-volto" -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" plone/volto-addon-ci'''
+                  sh '''rm -rf xunit-reports'''
                   sh '''mkdir -p xunit-reports'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/coverage xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/junit.xml xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/unit_tests_log.txt xunit-reports/'''
                   stash name: "xunit-reports", includes: "xunit-reports/**"
-                  
-                  archiveArtifacts artifacts: 'xunit-reports/junit.xml', fingerprint: true
                   archiveArtifacts artifacts: 'xunit-reports/unit_tests_log.txt', fingerprint: true
-                  archiveArtifacts artifacts: 'xunit-reports/coverage/lcov.info', fingerprint: true
                   publishHTML (target : [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -91,13 +89,8 @@ pipeline {
                     sh '''rm -rf cypress-reports cypress-results'''
                     sh '''mkdir -p cypress-reports cypress-results'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
-                    stash name: "cypress-reports", includes: "cypress-reports/**/*"
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
-                    sh '''ls -ltr cypress-results/*'''
-                    stash name: "cypress-results", includes: "cypress-results/**"
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
-                    archiveArtifacts artifacts: 'cypress-results/**', fingerprint: true
-
                   }
                   finally {
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
@@ -105,9 +98,9 @@ pipeline {
                     }                               
                     sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
                     sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
                     sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
-                    sh script: "docker ps -a", returnStatus: true
-
+                    
                   }
                 }
               }

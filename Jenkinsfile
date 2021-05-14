@@ -95,9 +95,9 @@ pipeline {
 
                   }
                   finally {
-                    sh '''echo $(docker stop $BUILD_TAG-plone)'''
-                    sh '''echo $(docker rm -v $BUILD_TAG-plone)'''
-                    sh '''echo $(docker rm -v $BUILD_TAG-cypress)'''
+                    sh '''docker stop $BUILD_TAG-plone''', returnStatus:true
+                    sh '''docker rm -v $BUILD_TAG-plone''', returnStatus:true
+                    sh '''docker rm -v $BUILD_TAG-cypress''', returnStatus:true
                   }
                 }
               }

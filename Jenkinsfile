@@ -45,13 +45,13 @@ pipeline {
                 try {
                   sh '''docker pull plone/volto-addon-ci'''
                   sh '''docker run -i --name="$BUILD_TAG-volto" -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" plone/volto-addon-ci'''
+                  sh '''rm -rf xunit-reports'''
                   sh '''mkdir -p xunit-reports'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/coverage xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/junit.xml xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/unit_tests_log.txt xunit-reports/'''
                   stash name: "xunit-reports", includes: "xunit-reports/**"
                   archiveArtifacts artifacts: 'xunit-reports/unit_tests_log.txt', fingerprint: true
-                  archiveArtifacts artifacts: 'xunit-reports/coverage/lcov.info', fingerprint: true
                   publishHTML (target : [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -62,7 +62,10 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  sh '''docker rm -v $BUILD_TAG-volto || true'''
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true 
+                    } 
+                   sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
               }
             }
@@ -83,18 +86,20 @@ pipeline {
                   sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
                 } finally {
                   try {
-                    sh '''mkdir -p cypress-reports'''
+                    sh '''rm -rf cypress-reports cypress-results'''
+                    sh '''mkdir -p cypress-reports cypress-results'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
-                    stash name: "cypress-reports", includes: "cypress-reports/**/*"
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
-                    stash name: "cypress-results", includes: "cypress-results/**"
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
-
                   }
                   finally {
-                    sh '''echo $(docker stop $BUILD_TAG-plone)'''
-                    sh '''echo $(docker rm -v $BUILD_TAG-plone)'''
-                    sh '''echo $(docker rm -v $BUILD_TAG-cypress)'''
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true
+                    }                               
+                    sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
+                    
                   }
                 }
               }
@@ -172,31 +177,6 @@ pipeline {
 
   post {
     always {
-      script{
-        try{
-          sh '''mkdir -p junit'''
-          try {
-            unstash "xunit-reports"
-            sh '''cp -p xunit-reports/*.xml junit/'''   
-            junit 'junit/*.xml'
-          }
-          catch (Exception e) {
-            sh '''echo "No Unit Tests junit results"'''
-          }
-        
-          try {
-            unstash "cypress-results"
-            sh '''cp -p cypress-results/*.xml junit/''' 
-            junit 'junit/*.xml'      
-          }
-          catch (Exception e) {
-            sh '''echo "No cypress junit results"'''
-          }
-        }
-        catch (Exception e) {
-          sh '''echo "No junit results"'''
-        }
-      }
       cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
     }
     changed {

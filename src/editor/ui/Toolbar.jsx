@@ -5,7 +5,12 @@ import { useSlate } from 'slate-react';
 import Separator from './Separator';
 import BasicToolbar from './BasicToolbar';
 
-const Toolbar = ({ enableExpando, toggleButton, className, children }) => {
+const Toolbar = ({
+  enableExpando = false,
+  toggleButton,
+  className,
+  children,
+}) => {
   const ref = useRef();
   const editor = useSlate();
 
@@ -30,6 +35,7 @@ const Toolbar = ({ enableExpando, toggleButton, className, children }) => {
     }
 
     const domSelection = window.getSelection();
+    console.log('dom seletion', domSelection, domSelection.rangeCount);
     if (domSelection.rangeCount < 1) {
       // don't do anything here, this happens when opening a focus-stealing
       // component, in which case we actually want to keep the toolbar open

@@ -27,6 +27,7 @@ export const makeInlineElementPlugin = (options) => {
     'editSchema',
     'element',
   ];
+
   const pluginOptions = {
     pluginEditor: PluginEditor,
     insertElement: _insertElement(elementType),
@@ -52,11 +53,12 @@ export const makeInlineElementPlugin = (options) => {
     ...options,
   };
 
-  const ElementContextButtons = makeContextButtons(pluginOptions);
-
   const PersistentHelper = (props) => (
     <SidebarEditor {...props} {...pluginOptions} />
   );
+  PersistentHelper.id = pluginId;
+
+  const ElementContextButtons = makeContextButtons(pluginOptions);
 
   const install = (config) => {
     const { slate } = config.settings;
@@ -72,7 +74,11 @@ export const makeInlineElementPlugin = (options) => {
       />
     );
     slate.contextToolbarButtons.push(ElementContextButtons);
-    slate.persistentHelpers.push(PersistentHelper);
+    slate.persistentHelpers.push(
+      options.persistentHelper
+        ? options.persistentHelper(pluginOptions)
+        : PersistentHelper,
+    );
     slate.extensions = [
       ...(slate.extensions || []),
       ...pluginOptions.extensions,

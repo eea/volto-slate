@@ -64,7 +64,10 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true 
+                    } 
+                   sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
               }
             }
@@ -97,7 +100,9 @@ pipeline {
 
                   }
                   finally {
-                    
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true
+                    }                               
                     sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
                     sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
                     sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
@@ -180,15 +185,6 @@ pipeline {
 
   post {
     always {
-      
-      catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-            unstash "xunit-reports"
-            junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit'
-      }           
-      catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-           unstash "cypress-results"
-           junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true, checksName: 'Integration'
-      } 
       cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
     }
     changed {

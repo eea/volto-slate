@@ -105,9 +105,9 @@ pipeline {
                       junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration'
                     } 
                     
-                    sh script: '''docker stop $BUILD_TAG-plone''', returnStatus: true
-                    sh script: '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
-                    variable_s = sh script: '''docker ps; docker ps -a; docker rm -v $BUILD_TAG-cypress; docker ps -a''', returnStatus: true
+                    sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
+                    variable_s = sh script: " docker ps -a; docker rm -v $BUILD_TAG-cypress; docker ps -a", returnStatus: true
                   }
                 }
               }

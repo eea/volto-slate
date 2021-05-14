@@ -89,7 +89,8 @@ pipeline {
                   sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
                 } finally {
                   try {
-                    sh '''mkdir -p cypress-reports'''
+                    sh '''rm -rf cypress-reports cypress-results'''
+                    sh '''mkdir -p cypress-reports cypress-results'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
                     stash name: "cypress-reports", includes: "cypress-reports/**/*"
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
@@ -106,7 +107,7 @@ pipeline {
                     
                     sh script: '''docker stop $BUILD_TAG-plone''', returnStatus: true
                     sh script: '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
-                    sh script: '''docker rm -v $BUILD_TAG-cypress''', returnStatus: true
+                    sh script: '''docker ps; docker ps -a; docker rm -v $BUILD_TAG-cypress''', returnStatus: true
                   }
                 }
               }

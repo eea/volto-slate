@@ -92,9 +92,9 @@ pipeline {
 
                   }
                   finally {
-                    sh '''docker stop $BUILD_TAG-plone || true'''
-                    sh '''docker rm -v $BUILD_TAG-plone || true'''
-                    sh '''docker rm -v $BUILD_TAG-cypress || true'''
+                    sh '''echo $(docker stop $BUILD_TAG-plone)'''
+                    sh '''echo $(docker rm -v $BUILD_TAG-plone)'''
+                    sh '''echo $(docker rm -v $BUILD_TAG-cypress)'''
                   }
                 }
               }
@@ -177,7 +177,8 @@ pipeline {
           sh '''mkdir -p junit'''
           try {
             unstash "xunit-reports"
-            sh '''cp -p xunit-reports/*.xml junit/'''       
+            sh '''cp -p xunit-reports/*.xml junit/'''   
+            junit 'junit/*.xml'
           }
           catch (Exception e) {
             sh '''echo "No Unit Tests junit results"'''
@@ -185,12 +186,12 @@ pipeline {
         
           try {
             unstash "cypress-results"
-            sh '''cp -p cypress-results/*.xml junit/'''       
+            sh '''cp -p cypress-results/*.xml junit/''' 
+            junit 'junit/*.xml'      
           }
           catch (Exception e) {
             sh '''echo "No cypress junit results"'''
           }
-          junit 'junit/*.xml'
         }
         catch (Exception e) {
           sh '''echo "No junit results"'''

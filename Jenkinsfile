@@ -50,6 +50,8 @@ pipeline {
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/junit.xml xunit-reports/'''
                   sh '''docker cp $BUILD_TAG-volto:/opt/frontend/my-volto-project/unit_tests_log.txt xunit-reports/'''
                   stash name: "xunit-reports", includes: "xunit-reports/**"
+                  
+                  archiveArtifacts artifacts: 'xunit-reports/junit.xml', fingerprint: true
                   archiveArtifacts artifacts: 'xunit-reports/unit_tests_log.txt', fingerprint: true
                   archiveArtifacts artifacts: 'xunit-reports/coverage/lcov.info', fingerprint: true
                   publishHTML (target : [
@@ -62,7 +64,7 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  sh '''docker rm -v $BUILD_TAG-volto || true'''
+                  sh '''echo $(docker rm -v $BUILD_TAG-volto)'''
                 }
               }
             }
@@ -89,6 +91,7 @@ pipeline {
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
                     stash name: "cypress-results", includes: "cypress-results/**"
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
+                    archiveArtifacts artifacts: 'cypress-results/**', fingerprint: true
 
                   }
                   finally {

@@ -6,6 +6,7 @@
   "video": true,
   "reporterOptions": {
     "mochaFile": "results/cypress-report-[hash].xml",
+    "jenkinsMode": true,
     "toConsole": true
   }
 }

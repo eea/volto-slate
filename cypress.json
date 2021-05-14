@@ -7,7 +7,6 @@
   "reporterOptions": {
     "mochaFile": "results/cypress-report-[hash].xml",
     "jenkinsMode": true,
-    "rootSuiteTitle": "Integration Tests",
     "toConsole": true
   }
 }

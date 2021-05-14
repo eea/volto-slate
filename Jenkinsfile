@@ -100,7 +100,9 @@ pipeline {
                     
                     sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
                     sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
-                    variable_s = sh script: " docker ps -a; docker rm -v $BUILD_TAG-cypress; docker ps -a", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
+                    sh script: "docker ps -a", returnStatus: true
+
                   }
                 }
               }
@@ -185,7 +187,7 @@ pipeline {
       }           
       catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
            unstash "cypress-results"
-           junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration'
+           junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true, checksName: 'Integration'
       } 
       cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
     }

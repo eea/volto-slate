@@ -64,7 +64,10 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
+                  
+                  catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
+                  } 
                   sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
               }
@@ -90,13 +93,17 @@ pipeline {
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
                     stash name: "cypress-reports", includes: "cypress-reports/**/*"
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
+                    sh '''ls -ltr cypress-results/*'''
                     stash name: "cypress-results", includes: "cypress-results/**"
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
                     archiveArtifacts artifacts: 'cypress-results/**', fingerprint: true
 
                   }
                   finally {
-                    junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                      junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
+                    } 
+                    
                     sh script: '''docker stop $BUILD_TAG-plone''', returnStatus: true
                     sh script: '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
                     sh script: '''docker rm -v $BUILD_TAG-cypress''', returnStatus: true

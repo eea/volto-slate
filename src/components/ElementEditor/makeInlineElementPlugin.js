@@ -26,6 +26,7 @@ export const makeInlineElementPlugin = (options) => {
     'isInlineElement',
     'editSchema',
     'element',
+    'persistentHelper',
   ];
 
   const pluginOptions = {
@@ -59,6 +60,7 @@ export const makeInlineElementPlugin = (options) => {
   PersistentHelper.id = pluginId;
 
   const ElementContextButtons = makeContextButtons(pluginOptions);
+  ElementContextButtons.id = pluginId;
 
   const install = (config) => {
     const { slate } = config.settings;
@@ -93,5 +95,5 @@ export const makeInlineElementPlugin = (options) => {
     return config;
   };
 
-  return [install, ElementContextButtons, PersistentHelper];
+  return [install, ElementContextButtons, PersistentHelper, pluginOptions];
 };

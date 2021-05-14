@@ -55,11 +55,17 @@ export const _insertElement = (elementType) => (editor, data) => {
 
 export const _unwrapElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.getSavedSelection();
+  // console.log(editor, editor);
+  const ref = Editor.rangeRef(editor, selection);
   Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === elementType,
     at: selection,
   });
+  const current = ref.current;
+  console.log('current', JSON.stringify(current));
+  ref.unref();
+  return current;
 };
 
 export const _isActiveElement = (elementType) => (editor) => {

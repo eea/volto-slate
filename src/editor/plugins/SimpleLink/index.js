@@ -1,5 +1,12 @@
 import React from 'react';
-import { makeInlineElementPlugin } from 'volto-slate/components/ElementEditor';
+// import { makeInlineElementPlugin } from 'volto-slate/components/ElementEditor';
+import { useSlate } from 'slate-react';
+import {
+  _insertElement,
+  _unwrapElement,
+  _isActiveElement,
+  _getActiveElement,
+} from 'volto-slate/components/ElementEditor/utils';
 import { SIMPLELINK, LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
 import { defineMessages } from 'react-intl'; // , defineMessages
@@ -8,9 +15,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
 import { FixedToolbar } from 'volto-slate/editor/ui';
 import { ReactEditor } from 'slate-react';
+import { Range } from 'slate';
 import { Transforms } from 'slate';
 import linkSVG from '@plone/volto/icons/link.svg';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
+import { ToolbarButton as UIToolbarButton } from 'volto-slate/editor/ui';
 
 const linkDeserializer = () => {};
 
@@ -25,9 +34,31 @@ const messages = defineMessages({
   },
 });
 
+function getPositionStyle(el) {
+  const domSelection = window.getSelection();
+  if (domSelection.rangeCount < 1) {
+    return {};
+  }
+  const domRange = domSelection.getRangeAt(0);
+  const rect = domRange.getBoundingClientRect();
+
+  return {
+    style: {
+      opacity: 1,
+      top: rect.top + window.pageYOffset - 6,
+      left: rect.left + window.pageXOffset + rect.width / 2,
+    },
+  };
+}
+
 const SimpleLinkEditor = (props) => {
-  // console.log('simple', props);
-  const { editor, pluginId, getActiveElement } = props;
+  const {
+    editor,
+    pluginId,
+    getActiveElement,
+    unwrapElement,
+    insertElement,
+  } = props;
   const showEditor = useSelector((state) => {
     return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
   });
@@ -39,26 +70,34 @@ const SimpleLinkEditor = (props) => {
 
   const selection = JSON.parse(JSON.stringify(editor.selection));
   const active = getActiveElement(editor);
+  const [node] = active || [];
 
-  // Hide the editor when switching to another text element
-  React.useEffect(() => {
-    if (!active)
-      dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-  }, [active, dispatch, pluginId]);
+  const position = showEditor && getPositionStyle();
 
-  return showEditor && active ? (
-    <FixedToolbar className="add-link">
+  return showEditor ? ( //  && active
+    <FixedToolbar className="add-link" position={position}>
       <AddLinkForm
         block="draft-js"
         placeholder={'Add link'}
-        data={{ url: '' }}
+        data={{ url: node?.data?.url || '' }}
+        theme={{}}
         onChangeValue={(url) => {
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          // console.log('got url', url);
           editor.savedSelection = selection;
           editor.selection = selection;
+          if (!active) {
+            insertElement(editor, { url });
+          } else {
+            const selection = unwrapElement(editor);
+            editor.selection = selection;
+            insertElement(editor, { url });
+          }
           ReactEditor.focus(editor);
+          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
         onClear={() => {
+          unwrapElement(editor);
+          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
           console.log('clear');
         }}
         onOverrideContent={(c) => {
@@ -76,33 +115,71 @@ export default (config) => {
 
   const PLUGINID = SIMPLELINK;
 
-  slate.toolbarButtons = slate.toolbarButtons.filter((b) => b !== LINK);
-  slate.toolbarButtons = slate.toolbarButtons.slice(0, 2).concat([PLUGINID]);
+  const linkBtnIndex = slate.toolbarButtons.findIndex((b) => b === LINK);
   slate.expandedToolbarButtons = slate.expandedToolbarButtons.filter(
     (b) => b !== LINK,
   );
 
-  slate.htmlTagsToSlate.A = linkDeserializer;
+  const insertElement = _insertElement(PLUGINID);
+  const getActiveElement = _getActiveElement(PLUGINID);
+  const isActiveElement = _isActiveElement(PLUGINID);
+  const unwrapElement = _unwrapElement(PLUGINID);
 
-  const opts = {
-    title: 'SimpleLink',
-    pluginId: PLUGINID,
-    elementType: PLUGINID,
-    element: LinkElement,
-    isInlineElement: true,
-    // editSchema: LinkEditSchema,
-    extensions: [withSimpleLink],
-    hasValue: (formData) => !!formData.link,
-    toolbarButtonIcon: linkSVG,
-    usePersistentHelper: false,
-    persistentHelper: (pluginOptions) => (props) => (
-      <SimpleLinkEditor {...props} {...pluginOptions} />
-    ),
-    messages,
+  const ToolbarButton = (props) => {
+    const dispatch = useDispatch();
+    const editor = useSlate();
+    const isElement = isActiveElement(editor);
+
+    return (
+      <UIToolbarButton
+        title="Simple Link"
+        icon={linkSVG}
+        active={isElement}
+        onMouseDown={() => {
+          // if (!isElement) insertElement(editor, {});
+          editor.savedSelection = JSON.parse(JSON.stringify(editor.selection));
+          dispatch(setPluginOptions(PLUGINID, { show_sidebar_editor: true }));
+        }}
+      />
+    );
   };
 
-  const [installLinkEditor] = makeInlineElementPlugin(opts);
-  config = installLinkEditor(config);
+  const pluginOptions = {
+    insertElement,
+    getActiveElement,
+    isActiveElement,
+    unwrapElement,
+  };
+
+  slate.buttons[PLUGINID] = ToolbarButton;
+  slate.toolbarButtons[linkBtnIndex] = PLUGINID;
+  slate.htmlTagsToSlate.A = linkDeserializer;
+  slate.extensions.push(withSimpleLink);
+  slate.elements[PLUGINID] = LinkElement;
+  slate.nodeTypesToHighlight.push(PLUGINID);
+  slate.persistentHelpers.push((props) => (
+    <SimpleLinkEditor {...props} pluginId={PLUGINID} {...pluginOptions} />
+  ));
+
+  // slate.persistentHelpers =
+  // const opts = {
+  //   title: 'SimpleLink',
+  //   pluginId: PLUGINID,
+  //   elementType: PLUGINID,
+  //   element: LinkElement,
+  //   isInlineElement: true,
+  //   // editSchema: LinkEditSchema,
+  //   extensions: [withSimpleLink],
+  //   hasValue: (formData) => !!formData.link,
+  //   toolbarButtonIcon: linkSVG,
+  //   persistentHelper: (pluginOptions) => (props) => (
+  //     <SimpleLinkEditor {...props} {...pluginOptions} />
+  //   ),
+  //   messages,
+  // };
+  //
+  // const [installLinkEditor] = makeInlineElementPlugin(opts);
+  // config = installLinkEditor(config);
 
   return config;
 };

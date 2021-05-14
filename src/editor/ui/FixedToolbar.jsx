@@ -1,47 +1,32 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Portal } from 'react-portal';
 
 import BasicToolbar from './BasicToolbar';
 
-const FixedToolbar = ({ toggleButton, className, children }) => {
-  const ref = useRef();
-  // const editor = useSlate();
-  const [positioned, setPositioned] = React.useState();
+const FixedToolbar = ({ toggleButton, className, children, position }) => {
+  const ref = React.useRef();
+  const oldPosition = React.useRef();
 
-  useEffect(() => {
+  React.useEffect(() => {
+    if (!oldPosition.current) {
+      oldPosition.current = position;
+    }
     const el = ref.current;
 
-    if ((children || []).length === 0) {
-      el.removeAttribute('style');
-      return;
-    }
+    // if ((children || []).length === 0) {
+    //   el.removeAttribute('style');
+    //   return;
+    // }
 
-    const domSelection = window.getSelection();
-    if (domSelection.rangeCount < 1) {
-      // don't do anything here, this happens when opening a focus-stealing
-      // component, in which case we actually want to keep the toolbar open
-      // See
-      // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
-      return;
-    }
+    const { style } = position || {};
+    const left = `${Math.max(style.left - el.offsetWidth / 2, 0)}px`;
+    const top = `${style.top - el.offsetHeight}px`;
+    // console.log('moving to', left, top);
 
-    if (!positioned) {
-      setTimeout(() => {
-        setPositioned(true);
-        const domRange = domSelection.getRangeAt(0);
-        const rect = domRange.getBoundingClientRect();
-
-        el.style.opacity = 1;
-        el.style.top = `${
-          rect.top + window.pageYOffset - el.offsetHeight - 6
-        }px`;
-        el.style.left = `${Math.max(
-          rect.left + window.pageXOffset - el.offsetWidth / 2 + rect.width / 2,
-          0, // if the left edge of the toolbar should be otherwise offscreen
-        )}px`;
-      }, 10);
-    }
-  }, [setPositioned, children, positioned]);
+    el.style.opacity = style.opacity;
+    el.style.top = top;
+    el.style.left = left;
+  });
 
   return (
     <Portal>

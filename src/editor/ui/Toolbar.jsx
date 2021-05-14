@@ -35,7 +35,6 @@ const Toolbar = ({
     }
 
     const domSelection = window.getSelection();
-    console.log('dom seletion', domSelection, domSelection.rangeCount);
     if (domSelection.rangeCount < 1) {
       // don't do anything here, this happens when opening a focus-stealing
       // component, in which case we actually want to keep the toolbar open

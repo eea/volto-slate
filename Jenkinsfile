@@ -64,7 +64,8 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  sh '''echo $(docker rm -v $BUILD_TAG-volto)'''
+                  junit 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
+                  sh '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
               }
             }
@@ -95,9 +96,10 @@ pipeline {
 
                   }
                   finally {
-                    sh '''docker stop $BUILD_TAG-plone''', returnStatus:true
-                    sh '''docker rm -v $BUILD_TAG-plone''', returnStatus:true
-                    sh '''docker rm -v $BUILD_TAG-cypress''', returnStatus:true
+                    junit 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
+                    sh '''docker stop $BUILD_TAG-plone''', returnStatus: true
+                    sh '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
+                    sh '''docker rm -v $BUILD_TAG-cypress''', returnStatus: true
                   }
                 }
               }
@@ -175,31 +177,6 @@ pipeline {
 
   post {
     always {
-      script{
-        try{
-          sh '''mkdir -p junit'''
-          try {
-            unstash "xunit-reports"
-            sh '''cp -p xunit-reports/*.xml junit/'''   
-            junit 'junit/*.xml'
-          }
-          catch (Exception e) {
-            sh '''echo "No Unit Tests junit results"'''
-          }
-        
-          try {
-            unstash "cypress-results"
-            sh '''cp -p cypress-results/*.xml junit/''' 
-            junit 'junit/*.xml'      
-          }
-          catch (Exception e) {
-            sh '''echo "No cypress junit results"'''
-          }
-        }
-        catch (Exception e) {
-          sh '''echo "No junit results"'''
-        }
-      }
       cleanWs(cleanWhenAborted: true, cleanWhenFailure: true, cleanWhenNotBuilt: true, cleanWhenSuccess: true, cleanWhenUnstable: true, deleteDirs: true)
     }
     changed {

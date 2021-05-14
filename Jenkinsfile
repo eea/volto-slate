@@ -64,8 +64,8 @@ pipeline {
                     reportTitles: 'Unit Tests Code Coverage'
                   ])
                 } finally {
-                  junit 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
-                  sh '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
+                  junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
+                  sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
               }
             }
@@ -96,10 +96,10 @@ pipeline {
 
                   }
                   finally {
-                    junit 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
-                    sh '''docker stop $BUILD_TAG-plone''', returnStatus: true
-                    sh '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
-                    sh '''docker rm -v $BUILD_TAG-cypress''', returnStatus: true
+                    junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
+                    sh script: '''docker stop $BUILD_TAG-plone''', returnStatus: true
+                    sh script: '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
+                    sh script: '''docker rm -v $BUILD_TAG-cypress''', returnStatus: true
                   }
                 }
               }

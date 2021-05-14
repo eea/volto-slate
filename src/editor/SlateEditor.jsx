@@ -35,6 +35,7 @@ const Toolbar = (props) => {
 
   return isRangeSelection || hasDomSelection ? (
     <SlateToolbar
+      enableExpando={slate.enableExpandedToolbar}
       className={className}
       selected={true}
       showExpandedToolbar={showExpandedToolbar}

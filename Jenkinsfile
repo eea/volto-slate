@@ -66,7 +66,7 @@ pipeline {
                 } finally {
                   
                   catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                    junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit Tests'
+                    junit testResults: 'xunit-reports/junit.xml', allowEmptyResults: true, checksName: 'Unit'
                   } 
                   sh script: '''docker rm -v $BUILD_TAG-volto''', returnStatus: true
                 }
@@ -102,12 +102,12 @@ pipeline {
                   }
                   finally {
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                      junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration Tests'
+                      junit testResults: 'cypress-results/*.xml', allowEmptyResults: true, checksName: 'Integration'
                     } 
                     
                     sh script: '''docker stop $BUILD_TAG-plone''', returnStatus: true
                     sh script: '''docker rm -v $BUILD_TAG-plone''', returnStatus: true
-                    sh script: '''docker ps; docker ps -a; docker rm -v $BUILD_TAG-cypress''', returnStatus: true
+                    variable_s = sh script: '''docker ps; docker ps -a; docker rm -v $BUILD_TAG-cypress; docker ps -a''', returnStatus: true
                   }
                 }
               }

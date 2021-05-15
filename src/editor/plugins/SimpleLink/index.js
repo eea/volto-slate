@@ -63,12 +63,8 @@ const SimpleLinkEditor = (props) => {
     return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
   });
 
-  // const showEditor = React.useState(false);
-  // editor.isSidebarOpen = showEditor && active;
-
   const dispatch = useDispatch();
 
-  const selection = JSON.parse(JSON.stringify(editor.selection));
   const active = getActiveElement(editor);
   const [node] = active || [];
 
@@ -82,9 +78,6 @@ const SimpleLinkEditor = (props) => {
         data={{ url: node?.data?.url || '' }}
         theme={{}}
         onChangeValue={(url) => {
-          // console.log('got url', url);
-          editor.savedSelection = selection;
-          editor.selection = selection;
           if (!active) {
             insertElement(editor, { url });
           } else {

@@ -10,4 +10,4 @@ export SlateToolbar from './SlateToolbar';
 export Toolbar from './Toolbar';
 export ToolbarButton from './ToolbarButton';
 export MarkElementButton from './MarkElementButton';
-export FixedToolbar from './FixedToolbar';
+export PositionedToolbar from './PositionedToolbar';

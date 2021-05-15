@@ -63,7 +63,6 @@ export const _unwrapElement = (elementType) => (editor) => {
     at: selection,
   });
   const current = ref.current;
-  console.log('current', JSON.stringify(current));
   ref.unref();
   return current;
 };

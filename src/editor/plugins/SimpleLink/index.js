@@ -9,30 +9,30 @@ import {
 } from 'volto-slate/components/ElementEditor/utils';
 import { SIMPLELINK, LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
-import { defineMessages } from 'react-intl'; // , defineMessages
+// import { defineMessages } from 'react-intl'; // , defineMessages
 import { withSimpleLink } from './extensions';
 import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
-import { FixedToolbar } from 'volto-slate/editor/ui';
+import { PositionedToolbar } from 'volto-slate/editor/ui';
 import { ReactEditor } from 'slate-react';
-import { Range } from 'slate';
-import { Transforms } from 'slate';
+// import { Range } from 'slate';
+// import { Transforms } from 'slate';
 import linkSVG from '@plone/volto/icons/link.svg';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import { ToolbarButton as UIToolbarButton } from 'volto-slate/editor/ui';
 
 const linkDeserializer = () => {};
 
-const messages = defineMessages({
-  edit: {
-    id: 'Edit link',
-    defaultMessage: 'Edit link',
-  },
-  delete: {
-    id: 'Remove link',
-    defaultMessage: 'Remove link',
-  },
-});
+// const messages = defineMessages({
+//   edit: {
+//     id: 'Edit link',
+//     defaultMessage: 'Edit link',
+//   },
+//   delete: {
+//     id: 'Remove link',
+//     defaultMessage: 'Remove link',
+//   },
+// });
 
 function getPositionStyle(el) {
   const domSelection = window.getSelection();
@@ -75,7 +75,7 @@ const SimpleLinkEditor = (props) => {
   const position = showEditor && getPositionStyle();
 
   return showEditor ? ( //  && active
-    <FixedToolbar className="add-link" position={position}>
+    <PositionedToolbar className="add-link" position={position}>
       <AddLinkForm
         block="draft-js"
         placeholder={'Add link'}
@@ -96,15 +96,22 @@ const SimpleLinkEditor = (props) => {
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
         onClear={() => {
-          unwrapElement(editor);
+          const selection = unwrapElement(editor);
+          editor.selection = selection;
+          ReactEditor.focus(editor);
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-          console.log('clear');
+          // console.log('clear');
         }}
         onOverrideContent={(c) => {
-          console.log('on overridden', c);
+          // console.log('on overridden', c);
+          if (!active) {
+            dispatch(
+              setPluginOptions(pluginId, { show_sidebar_editor: false }),
+            );
+          }
         }}
       />
-    </FixedToolbar>
+    </PositionedToolbar>
   ) : (
     ''
   );

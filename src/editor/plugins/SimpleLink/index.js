@@ -87,18 +87,23 @@ const SimpleLinkEditor = (props) => {
         }}
         onClear={() => {
           const selection = unwrapElement(editor);
+          editor.savedSelection = undefined;
           editor.selection = selection;
           ReactEditor.focus(editor);
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
           // console.log('clear');
         }}
         onOverrideContent={(c) => {
-          // console.log('on overridden', c);
-          if (!active) {
-            dispatch(
-              setPluginOptions(pluginId, { show_sidebar_editor: false }),
-            );
-          }
+          editor.savedSelection = undefined;
+          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+
+          // const active = getActiveElement(editor);
+          // console.log('on overridden', active);
+          // if (!active) {
+          //   dispatch(
+          //     setPluginOptions(pluginId, { show_sidebar_editor: false }),
+          //   );
+          // }
         }}
       />
     </PositionedToolbar>

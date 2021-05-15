@@ -1,5 +1,4 @@
 import React from 'react';
-// import { makeInlineElementPlugin } from 'volto-slate/components/ElementEditor';
 import { useSlate } from 'slate-react';
 import {
   _insertElement,
@@ -9,30 +8,28 @@ import {
 } from 'volto-slate/components/ElementEditor/utils';
 import { SIMPLELINK, LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
-// import { defineMessages } from 'react-intl'; // , defineMessages
+import { defineMessages } from 'react-intl'; // , defineMessages
 import { withSimpleLink } from './extensions';
 import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
 import { PositionedToolbar } from 'volto-slate/editor/ui';
 import { ReactEditor } from 'slate-react';
-// import { Range } from 'slate';
-// import { Transforms } from 'slate';
 import linkSVG from '@plone/volto/icons/link.svg';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import { ToolbarButton as UIToolbarButton } from 'volto-slate/editor/ui';
 
 const linkDeserializer = () => {};
 
-// const messages = defineMessages({
-//   edit: {
-//     id: 'Edit link',
-//     defaultMessage: 'Edit link',
-//   },
-//   delete: {
-//     id: 'Remove link',
-//     defaultMessage: 'Remove link',
-//   },
-// });
+const messages = defineMessages({
+  add: {
+    id: 'Add link',
+    defaultMessage: 'Add link',
+  },
+  edit: {
+    id: 'Edit link',
+    defaultMessage: 'Edit link',
+  },
+});
 
 function getPositionStyle(el) {
   const domSelection = window.getSelection();
@@ -132,7 +129,7 @@ export default (config) => {
 
     return (
       <UIToolbarButton
-        title="Simple Link"
+        title={isElement ? messages.edit : messages.add}
         icon={linkSVG}
         active={isElement}
         onMouseDown={() => {
@@ -160,26 +157,6 @@ export default (config) => {
   slate.persistentHelpers.push((props) => (
     <SimpleLinkEditor {...props} pluginId={PLUGINID} {...pluginOptions} />
   ));
-
-  // slate.persistentHelpers =
-  // const opts = {
-  //   title: 'SimpleLink',
-  //   pluginId: PLUGINID,
-  //   elementType: PLUGINID,
-  //   element: LinkElement,
-  //   isInlineElement: true,
-  //   // editSchema: LinkEditSchema,
-  //   extensions: [withSimpleLink],
-  //   hasValue: (formData) => !!formData.link,
-  //   toolbarButtonIcon: linkSVG,
-  //   persistentHelper: (pluginOptions) => (props) => (
-  //     <SimpleLinkEditor {...props} {...pluginOptions} />
-  //   ),
-  //   messages,
-  // };
-  //
-  // const [installLinkEditor] = makeInlineElementPlugin(opts);
-  // config = installLinkEditor(config);
 
   return config;
 };

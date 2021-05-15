@@ -25,6 +25,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
 };
 
 export const Leaf = ({ children, ...rest }) => {
+  // console.log('rest', rest, children);
   const { attributes, leaf, mode } = rest;
   let { leafs } = config.settings.slate;
 
@@ -34,7 +35,7 @@ export const Leaf = ({ children, ...rest }) => {
       : acc;
   }, children);
 
-  const obj = {
+  const classNames = {
     [`highlight-${leaf.highlightType}`]: mode !== 'view' && leaf.highlight,
     'highlight-selection': mode !== 'view' && leaf.isSelection,
   };
@@ -42,11 +43,11 @@ export const Leaf = ({ children, ...rest }) => {
   // stylemenu support
   for (const prop in leaf) {
     if (prop.startsWith('style-')) {
-      obj[prop.substring(6)] = true;
+      classNames[prop.substring(6)] = true;
     }
   }
 
-  const klass = cx(obj);
+  const klass = cx(classNames);
 
   return mode === 'view' ? (
     typeof children === 'string' ? (
@@ -118,8 +119,9 @@ export const serializeNodes = (nodes, getAttributes) => {
 /**
  * Get the concatenated text string of a node's content.
  *
- * Note that this WILL include spaces between block node leaves in contrary to the original slate method.
- * This function joins text of nodes with separating spaces to produce a string for indexing purposes.
+ * Note that this WILL include spaces between block node leaves in contrary to
+ * the original slate method. This function joins text of nodes with
+ * separating spaces to produce a string for indexing purposes.
  *
  */
 const ConcatenatedString = (node) => {

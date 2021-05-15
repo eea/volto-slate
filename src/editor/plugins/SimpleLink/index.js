@@ -59,16 +59,19 @@ const SimpleLinkEditor = (props) => {
   const showEditor = useSelector((state) => {
     return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
   });
+  const savedPosition = React.useRef();
 
   const dispatch = useDispatch();
 
   const active = getActiveElement(editor);
   const [node] = active || [];
 
-  const position = showEditor && getPositionStyle();
+  if (showEditor && !savedPosition.current) {
+    savedPosition.current = getPositionStyle();
+  }
 
   return showEditor ? ( //  && active
-    <PositionedToolbar className="add-link" position={position}>
+    <PositionedToolbar className="add-link" position={savedPosition.current}>
       <AddLinkForm
         block="draft-js"
         placeholder={'Add link'}
@@ -91,19 +94,9 @@ const SimpleLinkEditor = (props) => {
           editor.selection = selection;
           ReactEditor.focus(editor);
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-          // console.log('clear');
         }}
         onOverrideContent={(c) => {
-          editor.savedSelection = undefined;
-          // dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-
-          const active = getActiveElement(editor);
-          // console.log('on overridden', active);
-          if (!active) {
-            dispatch(
-              setPluginOptions(pluginId, { show_sidebar_editor: false }),
-            );
-          }
+          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
       />
     </PositionedToolbar>

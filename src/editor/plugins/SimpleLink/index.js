@@ -95,15 +95,15 @@ const SimpleLinkEditor = (props) => {
         }}
         onOverrideContent={(c) => {
           editor.savedSelection = undefined;
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          // dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
 
-          // const active = getActiveElement(editor);
+          const active = getActiveElement(editor);
           // console.log('on overridden', active);
-          // if (!active) {
-          //   dispatch(
-          //     setPluginOptions(pluginId, { show_sidebar_editor: false }),
-          //   );
-          // }
+          if (!active) {
+            dispatch(
+              setPluginOptions(pluginId, { show_sidebar_editor: false }),
+            );
+          }
         }}
       />
     </PositionedToolbar>

@@ -15,6 +15,7 @@ import { setPluginOptions } from 'volto-slate/actions';
 import { PositionedToolbar } from 'volto-slate/editor/ui';
 import { ReactEditor } from 'slate-react';
 import linkSVG from '@plone/volto/icons/link.svg';
+import unlinkSVG from '@plone/volto/icons/unlink.svg';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import { ToolbarButton as UIToolbarButton } from 'volto-slate/editor/ui';
 
@@ -132,7 +133,7 @@ export default (config) => {
     return (
       <UIToolbarButton
         title={isElement ? messages.edit : messages.add}
-        icon={linkSVG}
+        icon={isElement ? unlinkSVG : linkSVG}
         active={isElement}
         onMouseDown={() => {
           // if (!isElement) insertElement(editor, {});

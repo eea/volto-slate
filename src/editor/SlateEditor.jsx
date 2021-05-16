@@ -219,6 +219,7 @@ class SlateEditor extends Component {
         })}
       >
         {/* {JSON.stringify(this.state.hasDomSelection)} */}
+        {/* {JSON.stringify(hasRangeSelection(editor, false))} */}
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
@@ -246,7 +247,7 @@ class SlateEditor extends Component {
               decorate={this.multiDecorator}
               spellCheck={false}
               onClick={() => {
-                this.setState({ update: true }); // needed, triggers re-render
+                this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
               }}
               onMouseDown={() => {
                 this.mouseDown = true;

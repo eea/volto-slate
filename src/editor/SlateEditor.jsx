@@ -218,6 +218,7 @@ class SlateEditor extends Component {
           selected,
         })}
       >
+        {/* {JSON.stringify(this.state.hasDomSelection)} */}
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}

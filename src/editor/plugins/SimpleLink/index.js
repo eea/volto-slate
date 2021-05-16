@@ -1,5 +1,8 @@
 import React from 'react';
-import { useSlate } from 'slate-react';
+import { defineMessages } from 'react-intl'; // , defineMessages
+import { ReactEditor, useSlate } from 'slate-react';
+import { useSelector, useDispatch } from 'react-redux';
+import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
 import {
   _insertElement,
   _unwrapElement,
@@ -8,16 +11,15 @@ import {
 } from 'volto-slate/components/ElementEditor/utils';
 import { SIMPLELINK, LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
-import { defineMessages } from 'react-intl'; // , defineMessages
 import { withSimpleLink } from './extensions';
-import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
-import { PositionedToolbar } from 'volto-slate/editor/ui';
-import { ReactEditor } from 'slate-react';
+import {
+  ToolbarButton as UIToolbarButton,
+  PositionedToolbar,
+} from 'volto-slate/editor/ui';
+
 import linkSVG from '@plone/volto/icons/link.svg';
 import unlinkSVG from '@plone/volto/icons/unlink.svg';
-import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
-import { ToolbarButton as UIToolbarButton } from 'volto-slate/editor/ui';
 
 const linkDeserializer = () => {};
 
@@ -92,10 +94,6 @@ const SimpleLinkEditor = (props) => {
         }}
         onClear={() => {
           unwrapElement(editor);
-          // editor.savedSelection = undefined;
-          // editor.selection = selection;
-          // ReactEditor.focus(editor);
-          // dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
           // console.log('clear');
         }}
         onOverrideContent={(c) => {

@@ -78,6 +78,7 @@ const SimpleLinkEditor = (props) => {
         data={{ url: node?.data?.url || '' }}
         theme={{}}
         onChangeValue={(url) => {
+          // console.log('change value', url);
           if (!active) {
             insertElement(editor, { url });
           } else {
@@ -89,13 +90,16 @@ const SimpleLinkEditor = (props) => {
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
         onClear={() => {
-          const selection = unwrapElement(editor);
-          editor.savedSelection = undefined;
-          editor.selection = selection;
-          ReactEditor.focus(editor);
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          unwrapElement(editor);
+          // editor.savedSelection = undefined;
+          // editor.selection = selection;
+          // ReactEditor.focus(editor);
+          // dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          // console.log('clear');
         }}
         onOverrideContent={(c) => {
+          // console.log('override', c);
+          // editor.savedSelection = undefined;
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
       />

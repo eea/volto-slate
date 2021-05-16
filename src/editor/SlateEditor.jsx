@@ -31,7 +31,7 @@ const Toolbar = (props) => {
     hasDomSelection,
   } = props;
   const { slate } = config.settings;
-  const isRangeSelection = hasRangeSelection(editor);
+  const isRangeSelection = hasRangeSelection(editor, false);
 
   return isRangeSelection || hasDomSelection ? (
     <SlateToolbar

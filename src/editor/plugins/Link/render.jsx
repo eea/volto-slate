@@ -10,7 +10,7 @@ const formatLink = (str, obj) => {
   let newStr = str;
   if (!str || typeof str !== 'string') return str;
   Object.keys(obj || {}).forEach((key) => {
-    newStr = newStr.replaceAll(`{${key}}`, obj[key]);
+    newStr = newStr.replace(`/{${key}}/g`, obj[key]);
   });
   return newStr;
 };

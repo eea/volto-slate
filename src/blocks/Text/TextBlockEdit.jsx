@@ -32,7 +32,7 @@ import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
-// const DEBUG = true;
+const DEBUG = false;
 
 const TextBlockEdit = (props) => {
   const {

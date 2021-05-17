@@ -69,12 +69,19 @@ export const _unwrapElement = (elementType) => (editor) => {
 
 export const _isActiveElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.getSavedSelection();
-  let found = Array.from(
-    Editor.nodes(editor, {
-      match: (n) => n.type === elementType,
-      at: selection,
-    }) || [],
-  );
+  let found;
+  try {
+    found = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => n.type === elementType,
+        at: selection,
+      }) || [],
+    );
+  } catch (e) {
+    // eslint-disable-next-line
+    console.error('Error in finding active element', e);
+    return false;
+  }
   if (found.length) return true;
 
   if (selection) {

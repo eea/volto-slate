@@ -39,8 +39,14 @@ export function backspaceInList({ editor, event }) {
     if (data?.required) return;
 
     // Raise all LI-s as direct children of the editor.
+    // TODO: add check for path depth
+    // Error: Cannot lift node at a path [0] because it has a depth of less
+    // than `2`.
     Transforms.liftNodes(editor, {
-      match: (n) => n.type === slate.listItemType,
+      match: (n, path) => {
+        // console.log('lift', n, path);
+        return path.length > 1 && n.type === slate.listItemType;
+      },
     });
 
     // Convert all the selection to be of type `slate.defaultBlockType` (by

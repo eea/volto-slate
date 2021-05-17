@@ -169,6 +169,9 @@ export const toggleBlock = (editor, format) => {
  */
 export const toggleFormatAsListItem = (editor, format) => {
   const { slate } = config.settings;
+
+  // const pathRef = Editor.pathRef(editor, editor.selection);
+
   Transforms.unwrapNodes(editor, {
     match: (n) => slate.listTypes.includes(n.type),
     split: true,
@@ -177,6 +180,13 @@ export const toggleFormatAsListItem = (editor, format) => {
   Transforms.setNodes(editor, {
     type: format,
   });
+
+  Transforms.unwrapNodes(editor, {
+    match: (n) => n.type === slate.listItemType,
+    split: true,
+  });
+
+  // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
 
   deconstructToVoltoBlocks(editor);
 };

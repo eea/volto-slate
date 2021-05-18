@@ -172,19 +172,22 @@ export const toggleFormatAsListItem = (editor, format) => {
 
   // const pathRef = Editor.pathRef(editor, editor.selection);
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) => slate.listTypes.includes(n.type),
-    split: true,
-  });
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => slate.listTypes.includes(n.type),
+  //   split: true,
+  //   mode: 'all',
+  // });
 
   Transforms.setNodes(editor, {
     type: format,
   });
 
-  Transforms.unwrapNodes(editor, {
-    match: (n) => n.type === slate.listItemType,
-    split: true,
-  });
+  Editor.normalize(editor);
+
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => n.type === slate.listItemType,
+  //   split: true,
+  // });
 
   // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
 

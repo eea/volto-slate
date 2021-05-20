@@ -101,7 +101,7 @@ pipeline {
                              reportTitles: 'Integration Tests Code Coverage'])
                     }
                     archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
-                    stash name: "cypress-coverage", includes: "cypress-coverage/**"
+                    stash name: "cypress-coverage", includes: "cypress-coverage/**", allowEmpty: true
                   }
                   finally {
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {

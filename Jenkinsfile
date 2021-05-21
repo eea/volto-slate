@@ -90,14 +90,12 @@ pipeline {
                     sh '''mkdir -p cypress-reports cypress-results cypress-coverage'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
-                    coverage = sh script: '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/coverage cypress-coverage''', returnStatus: true
-                    if ( coverage == 0 ) {
-                         
-                         sh '''ls -ltr cypress-coverage/*'''
+                    coverage = sh script: '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/coverage cypress-coverage/''', returnStatus: true
+                    if ( coverage == 0 ) {                         
                          publishHTML (target : [allowMissing: false,
                              alwaysLinkToLastBuild: true,
                              keepAll: true,
-                             reportDir: 'cypress-coverage/lcov-report',
+                             reportDir: 'cypress-coverage/coverage/lcov-report',
                              reportFiles: 'index.html',
                              reportName: 'CypressCoverage',
                              reportTitles: 'Integration Tests Code Coverage'])
@@ -139,11 +137,9 @@ pipeline {
             def scannerHome = tool 'SonarQubeScanner';
             def nodeJS = tool 'NodeJS11';
             withSonarQubeEnv('Sonarqube') {
-              sh '''ls -ltr cypress-coverage/*'''
-              sh '''ls -ltr xunit-reports/*'''
               sh '''sed -i "s#/opt/frontend/my-volto-project/src/addons/${GIT_NAME}/##g" xunit-reports/coverage/lcov.info'''
-              sh script: '''sed -i "s#/opt/frontend/my-volto-project/src/addons/${GIT_NAME}/##g" cypress-coverage/lcov.info''', returnStatus: true
-              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info,./cypress-coverage/lcov.info -Dsonar.sources=./src -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
+              sh script: '''sed -i "s#/opt/frontend/my-volto-project/src/addons/${GIT_NAME}/##g" cypress-coverage/coverage/lcov.info''', returnStatus: true
+              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info,./cypress-coverage/coverage/lcov.info -Dsonar.sources=./src -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
               sh '''try=2; while [ \$try -gt 0 ]; do curl -s -XPOST -u "${SONAR_AUTH_TOKEN}:" "${SONAR_HOST_URL}api/project_tags/set?project=${GIT_NAME}-${BRANCH_NAME}&tags=${SONARQUBE_TAGS},${BRANCH_NAME}" > set_tags_result; if [ \$(grep -ic error set_tags_result ) -eq 0 ]; then try=0; else cat set_tags_result; echo "... Will retry"; sleep 60; try=\$(( \$try - 1 )); fi; done'''
             }
           }

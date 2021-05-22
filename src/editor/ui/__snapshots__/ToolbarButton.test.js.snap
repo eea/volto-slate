@@ -9,6 +9,7 @@ exports[`ToolbarButton renders a toolbar button 1`] = `
       aria-pressed="false"
       class="ui tiny compact toggle button"
       role="button"
+      title=""
     />
   </div>
 </DocumentFragment>

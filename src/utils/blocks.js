@@ -168,10 +168,8 @@ export const toggleBlock = (editor, format) => {
  * block
  */
 export const toggleFormatAsListItem = (editor, format) => {
-  const { slate } = config.settings;
-
+  // const { slate } = config.settings;
   // const pathRef = Editor.pathRef(editor, editor.selection);
-
   // Transforms.unwrapNodes(editor, {
   //   match: (n) => slate.listTypes.includes(n.type),
   //   split: true,

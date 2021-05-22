@@ -30,6 +30,11 @@ const SlateToolbar = (props) => {
 
   function renderButton(name, index) {
     const Btn = buttons[name];
+    if (!Btn) {
+      // eslint-disable-next-line
+      console.warn('Button not found:', name);
+      return null;
+    }
     // using also name because some buttons can be like "Separator"
     return <Btn key={`${name}-${index}`} />;
   }

@@ -8,6 +8,7 @@ import RichTextWidget from './widgets/RichTextWidget';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
+import installSimpleLink from './editor/plugins/SimpleLink';
 
 export default (config) => {
   config = [
@@ -57,6 +58,10 @@ export function minimalDefault(config) {
   installCallout(config);
 
   return config;
+}
+
+export function simpleLink(config) {
+  return installSimpleLink(config);
 }
 
 export function asDefault(config) {

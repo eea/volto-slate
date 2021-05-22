@@ -4,7 +4,6 @@ import installLinkPlugin from './Link';
 import installMarkdown from './Markdown';
 import installTable from './Table';
 import installStyleMenu from './StyleMenu';
-import installSimpleLink from './SimpleLink';
 
 export default function install(config) {
   return [
@@ -14,6 +13,5 @@ export default function install(config) {
     installImage,
     installTable,
     installStyleMenu,
-    installSimpleLink,
   ].reduce((acc, apply) => apply(acc), config);
 }

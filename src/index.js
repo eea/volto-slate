@@ -7,6 +7,8 @@ import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 import HashLink from './editor/plugins/Link/AppExtras/HashLink';
+import installCallout from './editor/plugins/Callout';
+import installSimpleLink from './editor/plugins/SimpleLink';
 
 export default (config) => {
   config = [
@@ -38,6 +40,29 @@ export default (config) => {
 
   return config;
 };
+
+export function minimalDefault(config) {
+  config = asDefault(config);
+  config.settings.slate.toolbarButtons = [
+    'bold',
+    'italic',
+    'link',
+    'separator',
+    'heading-two',
+    'heading-three',
+    'numbered-list',
+    'bulleted-list',
+    'blockquote',
+  ];
+
+  installCallout(config);
+
+  return config;
+}
+
+export function simpleLink(config) {
+  return installSimpleLink(config);
+}
 
 export function asDefault(config) {
   config.settings.defaultBlockType = 'slate';

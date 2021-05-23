@@ -8,13 +8,10 @@ import {
 
 /**
  * Handle the new Volto blocks created by `deconstructToVoltoBlocks`.
- * @param {Editor} editor The Slate editor object as customized by the
- * volto-slate addon.
+ * @param {Editor} editor The Slate editor object
  * @param {string[]} newIds The IDs of the newly created Volto blocks.
  */
 const handleNewVoltoBlocks = (editor, newIds) => {
-  // Get the Edit component's props as received from Volto the last time it was
-  // rendered.
   const props = editor.getBlockProps();
   props.onSelectBlock(newIds[0]);
 };
@@ -29,7 +26,6 @@ export function backspaceInList({ editor, event }) {
   // If the cursor is not in a list, nothing special.
   if (!isCursorInList(editor)) return false;
 
-  // If the cursor is at list block start, do something different:
   if (isCursorAtListBlockStart(editor)) {
     const { slate } = config.settings;
     const blockProps = editor.getBlockProps();
@@ -39,8 +35,14 @@ export function backspaceInList({ editor, event }) {
     if (data?.required) return;
 
     // Raise all LI-s as direct children of the editor.
+    // TODO: add check for path depth
+    // Error: Cannot lift node at a path [0] because it has a depth of less
+    // than `2`.
     Transforms.liftNodes(editor, {
-      match: (n) => n.type === slate.listItemType,
+      match: (n, path) => {
+        // console.log('lift', n, path);
+        return path.length > 1 && n.type === slate.listItemType;
+      },
     });
 
     // Convert all the selection to be of type `slate.defaultBlockType` (by
@@ -50,6 +52,7 @@ export function backspaceInList({ editor, event }) {
     deconstructToVoltoBlocks(editor).then((newIds) => {
       handleNewVoltoBlocks(editor, newIds);
     });
+
     return true;
   }
 }

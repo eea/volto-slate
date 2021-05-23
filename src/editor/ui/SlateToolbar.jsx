@@ -23,12 +23,18 @@ const SlateToolbar = (props) => {
     showExpandedToolbar,
     setShowExpandedToolbar,
     className,
+    enableExpando = false,
   } = props;
   const { slate } = config.settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
 
   function renderButton(name, index) {
     const Btn = buttons[name];
+    if (!Btn) {
+      // eslint-disable-next-line
+      console.warn('Button not found:', name);
+      return null;
+    }
     // using also name because some buttons can be like "Separator"
     return <Btn key={`${name}-${index}`} />;
   }
@@ -38,15 +44,17 @@ const SlateToolbar = (props) => {
       {!showExpandedToolbar && (
         <Toolbar
           toggleButton={
-            <ToolbarButton
-              title="More..."
-              onMouseDown={(event) => {
-                setShowExpandedToolbar(!showExpandedToolbar);
-                event.preventDefault();
-              }}
-              icon={toggleIcon}
-              active={showExpandedToolbar}
-            />
+            enableExpando && (
+              <ToolbarButton
+                title="More..."
+                onMouseDown={(event) => {
+                  setShowExpandedToolbar(!showExpandedToolbar);
+                  event.preventDefault();
+                }}
+                icon={toggleIcon}
+                active={showExpandedToolbar}
+              />
+            )
           }
           className={className}
         >

@@ -20,6 +20,8 @@ import {
   withSplitBlocksOnBreak,
   withDeserializers,
   breakList,
+  // withParagraphs,
+  withLists,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
@@ -32,6 +34,7 @@ export default (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
+      withLists,
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
       withDeserializers,

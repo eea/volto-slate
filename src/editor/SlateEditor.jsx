@@ -31,10 +31,11 @@ const Toolbar = (props) => {
     hasDomSelection,
   } = props;
   const { slate } = config.settings;
-  const isRangeSelection = hasRangeSelection(editor);
+  const isRangeSelection = hasRangeSelection(editor, false);
 
   return isRangeSelection || hasDomSelection ? (
     <SlateToolbar
+      enableExpando={slate.enableExpandedToolbar}
       className={className}
       selected={true}
       showExpandedToolbar={showExpandedToolbar}
@@ -217,6 +218,8 @@ class SlateEditor extends Component {
           selected,
         })}
       >
+        {/* {JSON.stringify(this.state.hasDomSelection)} */}
+        {/* {JSON.stringify(hasRangeSelection(editor, false))} */}
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
@@ -244,7 +247,7 @@ class SlateEditor extends Component {
               decorate={this.multiDecorator}
               spellCheck={false}
               onClick={() => {
-                this.setState({ update: true }); // needed, triggers re-render
+                this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
               }}
               onMouseDown={() => {
                 this.mouseDown = true;

@@ -18,10 +18,10 @@ import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-/* coverage start
+/* coverage-start
 //Generate code-coverage
 import '@cypress/code-coverage/support';
-coverage end */
+coverage-end */
 
 export const slateBeforeEach = () => {
   cy.autologin();

@@ -89,7 +89,7 @@ pipeline {
                     sh '''rm -rf cypress-reports cypress-results cypress-coverage'''
                     sh '''mkdir -p cypress-reports cypress-results cypress-coverage'''
                     sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
-                    sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/results cypress-results/'''
+                    sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/reports cypress-results/'''
                     coverage = sh script: '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/coverage cypress-coverage/''', returnStatus: true
                     if ( coverage == 0 ) {                         
                          publishHTML (target : [allowMissing: false,

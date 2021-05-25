@@ -15,9 +15,13 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
-
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+/* coverage-start
+//Generate code-coverage
+import '@cypress/code-coverage/support';
+coverage-end */
 
 export const slateBeforeEach = () => {
   cy.autologin();

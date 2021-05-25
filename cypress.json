@@ -5,7 +5,8 @@
   "reporter": "junit",
   "video": true,
   "reporterOptions": {
-    "mochaFile": "results/cypress-report-[hash].xml",
+    "mochaFile": "cypress/reports/cypress-[hash].xml",
+    "jenkinsMode": true,
     "toConsole": true
   }
 }

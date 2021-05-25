@@ -64,7 +64,7 @@ export function highlightSelection(editor, [node, path], ranges) {
       }
     }
   }
-  // if (ranges.length) console.log('RANGES!', ranges);
+  // if (ranges.length) console.log('RANGES!', ranges, editor.children);
   // console.log(node, path, editor.savedSelection);
   return ranges;
 }

@@ -168,15 +168,26 @@ export const toggleBlock = (editor, format) => {
  * block
  */
 export const toggleFormatAsListItem = (editor, format) => {
-  const { slate } = config.settings;
-  Transforms.unwrapNodes(editor, {
-    match: (n) => slate.listTypes.includes(n.type),
-    split: true,
-  });
+  // const { slate } = config.settings;
+  // const pathRef = Editor.pathRef(editor, editor.selection);
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => slate.listTypes.includes(n.type),
+  //   split: true,
+  //   mode: 'all',
+  // });
 
   Transforms.setNodes(editor, {
     type: format,
   });
+
+  Editor.normalize(editor);
+
+  // Transforms.unwrapNodes(editor, {
+  //   match: (n) => n.type === slate.listItemType,
+  //   split: true,
+  // });
+
+  // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
 
   deconstructToVoltoBlocks(editor);
 };

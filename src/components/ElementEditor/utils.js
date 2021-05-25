@@ -55,21 +55,33 @@ export const _insertElement = (elementType) => (editor, data) => {
 
 export const _unwrapElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.getSavedSelection();
+  // console.log(editor, editor);
+  const ref = Editor.rangeRef(editor, selection);
   Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
     match: (n) => n.type === elementType,
     at: selection,
   });
+  const current = ref.current;
+  ref.unref();
+  return current;
 };
 
 export const _isActiveElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.getSavedSelection();
-  let found = Array.from(
-    Editor.nodes(editor, {
-      match: (n) => n.type === elementType,
-      at: selection,
-    }) || [],
-  );
+  let found;
+  try {
+    found = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => n.type === elementType,
+        at: selection,
+      }) || [],
+    );
+  } catch (e) {
+    // eslint-disable-next-line
+    console.error('Error in finding active element', e);
+    return false;
+  }
   if (found.length) return true;
 
   if (selection) {

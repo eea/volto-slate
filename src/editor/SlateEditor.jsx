@@ -30,7 +30,9 @@ const Toolbar = (props) => {
     setShowExpandedToolbar,
   } = props;
   const { slate } = config.settings;
-  const [showMainToolbar, setShowMainToolbar] = React.useState(false);
+  const [showMainToolbar, setShowMainToolbar] = React.useState(
+    !!editor.selection,
+  );
   React.useEffect(() => {
     const el = ReactEditor.toDOMNode(editor, editor);
     const toggleToolbar = () => {

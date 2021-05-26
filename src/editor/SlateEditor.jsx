@@ -12,7 +12,7 @@ import config from '@plone/volto/registry';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import {
-  hasRangeSelection,
+  // hasRangeSelection,
   toggleInlineFormat,
   toggleMark,
 } from 'volto-slate/utils';
@@ -28,16 +28,30 @@ const Toolbar = (props) => {
     className,
     showExpandedToolbar,
     setShowExpandedToolbar,
-    hasDomSelection,
   } = props;
   const { slate } = config.settings;
-  const isRangeSelection = hasRangeSelection(editor, false);
+  const [showMainToolbar, setShowMainToolbar] = React.useState(false);
+  React.useEffect(() => {
+    const el = ReactEditor.toDOMNode(editor, editor);
+    const toggleToolbar = () => {
+      const selection = window.getSelection();
+      const { activeElement } = window.document;
+      if (activeElement !== el) return;
+      if (!selection.isCollapsed && !showMainToolbar) {
+        setShowMainToolbar(true);
+      } else if (selection.isCollapsed && showMainToolbar) {
+        setShowMainToolbar(false);
+      }
+    };
+    window.document.addEventListener('selectionchange', toggleToolbar);
+    return () => document.removeEventListener('selectionchange', toggleToolbar);
+  }, [editor, showMainToolbar]);
 
-  return isRangeSelection || hasDomSelection ? (
+  return showMainToolbar ? (
     <SlateToolbar
-      enableExpando={slate.enableExpandedToolbar}
       className={className}
       selected={true}
+      enableExpando={slate.enableExpandedToolbar}
       showExpandedToolbar={showExpandedToolbar}
       setShowExpandedToolbar={setShowExpandedToolbar}
     />
@@ -230,11 +244,7 @@ class SlateEditor extends Component {
               <Toolbar
                 editor={editor}
                 className={className}
-                showExpandedToolbar={this.state.showExpandedToolbar}
                 hasDomSelection={this.state.hasDomSelection}
-                setShowExpandedToolbar={(value) =>
-                  this.setState({ showExpandedToolbar: value })
-                }
               />
             ) : (
               ''
@@ -262,14 +272,14 @@ class SlateEditor extends Component {
                   ((event.shiftKey && event.key !== 'Shift') ||
                     (event.ctrlKey && event.key === 'a'))
                 ) {
-                  this.setState({ hasDomSelection: true });
+                  // this.setState({ hasDomSelection: true });
                 } else if (
                   (this.state.hasDomSelection ||
                     event.key === 'Left' ||
                     event.key === 'Right') &&
                   !event.shiftKey
                 ) {
-                  this.setState({ hasDomSelection: false });
+                  // this.setState({ hasDomSelection: false });
                 }
 
                 let wasHotkey = false;

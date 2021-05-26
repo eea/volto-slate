@@ -160,6 +160,8 @@ const TextBlockEdit = (props) => {
   const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
   const schema = TextBlockSchema(data);
 
+  const disableNewBlocks = data?.disableNewBlocks || detached;
+
   return (
     <>
       <SidebarPortal selected={selected}>
@@ -248,7 +250,7 @@ const TextBlockEdit = (props) => {
           </Dropzone>
         )}
       </VisibilitySensor>
-      {!detached && !data.plaintext && !data.disableNewBlocks && (
+      {selected && !disableNewBlocks && !data.plaintext && (
         <Button
           basic
           icon

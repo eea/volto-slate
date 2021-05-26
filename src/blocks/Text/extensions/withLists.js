@@ -10,7 +10,7 @@ export const withLists = (editor) => {
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 
-    if (node.type === 'ol')
+    if (node.type === 'ol' || node.type === 'ul')
       if (Element.isElement(node) && slate.listTypes.includes(node.type)) {
         for (const [child, childPath] of Node.children(editor, path)) {
           if (!validListElements.includes(child.type)) {

@@ -17,7 +17,13 @@ const SidebarEditor = (props) => {
 
   const dispatch = useDispatch();
 
-  const active = getActiveElement(editor);
+  let active;
+  try {
+    active = getActiveElement(editor);
+  } catch {
+    // eslint-disable-next-line
+    console.warn("Error in getting active element", error);
+  }
 
   // Hide the editor when switching to another text element
   React.useEffect(() => {

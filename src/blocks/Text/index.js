@@ -22,6 +22,7 @@ import {
   breakList,
   // withParagraphs,
   withLists,
+  normalizeBlocks,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
@@ -39,6 +40,7 @@ export default (config) => {
       withDeleteSelectionOnEnter,
       withDeserializers,
       breakList,
+      normalizeBlocks,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />

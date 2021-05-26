@@ -152,10 +152,17 @@ class SlateEditor extends Component {
       'selectionchange',
       this.onDOMSelectionChange,
     );
-
     if (this.props.selected) {
-      if (!ReactEditor.isFocused(this.state.editor)) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
+      let focused = true;
+      try {
+        focused = ReactEditor.isFocused(this.state.editor);
+      } catch {}
+      if (!focused) {
+        setTimeout(() => {
+          try {
+            ReactEditor.focus(this.state.editor);
+          } catch {}
+        }, 10); // flush
       }
     }
   }

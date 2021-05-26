@@ -6,7 +6,7 @@ export const withSimpleLink = (editor) => {
   const { isInline } = editor;
 
   editor.isInline = (element) => {
-    return element.type === SIMPLELINK ? true : isInline(element);
+    return element && element.type === SIMPLELINK ? true : isInline(element);
   };
 
   // editor.insertText = (text) => {

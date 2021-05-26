@@ -49,7 +49,7 @@ volto-slate provides several optional configuration:
 - `asDefault` which makes the volto-slate as the default richtext block editor
 - `minimalDefault`, same as the above, but uses a set of toolbar buttons
   similar to Volto
-- `simplePlugin` reuses Volto's link plugin and makes for a better replacement
+- `simpleLink` reuses Volto's link plugin and makes for a better replacement
   of Volto's rich text editor.
 
 ## Features

@@ -12,7 +12,7 @@ import config from '@plone/volto/registry';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import {
-  // hasRangeSelection,
+  hasRangeSelection,
   toggleInlineFormat,
   toggleMark,
 } from 'volto-slate/utils';
@@ -31,7 +31,7 @@ const Toolbar = (props) => {
   } = props;
   const { slate } = config.settings;
   const [showMainToolbar, setShowMainToolbar] = React.useState(
-    !!editor.selection,
+    !!(editor.selection && hasRangeSelection(editor)),
   );
   React.useEffect(() => {
     const el = ReactEditor.toDOMNode(editor, editor);

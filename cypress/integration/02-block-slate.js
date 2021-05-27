@@ -5,6 +5,8 @@ describe('Block Tests', () => {
   afterEach(slateAfterEach);
 
   it('should create 4 slate blocks, first 3 with mouse, the last with an Enter in the third block', () => {
+    cy.get('.slate-editor [contenteditable=true]').click();
+
     let s1 = createSlateBlock();
     s1.typeInSlate('Hello Slate World!');
 

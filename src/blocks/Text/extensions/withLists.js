@@ -23,7 +23,7 @@ export const withLists = (editor) => {
         const liNodes = Array.from(Node.children(node, [])).filter(
           ([n, p]) => n.type === slate.listItemType,
         );
-        console.log('lis', liNodes);
+        // console.log('lis', liNodes);
 
         // if a node has a <li> but isn't an ul/ol, unwrap the <li>
         // // check if <li> has ul/ol parent

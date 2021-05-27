@@ -93,6 +93,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     children = [{ text: '' }];
   }
 
+  // console.log('children', children);
   return jsx('element', { type: tagname }, children);
 };
 

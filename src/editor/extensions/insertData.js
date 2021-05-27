@@ -27,11 +27,9 @@ export const insertData = (editor) => {
 
       let fragment; //  = deserialize(editor, body);
 
-      // console.log('deserialize body', body);
-      console.log('parsed body', parsed);
-
       const val = deserialize(editor, body);
-      console.log('val', val);
+      console.log('deserialized', { parsed, val });
+
       fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
@@ -47,7 +45,7 @@ export const insertData = (editor) => {
       }
 
       const nodes = normalizeBlockNodes(editor, fragment);
-      console.log('nodes', nodes);
+      // console.log('nodes', nodes);
       Transforms.insertNodes(editor, nodes);
 
       deconstructToVoltoBlocks(editor);

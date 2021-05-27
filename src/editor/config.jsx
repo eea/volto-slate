@@ -30,7 +30,7 @@ import {
   withDeserializers,
 } from './extensions';
 import {
-  inlineTagDeserializer,
+  // inlineTagDeserializer,
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
@@ -219,6 +219,7 @@ export const elements = {
   s: ({ children }) => <s>{children}</s>,
   sub: ({ children }) => <sub>{children}</sub>,
   sup: ({ children }) => <sup>{children}</sup>,
+  code: ({ children }) => <code>{children}</code>,
 };
 
 export const inlineElements = [
@@ -230,13 +231,14 @@ export const inlineElements = [
   's',
   'sub',
   'sup',
+  'code',
 ];
 
 // Order of definition here is important (higher = inner element)
 export const leafs = {
-  code: ({ children }) => {
-    return <code>{children}</code>;
-  },
+  // code: ({ children }) => {
+  //   return <code>{children}</code>;
+  // },
 };
 
 export const defaultValue = () => {
@@ -266,7 +268,8 @@ export const htmlTagsToSlate = {
   // B: blockTagDeserializer('b'),
   B: bTagDeserializer,
   STRONG: blockTagDeserializer('strong'),
-  CODE: inlineTagDeserializer({ code: true }),
+  CODE: blockTagDeserializer('code'),
+  // CODE: inlineTagDeserializer({ code: true }),
   DEL: blockTagDeserializer('s'),
   EM: blockTagDeserializer('em'),
   I: blockTagDeserializer('i'),

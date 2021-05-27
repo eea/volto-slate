@@ -36,6 +36,7 @@ import {
   preTagDeserializer,
   spanTagDeserializer,
   bTagDeserializer,
+  codeTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -250,34 +251,35 @@ export const defaultValue = () => {
 // Any tag that is not listed here (or added by a plugin) will be stripped
 // (its children will be rendered, though)
 export const htmlTagsToSlate = {
+  B: bTagDeserializer,
   BODY: bodyTagDeserializer,
+  CODE: codeTagDeserializer,
+  PRE: blockTagDeserializer('p'), // preTagDeserializer,
+  SPAN: spanTagDeserializer,
+
+  BLOCKQUOTE: blockTagDeserializer('blockquote'),
+  DEL: blockTagDeserializer('s'),
+  EM: blockTagDeserializer('em'),
   H1: blockTagDeserializer('h1'),
   H2: blockTagDeserializer('h2'),
   H3: blockTagDeserializer('h3'),
   H4: blockTagDeserializer('h4'),
   H5: blockTagDeserializer('h5'),
   H6: blockTagDeserializer('h6'),
+  I: blockTagDeserializer('i'),
   P: blockTagDeserializer('p'),
-  BLOCKQUOTE: blockTagDeserializer('blockquote'),
-  PRE: preTagDeserializer,
+  S: blockTagDeserializer('s'),
+  STRONG: blockTagDeserializer('strong'),
+  SUB: blockTagDeserializer('sub'),
+  SUP: blockTagDeserializer('sup'),
+  U: blockTagDeserializer('u'),
 
   OL: blockTagDeserializer('ol'),
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
-  // B: blockTagDeserializer('b'),
-  B: bTagDeserializer,
-  STRONG: blockTagDeserializer('strong'),
-  CODE: blockTagDeserializer('code'),
   // CODE: inlineTagDeserializer({ code: true }),
-  DEL: blockTagDeserializer('s'),
-  EM: blockTagDeserializer('em'),
-  I: blockTagDeserializer('i'),
-  S: blockTagDeserializer('s'),
-  SPAN: spanTagDeserializer,
-  SUB: blockTagDeserializer('sub'),
-  SUP: blockTagDeserializer('sup'),
-  U: blockTagDeserializer('u'),
+  // B: blockTagDeserializer('b'),
   // STRONG: inlineTagDeserializer({ bold: true }),
 };
 

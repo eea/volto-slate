@@ -160,6 +160,10 @@ export const bTagDeserializer = (editor, el) => {
     : jsx('element', { type: 'b' }, deserializeChildren(el, editor));
 };
 
+export const codeTagDeserializer = (editor, el) => {
+  return jsx('element', { type: 'code' }, el.textContent);
+};
+
 export const preTagDeserializer = (editor, el) => {
   // Based on Slate example implementation. Replaces <pre> tags with <code>.
   // Comment: I don't know how good of an idea is this. I'd rather have two
@@ -169,6 +173,7 @@ export const preTagDeserializer = (editor, el) => {
 
   if (el.childNodes[0] && el.childNodes[0].nodeName === 'CODE') {
     parent = el.childNodes[0];
+    return codeTagDeserializer(parent);
   }
 
   return blockTagDeserializer(nodeName)(editor, parent);

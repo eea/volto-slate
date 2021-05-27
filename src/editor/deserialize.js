@@ -114,7 +114,6 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 };
 
 export const spanTagDeserializer = (editor, el) => {
-  // debugger;
   const style = el.getAttribute('style') || '';
   let children = el.childNodes;
   if (
@@ -126,6 +125,9 @@ export const spanTagDeserializer = (editor, el) => {
     return jsx('text', {}, ' ');
   }
   children = deserializeChildren(el, editor);
+
+  // whitespace is replaced by deserialize() with null;
+  children = children.map((c) => (c === null ? ' ' : c));
 
   // TODO: handle sub/sup as <sub> and <sup>
   // Handle Google Docs' <sub> formatting
@@ -144,9 +146,10 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return children.find((c) => typeof c !== 'string')
+  const res = children.find((c) => typeof c !== 'string')
     ? children
     : jsx('text', {}, children);
+  return res;
 };
 
 export const bTagDeserializer = (editor, el) => {

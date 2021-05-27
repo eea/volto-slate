@@ -10,12 +10,32 @@ export const withLists = (editor) => {
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 
-    if (Element.isElement(node) && slate.listTypes.includes(node.type)) {
-      for (const [child, childPath] of Node.children(editor, path)) {
-        if (!validListElements.includes(child.type)) {
-          Transforms.liftNodes(editor, { at: childPath, split: true });
-          return;
+    if (Element.isElement(node)) {
+      if (slate.listTypes.includes(node.type)) {
+        for (const [child, childPath] of Node.children(editor, path)) {
+          if (!validListElements.includes(child.type)) {
+            Transforms.liftNodes(editor, { at: childPath, split: true });
+            return;
+          }
         }
+      } else if (node.type === slate.listItemType) {
+        // // check if <li> has ul/ol parent
+        // console.log('check', node, path, editor.children);
+        // let parent;
+        // parent = Node.parent(editor.children, path);
+        // if (!slate.listTypes.includes(parent.type)) {
+        //   [parent] = Node.ancestors(editor.children, path, {
+        //     reverse: true,
+        //   }).find(([n, p]) => {
+        //     return slate.listTypes.includes(n.type);
+        //   });
+        //
+        //   console.log('parent', parent);
+        //   // Transforms.
+        // }
+        //
+        // // try {
+        // // }
       }
     }
 

@@ -112,12 +112,19 @@ export const _getActiveElement = (elementType) => (
   direction = 'any',
 ) => {
   const selection = editor.selection || editor.getSavedSelection();
-  let found = Array.from(
-    Editor.nodes(editor, {
-      match: (n) => n.type === elementType,
-      at: selection,
-    }),
-  );
+
+  let found = [];
+  try {
+    found = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => n.type === elementType,
+        at: selection,
+      }),
+    );
+  } catch (e) {
+    return null;
+  }
+
   if (found.length) return found[0];
 
   if (!selection) return null;

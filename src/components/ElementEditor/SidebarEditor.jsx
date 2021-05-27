@@ -20,7 +20,7 @@ const SidebarEditor = (props) => {
   let active;
   try {
     active = getActiveElement(editor);
-  } catch {
+  } catch (error) {
     // eslint-disable-next-line
     console.warn("Error in getting active element", error);
   }

@@ -23,9 +23,13 @@ export const withLists = (editor) => {
     // if (node.type === slate.listItemType) {
     //   console.log('node', node);
     // }
+    // console.log('normalizing', entry);
 
-    console.log('normalizing', entry);
-    normalizeNode(entry);
+    try {
+      normalizeNode(entry);
+    } catch {
+      console.log('Error in normalizing', entry);
+    }
   };
 
   return editor;

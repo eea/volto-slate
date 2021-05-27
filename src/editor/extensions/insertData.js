@@ -28,7 +28,7 @@ export const insertData = (editor) => {
       let fragment = deserialize(editor, body);
 
       // console.log('deserialize body', body);
-      // console.log('parsed body', parsed);
+      console.log('parsed body', parsed);
 
       const val = deserialize(editor, body);
       fragment = Array.isArray(val) ? val : [val];

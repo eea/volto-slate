@@ -80,3 +80,5 @@ export const linkDeserializer = (editor, el) => {
 
   return jsx('element', attrs, children);
 };
+
+linkDeserializer.id = 'linkDeserializer';

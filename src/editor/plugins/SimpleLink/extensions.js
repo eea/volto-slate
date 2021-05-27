@@ -1,4 +1,6 @@
 import { SIMPLELINK } from 'volto-slate/constants';
+import { jsx } from 'slate-hyperscript';
+import { deserialize } from 'volto-slate/editor/deserialize';
 
 export const withSimpleLink = (editor) => {
   // const { insertData, insertText, isInline } = editor;
@@ -28,3 +30,22 @@ export const withSimpleLink = (editor) => {
   // };
   return editor;
 };
+
+export const simpleLinkDeserializer = (editor, el) => {
+  let parent = el;
+
+  const children = Array.from(parent.childNodes)
+    .map((el) => deserialize(editor, el))
+    .flat();
+
+  const attrs = {
+    type: SIMPLELINK,
+    data: {
+      url: el.getAttribute('href'),
+    },
+  };
+
+  return jsx('element', attrs, children);
+};
+
+simpleLinkDeserializer.id = 'simpleLinkDeserializer';

@@ -26,7 +26,8 @@ export const normalizeBlocks = (editor) => {
       path.length > 1
     ) {
       console.log('not inline', node, path);
-      Transforms.liftNodes(editor, { at: path, split: true });
+      // Transforms.liftNodes(editor, { at: path, split: true });
+      //
       // for (const [child, childPath] of Node.children(editor, path)) {
       //   if (!validListElements.includes(child.type)) {
       //     Transforms.liftNodes(editor, { at: childPath, split: true });
@@ -53,8 +54,8 @@ export const normalizeBlocks = (editor) => {
 
     if (isNormalizing) {
       editor.voltoBlockNormalizing = undefined;
-      console.log('deconstruct', editor);
-      deconstructToVoltoBlocks(editor);
+      // console.log('deconstruct', editor);
+      // deconstructToVoltoBlocks(editor);
     }
   };
 

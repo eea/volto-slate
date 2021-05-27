@@ -12,13 +12,20 @@ export const withLists = (editor) => {
 
     if (Element.isElement(node)) {
       if (slate.listTypes.includes(node.type)) {
+        // lift all child nodes of ul/ol that are not ul/ol/li
         for (const [child, childPath] of Node.children(editor, path)) {
           if (!validListElements.includes(child.type)) {
             Transforms.liftNodes(editor, { at: childPath, split: true });
             return;
           }
         }
-      } else if (node.type === slate.listItemType) {
+      } else {
+        const liNodes = Array.from(Node.children(node, [])).filter(
+          ([n, p]) => n.type === slate.listItemType,
+        );
+        console.log('lis', liNodes);
+
+        // if a node has a <li> but isn't an ul/ol, unwrap the <li>
         // // check if <li> has ul/ol parent
         // console.log('check', node, path, editor.children);
         // let parent;

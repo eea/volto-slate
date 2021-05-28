@@ -11,6 +11,7 @@ describe('Block Tests', () => {
       .get('.documentFirstHeading span[data-text]')
       .contains('My Add-on Page');
 
+    cy.get('.slate-editor [contenteditable=true]').click();
     createSlateBlock();
 
     // Save

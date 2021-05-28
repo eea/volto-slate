@@ -187,6 +187,15 @@ export const keyDownHandlers = {};
 // Paragraphs (as default type of blocks) and lists need special handling
 export const listTypes = ['ul', 'ol'];
 export const listItemType = 'li';
+export const tableTypes = [
+  'table',
+  'tbody',
+  'thead',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+];
 export const defaultBlockType = 'p';
 
 // Default rendered elements
@@ -254,7 +263,7 @@ export const htmlTagsToSlate = {
   B: bTagDeserializer,
   BODY: bodyTagDeserializer,
   CODE: codeTagDeserializer,
-  PRE: blockTagDeserializer('p'), // preTagDeserializer,
+  PRE: preTagDeserializer,
   SPAN: spanTagDeserializer,
 
   BLOCKQUOTE: blockTagDeserializer('blockquote'),

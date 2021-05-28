@@ -5,16 +5,21 @@ export const normalizeBlocks = (editor) => {
   // enforce list rules (no block elements, only ol/ul/li as possible children
   const { normalizeNode } = editor;
   const { slate } = config.settings;
-  const validListElements = [...slate.listTypes, slate.listItemType];
+  const specialRuledElements = [
+    ...slate.listTypes,
+    slate.listItemType,
+    ...slate.tableTypes,
+  ];
 
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 
+    // TODO: skip table nodes
     if (
       !Text.isText(node) &&
       Element.isElement(node) &&
       !editor.isInline(node) &&
-      !validListElements.includes(node.type) &&
+      !specialRuledElements.includes(node.type) &&
       path.length > 1
     ) {
       // Insert a space in the first element
@@ -24,6 +29,7 @@ export const normalizeBlocks = (editor) => {
 
       return;
     }
+
     normalizeNode(entry);
   };
 

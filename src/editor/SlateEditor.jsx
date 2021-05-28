@@ -186,11 +186,11 @@ class SlateEditor extends Component {
       }
     }
 
-    if (this.editor && this.editor.selection) {
+    if (this.props.selected && this.editor && this.editor.selection) {
       this.editor.setSavedSelection(this.editor.selection);
     }
 
-    if (this.props.onUpdate) {
+    if (this.props.selected && this.props.onUpdate) {
       this.props.onUpdate(this.state.editor);
     }
   }

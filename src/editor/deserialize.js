@@ -173,7 +173,7 @@ export const preTagDeserializer = (editor, el) => {
 
   if (el.childNodes[0] && el.childNodes[0].nodeName === 'CODE') {
     parent = el.childNodes[0];
-    return codeTagDeserializer(parent);
+    return codeTagDeserializer(editor, parent);
   }
 
   return blockTagDeserializer(nodeName)(editor, parent);

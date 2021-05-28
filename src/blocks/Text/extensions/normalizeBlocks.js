@@ -38,13 +38,15 @@ export const normalizeBlocks = (editor) => {
         [parent] = Editor.parent(editor, path);
       }
     } catch (e) {
+      //  eslint-disable-next-line
       console.log('error in getting parent', node);
     }
 
     // if the node is child in a list, but it's not a list node, lift the node
     if (
       slate.listTypes.includes(parent.type) &&
-      !listElements.includes(node.type)
+      !listElements.includes(node.type) &&
+      Element.isElement(node)
     ) {
       Transforms.liftNodes(editor, { at: path });
       // Transforms.wrapNodes(

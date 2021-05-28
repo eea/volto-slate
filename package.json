@@ -18,6 +18,7 @@
     "@eeacms/volto-object-widget"
   ],
   "dependencies": {
+    "react-intersection-observer": "^8.32.0",
     "@eeacms/volto-object-widget": "^2.0.0",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
@@ -31,7 +32,7 @@
     "weak-key": "^1.0.2"
   },
   "peerDependencies": {
-    "@plone/volto": "^12.1.2"
+    "@plone/volto": ">=12.1.2"
   },
   "devDependencies": {
     "@testing-library/react": "9.5.0",

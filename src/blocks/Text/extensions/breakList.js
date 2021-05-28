@@ -35,9 +35,11 @@ export const breakList = (editor) => {
     const { anchor } = editor.selection;
 
     let oldSelection = JSON.parse(JSON.stringify(editor.selection));
-    const ref = Editor.rangeRef(editor, editor.selection, {
-      affinity: 'inward',
-    });
+
+    // XXX ref not used
+    // const ref = Editor.rangeRef(editor, editor.selection, {
+    //   affinity: 'inward',
+    // });
 
     // If the selection is inside a LI and it starts at a non-0 offset, split
     // the LI. (if one of the parents is a list item, break that list item)

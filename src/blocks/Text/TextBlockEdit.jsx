@@ -162,126 +162,141 @@ const TextBlockEdit = (props) => {
   const schema = TextBlockSchema(data);
 
   const disableNewBlocks = data?.disableNewBlocks || detached;
+  // {DEBUG ? <div>{block}</div> : ''}
 
   return (
-    <>
-      <SidebarPortal selected={selected}>
-        <div id="slate-plugin-sidebar"></div>
-        {instructions ? (
-          <Segment attached>
-            <div dangerouslySetInnerHTML={{ __html: instructions }} />
-          </Segment>
-        ) : (
-          <>
-            <ShortcutListing />
-            <MarkdownIntroduction />
-            <InlineForm
-              schema={schema}
-              title={schema.title}
-              onChangeField={(id, value) => {
-                onChangeBlock(block, {
-                  ...data,
-                  [id]: value,
-                });
-              }}
-              formData={data}
-            />
-          </>
-        )}
-      </SidebarPortal>
-      {DEBUG ? <div>{block}</div> : ''}
-      <VisibilitySensor partialVisibility={true}>
-        {({ isVisible }) => (
-          <Dropzone
-            disableClick
-            onDrop={onDrop}
-            className="dropzone"
-            onDragOver={() => setShowDropzone(true)}
-            onDragLeave={() => setShowDropzone(false)}
-          >
-            {({ getRootProps, getInputProps }) => {
-              return showDropzone ? (
-                <div className="drop-indicator">
-                  {uploading ? (
-                    <Dimmer active>
-                      <Loader indeterminate>Uploading image</Loader>
-                    </Dimmer>
-                  ) : (
-                    <Message>
-                      <center>
-                        <img src={imageBlockSVG} alt="" />
-                      </center>
-                    </Message>
-                  )}
-                </div>
-              ) : (
-                <SlateEditor
-                  index={index}
-                  readOnly={!isVisible}
-                  properties={properties}
-                  extensions={textblockExtensions}
-                  renderExtensions={[withBlockProperties]}
-                  value={value}
-                  block={block /* is this needed? */}
-                  onFocus={() => onSelectBlock(block)}
-                  onUpdate={handleUpdate}
-                  debug={DEBUG}
-                  onChange={(value, selection) => {
-                    onChangeBlock(block, {
-                      ...data,
-                      value,
-                      plaintext: serializeNodesToText(value || []),
-                      // TODO: also add html serialized value
-                    });
+    <VisibilitySensor partialVisibility={true}>
+      {({ isVisible, ...rest }) => {
+        console.log('isvisible', isVisible, rest);
+        return (
+          <div className="text-slate-editor">
+            {isVisible && (
+              <div className="text-slate-editor-inner">
+                <Dropzone
+                  disableClick
+                  onDrop={onDrop}
+                  className="dropzone"
+                  onDragOver={() => setShowDropzone(true)}
+                  onDragLeave={() => setShowDropzone(false)}
+                >
+                  {({ getRootProps, getInputProps }) => {
+                    return showDropzone ? (
+                      <div className="drop-indicator">
+                        {uploading ? (
+                          <Dimmer active>
+                            <Loader indeterminate>Uploading image</Loader>
+                          </Dimmer>
+                        ) : (
+                          <Message>
+                            <center>
+                              <img src={imageBlockSVG} alt="" />
+                            </center>
+                          </Message>
+                        )}
+                      </div>
+                    ) : (
+                      <SlateEditor
+                        index={index}
+                        readOnly={!isVisible}
+                        properties={properties}
+                        extensions={textblockExtensions}
+                        renderExtensions={[withBlockProperties]}
+                        value={value}
+                        block={block /* is this needed? */}
+                        onFocus={() => onSelectBlock(block)}
+                        onUpdate={handleUpdate}
+                        debug={DEBUG}
+                        onChange={(value, selection) => {
+                          onChangeBlock(block, {
+                            ...data,
+                            value,
+                            plaintext: serializeNodesToText(value || []),
+                            // TODO: also add html serialized value
+                          });
+                        }}
+                        onClick={(ev) => {
+                          // this is needed so that the click event does
+                          // not bubble up to the Blocks/Block/Edit.jsx component
+                          // which attempts to focus the TextBlockEdit on
+                          // click and this behavior breaks user selection, e.g.
+                          // when clicking once a selected word
+                          ev.stopPropagation();
+                        }}
+                        onKeyDown={handleKey}
+                        selected={selected}
+                        placeholder={placeholder}
+                      />
+                    );
                   }}
-                  onClick={(ev) => {
-                    // this is needed so that the click event does
-                    // not bubble up to the Blocks/Block/Edit.jsx component
-                    // which attempts to focus the TextBlockEdit on
-                    // click and this behavior breaks user selection, e.g.
-                    // when clicking once a selected word
-                    ev.stopPropagation();
-                  }}
-                  onKeyDown={handleKey}
-                  selected={selected}
-                  placeholder={placeholder}
-                />
-              );
-            }}
-          </Dropzone>
-        )}
-      </VisibilitySensor>
-      {selected && !disableNewBlocks && !data.plaintext && (
-        <Button
-          basic
-          icon
-          onClick={() => {
-            // This event handler unregisters itself after its first call.
-            document.addEventListener('mousedown', handleClickOutside, false);
+                </Dropzone>
+                {selected && !disableNewBlocks && !data.plaintext && (
+                  <Button
+                    basic
+                    icon
+                    onClick={() => {
+                      // This event handler unregisters itself after its first call.
+                      document.addEventListener(
+                        'mousedown',
+                        handleClickOutside,
+                        false,
+                      );
 
-            setAddNewBlockOpened(!addNewBlockOpened);
-          }}
-          className="block-add-button"
-        >
-          <Icon name={addSVG} className="block-add-button" size="24px" />
-        </Button>
-      )}
-      {addNewBlockOpened && (
-        <BlockChooser
-          onMutateBlock={(...args) => {
-            onMutateBlock(...args);
-            setAddNewBlockOpened(false);
-          }}
-          blocksConfig={blocksConfig}
-          onInsertBlock={(id, value) => {
-            onSelectBlock(onInsertBlock(id, value));
-            setAddNewBlockOpened(false);
-          }}
-          currentBlock={block}
-          allowedBlocks={allowedBlocks}
-        />
-      )}
-    </>
+                      setAddNewBlockOpened(!addNewBlockOpened);
+                    }}
+                    className="block-add-button"
+                  >
+                    <Icon
+                      name={addSVG}
+                      className="block-add-button"
+                      size="24px"
+                    />
+                  </Button>
+                )}
+                {addNewBlockOpened && (
+                  <BlockChooser
+                    onMutateBlock={(...args) => {
+                      onMutateBlock(...args);
+                      setAddNewBlockOpened(false);
+                    }}
+                    blocksConfig={blocksConfig}
+                    onInsertBlock={(id, value) => {
+                      onSelectBlock(onInsertBlock(id, value));
+                      setAddNewBlockOpened(false);
+                    }}
+                    currentBlock={block}
+                    allowedBlocks={allowedBlocks}
+                  />
+                )}
+                <SidebarPortal selected={selected}>
+                  <div id="slate-plugin-sidebar"></div>
+                  {instructions ? (
+                    <Segment attached>
+                      <div dangerouslySetInnerHTML={{ __html: instructions }} />
+                    </Segment>
+                  ) : (
+                    <>
+                      <ShortcutListing />
+                      <MarkdownIntroduction />
+                      <InlineForm
+                        schema={schema}
+                        title={schema.title}
+                        onChangeField={(id, value) => {
+                          onChangeBlock(block, {
+                            ...data,
+                            [id]: value,
+                          });
+                        }}
+                        formData={data}
+                      />
+                    </>
+                  )}
+                </SidebarPortal>
+              </div>
+            )}
+          </div>
+        );
+      }}
+    </VisibilitySensor>
   );
 };
 

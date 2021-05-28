@@ -6,7 +6,6 @@ import {
   setEditorContent,
   createAndSelectNewBlockAfter,
   getCurrentListItem,
-  syncCreateSlateBlock,
   createEmptyParagraph,
 } from 'volto-slate/utils';
 
@@ -37,7 +36,6 @@ export const breakList = (editor) => {
     const { slate } = config.settings;
     const { anchor } = editor.selection;
 
-    // let oldSelection = JSON.parse(JSON.stringify(editor.selection));
     const ref = Editor.rangeRef(editor, editor.selection, {
       affinity: 'inward',
     });

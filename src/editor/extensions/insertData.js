@@ -28,8 +28,8 @@ export const insertData = (editor) => {
       let fragment; //  = deserialize(editor, body);
 
       const val = deserialize(editor, body);
-      console.log('body', dt);
-      console.log('deserialized', val);
+      // console.log('body', dt);
+      // console.log('deserialized', val);
 
       fragment = Array.isArray(val) ? val : [val];
 

@@ -3,53 +3,57 @@
 exports[`TextBlockEdit renders w/o errors 1`] = `
 <DocumentFragment>
   <div
-    class="slate-editor selected"
+    class="text-slate-editor-inner"
   >
     <div
-      data-gramm="false"
-      data-slate-editor="true"
-      data-slate-node="value"
-      spellcheck="false"
-      style="position: relative; outline: none; white-space: pre-wrap; word-wrap: break-word; min-height: 0px;"
+      class="slate-editor selected"
     >
-      <p
-        data-slate-node="element"
+      <div
+        data-gramm="false"
+        data-slate-editor="true"
+        data-slate-node="value"
+        spellcheck="false"
+        style="position: relative; outline: none; white-space: pre-wrap; word-wrap: break-word; min-height: 0px;"
       >
-        <span
-          data-slate-node="text"
+        <p
+          data-slate-node="element"
         >
           <span
-            class=""
-            data-slate-leaf="true"
+            data-slate-node="text"
           >
             <span
-              contenteditable="false"
-              data-slate-placeholder="true"
-              style="position: absolute; pointer-events: none; width: 100%; max-width: 100%; display: block; opacity: 0.333; user-select: none; text-decoration: none;"
+              class=""
+              data-slate-leaf="true"
             >
-              Enter some rich text…
-            </span>
-            <span
-              data-slate-length="0"
-              data-slate-zero-width="n"
-            >
-              ﻿
-              <br />
+              <span
+                contenteditable="false"
+                data-slate-placeholder="true"
+                style="position: absolute; pointer-events: none; width: 100%; max-width: 100%; display: block; opacity: 0.333; user-select: none; text-decoration: none;"
+              >
+                Enter some rich text…
+              </span>
+              <span
+                data-slate-length="0"
+                data-slate-zero-width="n"
+              >
+                ﻿
+                <br />
+              </span>
             </span>
           </span>
-        </span>
-      </p>
+        </p>
+      </div>
     </div>
+    <button
+      class="ui basic icon button block-add-button"
+    >
+      <svg
+        class="icon block-add-button"
+        style="height: 24px; width: auto; fill: currentColor;"
+        viewBox=""
+        xmlns=""
+      />
+    </button>
   </div>
-  <button
-    class="ui basic icon button block-add-button"
-  >
-    <svg
-      class="icon block-add-button"
-      style="height: 24px; width: auto; fill: currentColor;"
-      viewBox=""
-      xmlns=""
-    />
-  </button>
 </DocumentFragment>
 `;

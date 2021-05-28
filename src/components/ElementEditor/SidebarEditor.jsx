@@ -22,7 +22,7 @@ const SidebarEditor = (props) => {
     active = getActiveElement(editor);
   } catch (error) {
     // eslint-disable-next-line
-    console.warn("Error in getting active element", error);
+    console.warn('Error in getting active element', error);
   }
 
   // Hide the editor when switching to another text element

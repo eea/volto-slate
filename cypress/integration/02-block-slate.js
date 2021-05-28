@@ -9,10 +9,11 @@ describe('Block Tests', () => {
 
     let s1 = createSlateBlock();
     s1.typeInSlate('Hello Slate World!');
+    s1.type('{enter}');
 
     let s3 = createSlateBlock();
     s3.typeInSlate('Hello Cypress World!');
-    s3.lineBreakInSlate();
+    s3.type('{enter}');
 
     // Save
     cy.get('#toolbar-save').click();

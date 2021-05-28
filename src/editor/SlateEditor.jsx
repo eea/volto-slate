@@ -162,7 +162,7 @@ class SlateEditor extends Component {
           try {
             ReactEditor.focus(this.state.editor);
           } catch {}
-        }, 10); // flush
+        }, 100); // flush
       }
     }
   }

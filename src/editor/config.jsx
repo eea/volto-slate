@@ -30,12 +30,13 @@ import {
   withDeserializers,
 } from './extensions';
 import {
-  inlineTagDeserializer,
+  // inlineTagDeserializer,
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
   spanTagDeserializer,
   bTagDeserializer,
+  codeTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
@@ -186,6 +187,15 @@ export const keyDownHandlers = {};
 // Paragraphs (as default type of blocks) and lists need special handling
 export const listTypes = ['ul', 'ol'];
 export const listItemType = 'li';
+export const tableTypes = [
+  'table',
+  'tbody',
+  'thead',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+];
 export const defaultBlockType = 'p';
 
 // Default rendered elements
@@ -219,6 +229,7 @@ export const elements = {
   s: ({ children }) => <s>{children}</s>,
   sub: ({ children }) => <sub>{children}</sub>,
   sup: ({ children }) => <sup>{children}</sup>,
+  code: ({ children }) => <code>{children}</code>,
 };
 
 export const inlineElements = [
@@ -230,13 +241,14 @@ export const inlineElements = [
   's',
   'sub',
   'sup',
+  'code',
 ];
 
 // Order of definition here is important (higher = inner element)
 export const leafs = {
-  code: ({ children }) => {
-    return <code>{children}</code>;
-  },
+  // code: ({ children }) => {
+  //   return <code>{children}</code>;
+  // },
 };
 
 export const defaultValue = () => {
@@ -248,33 +260,35 @@ export const defaultValue = () => {
 // Any tag that is not listed here (or added by a plugin) will be stripped
 // (its children will be rendered, though)
 export const htmlTagsToSlate = {
+  B: bTagDeserializer,
   BODY: bodyTagDeserializer,
+  CODE: codeTagDeserializer,
+  PRE: preTagDeserializer,
+  SPAN: spanTagDeserializer,
+
+  BLOCKQUOTE: blockTagDeserializer('blockquote'),
+  DEL: blockTagDeserializer('s'),
+  EM: blockTagDeserializer('em'),
   H1: blockTagDeserializer('h1'),
   H2: blockTagDeserializer('h2'),
   H3: blockTagDeserializer('h3'),
   H4: blockTagDeserializer('h4'),
   H5: blockTagDeserializer('h5'),
   H6: blockTagDeserializer('h6'),
+  I: blockTagDeserializer('i'),
   P: blockTagDeserializer('p'),
-  BLOCKQUOTE: blockTagDeserializer('blockquote'),
-  PRE: preTagDeserializer,
+  S: blockTagDeserializer('s'),
+  STRONG: blockTagDeserializer('strong'),
+  SUB: blockTagDeserializer('sub'),
+  SUP: blockTagDeserializer('sup'),
+  U: blockTagDeserializer('u'),
 
   OL: blockTagDeserializer('ol'),
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
 
+  // CODE: inlineTagDeserializer({ code: true }),
   // B: blockTagDeserializer('b'),
-  B: bTagDeserializer,
-  STRONG: blockTagDeserializer('strong'),
-  CODE: inlineTagDeserializer({ code: true }),
-  DEL: blockTagDeserializer('s'),
-  EM: blockTagDeserializer('em'),
-  I: blockTagDeserializer('i'),
-  S: blockTagDeserializer('s'),
-  SPAN: spanTagDeserializer,
-  SUB: blockTagDeserializer('sub'),
-  SUP: blockTagDeserializer('sup'),
-  U: blockTagDeserializer('u'),
   // STRONG: inlineTagDeserializer({ bold: true }),
 };
 

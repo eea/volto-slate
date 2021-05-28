@@ -5,7 +5,7 @@ export const isInline = (editor) => {
   const { slate } = config.settings;
 
   editor.isInline = (element) => {
-    return slate.inlineElements.includes(element.type)
+    return element && slate.inlineElements.includes(element.type)
       ? true
       : isInline(element);
   };

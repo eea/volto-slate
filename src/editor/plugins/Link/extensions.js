@@ -8,7 +8,7 @@ export const withLink = (editor) => {
   const { isInline } = editor;
 
   editor.isInline = (element) => {
-    return element.type === LINK ? true : isInline(element);
+    return element && element.type === LINK ? true : isInline(element);
   };
 
   // editor.insertText = (text) => {

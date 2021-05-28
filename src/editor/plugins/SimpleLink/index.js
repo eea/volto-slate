@@ -11,7 +11,7 @@ import {
 } from 'volto-slate/components/ElementEditor/utils';
 import { SIMPLELINK, LINK } from 'volto-slate/constants';
 import { LinkElement } from './render';
-import { withSimpleLink } from './extensions';
+import { simpleLinkDeserializer, withSimpleLink } from './extensions';
 import { setPluginOptions } from 'volto-slate/actions';
 import {
   ToolbarButton as UIToolbarButton,
@@ -20,8 +20,6 @@ import {
 
 import linkSVG from '@plone/volto/icons/link.svg';
 import unlinkSVG from '@plone/volto/icons/unlink.svg';
-
-const linkDeserializer = () => {};
 
 const messages = defineMessages({
   add: {
@@ -151,7 +149,7 @@ export default (config) => {
 
   slate.buttons[PLUGINID] = ToolbarButton;
   slate.toolbarButtons[linkBtnIndex] = PLUGINID;
-  slate.htmlTagsToSlate.A = linkDeserializer;
+  slate.htmlTagsToSlate.A = simpleLinkDeserializer;
   slate.extensions.push(withSimpleLink);
   slate.elements[PLUGINID] = LinkElement;
   slate.nodeTypesToHighlight.push(PLUGINID);

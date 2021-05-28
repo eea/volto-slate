@@ -112,12 +112,19 @@ export const _getActiveElement = (elementType) => (
   direction = 'any',
 ) => {
   const selection = editor.selection || editor.getSavedSelection();
-  let found = Array.from(
-    Editor.nodes(editor, {
-      match: (n) => n.type === elementType,
-      at: selection,
-    }),
-  );
+
+  let found = [];
+  try {
+    found = Array.from(
+      Editor.nodes(editor, {
+        match: (n) => n.type === elementType,
+        at: selection,
+      }),
+    );
+  } catch (e) {
+    return null;
+  }
+
   if (found.length) return found[0];
 
   if (!selection) return null;
@@ -134,7 +141,8 @@ export const _getActiveElement = (elementType) => (
           at: path,
         });
       } catch (ex) {
-        found = [];
+        console.warn('Unable to find previous node', editor, path);
+        return;
       }
       if (found && found[0] && found[0].type === elementType) {
         return found;
@@ -148,9 +156,16 @@ export const _getActiveElement = (elementType) => (
       selection.anchor.offset === 0 && selection.focus.offset === 0;
 
     if (isAtStart) {
-      let found = Editor.next(editor, {
-        at: path,
-      });
+      let found;
+      try {
+        found = Editor.next(editor, {
+          at: path,
+        });
+      } catch (e) {
+        // eslint-disable-next-line
+        console.warn("Unable to find next node", editor, path);
+        return;
+      }
       if (found && found[0].type === elementType) {
         return found;
       }

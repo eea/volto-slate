@@ -28,16 +28,32 @@ const Toolbar = (props) => {
     className,
     showExpandedToolbar,
     setShowExpandedToolbar,
-    hasDomSelection,
   } = props;
   const { slate } = config.settings;
-  const isRangeSelection = hasRangeSelection(editor, false);
+  const [showMainToolbar, setShowMainToolbar] = React.useState(
+    !!(editor.selection && hasRangeSelection(editor)),
+  );
+  React.useEffect(() => {
+    const el = ReactEditor.toDOMNode(editor, editor);
+    const toggleToolbar = () => {
+      const selection = window.getSelection();
+      const { activeElement } = window.document;
+      if (activeElement !== el) return;
+      if (!selection.isCollapsed && !showMainToolbar) {
+        setShowMainToolbar(true);
+      } else if (selection.isCollapsed && showMainToolbar) {
+        setShowMainToolbar(false);
+      }
+    };
+    window.document.addEventListener('selectionchange', toggleToolbar);
+    return () => document.removeEventListener('selectionchange', toggleToolbar);
+  }, [editor, showMainToolbar]);
 
-  return isRangeSelection || hasDomSelection ? (
+  return showMainToolbar ? (
     <SlateToolbar
-      enableExpando={slate.enableExpandedToolbar}
       className={className}
       selected={true}
+      enableExpando={slate.enableExpandedToolbar}
       showExpandedToolbar={showExpandedToolbar}
       setShowExpandedToolbar={setShowExpandedToolbar}
     />
@@ -136,10 +152,17 @@ class SlateEditor extends Component {
       'selectionchange',
       this.onDOMSelectionChange,
     );
-
     if (this.props.selected) {
-      if (!ReactEditor.isFocused(this.state.editor)) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
+      let focused = true;
+      try {
+        focused = ReactEditor.isFocused(this.state.editor);
+      } catch {}
+      if (!focused) {
+        setTimeout(() => {
+          try {
+            ReactEditor.focus(this.state.editor);
+          } catch {}
+        }, 10); // flush
       }
     }
   }
@@ -163,11 +186,11 @@ class SlateEditor extends Component {
       }
     }
 
-    if (this.editor && this.editor.selection) {
+    if (this.props.selected && this.editor && this.editor.selection) {
       this.editor.setSavedSelection(this.editor.selection);
     }
 
-    if (this.props.onUpdate) {
+    if (this.props.selected && this.props.onUpdate) {
       this.props.onUpdate(this.state.editor);
     }
   }
@@ -230,11 +253,7 @@ class SlateEditor extends Component {
               <Toolbar
                 editor={editor}
                 className={className}
-                showExpandedToolbar={this.state.showExpandedToolbar}
                 hasDomSelection={this.state.hasDomSelection}
-                setShowExpandedToolbar={(value) =>
-                  this.setState({ showExpandedToolbar: value })
-                }
               />
             ) : (
               ''
@@ -262,14 +281,14 @@ class SlateEditor extends Component {
                   ((event.shiftKey && event.key !== 'Shift') ||
                     (event.ctrlKey && event.key === 'a'))
                 ) {
-                  this.setState({ hasDomSelection: true });
+                  // this.setState({ hasDomSelection: true });
                 } else if (
                   (this.state.hasDomSelection ||
                     event.key === 'Left' ||
                     event.key === 'Right') &&
                   !event.shiftKey
                 ) {
-                  this.setState({ hasDomSelection: false });
+                  // this.setState({ hasDomSelection: false });
                 }
 
                 let wasHotkey = false;

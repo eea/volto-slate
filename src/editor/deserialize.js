@@ -93,6 +93,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     children = [{ text: '' }];
   }
 
+  // console.log('children', children);
   return jsx('element', { type: tagname }, children);
 };
 
@@ -114,7 +115,6 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
 };
 
 export const spanTagDeserializer = (editor, el) => {
-  // debugger;
   const style = el.getAttribute('style') || '';
   let children = el.childNodes;
   if (
@@ -126,6 +126,9 @@ export const spanTagDeserializer = (editor, el) => {
     return jsx('text', {}, ' ');
   }
   children = deserializeChildren(el, editor);
+
+  // whitespace is replaced by deserialize() with null;
+  children = children.map((c) => (c === null ? ' ' : c));
 
   // TODO: handle sub/sup as <sub> and <sup>
   // Handle Google Docs' <sub> formatting
@@ -144,9 +147,10 @@ export const spanTagDeserializer = (editor, el) => {
     });
   }
 
-  return children.find((c) => typeof c !== 'string')
+  const res = children.find((c) => typeof c !== 'string')
     ? children
     : jsx('text', {}, children);
+  return res;
 };
 
 export const bTagDeserializer = (editor, el) => {
@@ -154,6 +158,10 @@ export const bTagDeserializer = (editor, el) => {
   return (el.getAttribute('id') || '').indexOf('docs-internal-guid') > -1
     ? deserializeChildren(el, editor)
     : jsx('element', { type: 'b' }, deserializeChildren(el, editor));
+};
+
+export const codeTagDeserializer = (editor, el) => {
+  return jsx('element', { type: 'code' }, el.textContent);
 };
 
 export const preTagDeserializer = (editor, el) => {
@@ -165,6 +173,7 @@ export const preTagDeserializer = (editor, el) => {
 
   if (el.childNodes[0] && el.childNodes[0].nodeName === 'CODE') {
     parent = el.childNodes[0];
+    return codeTagDeserializer(editor, parent);
   }
 
   return blockTagDeserializer(nodeName)(editor, parent);

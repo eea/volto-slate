@@ -1,10 +1,13 @@
 import { Editor, Range, Transforms } from 'slate';
 import config from '@plone/volto/registry';
 import {
+  isCursorAtBlockEnd,
   splitEditorInTwoFragments,
   setEditorContent,
   createAndSelectNewBlockAfter,
   getCurrentListItem,
+  syncCreateSlateBlock,
+  createEmptyParagraph,
 } from 'volto-slate/utils';
 
 /**
@@ -34,7 +37,7 @@ export const breakList = (editor) => {
     const { slate } = config.settings;
     const { anchor } = editor.selection;
 
-    let oldSelection = JSON.parse(JSON.stringify(editor.selection));
+    // let oldSelection = JSON.parse(JSON.stringify(editor.selection));
     const ref = Editor.rangeRef(editor, editor.selection, {
       affinity: 'inward',
     });
@@ -57,7 +60,8 @@ export const breakList = (editor) => {
 
     // If the selection anchor is not in a LI or it is not at offset 0, handle
     // with the default behavior.
-    const [parent] = Editor.parent(editor, anchor.path);
+    const [parent] = Editor.parent(editor, anchor.path); // , parentPath
+
     if (parent.type !== slate.listItemType || anchor.offset > 0) {
       insertBreak();
       return; // applies default behaviour, as defined in insertBreak.js extension
@@ -72,19 +76,15 @@ export const breakList = (editor) => {
       }
     }
 
-    // TODO: while this is interesting as a tech demo, I'm not sure that this is
-    // what we really want (break lists in two separate blocks)
-
-    // Else delete the line before the text cursor and then split the editor
-    // with the list in two fragments, and convert them to separate Slate Text
-    // Volto blocks, based on the selection.
-
     Editor.deleteBackward(editor, { unit: 'line' });
-    // Transforms.unwrapNodes(editor, { at: ref.current });
-    // try {
-    // } catch {}
+    Transforms.removeNodes(editor, { at: ref.current });
 
-    const [top, bottom] = splitEditorInTwoFragments(editor, oldSelection);
+    if (isCursorAtBlockEnd(editor)) {
+      createAndSelectNewBlockAfter(editor, [createEmptyParagraph()]);
+      return true;
+    }
+
+    const [top, bottom] = splitEditorInTwoFragments(editor, ref.current);
     setEditorContent(editor, top);
     createAndSelectNewBlockAfter(editor, bottom);
 

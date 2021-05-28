@@ -14,6 +14,19 @@ export const normalizeBlocks = (editor) => {
   editor.normalizeNode = (entry) => {
     const [node, path] = entry;
 
+    // delete childless ul/ol nodes
+    if (
+      !Text.isText(node) &&
+      Element.isElement(node) &&
+      !editor.isInline(node) &&
+      slate.listTypes.includes(node.type)
+    ) {
+      if ((node.children || []).length === 0) {
+        Transforms.removeNodes(editor, { at: path });
+        return;
+      }
+    }
+
     // TODO: skip table nodes
     if (
       !Text.isText(node) &&

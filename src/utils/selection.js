@@ -173,6 +173,7 @@ export function getFragmentFromBeginningOfEditorToStartOfSelection(
   }
 
   // immer doesn't like editor.savedSelection
+  // TODO: there's a bug here related to splitting lists
   const newEditor = { children: editor.children };
   return Editor.fragment(
     newEditor,

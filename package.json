@@ -57,7 +57,7 @@
     "prettier:fix": "../../../node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,json,css,less,md}'",
     "lint": "../../../node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
     "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'",
-    "cypress:run": "if [ -d ./project ]; then ./project/cypress/bin/cypress run; else ../../../node_modules/cypress/bin/cypress run; fi",
-    "cypress:open": "if [ -d ./project ]; then ./project/cypress/bin/cypress open; else ../../../node_modules/cypress/bin/cypress open; fi"
+    "cypress:run": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress run; else ../../../node_modules/cypress/bin/cypress run; fi",
+    "cypress:open": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress open; else ../../../node_modules/cypress/bin/cypress open; fi"
   }
 }

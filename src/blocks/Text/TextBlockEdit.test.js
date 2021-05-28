@@ -4,6 +4,7 @@ import { Provider } from 'react-intl-redux';
 import { render } from '@testing-library/react';
 import config from '@plone/volto/registry';
 import TextBlockEdit from './TextBlockEdit';
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 
 const mockStore = configureStore();
 
@@ -49,6 +50,8 @@ describe('TextBlockEdit', () => {
         messages: {},
       },
     });
+
+    mockAllIsIntersecting(true);
 
     // TODO: also test for the initial contents: My first paragraph.
     const { asFragment } = render(

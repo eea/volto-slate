@@ -15,11 +15,13 @@ describe('Block Tests', () => {
     s3.typeInSlate('Hello Cypress World!');
     s3.type('{enter}');
 
+    cy.wait(500);
+
     // Save
     cy.get('#toolbar-save').click();
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 
     // then the page view should contain our changes
-    cy.get('#page-document p').contains('Hello Cypress World!');
+    cy.contains('Hello Cypress World!');
   });
 });

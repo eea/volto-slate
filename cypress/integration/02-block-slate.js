@@ -19,6 +19,8 @@ describe('Block Tests', () => {
     cy.get('#toolbar-save').click();
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 
+    cy.wait(500);
+
     // then the page view should contain our changes
     cy.contains('Hello Cypress World!');
   });

@@ -49,19 +49,22 @@ const Toolbar = (props) => {
     return () => document.removeEventListener('selectionchange', toggleToolbar);
   }, [editor, showMainToolbar]);
 
-  return showMainToolbar ? (
-    <SlateToolbar
-      className={className}
-      selected={true}
-      enableExpando={slate.enableExpandedToolbar}
-      showExpandedToolbar={showExpandedToolbar}
-      setShowExpandedToolbar={setShowExpandedToolbar}
-    />
-  ) : (
-    <SlateContextToolbar
-      editor={editor}
-      plugins={slate.contextToolbarButtons}
-    />
+  // console.log('showMainToolbar', showMainToolbar);
+  return (
+    <>
+      <SlateToolbar
+        className={className}
+        selected={true}
+        enableExpando={slate.enableExpandedToolbar}
+        showExpandedToolbar={showExpandedToolbar}
+        setShowExpandedToolbar={setShowExpandedToolbar}
+        show={showMainToolbar}
+      />
+      <SlateContextToolbar
+        editor={editor}
+        plugins={slate.contextToolbarButtons}
+      />
+    </>
   );
 };
 

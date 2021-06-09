@@ -77,7 +77,6 @@ class SlateEditor extends Component {
     this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
     this.savedSelection = null;
-    this.mouseDown = null;
 
     this.state = {
       editor: this.createEditor(),
@@ -267,12 +266,6 @@ class SlateEditor extends Component {
               spellCheck={false}
               onClick={() => {
                 this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
-              }}
-              onMouseDown={() => {
-                this.mouseDown = true;
-              }}
-              onMouseUp={() => {
-                this.mouseDown = false;
               }}
               onKeyDown={(event) => {
                 // we handle selection events to show the toolbar

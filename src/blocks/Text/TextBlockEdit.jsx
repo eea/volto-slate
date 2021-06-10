@@ -222,7 +222,6 @@ export const DefaultTextBlockEditor = (props) => {
                   // when clicking once a selected word
                   ev.stopPropagation();
                 }}
-                onKeyDown={handleKey}
                 selected={selected}
                 placeholder={placeholder}
               />
@@ -293,7 +292,6 @@ export const DetachedTextBlockEditor = (props) => {
     data,
     index,
     properties,
-    value,
     onSelectBlock,
     onChangeBlock,
     block,
@@ -301,6 +299,7 @@ export const DetachedTextBlockEditor = (props) => {
     formTitle,
     formDescription,
   } = props;
+  const { value } = data;
 
   const schema = TextBlockSchema(data);
   const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
@@ -313,14 +312,22 @@ export const DetachedTextBlockEditor = (props) => {
     threshold: 0,
     rootMargin: '0px 0px 200px 0px',
   });
+
+  const withBlockProperties = React.useCallback(
+    (editor) => {
+      editor.getBlockProps = () => props;
+      return editor;
+    },
+    [props],
+  );
+
   return (
-    <div className="text-slate-editor-inner" ref={ref}>
+    <div className="text-slate-editor-inner detached-slate-editor" ref={ref}>
       <SlateEditor
         index={index}
         readOnly={!inView}
         properties={properties}
-        extensions={[]}
-        renderExtensions={[[]]}
+        renderExtensions={[withBlockProperties]}
         value={value}
         block={block /* is this needed? */}
         onFocus={() => onSelectBlock(block)}

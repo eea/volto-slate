@@ -222,6 +222,7 @@ export const DefaultTextBlockEditor = (props) => {
                   // when clicking once a selected word
                   ev.stopPropagation();
                 }}
+                onKeyDown={handleKey}
                 selected={selected}
                 placeholder={placeholder}
               />
@@ -348,7 +349,6 @@ export const DetachedTextBlockEditor = (props) => {
           // when clicking once a selected word
           ev.stopPropagation();
         }}
-        onKeyDown={handleKey}
         selected={selected}
         placeholder={placeholder}
       />

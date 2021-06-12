@@ -1,6 +1,10 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
 import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
+import {
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
 import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 import _ from 'lodash';
 
@@ -230,4 +234,33 @@ export const toggleFormat = (editor, format) => {
   Transforms.setNodes(editor, {
     type,
   });
+};
+
+/**
+ * @param {object} properties A prop received by the View component
+ *  which is read by the `getBlocksFieldname` and
+ * `getBlocksLayoutFieldname` Volto helpers to produce the return value.
+ * @returns {Array} All the blocks data taken from the Volto form.
+ */
+export const getAllBlocks = (properties, blocks) => {
+  const blocksFieldName = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
+
+  for (const n of properties[blocksLayoutFieldname].items) {
+    const block = properties[blocksFieldName][n];
+    // TODO Make this configurable via block config getBlocks
+    if (
+      block?.data?.[blocksLayoutFieldname] &&
+      block?.data?.[blocksFieldName]
+    ) {
+      getAllBlocks(block.data, blocks);
+    } else if (block?.[blocksLayoutFieldname] && block?.[blocksFieldName]) {
+      getAllBlocks(block, blocks);
+    }
+    blocks.push({
+      id: n,
+      ...block,
+    });
+  }
+  return blocks;
 };

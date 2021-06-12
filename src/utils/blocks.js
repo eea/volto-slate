@@ -257,7 +257,10 @@ export const getAllBlocks = (properties, blocks) => {
     } else if (block?.[blocksLayoutFieldname] && block?.[blocksFieldName]) {
       getAllBlocks(block, blocks);
     }
-    blocks.push(block);
+    blocks.push({
+      id: n,
+      ...block,
+    });
   }
   return blocks;
 };

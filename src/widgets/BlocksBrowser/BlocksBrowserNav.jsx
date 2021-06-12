@@ -26,6 +26,7 @@ const messages = defineMessages({
   },
 });
 // TODO: getBlocks in Block configuration
+// TODO: Merge/Use 'volto-slate/utils' getAllBlocks
 const getBlocks = (data) => {
   if (!data?.blocks_layout?.items?.length) return [];
   return data.blocks_layout.items.map((block, index) => {

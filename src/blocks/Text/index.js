@@ -1,3 +1,4 @@
+import React from 'react';
 import codeSVG from '@plone/volto/icons/code.svg';
 import TextBlockView from './TextBlockView';
 import TextBlockEdit from './TextBlockEdit';
@@ -122,6 +123,14 @@ export default (config) => {
         ? [parseInt(type.slice(1)), plaintext]
         : null;
     },
+  };
+
+  config.blocks.blocksConfig.detachedSlate = {
+    ...config.blocks.blocksConfig.slate,
+    id: 'detachedSlate',
+    title: 'Detached Slate',
+    edit: (props) => <TextBlockEdit {...props} detached />,
+    restricted: true,
   };
   return config;
 };

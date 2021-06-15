@@ -65,7 +65,7 @@ const Toolbar = (props) => {
   );
 };
 
-class SlateEditor extends Component {
+class SlateEditor extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -78,11 +78,13 @@ class SlateEditor extends Component {
 
     this.savedSelection = null;
 
+    const editor = this.createEditor();
     this.state = {
-      editor: this.createEditor(),
+      editor,
       showExpandedToolbar: config.settings.slate.showExpandedToolbar,
       hasDomSelection: false,
     };
+    this.props.editorRef.current = editor;
 
     this.editor = null;
   }
@@ -201,6 +203,13 @@ class SlateEditor extends Component {
       this.props.selected !== selected ||
       this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value);
+    this.props.onClickUpdate({ type: 'update' });
+    console.log('should update', res, {
+      thisSelected: this.props.selected,
+      thisReadOnly: this.props.readOnly,
+      nextSelected: selected,
+      nextReadOnly: readOnly,
+    });
     return res;
   }
 
@@ -224,13 +233,14 @@ class SlateEditor extends Component {
       (acc, apply) => apply(acc),
       this.state.editor,
     );
-    this.editor = editor;
+    this.editor = editor; // why this hack?
 
     if (testingEditorRef) {
       testingEditorRef.current = editor;
     }
 
     // debug-values are `data-` HTML attributes in withTestingFeatures HOC
+    console.log('render editor');
 
     return (
       <div
@@ -242,88 +252,84 @@ class SlateEditor extends Component {
       >
         {/* {JSON.stringify(this.state.hasDomSelection)} */}
         {/* {JSON.stringify(hasRangeSelection(editor, false))} */}
-        <EditorContext.Provider value={editor}>
-          <Slate
-            editor={editor}
-            value={value || slate.defaultValue()}
-            onChange={this.handleChange}
-          >
-            {selected ? (
-              <Toolbar
-                editor={editor}
-                className={className}
-                hasDomSelection={this.state.hasDomSelection}
-              />
-            ) : (
-              ''
-            )}
-            <Editable
-              readOnly={readOnly}
-              placeholder={placeholder}
-              renderElement={(props) => <Element {...props} />}
-              renderLeaf={(props) => <Leaf {...props} />}
-              decorate={this.multiDecorator}
-              spellCheck={false}
-              onKeyDown={(event) => {
-                // we handle selection events to show the toolbar
-                if (
-                  !this.state.hasDomSelection &&
-                  ((event.shiftKey && event.key !== 'Shift') ||
-                    (event.ctrlKey && event.key === 'a'))
-                ) {
-                  // this.setState({ hasDomSelection: true });
-                } else if (
-                  (this.state.hasDomSelection ||
-                    event.key === 'Left' ||
-                    event.key === 'Right') &&
-                  !event.shiftKey
-                ) {
-                  // this.setState({ hasDomSelection: false });
-                }
-
-                let wasHotkey = false;
-
-                for (const hk of Object.entries(slate.hotkeys)) {
-                  const [shortcut, { format, type }] = hk;
-                  if (isHotkey(shortcut, event)) {
-                    event.preventDefault();
-
-                    if (type === 'inline') {
-                      toggleInlineFormat(editor, format);
-                    } else {
-                      // type === 'mark'
-                      toggleMark(editor, format);
-                    }
-
-                    wasHotkey = true;
-                  }
-                }
-
-                if (wasHotkey) {
-                  return;
-                }
-
-                onKeyDown && onKeyDown({ editor, event });
-              }}
+        <Slate
+          editor={editor}
+          value={value || slate.defaultValue()}
+          onChange={this.handleChange}
+        >
+          {selected ? (
+            <Toolbar
+              editor={editor}
+              className={className}
+              hasDomSelection={this.state.hasDomSelection}
             />
-            {selected &&
-              slate.persistentHelpers.map((Helper, i) => {
-                return <Helper key={i} editor={editor} />;
-              })}
-            {this.props.debug ? (
-              <ul>
-                <li>{selected ? 'selected' : 'no-selected'}</li>
-                <li>
-                  savedSelection: {JSON.stringify(editor.getSavedSelection())}
-                </li>
-                <li>live selection: {JSON.stringify(editor.selection)}</li>
-                <li>children: {JSON.stringify(editor.children)}</li>
-              </ul>
-            ) : (
-              ''
-            )}
-          </Slate>
-        </EditorContext.Provider>
+          ) : (
+            ''
+          )}
+          <Editable
+            readOnly={readOnly}
+            placeholder={placeholder}
+            renderElement={(props) => <Element {...props} />}
+            renderLeaf={(props) => <Leaf {...props} />}
+            decorate={this.multiDecorator}
+            spellCheck={false}
+            onClick={() => this.props.onClickUpdate({ type: 'update' })}
+            onKeyDown={(event) => {
+              // we handle selection events to show the toolbar
+              if (
+                !this.state.hasDomSelection &&
+                ((event.shiftKey && event.key !== 'Shift') ||
+                  (event.ctrlKey && event.key === 'a'))
+              ) {
+                // this.setState({ hasDomSelection: true });
+              } else if (
+                (this.state.hasDomSelection ||
+                  event.key === 'Left' ||
+                  event.key === 'Right') &&
+                !event.shiftKey
+              ) {
+                // this.setState({ hasDomSelection: false });
+              }
+
+              let wasHotkey = false;
+
+              for (const hk of Object.entries(slate.hotkeys)) {
+                const [shortcut, { format, type }] = hk;
+                if (isHotkey(shortcut, event)) {
+                  event.preventDefault();
+
+                  if (type === 'inline') {
+                    toggleInlineFormat(editor, format);
+                  } else {
+                    // type === 'mark'
+                    toggleMark(editor, format);
+                  }
+
+                  wasHotkey = true;
+                }
+              }
+
+              if (wasHotkey) {
+                return;
+              }
+
+              onKeyDown && onKeyDown({ editor, event });
+            }}
+          />
+
+          {this.props.debug ? (
+            <ul>
+              <li>{selected ? 'selected' : 'no-selected'}</li>
+              <li>
+                savedSelection: {JSON.stringify(editor.getSavedSelection())}
+              </li>
+              <li>live selection: {JSON.stringify(editor.selection)}</li>
+              <li>children: {JSON.stringify(editor.children)}</li>
+            </ul>
+          ) : (
+            ''
+          )}
+        </Slate>
       </div>
     );
   }
@@ -334,10 +340,33 @@ SlateEditor.defaultProps = {
   className: '',
 };
 
+const SlateEditorWrapper = (props) => {
+  const editorRef = React.useRef();
+  const { selected } = props;
+  const { slate } = config.settings;
+
+  const [flag, setFlag] = React.useState(false);
+
+  console.log('render wrapper');
+  return (
+    <EditorContext.Provider value={editorRef.current}>
+      {selected &&
+        slate.persistentHelpers.map((Helper, i) => {
+          return <Helper key={i} editor={editorRef.current} />;
+        })}
+      <SlateEditor
+        {...props}
+        editorRef={editorRef}
+        onClickUpdate={() => setFlag(!flag)}
+      />
+    </EditorContext.Provider>
+  );
+};
+
 export default connect((state, props) => {
   return {};
 })(
   __CLIENT__ && window?.Cypress
-    ? withTestingFeatures(SlateEditor)
-    : SlateEditor,
+    ? withTestingFeatures(SlateEditorWrapper)
+    : SlateEditorWrapper,
 );

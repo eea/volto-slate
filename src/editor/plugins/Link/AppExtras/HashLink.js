@@ -15,14 +15,7 @@ const scrollToTarget = (target, offsetHeight = 0) => {
   });
 };
 
-const HashLink = ({
-  data,
-  history,
-  pathname,
-  hashlink,
-  resetHashLink,
-  ...props
-}) => {
+const HashLink = ({ history, pathname, hashlink, resetHashLink }) => {
   const { settings } = config;
   const blacklist = settings.hashlinkBlacklist || [];
   const id = hashlink.hash;
@@ -44,7 +37,8 @@ const HashLink = ({
     if (hashlink.counter > 0 && blacklist.indexOf(type) === -1) {
       const element = document.getElementById(id);
       const headerWrapper = document.querySelector('.header-wrapper');
-      const offsetHeight = headerWrapper?.offsetHeight || 0;
+      const offsetHeight =
+        hashlink.data.offsetHeight || headerWrapper?.offsetHeight || 0;
       if (element) {
         scrollToTarget(element, offsetHeight);
       }

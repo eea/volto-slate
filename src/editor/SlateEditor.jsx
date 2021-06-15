@@ -203,13 +203,12 @@ class SlateEditor extends React.PureComponent {
       this.props.selected !== selected ||
       this.props.readOnly !== readOnly ||
       !isEqual(value, this.props.value);
-    this.props.onClickUpdate({ type: 'update' });
-    console.log('should update', res, {
-      thisSelected: this.props.selected,
-      thisReadOnly: this.props.readOnly,
-      nextSelected: selected,
-      nextReadOnly: readOnly,
-    });
+    // console.log('should update', res, {
+    //   thisSelected: this.props.selected,
+    //   thisReadOnly: this.props.readOnly,
+    //   nextSelected: selected,
+    //   nextReadOnly: readOnly,
+    // });
     return res;
   }
 
@@ -347,12 +346,19 @@ const SlateEditorWrapper = (props) => {
 
   const [flag, setFlag] = React.useState(false);
 
-  console.log('render wrapper');
+  console.log('render wrapper', JSON.stringify(editorRef.current?.selection));
   return (
     <EditorContext.Provider value={editorRef.current}>
       {selected &&
         slate.persistentHelpers.map((Helper, i) => {
-          return <Helper key={i} editor={editorRef.current} />;
+          console.log('helper', Helper.id);
+          return (
+            <Helper
+              key={Helper.id || i}
+              editor={editorRef.current}
+              flag={flag}
+            />
+          );
         })}
       <SlateEditor
         {...props}

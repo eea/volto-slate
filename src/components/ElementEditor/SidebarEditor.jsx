@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setPluginOptions } from 'volto-slate/actions';
 
 const SidebarEditor = (props) => {
+  console.log('SE');
   const { editor, pluginId, getActiveElement, pluginEditor } = props;
   const PluginEditor = pluginEditor;
   const showEditor = useSelector((state) => {

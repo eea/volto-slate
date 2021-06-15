@@ -264,9 +264,6 @@ class SlateEditor extends Component {
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
-              onClick={() => {
-                this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
-              }}
               onKeyDown={(event) => {
                 // we handle selection events to show the toolbar
                 if (

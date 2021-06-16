@@ -39,8 +39,10 @@ const getBlocks = (data) => {
         type ||
         `unknown_${index}`,
       id: data.blocks[block].id || block,
-      ...(config.blocks.blocksConfig[type]?.getBlocks?.(data.blocks[block]) ||
-        {}),
+      ...(config.blocks.blocksConfig[type]?.getBlocks?.({
+        ...data.blocks[block],
+        parentId: block,
+      }) || {}),
     };
   });
 };
@@ -66,10 +68,7 @@ const BlocksBrowserNav = (props) => {
     handleDoubleClickOnItem,
     content,
   } = props;
-  const blocksData = getBlocks({
-    blocks: content.blocks,
-    blocks_layout: content.blocks_layout,
-  });
+  const blocksData = getBlocks(content);
   const [selectedBlocks, setSelectedBlocks] = React.useState(null);
   const [parent, setParent] = React.useState(null);
   const intl = useIntl();

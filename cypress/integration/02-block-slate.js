@@ -11,6 +11,8 @@ describe('Block Tests', () => {
     s1.typeInSlate('Hello Slate World!');
     s1.type('{enter}');
 
+    cy.wait(500);
+
     let s3 = createSlateBlock();
     s3.typeInSlate('Hello Cypress World!');
     s3.type('{enter}');

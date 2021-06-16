@@ -40,7 +40,7 @@ export const LinkElement = withHashLink(
         ) : (
           <UniversalLink
             href={href || '#'}
-            openLinkInNewTab={link?.external?.target}
+            openLinkInNewTab={link?.external?.target === '_blank'}
             title={title}
           >
             {children}

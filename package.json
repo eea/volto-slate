@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "react-intersection-observer": "^8.32.0",
-    "@eeacms/volto-object-widget": "^2.0.0",
+    "@eeacms/volto-object-widget": ">=2.2.3",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",

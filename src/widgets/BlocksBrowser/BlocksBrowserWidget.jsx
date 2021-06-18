@@ -127,6 +127,7 @@ class BlocksBrowserWidget extends Component {
           ...this.props.selectedItemAttrs,
           // Add the required attributes for the widget to work
           'id',
+          'parentId',
           'title',
           'type',
         ];

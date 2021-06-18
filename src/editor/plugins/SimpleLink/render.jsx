@@ -9,7 +9,7 @@ const ViewLink = ({ url, target, download, children }) => {
   return (
     <UniversalLink
       href={url}
-      openLinkInNewTab={target === '_blank' || undefined}
+      openLinkInNewTab={target === '_blank'}
       download={download}
     >
       {children}

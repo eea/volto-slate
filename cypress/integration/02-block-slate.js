@@ -22,6 +22,6 @@ describe('Block Tests', () => {
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 
     // then the page view should contain our changes
-    cy.contains('Hello Cypress World!');
+    cy.contains('Hello Cypress World');
   });
 });

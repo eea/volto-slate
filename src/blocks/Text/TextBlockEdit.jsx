@@ -329,7 +329,7 @@ export const DetachedTextBlockEditor = (props) => {
         index={index}
         readOnly={!inView}
         properties={properties}
-        renderExtensions={[withBlockProperties]}
+        renderExtensions={[]}
         value={value}
         block={block /* is this needed? */}
         onFocus={() => onSelectBlock(block)}

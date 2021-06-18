@@ -69,6 +69,7 @@ const INLINE_ELEMENTS = [
   'WBR',
 ];
 
+// eslint-disable-next-line
 const BLOCK_ELEMENTS = [
   'ADDRESS',
   'ARTICLE',

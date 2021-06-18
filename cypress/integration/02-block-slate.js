@@ -8,12 +8,14 @@ describe('Block Tests', () => {
     cy.get('.slate-editor [contenteditable=true]').click();
     let s1 = createSlateBlock();
 
-    s1.typeInSlate('Hello Slate World!').type('{enter}');
+    s1.typeInSlate('Hello Slate World!');
+    cy.wait(500);
+    s1.type('{enter}');
 
     let s3 = createSlateBlock();
-    s3.typeInSlate('Hello Cypress World!').type('{enter}');
-
+    s3.typeInSlate('Hello Cypress World!');
     cy.wait(500);
+    s3.type('{enter}');
 
     // Save
     cy.get('#toolbar-save').click();

@@ -5,106 +5,14 @@ import {
   isWhitespace,
   createEmptyParagraph,
 } from 'volto-slate/utils';
-import { TD, TH } from '../constants';
-
-const TEXT_NODE = 3;
-const ELEMENT_NODE = 1;
-const COMMENT = 8;
-
-const INLINE_ELEMENTS = [
-  'A',
-  'ABBR',
-  'ACRONYM',
-  'AUDIO',
-  'B',
-  'BDI',
-  'BDO',
-  'BIG',
-  'BR',
-  'BUTTON',
-  'CANVAS',
-  'CITE',
-  'CODE',
-  'DATA',
-  'DATALIST',
-  'DEL',
-  'DFN',
-  'EM',
-  'EMBED',
-  'I',
-  'IFRAME',
-  'IMG',
-  'INPUT',
-  'INS',
-  'KBD',
-  'LABEL',
-  'MAP',
-  'MARK',
-  'METER',
-  'NOSCRIPT',
-  'OBJECT',
-  'OUTPUT',
-  'PICTURE',
-  'PROGRESS',
-  'Q',
-  'RUBY',
-  'S',
-  'SAMP',
-  'SCRIPT',
-  'SELECT',
-  'SLOT',
-  'SMALL',
-  'SPAN',
-  'STRONG',
-  'SUB',
-  'SUP',
-  'SVG',
-  'TEMPLATE',
-  'TEXTAREA',
-  'TIME',
-  'U',
-  'TT',
-  'VAR',
-  'VIDEO',
-  'WBR',
-];
-
-// eslint-disable-next-line
-const BLOCK_ELEMENTS = [
-  'ADDRESS',
-  'ARTICLE',
-  'ASIDE',
-  'BLOCKQUOTE',
-  'DETAILS',
-  'DIALOG',
-  'DD',
-  'DIV',
-  'DL',
-  'DT',
-  'FIELDSET',
-  'FIGCAPTION',
-  'FIGURE',
-  'FOOTER',
-  'FORM',
-  'H1',
-  'H2',
-  'H3',
-  'H4',
-  'H5',
-  'H6',
-  'HEADER',
-  'HGROUP',
-  'HR',
-  'LI',
-  'MAIN',
-  'NAV',
-  'OL',
-  'P',
-  'PRE',
-  'SECTION',
-  'TABLE',
-  'UL',
-];
+import {
+  TD,
+  TH,
+  COMMENT,
+  ELEMENT_NODE,
+  INLINE_ELEMENTS,
+  TEXT_NODE,
+} from '../constants';
 
 const isInline = (node) =>
   node &&
@@ -136,7 +44,7 @@ export const deserialize = (editor, el) => {
       // });
       // if it's empty text between 2 tags, it should be ignored
       return isInline(el.previousSibling) || isInline(el.nextSibling)
-        ? ' '
+        ? ' ' // perceptually multiple whitespaces render as a single space
         : null;
     }
     return el.textContent

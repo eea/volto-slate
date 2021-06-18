@@ -382,7 +382,7 @@ export const DetachedTextBlockEditor = (props) => {
 };
 
 const TextBlockEdit = (props) => {
-  return props.detached || props.disableNewBlocks ? (
+  return props.detached ? ( // || props.disableNewBlocks
     <DetachedTextBlockEditor {...props} />
   ) : (
     <DefaultTextBlockEditor {...props} />

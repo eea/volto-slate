@@ -11,10 +11,109 @@ const TEXT_NODE = 3;
 const ELEMENT_NODE = 1;
 const COMMENT = 8;
 
+const INLINE_ELEMENTS = [
+  'A',
+  'ABBR',
+  'ACRONYM',
+  'AUDIO',
+  'B',
+  'BDI',
+  'BDO',
+  'BIG',
+  'BR',
+  'BUTTON',
+  'CANVAS',
+  'CITE',
+  'CODE',
+  'DATA',
+  'DATALIST',
+  'DEL',
+  'DFN',
+  'EM',
+  'EMBED',
+  'I',
+  'IFRAME',
+  'IMG',
+  'INPUT',
+  'INS',
+  'KBD',
+  'LABEL',
+  'MAP',
+  'MARK',
+  'METER',
+  'NOSCRIPT',
+  'OBJECT',
+  'OUTPUT',
+  'PICTURE',
+  'PROGRESS',
+  'Q',
+  'RUBY',
+  'S',
+  'SAMP',
+  'SCRIPT',
+  'SELECT',
+  'SLOT',
+  'SMALL',
+  'SPAN',
+  'STRONG',
+  'SUB',
+  'SUP',
+  'SVG',
+  'TEMPLATE',
+  'TEXTAREA',
+  'TIME',
+  'U',
+  'TT',
+  'VAR',
+  'VIDEO',
+  'WBR',
+];
+
+const BLOCK_ELEMENTS = [
+  'ADDRESS',
+  'ARTICLE',
+  'ASIDE',
+  'BLOCKQUOTE',
+  'DETAILS',
+  'DIALOG',
+  'DD',
+  'DIV',
+  'DL',
+  'DT',
+  'FIELDSET',
+  'FIGCAPTION',
+  'FIGURE',
+  'FOOTER',
+  'FORM',
+  'H1',
+  'H2',
+  'H3',
+  'H4',
+  'H5',
+  'H6',
+  'HEADER',
+  'HGROUP',
+  'HR',
+  'LI',
+  'MAIN',
+  'NAV',
+  'OL',
+  'P',
+  'PRE',
+  'SECTION',
+  'TABLE',
+  'UL',
+];
+
+const isInline = (node) =>
+  node &&
+  (node.nodeType === TEXT_NODE || INLINE_ELEMENTS.includes(node.nodeName));
+
 /**
  * Deserializes to an object or an Array.
  */
 export const deserialize = (editor, el) => {
+  // console.log('deserialize el:', el);
   const { htmlTagsToSlate } = editor;
 
   // console.log('des:', el.nodeType, el);
@@ -23,9 +122,21 @@ export const deserialize = (editor, el) => {
   } else if (el.nodeType === TEXT_NODE) {
     // instead of === '\n' we use isWhitespace for when deserializing tables
     // from Calc and other similar cases
+
     if (isWhitespace(el.textContent)) {
+      // console.log({
+      //   text: `-${el.textContent}-`,
+      //   prev: el.previousSibling,
+      //   next: el.nextSibling,
+      //   isPrev: isInline(el.previousSibling),
+      //   isNext: isInline(el.nextSibling),
+      //   prevName: el.previousSibling && el.previousSibling.nodeName,
+      //   nextName: el.nextSibling && el.nextSibling.nodeName,
+      // });
       // if it's empty text between 2 tags, it should be ignored
-      return null;
+      return isInline(el.previousSibling) || isInline(el.nextSibling)
+        ? ' '
+        : null;
     }
     return el.textContent
       .replace(/\n$/g, ' ')

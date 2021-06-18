@@ -6,13 +6,13 @@ describe('Block Tests', () => {
 
   it('should create 4 slate blocks, first 3 with mouse, the last with an Enter in the third block', () => {
     cy.get('.slate-editor [contenteditable=true]').click();
-
     let s1 = createSlateBlock();
-    s1.typeInSlate('Hello Slate World!');
+
+    s1.typeInSlate('Hello Slate World');
     s1.type('{enter}');
 
     let s3 = createSlateBlock();
-    s3.typeInSlate('Hello Cypress World!');
+    s3.typeInSlate('Hello Cypress World');
     s3.type('{enter}');
 
     cy.wait(500);
@@ -22,6 +22,6 @@ describe('Block Tests', () => {
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 
     // then the page view should contain our changes
-    cy.contains('Hello Cypress World!');
+    cy.contains('Hello Cypress World');
   });
 });

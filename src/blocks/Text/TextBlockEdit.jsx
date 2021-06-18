@@ -36,12 +36,12 @@ import './css/editor.css';
 
 const DEBUG = false;
 
-const TextBlockEdit = (props) => {
+export const DefaultTextBlockEditor = (props) => {
   const {
     block,
     blocksConfig,
     data,
-    detached,
+    detached = false,
     index,
     onChangeBlock,
     onInsertBlock,
@@ -286,6 +286,106 @@ const TextBlockEdit = (props) => {
         </SidebarPortal>
       </>
     </div>
+  );
+};
+
+export const DetachedTextBlockEditor = (props) => {
+  const {
+    data,
+    index,
+    properties,
+    onSelectBlock,
+    onChangeBlock,
+    block,
+    selected,
+    formTitle,
+    formDescription,
+  } = props;
+  const { value } = data;
+
+  const schema = TextBlockSchema(data);
+  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  let instructions = data?.instructions?.data || data?.instructions;
+  if (!instructions || instructions === '<p><br/></p>') {
+    instructions = formDescription;
+  }
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '0px 0px 200px 0px',
+  });
+
+  const withBlockProperties = React.useCallback(
+    (editor) => {
+      editor.getBlockProps = () => props;
+      return editor;
+    },
+    [props],
+  );
+
+  return (
+    <div className="text-slate-editor-inner detached-slate-editor" ref={ref}>
+      <SlateEditor
+        index={index}
+        readOnly={!inView}
+        properties={properties}
+        renderExtensions={[withBlockProperties]}
+        value={value}
+        block={block /* is this needed? */}
+        onFocus={() => onSelectBlock(block)}
+        debug={DEBUG}
+        onChange={(value, selection) => {
+          onChangeBlock(block, {
+            ...data,
+            value,
+            plaintext: serializeNodesToText(value || []),
+            // TODO: also add html serialized value
+          });
+        }}
+        onClick={(ev) => {
+          // this is needed so that the click event does
+          // not bubble up to the Blocks/Block/Edit.jsx component
+          // which attempts to focus the TextBlockEdit on
+          // click and this behavior breaks user selection, e.g.
+          // when clicking once a selected word
+          ev.stopPropagation();
+        }}
+        selected={selected}
+        placeholder={placeholder}
+      />
+      <SidebarPortal selected={selected}>
+        <div id="slate-plugin-sidebar"></div>
+        {instructions ? (
+          <Segment attached>
+            <div dangerouslySetInnerHTML={{ __html: instructions }} />
+          </Segment>
+        ) : (
+          <>
+            <ShortcutListing />
+            <MarkdownIntroduction />
+            <InlineForm
+              schema={schema}
+              title={schema.title}
+              onChangeField={(id, value) => {
+                onChangeBlock(block, {
+                  ...data,
+                  [id]: value,
+                });
+              }}
+              formData={data}
+            />
+          </>
+        )}
+      </SidebarPortal>
+    </div>
+  );
+};
+
+const TextBlockEdit = (props) => {
+  return props.detached ? ( // || props.disableNewBlocks
+    <DetachedTextBlockEditor {...props} />
+  ) : (
+    <DefaultTextBlockEditor {...props} />
   );
 };
 

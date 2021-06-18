@@ -103,7 +103,12 @@ class SlateEditor extends Component {
     const raw = withHistory(withReact(createEditor()));
 
     // TODO: also look for MIME Types in the files case
-    raw.dataTransferFormatsOrder = ['text/html', 'files', 'text/plain'];
+    raw.dataTransferFormatsOrder = [
+      'application/x-slate-fragment',
+      'text/html',
+      'files',
+      'text/plain',
+    ];
     raw.dataTransferHandlers = {};
 
     const plugins = [...defaultExtensions, ...this.props.extensions];

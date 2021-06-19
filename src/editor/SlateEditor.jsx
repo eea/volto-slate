@@ -273,7 +273,11 @@ class SlateEditor extends Component {
               decorate={this.multiDecorator}
               spellCheck={false}
               onClick={() => {
-                this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
+                setTimeout(
+                  () =>
+                    this.setState((state) => ({ update: !this.state.update })),
+                  400,
+                );
               }}
               onKeyDown={(event) => {
                 // we handle selection events to show the toolbar

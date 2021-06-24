@@ -49,22 +49,26 @@ const Toolbar = (props) => {
     return () => document.removeEventListener('selectionchange', toggleToolbar);
   }, [editor, showMainToolbar]);
 
-  return showMainToolbar ? (
-    <SlateToolbar
-      className={className}
-      selected={true}
-      enableExpando={slate.enableExpandedToolbar}
-      showExpandedToolbar={showExpandedToolbar}
-      setShowExpandedToolbar={setShowExpandedToolbar}
-    />
-  ) : (
-    <SlateContextToolbar
-      editor={editor}
-      plugins={slate.contextToolbarButtons}
-    />
+  // console.log('showMainToolbar', showMainToolbar);
+  return (
+    <>
+      <SlateToolbar
+        className={className}
+        selected={true}
+        enableExpando={slate.enableExpandedToolbar}
+        showExpandedToolbar={showExpandedToolbar}
+        setShowExpandedToolbar={setShowExpandedToolbar}
+        show={showMainToolbar}
+      />
+      <SlateContextToolbar
+        editor={editor}
+        plugins={slate.contextToolbarButtons}
+      />
+    </>
   );
 };
 
+// TODO: implement onFocus
 class SlateEditor extends Component {
   constructor(props) {
     super(props);
@@ -74,7 +78,6 @@ class SlateEditor extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.getSavedSelection = this.getSavedSelection.bind(this);
     this.setSavedSelection = this.setSavedSelection.bind(this);
-    this.onDOMSelectionChange = this.onDOMSelectionChange.bind(this);
 
     this.savedSelection = null;
 
@@ -137,25 +140,9 @@ class SlateEditor extends Component {
     );
   }
 
-  onDOMSelectionChange(evt) {
-    const { activeElement } = window.document;
-    const { editor } = this.state;
-
-    const el = ReactEditor.toDOMNode(editor, editor);
-    if (activeElement !== el) return;
-
-    // TODO: we should give up on maintaining savedSelection like this
-    // we should only create it on blur
-    if (editor.selection)
-      this.setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
-  }
-
   componentDidMount() {
     // watch the dom change
-    window.document.addEventListener(
-      'selectionchange',
-      this.onDOMSelectionChange,
-    );
+
     if (this.props.selected) {
       let focused = true;
       try {
@@ -171,13 +158,6 @@ class SlateEditor extends Component {
     }
   }
 
-  componentWillUnmount() {
-    window.document.removeEventListener(
-      'selectionchange',
-      this.onDOMSelectionChange,
-    );
-  }
-
   componentDidUpdate(prevProps) {
     if (!isEqual(prevProps.extensions, this.props.extensions)) {
       this.setState({ editor: this.createEditor() });
@@ -186,13 +166,13 @@ class SlateEditor extends Component {
 
     if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 10); // flush
+        setTimeout(() => ReactEditor.focus(this.state.editor), 100); // flush
       }
     }
 
-    if (this.props.selected && this.editor && this.editor.selection) {
-      this.editor.setSavedSelection(this.editor.selection);
-    }
+    // if (this.props.selected && this.editor && this.editor.selection) {
+    //   this.editor.setSavedSelection(this.editor.selection);
+    // }
 
     if (this.props.selected && this.props.onUpdate) {
       this.props.onUpdate(this.state.editor);
@@ -245,8 +225,6 @@ class SlateEditor extends Component {
           selected,
         })}
       >
-        {/* {JSON.stringify(this.state.hasDomSelection)} */}
-        {/* {JSON.stringify(hasRangeSelection(editor, false))} */}
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
@@ -269,26 +247,19 @@ class SlateEditor extends Component {
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
-              onClick={() => {
-                this.setState((state) => ({ update: !this.state.update })); // needed, triggers re-render
+              onSelect={() => {
+                if (
+                  editor.selection &&
+                  !isEqual(editor.selection, this.savedSelection)
+                ) {
+                  this.setSavedSelection(
+                    JSON.parse(JSON.stringify(editor.selection)),
+                  );
+                  this.setState((state) => ({ update: !this.state.update }));
+                  // console.log('select', JSON.stringify(editor.selection));
+                }
               }}
               onKeyDown={(event) => {
-                // we handle selection events to show the toolbar
-                if (
-                  !this.state.hasDomSelection &&
-                  ((event.shiftKey && event.key !== 'Shift') ||
-                    (event.ctrlKey && event.key === 'a'))
-                ) {
-                  // this.setState({ hasDomSelection: true });
-                } else if (
-                  (this.state.hasDomSelection ||
-                    event.key === 'Left' ||
-                    event.key === 'Right') &&
-                  !event.shiftKey
-                ) {
-                  // this.setState({ hasDomSelection: false });
-                }
-
                 let wasHotkey = false;
 
                 for (const hk of Object.entries(slate.hotkeys)) {

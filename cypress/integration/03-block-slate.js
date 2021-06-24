@@ -21,8 +21,6 @@ describe('Block Tests', () => {
       .type('{leftarrow}')
       .type('{enter}');
 
-    // s1.lineBreakInSlate();
-
     getSlateBlockValue(cy.get('.slate-editor').first()).then((val) => {
       expect(val).to.deep.eq([
         {

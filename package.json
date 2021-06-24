@@ -50,6 +50,7 @@
   "scripts": {
     "release": "release-it",
     "bootstrap": "node bootstrap",
+    "test": "make test",
     "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",
     "stylelint:overrides": "../../../node_modules/.bin/stylelint --syntax less --allow-empty-input 'theme/**/*.overrides' 'src/**/*.overrides'",
     "stylelint:fix": "yarn stylelint --fix && yarn stylelint:overrides --fix",

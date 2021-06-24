@@ -10,6 +10,7 @@ const Toolbar = ({
   toggleButton,
   className,
   children,
+  show = true,
 }) => {
   const ref = useRef();
   const editor = useSlate();
@@ -18,6 +19,11 @@ const Toolbar = ({
     const el = ref.current;
 
     if ((children || []).length === 0) {
+      el.removeAttribute('style');
+      return;
+    }
+
+    if (!show) {
       el.removeAttribute('style');
       return;
     }

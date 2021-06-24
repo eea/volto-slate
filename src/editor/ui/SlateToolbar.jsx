@@ -24,6 +24,7 @@ const SlateToolbar = (props) => {
     setShowExpandedToolbar,
     className,
     enableExpando = false,
+    show,
   } = props;
   const { slate } = config.settings;
   const { toolbarButtons, expandedToolbarButtons, buttons } = slate;
@@ -43,6 +44,7 @@ const SlateToolbar = (props) => {
     <>
       {!showExpandedToolbar && (
         <Toolbar
+          show={show}
           toggleButton={
             enableExpando && (
               <ToolbarButton
@@ -68,6 +70,7 @@ const SlateToolbar = (props) => {
       >
         {selected && showExpandedToolbar && (
           <ExpandedToolbar
+            show={show}
             toggleButton={
               <ToolbarButton
                 title="Less..."

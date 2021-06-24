@@ -26,6 +26,7 @@ test('renders an edit table block component', () => {
         onChangeBlock={() => {}}
         onSelectBlock={() => {}}
         onDeleteBlock={() => {}}
+        onInsertBlock={() => {}}
         onFocusPreviousBlock={() => {}}
         onFocusNextBlock={() => {}}
         handleKeyDown={() => {}}

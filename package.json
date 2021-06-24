@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "2.7.3",
+  "version": "2.8.0",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -50,6 +50,8 @@
   "scripts": {
     "release": "release-it",
     "bootstrap": "node bootstrap",
+    "test": "make test",
+    "test:fix": "make test-update",
     "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",
     "stylelint:overrides": "../../../node_modules/.bin/stylelint --syntax less --allow-empty-input 'theme/**/*.overrides' 'src/**/*.overrides'",
     "stylelint:fix": "yarn stylelint --fix && yarn stylelint:overrides --fix",

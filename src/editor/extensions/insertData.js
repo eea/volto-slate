@@ -14,7 +14,11 @@ export const insertData = (editor) => {
       const decoded = decodeURIComponent(window.atob(dt));
       const parsed = JSON.parse(decoded);
       editor.insertFragment(parsed);
-      deconstructToVoltoBlocks(editor);
+
+      if (editor.getBlockProps) {
+        deconstructToVoltoBlocks(editor);
+      }
+
       return true;
     },
     'text/html': (dt, fullMime) => {
@@ -79,7 +83,9 @@ export const insertData = (editor) => {
 
       // TODO: This used to solve a problem when pasting images. What is it?
       // Transforms.deselect(editor);
-      deconstructToVoltoBlocks(editor);
+      if (editor.getBlockProps) {
+        deconstructToVoltoBlocks(editor);
+      }
       return true;
     },
   };
@@ -124,14 +130,3 @@ export const insertData = (editor) => {
 
   return editor;
 };
-
-//   // Delete the empty placeholder paragraph, if we can
-//   // Transforms.deselect(editor);
-//   Transforms.removeNodes(editor);
-//   // Wrap the text nodes of the fragment in paragraphs
-//   // fragment = Array.isArray(fragment)
-//   //   ? fragment.map((b) =>
-//   //       Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-//   //     )
-//   //   : fragment;
-//   // console.log('Pasting in empty block:', fragment);

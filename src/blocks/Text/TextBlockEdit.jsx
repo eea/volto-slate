@@ -215,14 +215,6 @@ export const DefaultTextBlockEditor = (props) => {
                     // TODO: also add html serialized value
                   });
                 }}
-                onClick={(ev) => {
-                  // this is needed so that the click event does
-                  // not bubble up to the Blocks/Block/Edit.jsx component
-                  // which attempts to focus the TextBlockEdit on
-                  // click and this behavior breaks user selection, e.g.
-                  // when clicking once a selected word
-                  ev.stopPropagation();
-                }}
                 onKeyDown={handleKey}
                 selected={selected}
                 placeholder={placeholder}
@@ -315,21 +307,13 @@ export const DetachedTextBlockEditor = (props) => {
     rootMargin: '0px 0px 200px 0px',
   });
 
-  const withBlockProperties = React.useCallback(
-    (editor) => {
-      editor.getBlockProps = () => props;
-      return editor;
-    },
-    [props],
-  );
-
   return (
     <div className="text-slate-editor-inner detached-slate-editor" ref={ref}>
       <SlateEditor
         index={index}
         readOnly={!inView}
         properties={properties}
-        renderExtensions={[withBlockProperties]}
+        renderExtensions={[]}
         value={value}
         block={block /* is this needed? */}
         onFocus={() => onSelectBlock(block)}
@@ -341,14 +325,6 @@ export const DetachedTextBlockEditor = (props) => {
             plaintext: serializeNodesToText(value || []),
             // TODO: also add html serialized value
           });
-        }}
-        onClick={(ev) => {
-          // this is needed so that the click event does
-          // not bubble up to the Blocks/Block/Edit.jsx component
-          // which attempts to focus the TextBlockEdit on
-          // click and this behavior breaks user selection, e.g.
-          // when clicking once a selected word
-          ev.stopPropagation();
         }}
         selected={selected}
         placeholder={placeholder}
@@ -382,7 +358,7 @@ export const DetachedTextBlockEditor = (props) => {
 };
 
 const TextBlockEdit = (props) => {
-  return props.detached || props.disableNewBlocks ? (
+  return props.detached ? ( // || props.disableNewBlocks
     <DetachedTextBlockEditor {...props} />
   ) : (
     <DefaultTextBlockEditor {...props} />

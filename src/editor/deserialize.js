@@ -5,16 +5,24 @@ import {
   isWhitespace,
   createEmptyParagraph,
 } from 'volto-slate/utils';
-import { TD, TH } from '../constants';
+import {
+  TD,
+  TH,
+  COMMENT,
+  ELEMENT_NODE,
+  INLINE_ELEMENTS,
+  TEXT_NODE,
+} from '../constants';
 
-const TEXT_NODE = 3;
-const ELEMENT_NODE = 1;
-const COMMENT = 8;
+const isInline = (node) =>
+  node &&
+  (node.nodeType === TEXT_NODE || INLINE_ELEMENTS.includes(node.nodeName));
 
 /**
  * Deserializes to an object or an Array.
  */
 export const deserialize = (editor, el) => {
+  // console.log('deserialize el:', el);
   const { htmlTagsToSlate } = editor;
 
   // console.log('des:', el.nodeType, el);
@@ -23,9 +31,21 @@ export const deserialize = (editor, el) => {
   } else if (el.nodeType === TEXT_NODE) {
     // instead of === '\n' we use isWhitespace for when deserializing tables
     // from Calc and other similar cases
+
     if (isWhitespace(el.textContent)) {
+      // console.log({
+      //   text: `-${el.textContent}-`,
+      //   prev: el.previousSibling,
+      //   next: el.nextSibling,
+      //   isPrev: isInline(el.previousSibling),
+      //   isNext: isInline(el.nextSibling),
+      //   prevName: el.previousSibling && el.previousSibling.nodeName,
+      //   nextName: el.nextSibling && el.nextSibling.nodeName,
+      // });
       // if it's empty text between 2 tags, it should be ignored
-      return null;
+      return isInline(el.previousSibling) || isInline(el.nextSibling)
+        ? ' ' // perceptually multiple whitespaces render as a single space
+        : null;
     }
     return el.textContent
       .replace(/\n$/g, ' ')

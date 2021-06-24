@@ -1,7 +1,6 @@
 import {
   slateBeforeEach,
   slateAfterEach,
-  createSlateBlock,
   getSlateBlockValue,
 } from '../support';
 
@@ -10,11 +9,11 @@ describe('Block Tests', () => {
   afterEach(slateAfterEach);
 
   it('should create a block with some text, move the cursor in the middle of the text, insert a line break, and then have 2 blocks with the two parts of the initial text', () => {
-    cy.get('.slate-editor [contenteditable=true]').click();
-    let s1 = createSlateBlock();
-
-    s1.typeInSlate('hello, world');
-    s1.type('{leftarrow}')
+    cy.get('.slate-editor [contenteditable=true]').focus()
+      .click()
+      .wait(1000)
+      .type("hello, world")
+      .type('{leftarrow}')
       .type('{leftarrow}')
       .type('{leftarrow}')
       .type('{leftarrow}')

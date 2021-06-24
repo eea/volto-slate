@@ -38,7 +38,7 @@ describe('Block Tests', () => {
     cy.get('.sidebar-container a.item:nth-child(3)').click();
     cy.get('input[name="external_link-0-external"]').click().type('https://google.com{enter}');
     cy.get('.sidebar-container .form .header button:first-of-type').click();
-    
+
     cy.get('#toolbar-save').click();
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
     cy.waitForResourceToLoad('@navigation');

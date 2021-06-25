@@ -21,7 +21,13 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
     ),
   );
 
-  return <El element={element} {...omit(rest, OMITTED)} attributes={out} />;
+  return (
+    <El
+      element={element}
+      {...omit(rest, OMITTED)}
+      attributes={{ ...out, class: element.styleName ?? '' }}
+    />
+  );
 };
 
 export const Leaf = ({ children, ...rest }) => {

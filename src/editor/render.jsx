@@ -27,7 +27,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
       {...omit(rest, OMITTED)}
       attributes={{
         ...out,
-        class: cx({
+        className: cx({
           [attributes?.className]: attributes?.className,
           [element.styleName]: element.styleName,
         }),

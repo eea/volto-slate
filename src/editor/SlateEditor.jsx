@@ -88,6 +88,7 @@ class SlateEditor extends Component {
     };
 
     this.editor = null;
+    this.selectionTimeout = null;
   }
 
   getSavedSelection() {
@@ -248,16 +249,18 @@ class SlateEditor extends Component {
               decorate={this.multiDecorator}
               spellCheck={false}
               onSelect={() => {
-                if (
-                  editor.selection &&
-                  !isEqual(editor.selection, this.savedSelection)
-                ) {
-                  this.setSavedSelection(
-                    JSON.parse(JSON.stringify(editor.selection)),
-                  );
-                  this.setState((state) => ({ update: !this.state.update }));
-                  // console.log('select', JSON.stringify(editor.selection));
-                }
+                if (this.selectionTimeout) clearTimeout(this.selectionTimeout);
+                this.selectionTimeout = setTimeout(() => {
+                  if (
+                    editor.selection &&
+                    !isEqual(editor.selection, this.savedSelection)
+                  ) {
+                    this.setState((state) => ({ update: !this.state.update }));
+                    this.setSavedSelection(
+                      JSON.parse(JSON.stringify(editor.selection)),
+                    );
+                  }
+                }, 300);
               }}
               onKeyDown={(event) => {
                 let wasHotkey = false;

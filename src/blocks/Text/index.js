@@ -71,7 +71,11 @@ export default (config) => {
         traverseBlocks,
       ],
     },
-
+    textblockDetachedKeyboardHandlers: {
+      Enter: [
+        softBreak, // Handles shift+Enter as a newline (<br/>)
+      ],
+    },
     // Used by deconstructToVoltoBlocks to transform tags such as <img> to a Volto image block
     // These emiters receive (editor, pathRef), emit [blockid, blockoptions] and
     // are allowed to change the editor contents (for the given path)

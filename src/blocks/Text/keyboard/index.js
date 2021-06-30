@@ -36,7 +36,7 @@ export function handleKey({ editor, event }) {
  * @param {Editor} editor
  * @param {KeyboardEvent} event
  */
- export function handleKeyDetached({ editor, event }) {
+export function handleKeyDetached({ editor, event }) {
   const { slate } = config.settings;
 
   const handlers = slate.textblockDetachedKeyboardHandlers[event.key];

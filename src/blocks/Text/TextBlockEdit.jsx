@@ -329,7 +329,7 @@ export const DetachedTextBlockEditor = (props) => {
         selected={selected}
         placeholder={placeholder}
         onKeyDown={handleKeyDetached}
-        />
+      />
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>
         {instructions ? (

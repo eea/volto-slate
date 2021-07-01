@@ -21,7 +21,7 @@ import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
-import { handleKey } from './keyboard';
+import { handleKey, handleKeyDetached } from './keyboard';
 import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
@@ -328,6 +328,7 @@ export const DetachedTextBlockEditor = (props) => {
         }}
         selected={selected}
         placeholder={placeholder}
+        onKeyDown={handleKeyDetached}
       />
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>

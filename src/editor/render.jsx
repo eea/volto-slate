@@ -21,7 +21,14 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
     ),
   );
 
-  return <El element={element} {...omit(rest, OMITTED)} attributes={out} />;
+  return (
+    <El
+      element={element}
+      {...omit(rest, OMITTED)}
+      attributes={out}
+      extras={extras}
+    />
+  );
 };
 
 export const Leaf = ({ children, ...rest }) => {
@@ -83,7 +90,7 @@ const serializeData = (node) => {
   return JSON.stringify({ type: node.type, data: node.data });
 };
 
-export const serializeNodes = (nodes, getAttributes) => {
+export const serializeNodes = (nodes, getAttributes, extras = {}) => {
   const editor = { children: nodes || [] };
 
   const _serializeNodes = (nodes) => {
@@ -106,6 +113,7 @@ export const serializeNodes = (nodes, getAttributes) => {
                 : null
               : null
           }
+          extras={extras}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

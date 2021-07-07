@@ -260,7 +260,7 @@ class SlateEditor extends Component {
                       JSON.parse(JSON.stringify(editor.selection)),
                     );
                   }
-                }, 150);
+                }, 200);
               }}
               onKeyDown={(event) => {
                 let wasHotkey = false;

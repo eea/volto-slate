@@ -60,6 +60,7 @@
     "lint": "../../../node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
     "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'",
     "cypress:run": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress run; else ../../../node_modules/cypress/bin/cypress run; fi",
-    "cypress:open": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress open; else ../../../node_modules/cypress/bin/cypress open; fi"
+    "cypress:open": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress open; else ../../../node_modules/cypress/bin/cypress open; fi",
+    "i18n": "rm -rf build/messages && NODE_ENV=production node src/i18n.js"
   }
 }

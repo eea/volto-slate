@@ -27,12 +27,21 @@ import TextBlockSchema from './schema';
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 
+import { defineMessages, useIntl } from 'react-intl';
+
 import { useInView } from 'react-intersection-observer';
 // import VisibilitySensor from 'react-visibility-sensor';
 
 import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
+
+const messages = defineMessages({
+  text: {
+    id: 'Type text…',
+    defaultMessage: 'Type text…',
+  },
+});
 
 const DEBUG = false;
 
@@ -160,7 +169,9 @@ export const DefaultTextBlockEditor = (props) => {
     instructions = formDescription;
   }
 
-  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
   const schema = TextBlockSchema(data);
 
   const disableNewBlocks = data?.disableNewBlocks || detached;
@@ -296,7 +307,9 @@ export const DetachedTextBlockEditor = (props) => {
   const { value } = data;
 
   const schema = TextBlockSchema(data);
-  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
   let instructions = data?.instructions?.data || data?.instructions;
   if (!instructions || instructions === '<p><br/></p>') {
     instructions = formDescription;

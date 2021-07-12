@@ -32,6 +32,16 @@ export const deserialize = (editor, el) => {
     // instead of === '\n' we use isWhitespace for when deserializing tables
     // from Calc and other similar cases
 
+    // console.log('maybe whitespace', {
+    //   text: `-${el.textContent}-`,
+    //   prev: el.previousSibling,
+    //   next: el.nextSibling,
+    //   isPrev: isInline(el.previousSibling),
+    //   isNext: isInline(el.nextSibling),
+    //   prevName: el.previousSibling && el.previousSibling.nodeName,
+    //   nextName: el.nextSibling && el.nextSibling.nodeName,
+    // });
+
     if (isWhitespace(el.textContent)) {
       // console.log({
       //   text: `-${el.textContent}-`,
@@ -54,8 +64,8 @@ export const deserialize = (editor, el) => {
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
-    // TODO: handle <br> ?
-    return null;
+    // TODO: is handling <br> like this ok in all cases ?
+    return '\n';
   }
 
   if (el.getAttribute('data-slate-data')) {

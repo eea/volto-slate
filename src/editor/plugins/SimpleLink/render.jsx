@@ -1,11 +1,7 @@
 import React from 'react';
-// import { useSelector } from 'react-redux';
 import { UniversalLink } from '@plone/volto/components';
 
 const ViewLink = ({ url, target, download, children }) => {
-  // const token = useSelector((state) => state?.userSession?.token);
-  // const to = token ? url : targetUrl || url;
-
   return (
     <UniversalLink
       href={url}
@@ -23,7 +19,7 @@ export const LinkElement = (props) => {
   return mode === 'view' ? (
     <ViewLink {...(element.data || {})}>{children}</ViewLink>
   ) : (
-    <span {...attributes} className="slate-editor-link">
+    <a {...attributes} className="slate-editor-link" href={element.data?.url}>
       {Array.isArray(children)
         ? children.map((child) => {
             if (child?.props?.decorations) {
@@ -36,6 +32,6 @@ export const LinkElement = (props) => {
             return child;
           })
         : children}
-    </span>
+    </a>
   );
 };

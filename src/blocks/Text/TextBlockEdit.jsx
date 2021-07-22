@@ -150,6 +150,7 @@ export const DefaultTextBlockEditor = (props) => {
           // a 100ms throttle, so setting to a bigger value seems to help
         }
       }
+      console.log('did update');
     },
     [defaultSelection, block, saveSlateBlockSelection],
   );
@@ -204,7 +205,12 @@ export const DefaultTextBlockEditor = (props) => {
                 renderExtensions={[withBlockProperties]}
                 value={value}
                 block={block /* is this needed? */}
-                onFocus={() => onSelectBlock(block)}
+                onFocus={() => {
+                  if (!selected) {
+                    console.log('focusing');
+                    onSelectBlock(block);
+                  }
+                }}
                 onUpdate={handleUpdate}
                 debug={DEBUG}
                 onChange={(value, selection) => {
@@ -316,7 +322,12 @@ export const DetachedTextBlockEditor = (props) => {
         renderExtensions={[]}
         value={value}
         block={block /* is this needed? */}
-        onFocus={() => onSelectBlock(block)}
+        onFocus={() => {
+          if (!selected) {
+            onSelectBlock(block);
+            console.log('focused', block);
+          }
+        }}
         debug={DEBUG}
         onChange={(value, selection) => {
           onChangeBlock(block, {

@@ -47,6 +47,11 @@ class Cell extends Component {
     this.state = {
       selected: this.props.selected,
     };
+
+    this.handleContainerFocus = this.handleContainerFocus.bind(this);
+    this.onChange = this.onChange.bind(this);
+    // this.handleFocus = this.handleFocus.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
   }
 
   /**
@@ -69,11 +74,11 @@ class Cell extends Component {
   /**
    * Handles the `onFocus` event received on the `SlateEditor` component.
    */
-  handleFocus() {
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
-  }
+  // handleFocus() {
+  //   this.setState({ selected: true }, () => {
+  //     this.props.onSelectCell(this.props.row, this.props.cell);
+  //   });
+  // }
 
   /**
    * Component will receive props
@@ -119,20 +124,19 @@ class Cell extends Component {
    * does nothing.
    */
   render() {
-    return (
-      // The tabIndex is required for the keyboard navigation
-      /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-      <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
-        {__CLIENT__ && (
-          <SlateEditor
-            onChange={this.onChange.bind(this)}
-            value={this.props.value}
-            selected={this.state.selected}
-            onFocus={this.handleFocus.bind(this)}
-            onBlur={this.handleBlur.bind(this)}
-          />
-        )}
-      </div>
+    // The tabIndex is required for the keyboard navigation
+    /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+    return __CLIENT__ ? (
+      <SlateEditor
+        tabIndex={0}
+        onChange={this.onChange}
+        value={this.props.value}
+        selected={this.state.selected}
+        onFocus={this.handleContainerFocus}
+        onBlur={this.handleBlur}
+      />
+    ) : (
+      ''
     );
   }
 }

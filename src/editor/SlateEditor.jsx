@@ -351,11 +351,3 @@ export default connect((state, props) => {
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,
 );
-//
-// const match = Node.first(this.state.editor, []);
-// const path = match[1];
-// const point = { path, offset: 0 };
-// const newSelection = { anchor: point, focus: point };
-// Transforms.select(this.state.editor, selection);
-// Transforms.select(editor, selection);
-// setTimeout(() => ReactEditor.focus(editor), 100);

@@ -322,6 +322,11 @@ export const DetachedTextBlockEditor = (props) => {
         value={value}
         block={block /* is this needed? */}
         debug={DEBUG}
+        onFocus={() => {
+          if (!selected) {
+            onSelectBlock(block);
+          }
+        }}
         onChange={(value, selection) => {
           onChangeBlock(block, {
             ...data,

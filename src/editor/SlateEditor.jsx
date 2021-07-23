@@ -51,7 +51,6 @@ const Toolbar = (props) => {
     return () => document.removeEventListener('selectionchange', toggleToolbar);
   }, [editor, showMainToolbar]);
 
-  // console.log('showMainToolbar', showMainToolbar);
   return (
     <>
       <SlateToolbar
@@ -194,14 +193,12 @@ class SlateEditor extends Component {
       if (!ReactEditor.isFocused(this.state.editor)) {
         //  || !editor.selection
         setTimeout(() => {
-          // console.log('sel', window.getSelection());
           if (window.getSelection().type === 'None') {
             const match = Node.first(this.state.editor, []);
             const path = match[1];
             const point = { path, offset: 0 };
             const selection = { anchor: point, focus: point };
             Transforms.select(this.state.editor, selection);
-            // console.log('focusing', selection);
           }
 
           ReactEditor.focus(this.state.editor);
@@ -279,6 +276,11 @@ class SlateEditor extends Component {
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
+              onBlur={() => {
+                this.props.onBlur && this.props.onBlur();
+                return null;
+              }}
+              onClick={this.props.onClick}
               onSelect={(e) => {
                 if (!selected && this.props.onFocus) {
                   // we can't overwrite the onFocus of Editable, as the onFocus
@@ -287,6 +289,7 @@ class SlateEditor extends Component {
                   // event based on observing selected state
                   if (!editor.selection) {
                     setTimeout(this.props.onFocus, 100);
+                  } else {
                   }
                 }
 

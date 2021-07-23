@@ -48,8 +48,8 @@ class Cell extends Component {
       selected: this.props.selected,
     };
 
-    this.handleContainerFocus = this.handleContainerFocus.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.handleContainerFocus = this.handleContainerFocus.bind(this);
     // this.handleFocus = this.handleFocus.bind(this);
     this.handleBlur = this.handleBlur.bind(this);
   }
@@ -126,6 +126,7 @@ class Cell extends Component {
         selected={this.state.selected}
         onFocus={this.handleContainerFocus}
         onBlur={this.handleBlur}
+        onClick={this.handleContainerFocus}
       />
     );
   }

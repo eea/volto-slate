@@ -34,7 +34,7 @@ import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
-const DEBUG = false;
+const DEBUG = true;
 
 export const DefaultTextBlockEditor = (props) => {
   const {
@@ -142,6 +142,7 @@ export const DefaultTextBlockEditor = (props) => {
         const selection = parseDefaultSelection(editor, defaultSelection);
         if (selection) {
           setTimeout(() => {
+            console.log('did update', block);
             Transforms.select(editor, selection);
             saveSlateBlockSelection(block, null);
           }, 120);
@@ -150,7 +151,6 @@ export const DefaultTextBlockEditor = (props) => {
           // a 100ms throttle, so setting to a bigger value seems to help
         }
       }
-      console.log('did update');
     },
     [defaultSelection, block, saveSlateBlockSelection],
   );
@@ -173,7 +173,6 @@ export const DefaultTextBlockEditor = (props) => {
   return (
     <div className="text-slate-editor-inner" ref={ref}>
       <>
-        {DEBUG ? <div>{block}</div> : ''}
         <Dropzone
           disableClick
           onDrop={onDrop}
@@ -197,34 +196,37 @@ export const DefaultTextBlockEditor = (props) => {
                 )}
               </div>
             ) : (
-              <SlateEditor
-                index={index}
-                readOnly={!inView}
-                properties={properties}
-                extensions={textblockExtensions}
-                renderExtensions={[withBlockProperties]}
-                value={value}
-                block={block /* is this needed? */}
-                onFocus={() => {
-                  if (!selected) {
-                    console.log('focusing');
-                    onSelectBlock(block);
-                  }
-                }}
-                onUpdate={handleUpdate}
-                debug={DEBUG}
-                onChange={(value, selection) => {
-                  onChangeBlock(block, {
-                    ...data,
-                    value,
-                    plaintext: serializeNodesToText(value || []),
-                    // TODO: also add html serialized value
-                  });
-                }}
-                onKeyDown={handleKey}
-                selected={selected}
-                placeholder={placeholder}
-              />
+              <>
+                <SlateEditor
+                  index={index}
+                  readOnly={!inView}
+                  properties={properties}
+                  extensions={textblockExtensions}
+                  renderExtensions={[withBlockProperties]}
+                  value={value}
+                  block={block /* is this needed? */}
+                  onFocus={() => {
+                    // if (!selected) {
+                    //   console.log('focusing');
+                    //   onSelectBlock(block);
+                    // }
+                  }}
+                  onUpdate={handleUpdate}
+                  debug={DEBUG}
+                  onChange={(value, selection) => {
+                    onChangeBlock(block, {
+                      ...data,
+                      value,
+                      plaintext: serializeNodesToText(value || []),
+                      // TODO: also add html serialized value
+                    });
+                  }}
+                  onKeyDown={handleKey}
+                  selected={selected}
+                  placeholder={placeholder}
+                />
+                {DEBUG ? <div>{block}</div> : ''}
+              </>
             );
           }}
         </Dropzone>
@@ -323,10 +325,10 @@ export const DetachedTextBlockEditor = (props) => {
         value={value}
         block={block /* is this needed? */}
         onFocus={() => {
-          if (!selected) {
-            onSelectBlock(block);
-            console.log('focused', block);
-          }
+          // if (!selected) {
+          //   onSelectBlock(block);
+          //   console.log('focused', block);
+          // }
         }}
         debug={DEBUG}
         onChange={(value, selection) => {

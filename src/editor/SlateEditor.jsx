@@ -188,18 +188,20 @@ class SlateEditor extends Component {
       return;
     }
 
+    const { editor } = this.state;
+
     if (!prevProps.selected && this.props.selected) {
-      if (
-        !ReactEditor.isFocused(this.state.editor) ||
-        !this.state.editor.selection
-      ) {
+      if (!ReactEditor.isFocused(this.state.editor)) {
+        //  || !editor.selection
         setTimeout(() => {
           console.log('sel', window.getSelection());
-          const match = Node.first(this.state.editor, []);
-          const path = match[1];
-          const point = { path, offset: 0 };
-          const selection = { anchor: point, focus: point };
-          console.log('focusing', selection);
+          if (window.getSelection().type === 'none') {
+            const match = Node.first(this.state.editor, []);
+            const path = match[1];
+            const point = { path, offset: 0 };
+            const selection = { anchor: point, focus: point };
+            console.log('focusing', selection);
+          }
 
           // ReactEditor.focus(this.state.editor);
           // Transforms.select(this.state.editor, selection);
@@ -212,7 +214,7 @@ class SlateEditor extends Component {
     // }
 
     if (this.props.selected && this.props.onUpdate) {
-      this.props.onUpdate(this.state.editor);
+      this.props.onUpdate(editor);
     }
   }
 
@@ -263,7 +265,6 @@ class SlateEditor extends Component {
         })}
         tabIndex="-1"
       >
-        {selected ? 'selected' : 'notselected'}
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
@@ -271,8 +272,6 @@ class SlateEditor extends Component {
             onChange={this.handleChange}
           >
             {selected ? <Toolbar editor={editor} className={className} /> : ''}
-            {ReactEditor.isFocused(editor) ? 'focused' : 'unfocused'}
-            {JSON.stringify(editor.selection || [])}
             <Editable
               tabIndex={this.props.tabIndex || 0}
               readOnly={readOnly}
@@ -315,6 +314,10 @@ class SlateEditor extends Component {
                 </li>
                 <li>live selection: {JSON.stringify(editor.selection)}</li>
                 <li>children: {JSON.stringify(editor.children)}</li>
+                <li> {selected ? 'selected' : 'notselected'}</li>
+                <li>
+                  {ReactEditor.isFocused(editor) ? 'focused' : 'unfocused'}
+                </li>
               </ul>
             ) : (
               ''

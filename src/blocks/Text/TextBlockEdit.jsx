@@ -28,7 +28,6 @@ import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-ima
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 
 import { useInView } from 'react-intersection-observer';
-// import VisibilitySensor from 'react-visibility-sensor';
 
 import './css/editor.css';
 
@@ -142,7 +141,6 @@ export const DefaultTextBlockEditor = (props) => {
         const selection = parseDefaultSelection(editor, defaultSelection);
         if (selection) {
           setTimeout(() => {
-            console.log('did update', block);
             Transforms.select(editor, selection);
             saveSlateBlockSelection(block, null);
           }, 120);
@@ -205,14 +203,13 @@ export const DefaultTextBlockEditor = (props) => {
                   renderExtensions={[withBlockProperties]}
                   value={value}
                   block={block /* is this needed? */}
-                  onFocus={() => {
-                    // if (!selected) {
-                    //   console.log('focusing');
-                    //   onSelectBlock(block);
-                    // }
-                  }}
                   onUpdate={handleUpdate}
                   debug={DEBUG}
+                  onFocus={() => {
+                    if (!selected) {
+                      onSelectBlock(block);
+                    }
+                  }}
                   onChange={(value, selection) => {
                     onChangeBlock(block, {
                       ...data,
@@ -324,12 +321,6 @@ export const DetachedTextBlockEditor = (props) => {
         renderExtensions={[]}
         value={value}
         block={block /* is this needed? */}
-        onFocus={() => {
-          // if (!selected) {
-          //   onSelectBlock(block);
-          //   console.log('focused', block);
-          // }
-        }}
         debug={DEBUG}
         onChange={(value, selection) => {
           onChangeBlock(block, {

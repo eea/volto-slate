@@ -194,24 +194,23 @@ class SlateEditor extends Component {
       if (!ReactEditor.isFocused(this.state.editor)) {
         //  || !editor.selection
         setTimeout(() => {
-          console.log('sel', window.getSelection());
-          if (window.getSelection().type === 'none') {
+          // console.log('sel', window.getSelection());
+          if (window.getSelection().type === 'None') {
             const match = Node.first(this.state.editor, []);
             const path = match[1];
             const point = { path, offset: 0 };
             const selection = { anchor: point, focus: point };
-            console.log('focusing', selection);
+            Transforms.select(this.state.editor, selection);
+            // console.log('focusing', selection);
           }
 
-          // ReactEditor.focus(this.state.editor);
-          // Transforms.select(this.state.editor, selection);
+          ReactEditor.focus(this.state.editor);
         }, 100); // flush
       }
     }
 
     // if (this.props.selected && this.editor && this.editor.selection) {
     //   this.editor.setSavedSelection(this.editor.selection);
-    // }
 
     if (this.props.selected && this.props.onUpdate) {
       this.props.onUpdate(editor);
@@ -280,9 +279,17 @@ class SlateEditor extends Component {
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
-              onFocus={this.props.onFocus}
-              onBlur={this.props.onBlur}
-              onSelect={() => {
+              onSelect={(e) => {
+                if (!selected && this.props.onFocus) {
+                  // we can't overwrite the onFocus of Editable, as the onFocus
+                  // in Slate has too much builtin behaviour that's not
+                  // accessible otherwise. Instead we try to detect such an
+                  // event based on observing selected state
+                  if (!editor.selection) {
+                    setTimeout(this.props.onFocus, 100);
+                  }
+                }
+
                 if (this.selectionTimeout) clearTimeout(this.selectionTimeout);
                 this.selectionTimeout = setTimeout(() => {
                   if (
@@ -341,3 +348,11 @@ export default connect((state, props) => {
     ? withTestingFeatures(SlateEditor)
     : SlateEditor,
 );
+//
+// const match = Node.first(this.state.editor, []);
+// const path = match[1];
+// const point = { path, offset: 0 };
+// const newSelection = { anchor: point, focus: point };
+// Transforms.select(this.state.editor, selection);
+// Transforms.select(editor, selection);
+// setTimeout(() => ReactEditor.focus(editor), 100);

@@ -6,7 +6,7 @@
 import React from 'react';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
-
+import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
 
@@ -15,13 +15,13 @@ const SlateRichTextWidget = (props) => {
     id,
     onChange,
     value,
-    focus,
     className,
     block,
     placeholder,
     properties,
   } = props;
-  const [selected, setSelected] = React.useState(focus);
+  const [selected, setSelected] = React.useState(false);
+  const slateContainer = React.useRef();
   // make editor.getBlockProps available for extensions
   const withBlockProperties = React.useCallback(
     (editor) => {
@@ -30,6 +30,27 @@ const SlateRichTextWidget = (props) => {
     },
     [props],
   );
+
+  React.useEffect(() => {
+    __CLIENT__ &&
+      document &&
+      document.addEventListener('mousedown', handleClickOutside, false);
+
+    return () => {
+      __CLIENT__ &&
+        document &&
+        document.removeEventListener('mousedown', handleClickOutside, false);
+    };
+  }, []);
+
+  const handleClickOutside = (e) => {
+    let active =
+      slateContainer.current && doesNodeContainClick(slateContainer.current, e)
+        ? true
+        : false;
+
+    setSelected(active);
+  };
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -37,10 +58,8 @@ const SlateRichTextWidget = (props) => {
         role="textbox"
         tabIndex="-1"
         style={{ boxSizing: 'initial' }}
-        onClick={() => {
-          setSelected(true);
-        }}
         onKeyDown={() => {}}
+        ref={slateContainer}
       >
         <SlateEditor
           className={className}

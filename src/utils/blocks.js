@@ -149,6 +149,7 @@ export const toggleBlock = (editor, format) => {
   const isListItem = isBlockActive(editor, slate.listItemType);
   const isActive = isBlockActive(editor, format);
   const wantsList = listTypes.includes(format);
+  // console.log({ isListItem, isActive, wantsList, format });
 
   if (isListItem && !wantsList) {
     toggleFormatAsListItem(editor, format);
@@ -158,6 +159,8 @@ export const toggleBlock = (editor, format) => {
     changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {
     toggleFormat(editor, format);
+  } else if (isListItem && wantsList && isActive) {
+    toggleFormatAsListItem(editor, slate.defaultBlockType);
   } else {
     console.warn('toggleBlock case not covered, please examine:', {
       wantsList,

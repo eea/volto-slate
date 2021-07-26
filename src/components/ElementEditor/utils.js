@@ -79,7 +79,7 @@ export const _isActiveElement = (elementType) => (editor) => {
     );
   } catch (e) {
     // eslint-disable-next-line
-    console.error('Error in finding active element', e);
+    // console.warn('Error in finding active element', e);
     return false;
   }
   if (found.length) return true;

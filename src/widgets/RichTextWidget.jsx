@@ -32,15 +32,15 @@ const SlateRichTextWidget = (props) => {
   );
 
   React.useEffect(() => {
-    __CLIENT__ &&
+    if (__CLIENT__) {
       document &&
-      document.addEventListener('mousedown', handleClickOutside, false);
+        document.addEventListener('mousedown', handleClickOutside, false);
 
-    return () => {
-      __CLIENT__ &&
+      return () => {
         document &&
-        document.removeEventListener('mousedown', handleClickOutside, false);
-    };
+          document.removeEventListener('mousedown', handleClickOutside, false);
+      };
+    }
   }, []);
 
   const handleClickOutside = (e) => {

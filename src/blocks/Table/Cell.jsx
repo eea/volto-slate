@@ -58,15 +58,17 @@ class Cell extends Component {
 
   render() {
     return (
-      <SlateEditor
-        tabIndex={0}
-        onChange={this.onChange}
-        value={this.props.value}
-        selected={this.state.selected}
-        onFocus={this.handleContainerFocus}
-        onBlur={this.handleBlur}
-        onClick={this.handleContainerFocus}
-      />
+      __CLIENT__ && (
+        <SlateEditor
+          tabIndex={0}
+          onChange={this.onChange}
+          value={this.props.value}
+          selected={this.state.selected}
+          onFocus={this.handleContainerFocus}
+          onBlur={this.handleBlur}
+          onClick={this.handleContainerFocus}
+        />
+      )
     );
   }
 }

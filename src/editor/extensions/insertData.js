@@ -13,6 +13,7 @@ export const insertData = (editor) => {
     'application/x-slate-fragment': (dt, fullMime) => {
       const decoded = decodeURIComponent(window.atob(dt));
       const parsed = JSON.parse(decoded);
+      editor.beforeInsertFragment && editor.beforeInsertFragment(parsed);
       editor.insertFragment(parsed);
 
       if (editor.getBlockProps) {

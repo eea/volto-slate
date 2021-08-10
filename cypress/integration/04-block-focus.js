@@ -34,6 +34,8 @@ describe('Block Tests', () => {
       'Colorless green ideas sleep furiously.',
     ).setSelection('furiously');
 
+    cy.wait(500);
+
     cy.get('.slate-inline-toolbar .button-wrapper a[title="Link"]').click();
     cy.get('.sidebar-container a.item:nth-child(3)').click();
     cy.get('input[name="external_link-0-external"]').click().type('https://google.com{enter}');

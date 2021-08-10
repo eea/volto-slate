@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-import { createEditor } from 'slate'; // , Transforms
+import { createEditor, Node, Transforms } from 'slate'; // , Transforms
 import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
@@ -29,10 +29,12 @@ const Toolbar = (props) => {
     showExpandedToolbar,
     setShowExpandedToolbar,
   } = props;
+
   const { slate } = config.settings;
   const [showMainToolbar, setShowMainToolbar] = React.useState(
     !!(editor.selection && hasRangeSelection(editor)),
   );
+
   React.useEffect(() => {
     const el = ReactEditor.toDOMNode(editor, editor);
     const toggleToolbar = () => {
@@ -49,7 +51,6 @@ const Toolbar = (props) => {
     return () => document.removeEventListener('selectionchange', toggleToolbar);
   }, [editor, showMainToolbar]);
 
-  // console.log('showMainToolbar', showMainToolbar);
   return (
     <>
       <SlateToolbar
@@ -68,6 +69,28 @@ const Toolbar = (props) => {
   );
 };
 
+const handleHotKeys = (editor, event, config) => {
+  let wasHotkey = false;
+
+  for (const hk of Object.entries(config.hotkeys)) {
+    const [shortcut, { format, type }] = hk;
+    if (isHotkey(shortcut, event)) {
+      event.preventDefault();
+
+      if (type === 'inline') {
+        toggleInlineFormat(editor, format);
+      } else {
+        // type === 'mark'
+        toggleMark(editor, format);
+      }
+
+      wasHotkey = true;
+    }
+  }
+
+  return wasHotkey;
+};
+
 // TODO: implement onFocus
 class SlateEditor extends Component {
   constructor(props) {
@@ -84,10 +107,10 @@ class SlateEditor extends Component {
     this.state = {
       editor: this.createEditor(),
       showExpandedToolbar: config.settings.slate.showExpandedToolbar,
-      hasDomSelection: false,
     };
 
     this.editor = null;
+    this.selectionTimeout = null;
   }
 
   getSavedSelection() {
@@ -164,18 +187,30 @@ class SlateEditor extends Component {
       return;
     }
 
+    const { editor } = this.state;
+
     if (!prevProps.selected && this.props.selected) {
       if (!ReactEditor.isFocused(this.state.editor)) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 100); // flush
+        //  || !editor.selection
+        setTimeout(() => {
+          if (window.getSelection().type === 'None') {
+            const match = Node.first(this.state.editor, []);
+            const path = match[1];
+            const point = { path, offset: 0 };
+            const selection = { anchor: point, focus: point };
+            Transforms.select(this.state.editor, selection);
+          }
+
+          ReactEditor.focus(this.state.editor);
+        }, 100); // flush
       }
     }
 
     // if (this.props.selected && this.editor && this.editor.selection) {
     //   this.editor.setSavedSelection(this.editor.selection);
-    // }
 
     if (this.props.selected && this.props.onUpdate) {
-      this.props.onUpdate(this.state.editor);
+      this.props.onUpdate(editor);
     }
   }
 
@@ -224,6 +259,7 @@ class SlateEditor extends Component {
           'show-toolbar': this.state.showExpandedToolbar,
           selected,
         })}
+        tabIndex="-1"
       >
         <EditorContext.Provider value={editor}>
           <Slate
@@ -231,57 +267,45 @@ class SlateEditor extends Component {
             value={value || slate.defaultValue()}
             onChange={this.handleChange}
           >
-            {selected ? (
-              <Toolbar
-                editor={editor}
-                className={className}
-                hasDomSelection={this.state.hasDomSelection}
-              />
-            ) : (
-              ''
-            )}
+            {selected ? <Toolbar editor={editor} className={className} /> : ''}
             <Editable
+              tabIndex={this.props.tabIndex || 0}
               readOnly={readOnly}
               placeholder={placeholder}
               renderElement={(props) => <Element {...props} />}
               renderLeaf={(props) => <Leaf {...props} />}
               decorate={this.multiDecorator}
               spellCheck={false}
-              onSelect={() => {
-                if (
-                  editor.selection &&
-                  !isEqual(editor.selection, this.savedSelection)
-                ) {
-                  this.setSavedSelection(
-                    JSON.parse(JSON.stringify(editor.selection)),
-                  );
-                  this.setState((state) => ({ update: !this.state.update }));
-                  // console.log('select', JSON.stringify(editor.selection));
+              onBlur={() => {
+                this.props.onBlur && this.props.onBlur();
+                return null;
+              }}
+              onClick={this.props.onClick}
+              onSelect={(e) => {
+                if (!selected && this.props.onFocus) {
+                  // we can't overwrite the onFocus of Editable, as the onFocus
+                  // in Slate has too much builtin behaviour that's not
+                  // accessible otherwise. Instead we try to detect such an
+                  // event based on observing selected state
+                  if (!editor.selection) setTimeout(this.props.onFocus, 100);
                 }
+
+                if (this.selectionTimeout) clearTimeout(this.selectionTimeout);
+                this.selectionTimeout = setTimeout(() => {
+                  if (
+                    editor.selection &&
+                    !isEqual(editor.selection, this.savedSelection)
+                  ) {
+                    this.setState((state) => ({ update: !this.state.update }));
+                    this.setSavedSelection(
+                      JSON.parse(JSON.stringify(editor.selection)),
+                    );
+                  }
+                }, 200);
               }}
               onKeyDown={(event) => {
-                let wasHotkey = false;
-
-                for (const hk of Object.entries(slate.hotkeys)) {
-                  const [shortcut, { format, type }] = hk;
-                  if (isHotkey(shortcut, event)) {
-                    event.preventDefault();
-
-                    if (type === 'inline') {
-                      toggleInlineFormat(editor, format);
-                    } else {
-                      // type === 'mark'
-                      toggleMark(editor, format);
-                    }
-
-                    wasHotkey = true;
-                  }
-                }
-
-                if (wasHotkey) {
-                  return;
-                }
-
+                const handled = handleHotKeys(editor, event, slate);
+                if (handled) return;
                 onKeyDown && onKeyDown({ editor, event });
               }}
             />
@@ -297,6 +321,10 @@ class SlateEditor extends Component {
                 </li>
                 <li>live selection: {JSON.stringify(editor.selection)}</li>
                 <li>children: {JSON.stringify(editor.children)}</li>
+                <li> {selected ? 'selected' : 'notselected'}</li>
+                <li>
+                  {ReactEditor.isFocused(editor) ? 'focused' : 'unfocused'}
+                </li>
               </ul>
             ) : (
               ''

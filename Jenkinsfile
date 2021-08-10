@@ -5,7 +5,7 @@ pipeline {
         GIT_NAME = "volto-slate"
         NAMESPACE = ""
         DEPENDENCIES = "volto-slate:asDefault"
-        SONARQUBE_TAGS = "volto.eea.europa.eu"
+        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu"
     }
 
   stages {

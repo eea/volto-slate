@@ -25,13 +25,8 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
     <El
       element={element}
       {...omit(rest, OMITTED)}
-      attributes={{
-        ...out,
-        className: cx({
-          [attributes?.className]: attributes?.className,
-          [element.styleName]: element.styleName,
-        }),
-      }}
+      attributes={out}
+      extras={extras}
     />
   );
 };
@@ -95,7 +90,7 @@ const serializeData = (node) => {
   return JSON.stringify({ type: node.type, data: node.data });
 };
 
-export const serializeNodes = (nodes, getAttributes) => {
+export const serializeNodes = (nodes, getAttributes, extras = {}) => {
   const editor = { children: nodes || [] };
 
   const _serializeNodes = (nodes) => {
@@ -118,6 +113,7 @@ export const serializeNodes = (nodes, getAttributes) => {
                 : null
               : null
           }
+          extras={extras}
         >
           {_serializeNodes(Array.from(Node.children(editor, path)))}
         </Element>

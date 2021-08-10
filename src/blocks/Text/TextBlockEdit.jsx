@@ -21,14 +21,13 @@ import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
-import { handleKey } from './keyboard';
+import { handleKey, handleKeyDetached } from './keyboard';
 import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
 import addSVG from '@plone/volto/icons/circle-plus.svg';
 
 import { useInView } from 'react-intersection-observer';
-// import VisibilitySensor from 'react-visibility-sensor';
 
 import './css/editor.css';
 
@@ -172,7 +171,6 @@ export const DefaultTextBlockEditor = (props) => {
   return (
     <div className="text-slate-editor-inner" ref={ref}>
       <>
-        {DEBUG ? <div>{block}</div> : ''}
         <Dropzone
           disableClick
           onDrop={onDrop}
@@ -196,29 +194,36 @@ export const DefaultTextBlockEditor = (props) => {
                 )}
               </div>
             ) : (
-              <SlateEditor
-                index={index}
-                readOnly={!inView}
-                properties={properties}
-                extensions={textblockExtensions}
-                renderExtensions={[withBlockProperties]}
-                value={value}
-                block={block /* is this needed? */}
-                onFocus={() => onSelectBlock(block)}
-                onUpdate={handleUpdate}
-                debug={DEBUG}
-                onChange={(value, selection) => {
-                  onChangeBlock(block, {
-                    ...data,
-                    value,
-                    plaintext: serializeNodesToText(value || []),
-                    // TODO: also add html serialized value
-                  });
-                }}
-                onKeyDown={handleKey}
-                selected={selected}
-                placeholder={placeholder}
-              />
+              <>
+                <SlateEditor
+                  index={index}
+                  readOnly={!inView}
+                  properties={properties}
+                  extensions={textblockExtensions}
+                  renderExtensions={[withBlockProperties]}
+                  value={value}
+                  block={block /* is this needed? */}
+                  onUpdate={handleUpdate}
+                  debug={DEBUG}
+                  onFocus={() => {
+                    if (!selected) {
+                      onSelectBlock(block);
+                    }
+                  }}
+                  onChange={(value, selection) => {
+                    onChangeBlock(block, {
+                      ...data,
+                      value,
+                      plaintext: serializeNodesToText(value || []),
+                      // TODO: also add html serialized value
+                    });
+                  }}
+                  onKeyDown={handleKey}
+                  selected={selected}
+                  placeholder={placeholder}
+                />
+                {DEBUG ? <div>{block}</div> : ''}
+              </>
             );
           }}
         </Dropzone>
@@ -316,8 +321,12 @@ export const DetachedTextBlockEditor = (props) => {
         renderExtensions={[]}
         value={value}
         block={block /* is this needed? */}
-        onFocus={() => onSelectBlock(block)}
         debug={DEBUG}
+        onFocus={() => {
+          if (!selected) {
+            onSelectBlock(block);
+          }
+        }}
         onChange={(value, selection) => {
           onChangeBlock(block, {
             ...data,
@@ -328,6 +337,7 @@ export const DetachedTextBlockEditor = (props) => {
         }}
         selected={selected}
         placeholder={placeholder}
+        onKeyDown={handleKeyDetached}
       />
       <SidebarPortal selected={selected}>
         <div id="slate-plugin-sidebar"></div>

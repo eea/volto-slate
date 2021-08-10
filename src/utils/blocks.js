@@ -249,7 +249,7 @@ export const getAllBlocks = (properties, blocks) => {
   const blocksFieldName = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  for (const n of properties[blocksLayoutFieldname].items) {
+  for (const n of properties[blocksLayoutFieldname]?.items || []) {
     const block = properties[blocksFieldName][n];
     // TODO Make this configurable via block config getBlocks
     if (

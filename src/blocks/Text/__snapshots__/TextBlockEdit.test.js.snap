@@ -21,6 +21,7 @@ exports[`TextBlockEdit renders w/o errors 1`] = `
         tabindex="0"
       >
         <p
+          class=""
           data-slate-node="element"
         >
           <span

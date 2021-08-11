@@ -25,7 +25,13 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
     <El
       element={element}
       {...omit(rest, OMITTED)}
-      attributes={out}
+      attributes={{
+        ...out,
+        className: cx({
+          [attributes?.className]: attributes?.className,
+          [element.styleName]: element.styleName,
+        }),
+      }}
       extras={extras}
     />
   );

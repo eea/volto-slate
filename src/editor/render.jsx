@@ -15,7 +15,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
   const El = elements[element.type] || elements['default'];
 
   const out = Object.assign(
-    {},
+    element.styleName ? {className: element.styleName} : {},
     ...Object.keys(attributes || {}).map((k) =>
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
@@ -25,13 +25,7 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
     <El
       element={element}
       {...omit(rest, OMITTED)}
-      attributes={{
-        ...out,
-        className: cx({
-          [attributes?.className]: attributes?.className,
-          [element.styleName]: element.styleName,
-        }),
-      }}
+      attributes={out}
       extras={extras}
     />
   );

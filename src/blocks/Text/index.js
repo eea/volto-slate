@@ -15,6 +15,7 @@ import {
   moveListItemDown,
   moveListItemUp,
   traverseBlocks,
+  unwrapEmptyString,
 } from './keyboard';
 import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
@@ -49,13 +50,16 @@ export default (config) => {
     // following handler
     textblockKeyboardHandlers: {
       Backspace: [
+        unwrapEmptyString,
         backspaceInList, // Backspace in list item lifts node and breaks Volto blocks
         joinWithPreviousBlock, // Backspace at beginning of block joins with previous block
       ],
       Delete: [
+        unwrapEmptyString,
         joinWithNextBlock, // Delete at end of block joins with next block
       ],
       Enter: [
+        unwrapEmptyString,
         softBreak, // Handles shift+Enter as a newline (<br/>)
       ],
       ArrowUp: [

@@ -3,16 +3,21 @@ import {
   _unwrapElement,
   _getActiveElement,
 } from 'volto-slate/components/ElementEditor/utils';
-
-const getActiveElement = _getActiveElement('zotero');
-const unwrapElement = _unwrapElement('zotero');
+import config from '@plone/volto/registry';
 
 /**
- * Handles the Backspace key press event in the given `editor`.
+ * Handles empty string cases in the given `editor`.
+ * It will unwrap empty strings for any major type (ex: a, mentions, footnote, zotero).
  * @param {Editor} editor
  * @param {Event} event
  */
-export function unwrapEmptyString({ editor }) {
+export function unwrapEmptyString(props) {
+  const { nodeTypesToHighlight } = config.settings.slate;
+  const uniqueNodeTypesToHighligh = [...new Set(nodeTypesToHighlight)];
+  const getActiveElement = _getActiveElement(uniqueNodeTypesToHighligh);
+  const unwrapElement = _unwrapElement(uniqueNodeTypesToHighligh);
+
+  const { editor } = props;
   const actEl = getActiveElement(editor);
 
   if (actEl && Node.string(actEl[0]).length === 1) {

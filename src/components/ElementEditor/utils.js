@@ -53,17 +53,27 @@ export const _insertElement = (elementType) => (editor, data) => {
   return false;
 };
 
+/**
+ * Will unwrap a node that has as type the one received or one from an array
+ * @param {string|Object[]} elementType - this can be a string or an array of strings
+ * @returns {Object|null} - current node
+ */
 export const _unwrapElement = (elementType) => (editor) => {
   const selection = editor.selection || editor.getSavedSelection();
-  // console.log(editor, editor);
   const ref = Editor.rangeRef(editor, selection);
+
   Transforms.select(editor, selection);
   Transforms.unwrapNodes(editor, {
-    match: (n) => n.type === elementType,
+    match: (n) =>
+      Array.isArray(elementType)
+        ? elementType.includes(n.type)
+        : n.type === elementType,
     at: selection,
   });
+
   const current = ref.current;
   ref.unref();
+
   return current;
 };
 
@@ -107,17 +117,25 @@ export const _isActiveElement = (elementType) => (editor) => {
   return false;
 };
 
+/**
+ * Will look for a node that has as type the one received or one from an array
+ * @param {string|Object[]} elementType - this can be a string or an array of strings
+ * @returns {Object|null} - found node
+ */
 export const _getActiveElement = (elementType) => (
   editor,
   direction = 'any',
 ) => {
   const selection = editor.selection || editor.getSavedSelection();
-
   let found = [];
+
   try {
     found = Array.from(
       Editor.nodes(editor, {
-        match: (n) => n.type === elementType,
+        match: (n) =>
+          Array.isArray(elementType)
+            ? elementType.includes(n.type)
+            : n.type === elementType,
         at: selection,
       }),
     );
@@ -146,7 +164,14 @@ export const _getActiveElement = (elementType) => (
         return;
       }
       if (found && found[0] && found[0].type === elementType) {
-        return found;
+        if (
+          (Array.isArray(elementType) && elementType.includes(found[0].type)) ||
+          found[0].type === elementType
+        ) {
+          return found;
+        }
+      } else {
+        return null;
       }
     }
   }
@@ -167,8 +192,15 @@ export const _getActiveElement = (elementType) => (
         console.warn('Unable to find next node', editor, path);
         return;
       }
-      if (found && found[0].type === elementType) {
-        return found;
+      if (found && found[0] && found[0].type === elementType) {
+        if (
+          (Array.isArray(elementType) && elementType.includes(found[0].type)) ||
+          found[0].type === elementType
+        ) {
+          return found;
+        }
+      } else {
+        return null;
       }
     }
   }

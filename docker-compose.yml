@@ -8,9 +8,14 @@ services:
       - RAZZLE_JEST_CONFIG=jest-addon.config.js
     volumes:
       - .:/opt/frontend/my-volto-project/src/addons/volto-slate
-      - ./jest-addon.config.js:/opt/frontend/my-volto-project/jest-addon.config.js
-      - ./project/package.json:/opt/frontend/my-volto-project/package.json
-    entrypoint: sh -c 'tail -f /dev/null'
+    # - ./project/package.json:/opt/frontend/my-volto-project/package.json
+    # - ./jest-addon.config.js:/opt/frontend/my-volto-project/jest-addon.config.js
+    command: cat
+    stdin_open: true
+    tty: true
+    # user: root
+    working_dir: /opt/frontend/my-volto-project
+    # entrypoint: sh -c 'tail -f /dev/null'
 
 # docker run -it --rm -e GIT_NAME=volto-slate -e RAZZLE_JEST_CONFIG=jest-addon.config.js
 # -v "$$(pwd):/opt/frontend/my-volto-project/src/addons/volto-slate" plone/volto-addon-ci yarn test --watchAll=false

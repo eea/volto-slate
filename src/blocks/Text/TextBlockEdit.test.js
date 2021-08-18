@@ -8,8 +8,6 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 
 const mockStore = configureStore();
 
-// ReactDOM.createPortal = (node) => node;
-
 window.getSelection = () => null;
 
 global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
@@ -38,6 +36,23 @@ beforeAll(() => {
       contextToolbarButtons: [],
       textblockExtensions: [],
       extensions: [],
+    },
+  };
+  config.blocks.blocksConfig.slate = {
+    id: 'slate',
+    title: 'Slate',
+    group: 'text',
+    edit: TextBlockEdit,
+    restricted: false,
+    mostUsed: false,
+    blockHasOwnFocusManagement: true,
+    sidebarTab: 1,
+    security: {
+      addPermission: [],
+      view: [],
+    },
+    blockHasValue: (data) => {
+      return !!data.plaintext;
     },
   };
 });
@@ -72,6 +87,8 @@ describe('TextBlockEdit', () => {
           properties={{}}
           setSlateBlockSelection={() => {}}
           data={{
+            '@type': 'slate',
+            plaintext: '',
             value: [
               {
                 type: 'p',

@@ -35,7 +35,7 @@ exports[`TextBlockEdit renders w/o errors 1`] = `
                 data-slate-placeholder="true"
                 style="position: absolute; pointer-events: none; width: 100%; max-width: 100%; display: block; opacity: 0.333; user-select: none; text-decoration: none;"
               >
-                Enter some rich text…
+                Type text…
               </span>
               <span
                 data-slate-length="0"

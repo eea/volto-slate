@@ -1,0 +1,21 @@
+version: "3"
+services:
+
+  volto:
+    image: plone/volto-addon-ci
+    environment:
+      - GIT_NAME=volto-slate
+      - RAZZLE_JEST_CONFIG=jest-addon.config.js
+    volumes:
+      - .:/opt/frontend/my-volto-project/src/addons/volto-slate
+    # - ./project/package.json:/opt/frontend/my-volto-project/package.json
+    # - ./jest-addon.config.js:/opt/frontend/my-volto-project/jest-addon.config.js
+    command: cat
+    stdin_open: true
+    tty: true
+    # user: root
+    working_dir: /opt/frontend/my-volto-project
+    # entrypoint: sh -c 'tail -f /dev/null'
+
+# docker run -it --rm -e GIT_NAME=volto-slate -e RAZZLE_JEST_CONFIG=jest-addon.config.js
+# -v "$$(pwd):/opt/frontend/my-volto-project/src/addons/volto-slate" plone/volto-addon-ci yarn test --watchAll=false

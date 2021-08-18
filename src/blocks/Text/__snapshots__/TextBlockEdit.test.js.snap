@@ -51,6 +51,7 @@ exports[`TextBlockEdit renders w/o errors 1`] = `
     </div>
     <button
       class="ui basic icon button block-add-button"
+      title="Add block"
     >
       <svg
         class="icon block-add-button"

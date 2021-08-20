@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
 });
 
-function getPositionStyle(el) {
+function getPositionStyle() {
   const domSelection = window.getSelection();
   if (domSelection.rangeCount < 1) {
     return {};
@@ -67,11 +67,9 @@ const SimpleLinkEditor = (props) => {
   const active = getActiveElement(editor);
   const [node] = active || [];
 
-  if (showEditor && !savedPosition.current) {
-    savedPosition.current = getPositionStyle();
-  }
+  if (showEditor) savedPosition.current = getPositionStyle();
 
-  return showEditor ? ( //  && active
+  return showEditor ? (
     <PositionedToolbar className="add-link" position={savedPosition.current}>
       <AddLinkForm
         block="draft-js"
@@ -99,7 +97,6 @@ const SimpleLinkEditor = (props) => {
           editor.savedSelection = newSelection;
         }}
         onOverrideContent={(c) => {
-          // editor.savedSelection = undefined;
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
         }}
       />

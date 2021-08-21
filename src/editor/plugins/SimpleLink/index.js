@@ -67,7 +67,9 @@ const SimpleLinkEditor = (props) => {
   const active = getActiveElement(editor);
   const [node] = active || [];
 
-  if (showEditor) savedPosition.current = getPositionStyle();
+  if (showEditor && !savedPosition.current) {
+    savedPosition.current = getPositionStyle();
+  }
 
   return showEditor ? (
     <PositionedToolbar className="add-link" position={savedPosition.current}>
@@ -87,6 +89,7 @@ const SimpleLinkEditor = (props) => {
           }
           ReactEditor.focus(editor);
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          savedPosition.current = null;
         }}
         onClear={() => {
           // clear button was pressed in the link edit popup
@@ -98,6 +101,7 @@ const SimpleLinkEditor = (props) => {
         }}
         onOverrideContent={(c) => {
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          savedPosition.current = null;
         }}
       />
     </PositionedToolbar>

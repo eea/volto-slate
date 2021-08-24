@@ -32,7 +32,7 @@ const messages = defineMessages({
   },
 });
 
-function getPositionStyle(el) {
+function getPositionStyle() {
   const domSelection = window.getSelection();
   if (domSelection.rangeCount < 1) {
     return {};
@@ -71,7 +71,7 @@ const SimpleLinkEditor = (props) => {
     savedPosition.current = getPositionStyle();
   }
 
-  return showEditor ? ( //  && active
+  return showEditor ? (
     <PositionedToolbar className="add-link" position={savedPosition.current}>
       <AddLinkForm
         block="draft-js"
@@ -89,6 +89,7 @@ const SimpleLinkEditor = (props) => {
           }
           ReactEditor.focus(editor);
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          savedPosition.current = null;
         }}
         onClear={() => {
           // clear button was pressed in the link edit popup
@@ -99,8 +100,8 @@ const SimpleLinkEditor = (props) => {
           editor.savedSelection = newSelection;
         }}
         onOverrideContent={(c) => {
-          // editor.savedSelection = undefined;
           dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          savedPosition.current = null;
         }}
       />
     </PositionedToolbar>

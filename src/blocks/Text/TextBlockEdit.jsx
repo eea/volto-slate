@@ -3,13 +3,12 @@ import { connect } from 'react-redux';
 import { readAsDataURL } from 'promise-file-reader';
 import Dropzone from 'react-dropzone';
 
-import { doesNodeContainClick } from 'semantic-ui-react/dist/commonjs/lib';
-import { Button, Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
+import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 
-import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
 import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import config from '@plone/volto/registry';
+import { SidebarPortal, BlockChooserButton } from '@plone/volto/components';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
@@ -25,13 +24,21 @@ import { handleKey, handleKeyDetached } from './keyboard';
 import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
-import addSVG from '@plone/volto/icons/circle-plus.svg';
+
+import { defineMessages, useIntl } from 'react-intl';
 
 import { useInView } from 'react-intersection-observer';
 
 import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
+
+const messages = defineMessages({
+  text: {
+    id: 'Type text…',
+    defaultMessage: 'Type text…',
+  },
+});
 
 const DEBUG = false;
 
@@ -63,7 +70,7 @@ export const DefaultTextBlockEditor = (props) => {
   const { textblockExtensions } = slate;
   const { value } = data;
 
-  const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
+  // const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
   const [showDropzone, setShowDropzone] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
   const [newImageId, setNewImageId] = React.useState(null);
@@ -124,14 +131,6 @@ export const DefaultTextBlockEditor = (props) => {
     prevReq.current = loaded;
   }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
 
-  // This event handler unregisters itself after its first call.
-  const handleClickOutside = React.useCallback((e) => {
-    const blockChooser = document.querySelector('.blocks-chooser');
-    document.removeEventListener('mousedown', handleClickOutside, false);
-    if (doesNodeContainClick(blockChooser, e)) return;
-    setAddNewBlockOpened(false);
-  }, []);
-
   const handleUpdate = React.useCallback(
     (editor) => {
       // defaultSelection is used for things such as "restoring" the selection
@@ -159,7 +158,9 @@ export const DefaultTextBlockEditor = (props) => {
     instructions = formDescription;
   }
 
-  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
   const schema = TextBlockSchema(data);
 
   const disableNewBlocks = data?.disableNewBlocks || detached;
@@ -227,36 +228,23 @@ export const DefaultTextBlockEditor = (props) => {
             );
           }}
         </Dropzone>
-        {selected && !disableNewBlocks && !data.plaintext && (
-          <Button
-            basic
-            icon
-            onClick={() => {
-              // This event handler unregisters itself after its first call.
-              document.addEventListener('mousedown', handleClickOutside, false);
 
-              setAddNewBlockOpened(!addNewBlockOpened);
-            }}
-            className="block-add-button"
-          >
-            <Icon name={addSVG} className="block-add-button" size="24px" />
-          </Button>
-        )}
-        {addNewBlockOpened && (
-          <BlockChooser
-            onMutateBlock={(...args) => {
-              onMutateBlock(...args);
-              setAddNewBlockOpened(false);
-            }}
-            blocksConfig={blocksConfig}
+        {selected && !data.plaintext && !disableNewBlocks && (
+          <BlockChooserButton
+            data={data}
+            block={block}
             onInsertBlock={(id, value) => {
               onSelectBlock(onInsertBlock(id, value));
-              setAddNewBlockOpened(false);
             }}
-            currentBlock={block}
+            onMutateBlock={onMutateBlock}
             allowedBlocks={allowedBlocks}
+            blocksConfig={blocksConfig}
+            size="24px"
+            className="block-add-button"
+            properties={properties}
           />
         )}
+
         <SidebarPortal selected={selected}>
           <div id="slate-plugin-sidebar"></div>
           {instructions ? (
@@ -301,7 +289,9 @@ export const DetachedTextBlockEditor = (props) => {
   const { value } = data;
 
   const schema = TextBlockSchema(data);
-  const placeholder = data.placeholder || formTitle || 'Enter some rich text…';
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
   let instructions = data?.instructions?.data || data?.instructions;
   if (!instructions || instructions === '<p><br/></p>') {
     instructions = formDescription;

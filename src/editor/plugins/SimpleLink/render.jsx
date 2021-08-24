@@ -21,13 +21,17 @@ export const LinkElement = (props) => {
   ) : (
     <a {...attributes} className="slate-editor-link" href={element.data?.url}>
       {Array.isArray(children)
-        ? children.map((child) => {
+        ? children.map((child, i) => {
             if (child?.props?.decorations) {
               const isSelection =
                 child.props.decorations.findIndex((deco) => deco.isSelection) >
                 -1;
               if (isSelection)
-                return <span className="highlight-selection">{child}</span>;
+                return (
+                  <span className="highlight-selection" key={`${i}-sel`}>
+                    {child}
+                  </span>
+                );
             }
             return child;
           })

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { SlateEditor } from 'volto-slate/editor';
+import { EditorReference, SlateEditor } from 'volto-slate/editor';
+import { ReactEditor } from 'slate-react';
 
 class Cell extends Component {
   static propTypes = {
@@ -18,22 +19,9 @@ class Cell extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      selected: this.props.selected,
-    };
-
     this.onChange = this.onChange.bind(this);
     this.handleContainerFocus = this.handleContainerFocus.bind(this);
-    this.handleBlur = this.handleBlur.bind(this);
-  }
-
-  componentDidMount() {
-    this.state.selected &&
-      this.props.onSelectCell(this.props.row, this.props.cell);
-  }
-
-  handleBlur() {
-    this.setState({ selected: false });
+    this.state = { editor: null };
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -42,7 +30,10 @@ class Cell extends Component {
       this.props.cell === 0 &&
       this.props.row === 0
     ) {
-      this.setState({ selected: this.props.selected });
+      this.props.onSelectCell(this.props.row, this.props.cell);
+      if (this.state.editor) {
+        setTimeout(() => ReactEditor.focus(this.state.editor), 0);
+      }
     }
   }
 
@@ -51,9 +42,7 @@ class Cell extends Component {
   }
 
   handleContainerFocus() {
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
+    this.props.onSelectCell(this.props.row, this.props.cell);
   }
 
   render() {
@@ -63,11 +52,16 @@ class Cell extends Component {
           tabIndex={0}
           onChange={this.onChange}
           value={this.props.value}
-          selected={this.state.selected}
+          selected={this.props.selected}
           onFocus={this.handleContainerFocus}
-          onBlur={this.handleBlur}
           onClick={this.handleContainerFocus}
-        />
+        >
+          <EditorReference
+            onHasEditor={(editor) =>
+              !this.state.editor && this.setState({ editor })
+            }
+          />
+        </SlateEditor>
       )
     );
   }

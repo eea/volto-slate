@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { createEditor, Node, Transforms } from 'slate'; // , Transforms
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
+import { useSlate, Slate, Editable, withReact, ReactEditor } from 'slate-react';
 import { withHistory } from 'slate-history';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -21,6 +21,23 @@ import EditorContext from './EditorContext';
 import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
+
+/**
+ * A component that can lift the editor to higher level
+ *
+ * Use like:
+ * <SlateEditor ...><EditorReference onHasEditor=((editor) =>
+ * this.setState({editor}) /></SlateEditor>
+ *
+ * With this you have access to the Slate editor "out of tree".
+ */
+export const EditorReference = ({ onHasEditor }) => {
+  const editor = useSlate();
+  React.useEffect(() => {
+    onHasEditor(editor);
+  }, [onHasEditor, editor]);
+  return null;
+};
 
 const Toolbar = (props) => {
   const {
@@ -329,6 +346,7 @@ class SlateEditor extends Component {
             ) : (
               ''
             )}
+            {this.props.children}
           </Slate>
         </EditorContext.Provider>
       </div>

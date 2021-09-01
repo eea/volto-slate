@@ -8,6 +8,7 @@ import RichTextWidget from './widgets/RichTextWidget';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
+import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
 
 export default (config) => {
@@ -63,6 +64,10 @@ export function minimalDefault(config) {
 
 export function simpleLink(config) {
   return installSimpleLink(config);
+}
+
+export function tableButton(config) {
+  return installTable(config);
 }
 
 export function asDefault(config) {

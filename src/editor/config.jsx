@@ -136,7 +136,6 @@ export const defaultToolbarButtons = [
   'separator',
   'bulleted-list',
   'numbered-list',
-  'blockquote',
 ];
 
 export const toolbarButtons = [...defaultToolbarButtons];

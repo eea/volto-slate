@@ -35,8 +35,9 @@ export default (config) => {
     ...config.views,
   };
 
-  config.widgets.widget.slate_richtext = RichTextWidget;
   config.widgets.widget.blocks_browser = BlocksBrowserWidget;
+  config.widgets.widget.slate = RichTextWidget;
+  config.widgets.widget.slate_richtext = RichTextWidget; // BBB
 
   return config;
 };

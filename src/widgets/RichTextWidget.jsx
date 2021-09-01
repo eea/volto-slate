@@ -48,7 +48,7 @@ const SlateRichTextWidget = (props) => {
           name={id}
           value={
             typeof value === 'undefined' ||
-            typeof value.data !==
+            typeof value?.data !==
               'undefined' /* previously this was a Draft block */
               ? [createEmptyParagraph()]
               : value

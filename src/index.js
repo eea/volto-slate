@@ -5,6 +5,7 @@ import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
 import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
+import RichTextWidgetView from './widgets/RichTextWidgetView';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
@@ -39,6 +40,12 @@ export default (config) => {
   config.widgets.widget.blocks_browser = BlocksBrowserWidget;
   config.widgets.widget.slate = RichTextWidget;
   config.widgets.widget.slate_richtext = RichTextWidget; // BBB
+
+  // volto-widgets-view
+  if (config.widgets.views?.widget) {
+    config.widgets.views.widget.slate = RichTextWidgetView;
+    config.widgets.views.widget.slate_richtext = RichTextWidgetView;
+  }
 
   return config;
 };

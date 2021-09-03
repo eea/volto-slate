@@ -26,6 +26,7 @@ const SlateRichTextWidget = (props) => {
   const withBlockProperties = React.useCallback(
     (editor) => {
       editor.getBlockProps = () => props;
+      editor.isNotTextBlock = true;
       return editor;
     },
     [props],

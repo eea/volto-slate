@@ -199,7 +199,7 @@ export const toggleFormatAsListItem = (editor, format) => {
 
   // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
 
-  deconstructToVoltoBlocks(editor);
+  if (editor.getBlockProps) deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -214,7 +214,7 @@ export const switchListType = (editor, format) => {
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
 
-  deconstructToVoltoBlocks(editor);
+  if (editor.getBlockProps) deconstructToVoltoBlocks(editor);
 };
 
 export const changeBlockToList = (editor, format) => {

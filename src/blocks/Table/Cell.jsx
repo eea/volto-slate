@@ -26,15 +26,27 @@ class Cell extends Component {
     this.tableblockExtensions = config.settings.slate.tableblockExtensions;
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillUnmount() {
+    this.isUnmounted = true;
+  }
+
+  componentDidUpdate(prevProps) {
     if (
-      nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      prevProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      this.props.isTableBlockSelected &&
       this.props.cell === 0 &&
-      this.props.row === 0
+      this.props.row === 0 &&
+      (!this.props.selectedCell ||
+        (this.props.selectedCell.row === 0 &&
+          this.props.selectedCell.cell === 0))
     ) {
       this.props.onSelectCell(this.props.row, this.props.cell);
+
       if (this.state.editor) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 0);
+        setTimeout(
+          () => !this.isUnmounted && ReactEditor.focus(this.state.editor),
+          0,
+        );
       }
     }
   }

@@ -27,7 +27,6 @@ src/
       StyleMenu/ - Customizable menu with custom block and inline styles for the current selection
       Table/ - Table support with table header, table footer, keyboard management, paste, table size picker under add-table button in toolbar
     ui/ - Some React components for Volto Slate toolbars
-  futurevolto/ - Backports of possible future features of Volto
   hooks/ - Custom React hooks useful, used in other parts of volto-slate
   reducers/ - Redux reducers specific to volto-slate
   utils/ - Lots of functions used in all volto-slate (e.g. in the editor/ or blocks/Text/ directories) and grouped into 15 files
@@ -54,7 +53,6 @@ The `/src` directory directly contains the `index.js` file which configures the 
 2. imports of the two React components used as an intermediary between Volto and the `SlateEditor`:
     1. `TextBlockView` in `./blocks/Text`
     2. `TextBlockEdit` in `./blocks/Text`
-3. import of the Volto proposals in `./futurevolto`
 4. import of the `slate_richtext` widget (`RichTextWidget`)
 5. export of the configuration function that installs volto-slate which:
    1. sends the Volto config through all the above imports except the widget

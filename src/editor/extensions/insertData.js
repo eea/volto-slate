@@ -16,10 +16,6 @@ export const insertData = (editor) => {
       editor.beforeInsertFragment && editor.beforeInsertFragment(parsed);
       editor.insertFragment(parsed);
 
-      if (editor.getBlockProps) {
-        deconstructToVoltoBlocks(editor);
-      }
-
       return true;
     },
     'text/html': (dt, fullMime) => {
@@ -33,21 +29,22 @@ export const insertData = (editor) => {
       let fragment; //  = deserialize(editor, body);
 
       const val = deserialize(editor, body);
-      // console.log('body', dt);
-      // console.log('deserialized', val);
+      console.log('body', dt);
+      console.log('deserialized', val);
 
       fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
-      if (Editor.string(editor, [])) {
-        if (
-          Array.isArray(fragment) &&
-          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
-        ) {
-          // TODO: we want normalization also when dealing with fragments
-          Transforms.insertFragment(editor, fragment);
-          return true;
-        }
+      if (
+        Editor.string(editor, []) &&
+        Array.isArray(fragment) &&
+        fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+      ) {
+        // TODO: we want normalization also when dealing with fragments
+        // Transforms.insertFragment(editor, fragment);
+        console.log('sinertasdas', fragment);
+        editor.insertFragment(fragment);
+        return true;
       }
 
       const nodes = normalizeBlockNodes(editor, fragment);

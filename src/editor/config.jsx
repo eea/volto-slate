@@ -28,6 +28,7 @@ import {
   isInline,
   withDeleteSelectionOnEnter,
   withDeserializers,
+  normalizeNode,
 } from './extensions';
 import {
   // inlineTagDeserializer,
@@ -169,6 +170,7 @@ export const extensions = [
   withDeserializers,
   insertData,
   isInline,
+  normalizeNode,
 ];
 
 // Default hotkeys and the format they trigger
@@ -201,16 +203,21 @@ export const defaultBlockType = 'p';
 // TODO: expose the IDs in constants.js, for uniformity
 export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+
+  h1: ({ attributes, children }) => <h1 {...attributes}>{children}</h1>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
   h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
   h4: ({ attributes, children }) => <h4 {...attributes}>{children}</h4>,
+
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
-  p: ({ attributes, children }) => {
-    return <p {...attributes}>{children}</p>;
-  },
   ul: ({ attributes, children }) => {
     return <ul {...attributes}>{children}</ul>;
+  },
+
+  div: ({ attributes, children }) => <div {...attributes}>{children}</div>,
+  p: ({ attributes, children }) => {
+    return <p {...attributes}>{children}</p>;
   },
 
   // While usual slate editor consider these to be Leafs, we treat them as

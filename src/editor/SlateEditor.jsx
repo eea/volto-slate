@@ -198,6 +198,10 @@ class SlateEditor extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.isUnmounted = true;
+  }
+
   componentDidUpdate(prevProps) {
     if (!isEqual(prevProps.extensions, this.props.extensions)) {
       this.setState({ editor: this.createEditor() });
@@ -311,7 +315,8 @@ class SlateEditor extends Component {
                 this.selectionTimeout = setTimeout(() => {
                   if (
                     editor.selection &&
-                    !isEqual(editor.selection, this.savedSelection)
+                    !isEqual(editor.selection, this.savedSelection) &&
+                    !this.isUnmounted
                   ) {
                     this.setState((state) => ({ update: !this.state.update }));
                     this.setSavedSelection(

@@ -1,7 +1,8 @@
 import codeSVG from '@plone/volto/icons/code.svg';
-import TableEdit from './Edit';
-import TableView from './View';
+import TableBlockEdit from './TableBlockEdit';
+import TableBlockView from './TableBlockView';
 import { extractTables } from './deconstruct';
+import { normalizeTable } from './extensions/normalizeTable';
 
 /**
  * @summary Called from Volto to configure new or existing Volto block types.
@@ -15,14 +16,24 @@ export default function install(config) {
       ...(config.settings.slate.voltoBlockEmiters || []),
       extractTables,
     ],
+    tableblockExtensions: [
+      // First here gets executed last
+      // withLists,
+      // withSplitBlocksOnBreak,
+      // withDeleteSelectionOnEnter,
+      // withDeserializers,
+      // breakList,
+      normalizeTable,
+    ],
   };
+
   config.blocks.blocksConfig.slateTable = {
     id: 'slateTable',
     title: 'Slate Table',
     icon: codeSVG,
     group: 'text',
-    view: TableView,
-    edit: TableEdit,
+    view: TableBlockView,
+    edit: TableBlockEdit,
     restricted: false,
     mostUsed: false,
     blockHasOwnFocusManagement: true,

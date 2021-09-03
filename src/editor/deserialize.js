@@ -93,6 +93,7 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
+  // if (tagname === 'h2') debugger;
   let children = deserializeChildren(el, editor).filter((n) => n !== null);
 
   if (
@@ -102,7 +103,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   ) {
     // TODO: should here be handled the cases when there are more strings in
     // `children` or when there are besides strings other types of nodes too?
-    const p = createEmptyParagraph();
+    const p = { type: 'div', children: [] };
     p.children[0].text = children[0];
     children = [p];
   }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EditorReference, SlateEditor } from 'volto-slate/editor';
 import { ReactEditor } from 'slate-react';
+import config from '@plone/volto/registry';
 
 class Cell extends Component {
   static propTypes = {
@@ -22,6 +23,7 @@ class Cell extends Component {
     this.onChange = this.onChange.bind(this);
     this.handleContainerFocus = this.handleContainerFocus.bind(this);
     this.state = { editor: null };
+    this.tableblockExtensions = config.settings.slate.tableblockExtensions;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -51,10 +53,12 @@ class Cell extends Component {
         <SlateEditor
           tabIndex={0}
           onChange={this.onChange}
+          extensions={this.tableblockExtensions}
           value={this.props.value}
           selected={this.props.selected}
           onFocus={this.handleContainerFocus}
           onClick={this.handleContainerFocus}
+          debug={false}
         >
           <EditorReference
             onHasEditor={(editor) =>

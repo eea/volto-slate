@@ -24,7 +24,8 @@ import {
   breakList,
   // withParagraphs,
   withLists,
-  normalizeBlocks,
+  normalizeNode,
+  insertFragment,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
@@ -37,12 +38,13 @@ export default (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
+      insertFragment,
+      normalizeNode,
       withLists,
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
       withDeserializers,
       breakList,
-      normalizeBlocks,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />

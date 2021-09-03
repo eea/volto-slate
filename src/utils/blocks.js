@@ -27,6 +27,9 @@ export const isWhitespace = (c) => {
 };
 
 export function normalizeBlockNodes(editor, children) {
+  // Basic normalization of slate content. Make sure that no inline element is
+  // alone, without a block element parent.
+  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
   const nodes = [];
   let inlinesBlock = null;
 

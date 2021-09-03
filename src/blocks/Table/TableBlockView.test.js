@@ -1,6 +1,6 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import View from './View';
+import View from './TableBlockView';
 import config from '@plone/volto/registry';
 
 beforeAll(() => {

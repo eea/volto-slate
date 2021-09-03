@@ -1,5 +1,5 @@
-import { Transforms, Element, Node } from 'slate';
-import config from '@plone/volto/registry';
+// import { Transforms, Element, Node } from 'slate';
+// import config from '@plone/volto/registry';
 
 export const withLists = (editor) => {
   // enforce list rules (no block elements, only ol/ul/li as possible children)

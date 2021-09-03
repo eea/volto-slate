@@ -3,7 +3,6 @@ import * as slateReducers from './reducers';
 import installSlate from './editor';
 import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
-import installVoltoProposals from './futurevolto';
 import RichTextWidget from './widgets/RichTextWidget';
 import RichTextWidgetView from './widgets/RichTextWidgetView';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
@@ -13,12 +12,10 @@ import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
 
 export default (config) => {
-  config = [
-    installSlate,
-    installTextBlock,
-    installTableBlock,
-    installVoltoProposals,
-  ].reduce((acc, apply) => apply(acc), config);
+  config = [installSlate, installTextBlock, installTableBlock].reduce(
+    (acc, apply) => apply(acc),
+    config,
+  );
 
   config.settings.appExtras = [
     ...(config.settings.appExtras || []),

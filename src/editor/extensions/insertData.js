@@ -29,9 +29,6 @@ export const insertData = (editor) => {
       let fragment; //  = deserialize(editor, body);
 
       const val = deserialize(editor, body);
-      console.log('body', dt);
-      console.log('deserialized', val);
-
       fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
@@ -42,7 +39,6 @@ export const insertData = (editor) => {
       ) {
         // TODO: we want normalization also when dealing with fragments
         // Transforms.insertFragment(editor, fragment);
-        console.log('sinertasdas', fragment);
         editor.insertFragment(fragment);
         return true;
       }

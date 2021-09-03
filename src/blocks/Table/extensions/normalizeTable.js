@@ -1,6 +1,3 @@
-import { Editor, Text, Transforms, Element } from 'slate';
-import config from '@plone/volto/registry';
-
 export const normalizeTable = (editor) => {
   // Normalization rules for table cells
 

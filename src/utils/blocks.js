@@ -27,6 +27,9 @@ export const isWhitespace = (c) => {
 };
 
 export function normalizeBlockNodes(editor, children) {
+  // Basic normalization of slate content. Make sure that no inline element is
+  // alone, without a block element parent.
+  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
   const nodes = [];
   let inlinesBlock = null;
 
@@ -196,7 +199,7 @@ export const toggleFormatAsListItem = (editor, format) => {
 
   // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
 
-  deconstructToVoltoBlocks(editor);
+  if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -211,7 +214,7 @@ export const switchListType = (editor, format) => {
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
 
-  deconstructToVoltoBlocks(editor);
+  if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
 };
 
 export const changeBlockToList = (editor, format) => {

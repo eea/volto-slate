@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EditorReference, SlateEditor } from 'volto-slate/editor';
 import { ReactEditor } from 'slate-react';
+import config from '@plone/volto/registry';
 
 class Cell extends Component {
   static propTypes = {
@@ -22,17 +23,30 @@ class Cell extends Component {
     this.onChange = this.onChange.bind(this);
     this.handleContainerFocus = this.handleContainerFocus.bind(this);
     this.state = { editor: null };
+    this.tableblockExtensions = config.settings.slate.tableblockExtensions;
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillUnmount() {
+    this.isUnmounted = true;
+  }
+
+  componentDidUpdate(prevProps) {
     if (
-      nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      prevProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      this.props.isTableBlockSelected &&
       this.props.cell === 0 &&
-      this.props.row === 0
+      this.props.row === 0 &&
+      (!this.props.selectedCell ||
+        (this.props.selectedCell.row === 0 &&
+          this.props.selectedCell.cell === 0))
     ) {
       this.props.onSelectCell(this.props.row, this.props.cell);
+
       if (this.state.editor) {
-        setTimeout(() => ReactEditor.focus(this.state.editor), 0);
+        setTimeout(
+          () => !this.isUnmounted && ReactEditor.focus(this.state.editor),
+          0,
+        );
       }
     }
   }
@@ -51,10 +65,12 @@ class Cell extends Component {
         <SlateEditor
           tabIndex={0}
           onChange={this.onChange}
+          extensions={this.tableblockExtensions}
           value={this.props.value}
           selected={this.props.selected}
           onFocus={this.handleContainerFocus}
           onClick={this.handleContainerFocus}
+          debug={false}
         >
           <EditorReference
             onHasEditor={(editor) =>

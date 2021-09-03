@@ -15,7 +15,7 @@ import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
 import { uploadContent } from 'volto-slate/actions';
-import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
+// import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
 import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
@@ -121,7 +121,7 @@ export const DefaultTextBlockEditor = (props) => {
   const imageId = uploadedContent['@id'];
   const prevLoaded = prevReq.current;
 
-  useIsomorphicLayoutEffect(() => {
+  React.useEffect(() => {
     if (loaded && !loading && !prevLoaded && newImageId !== imageId) {
       const url = flattenToAppURL(imageId);
       setNewImageId(imageId);

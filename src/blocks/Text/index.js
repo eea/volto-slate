@@ -22,7 +22,6 @@ import {
   withSplitBlocksOnBreak,
   withDeserializers,
   breakList,
-  // withParagraphs,
   withLists,
   normalizeNode,
   insertFragment,

@@ -5,6 +5,7 @@ export const insertFragment = (editor) => {
 
   editor.insertFragment = (entry) => {
     insertFragment(entry);
+
     deconstructToVoltoBlocks(editor);
   };
 

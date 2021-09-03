@@ -44,10 +44,9 @@ export const insertData = (editor) => {
       }
 
       const nodes = normalizeBlockNodes(editor, fragment);
-      // console.log('nodes', nodes);
       Transforms.insertNodes(editor, nodes);
 
-      deconstructToVoltoBlocks(editor);
+      if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
       return true;
     },
     'text/plain': (dt, fullMime) => {
@@ -70,16 +69,12 @@ export const insertData = (editor) => {
         }
       }
 
-      // console.log('fragment', fragment);
       const nodes = normalizeBlockNodes(editor, fragment);
-      // console.log('insert nodes', nodes);
       Transforms.insertNodes(editor, nodes);
 
       // TODO: This used to solve a problem when pasting images. What is it?
       // Transforms.deselect(editor);
-      if (editor.getBlockProps) {
-        deconstructToVoltoBlocks(editor);
-      }
+      if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
       return true;
     },
   };

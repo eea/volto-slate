@@ -12,11 +12,10 @@ import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
 
 export default (config) => {
-  config = [
-    installSlate,
-    installTextBlock,
-    installTableBlock,
-  ].reduce((acc, apply) => apply(acc), config);
+  config = [installSlate, installTextBlock, installTableBlock].reduce(
+    (acc, apply) => apply(acc),
+    config,
+  );
 
   config.settings.appExtras = [
     ...(config.settings.appExtras || []),

@@ -36,10 +36,10 @@ export const InternalLinkSchema = {
   ],
   properties: {
     internal_link: {
-      // widget: 'url',
       widget: 'object_browser',
       title: 'Internal link',
       multiple: false,
+      mode: 'link',
       selectedItemAttrs: [],
     },
   },
@@ -61,27 +61,6 @@ export const InternalHashSchema = {
       title: 'Hash link',
       multiple: false,
       selectedItemAttrs: [],
-    },
-  },
-  required: [],
-};
-
-export const PageLinkSchema = {
-  title: 'Section in this page',
-  fieldsets: [
-    {
-      id: 'pagelink',
-      title: 'Link on this page',
-      fields: ['page_link'],
-    },
-  ],
-  properties: {
-    page_link: {
-      widget: 'object_browser',
-      title: 'Internal link',
-      default: [],
-      selectedItemAttrs: [],
-      multiple: false,
     },
   },
   required: [],
@@ -147,11 +126,6 @@ const LinkEditSchema = {
           icon: externalSVG,
           schema: ExternalLinkSchema,
         },
-        // {
-        //   id: 'pageLink',
-        //   icon: pageLinkSVG,
-        //   schema: PageLinkSchema,
-        // },
         {
           id: 'email',
           icon: emailSVG,

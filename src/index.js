@@ -10,6 +10,7 @@ import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
 import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
+import HtmlSlateWidget from './widgets/HtmlSlateWidget';
 
 export default (config) => {
   config = [installSlate, installTextBlock, installTableBlock].reduce(
@@ -37,7 +38,7 @@ export default (config) => {
   config.widgets.widget.blocks_browser = BlocksBrowserWidget;
   config.widgets.widget.slate = RichTextWidget;
   config.widgets.widget.slate_richtext = RichTextWidget; // BBB
-  config.widgets.widget.slate_html = HtmlSlateWidget; // BBB
+  config.widgets.widget.slate_html = HtmlSlateWidget;
 
   // volto-widgets-view
   if (config.widgets.views?.widget) {
@@ -83,6 +84,8 @@ export function asDefault(config) {
 
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
+
+  config.widgets.widget.richtext = HtmlSlateWidget; // BBB
 
   // TODO: handle title and description blocks
   return config;

@@ -9,13 +9,13 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
-import { makeEditor } from 'volto-slate/editor/makeEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
 import deserialize from 'volto-slate/editor/deserialize';
 import { Provider, useSelector } from 'react-redux';
 
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
+import makeEditor from 'volto-slate/editor/makeEditor';
 
 const HtmlSlateWidget = (props) => {
   const {
@@ -43,15 +43,16 @@ const HtmlSlateWidget = (props) => {
   const toHtml = React.useCallback(
     (value) => {
       const mockStore = configureStore();
+      const html = ReactDOMServer.renderToStaticMarkup(
+        <Provider store={mockStore({ userSession: { token } })}>
+          <MemoryRouter>{serializeNodes(value || [])}</MemoryRouter>
+        </Provider>,
+      );
 
       return {
         'content-type': value ? value['content-type'] : 'text/html',
         encoding: value ? value.encoding : 'utf8',
-        data: ReactDOMServer.renderToStaticMarkup(
-          <Provider store={mockStore({ userSession: { token } })}>
-            <MemoryRouter>{serializeNodes(value?.data || [])}</MemoryRouter>
-          </Provider>,
-        ),
+        data: html,
       };
     },
     [token],
@@ -59,11 +60,16 @@ const HtmlSlateWidget = (props) => {
 
   const fromHtml = React.useCallback(
     (value) => {
-      return typeof value === 'undefined' ||
-        typeof value?.data !==
-          'undefined' /* previously this was a Draft block */
-        ? [createEmptyParagraph()]
-        : deserialize(editor, value.data);
+      const html = value?.data || '';
+
+      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      const body =
+        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+          ? parsed.querySelector('google-sheets-html-origin > table')
+          : parsed.body;
+      const data = deserialize(editor, body);
+      const res = data.length ? data : [createEmptyParagraph()];
+      return res;
     },
     [editor],
   );

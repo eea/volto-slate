@@ -4,7 +4,8 @@ import { withHistory } from 'slate-history';
 
 import config from '@plone/volto/registry';
 
-export default function makeEditor() {
+export default function makeEditor(options = {}) {
+  const { extensions = [] } = options;
   const { slate } = config.settings;
   const defaultExtensions = slate.extensions;
   const raw = withHistory(withReact(createEditor()));
@@ -18,8 +19,7 @@ export default function makeEditor() {
   ];
   raw.dataTransferHandlers = {};
 
-  const plugins = [...defaultExtensions, ...this.props.extensions];
-  const editor = plugins.reduce((acc, apply) => apply(acc), raw);
+  const plugins = [...defaultExtensions, ...extensions];
 
-  return editor;
+  return plugins.reduce((acc, apply) => apply(acc), raw);
 }

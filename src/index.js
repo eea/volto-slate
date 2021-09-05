@@ -37,6 +37,7 @@ export default (config) => {
   config.widgets.widget.blocks_browser = BlocksBrowserWidget;
   config.widgets.widget.slate = RichTextWidget;
   config.widgets.widget.slate_richtext = RichTextWidget; // BBB
+  config.widgets.widget.slate_html = HtmlSlateWidget; // BBB
 
   // volto-widgets-view
   if (config.widgets.views?.widget) {

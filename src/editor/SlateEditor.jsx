@@ -1,14 +1,15 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-import { createEditor, Node, Transforms } from 'slate'; // , Transforms
-import { useSlate, Slate, Editable, withReact, ReactEditor } from 'slate-react';
-import { withHistory } from 'slate-history';
+import { Node, Transforms } from 'slate'; // , Transforms
+import { useSlate, Slate, Editable, ReactEditor } from 'slate-react';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
 
-import { Element, Leaf } from './render';
-import { SlateToolbar, SlateContextToolbar } from './ui';
 import config from '@plone/volto/registry';
+
+import { Element, Leaf } from './render';
+import makeEditor from './makeEditor';
+import { SlateToolbar, SlateContextToolbar } from './ui';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
 import {
@@ -138,21 +139,7 @@ class SlateEditor extends Component {
   }
 
   createEditor() {
-    const { slate } = config.settings;
-    const defaultExtensions = slate.extensions;
-    const raw = withHistory(withReact(createEditor()));
-
-    // TODO: also look for MIME Types in the files case
-    raw.dataTransferFormatsOrder = [
-      'application/x-slate-fragment',
-      'text/html',
-      'files',
-      'text/plain',
-    ];
-    raw.dataTransferHandlers = {};
-
-    const plugins = [...defaultExtensions, ...this.props.extensions];
-    const editor = plugins.reduce((acc, apply) => apply(acc), raw);
+    const editor = makeEditor();
 
     // When the editor loses focus it no longer has a valid selections. This
     // makes it impossible to have complex types of interactions (like filling

@@ -205,3 +205,5 @@ export const preTagDeserializer = (editor, el) => {
 
   return blockTagDeserializer(nodeName)(editor, parent);
 };
+
+export default deserialize;

@@ -92,6 +92,7 @@ export const insertData = (editor) => {
       editor.beforeInsertData(data);
     }
 
+    // debugger;
     for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
       const dt = editor.dataTransferFormatsOrder[i];
       if (dt === 'files') {

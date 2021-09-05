@@ -12,6 +12,8 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
 import deserialize from 'volto-slate/editor/deserialize';
 import { Provider, useSelector } from 'react-redux';
+import { normalizeBlockNodes } from 'volto-slate/utils';
+// import { Editor } from 'slate';
 
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
@@ -48,6 +50,8 @@ const HtmlSlateWidget = (props) => {
           <MemoryRouter>{serializeNodes(value || [])}</MemoryRouter>
         </Provider>,
       );
+      console.log('toHtml html', html);
+      console.log('toHtml value', JSON.stringify(value));
 
       return {
         'content-type': value ? value['content-type'] : 'text/html',
@@ -67,8 +71,14 @@ const HtmlSlateWidget = (props) => {
         parsed.getElementsByTagName('google-sheets-html-origin').length > 0
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
-      const data = deserialize(editor, body);
+      let data = deserialize(editor, body);
+      data = normalizeBlockNodes(editor, data);
+
+      // editor.children = data;
+      // Editor.normalize(editor);
+      // TODO: need to add {text: ""} placeholders between elements
       const res = data.length ? data : [createEmptyParagraph()];
+      console.log('from html', res);
       return res;
     },
     [editor],

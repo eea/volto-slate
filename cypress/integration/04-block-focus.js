@@ -6,7 +6,7 @@ describe('Block Tests', () => {
 
   it('As editor I can add a link to a text block', function () {
     // Complete chained commands
-    cy.get('.slate-editor [contenteditable=true]')
+    cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
       .click()
       .wait(1000)
@@ -17,7 +17,7 @@ describe('Block Tests', () => {
     );
 
     // This also works
-    cy.get('.slate-editor [contenteditable=true]')
+    cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
       .click()
       .wait(1000)
@@ -30,7 +30,7 @@ describe('Block Tests', () => {
     };
 
     getSlateEditorAndType(
-      '.slate-editor [contenteditable=true]',
+      '.content-area .slate-editor [contenteditable=true]',
       'Colorless green ideas sleep furiously.',
     ).setSelection('furiously');
 

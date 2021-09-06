@@ -9,7 +9,7 @@ describe('Block Tests', () => {
       .clear()
       .type('My Add-on Page')
       .type('{enter}')
-      .get('.documentFirstHeading span[data-text]')
+      .get('.content-area .documentFirstHeading span[data-text]')
       .contains('My Add-on Page');
 
     // Save

@@ -5,12 +5,12 @@ describe('Block Tests', () => {
   afterEach(slateAfterEach);
 
   it('should create 4 slate blocks, first 3 with mouse, the last with an Enter in the third block', () => {
-    cy.get('.slate-editor [contenteditable=true]')
+    cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
       .click()
       .wait(1000)
-      .type("Hello Slate World")
-      .type("{enter}");
+      .type('Hello Slate World')
+      .type('{enter}');
 
     cy.wait(500);
 

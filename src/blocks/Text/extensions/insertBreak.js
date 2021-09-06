@@ -25,7 +25,6 @@ export const withSplitBlocksOnBreak = (editor) => {
   const { insertBreak } = editor;
 
   editor.insertBreak = () => {
-    console.log('insert break');
     // if selection is expanded, delete it
     if (rangeIsInSplittableNode(editor, editor.selection)) {
       const block = Editor.parent(editor, editor.selection);
@@ -33,14 +32,14 @@ export const withSplitBlocksOnBreak = (editor) => {
       if (block) {
         const blockProps = editor.getBlockProps();
         const { data } = blockProps;
+
         // Don't add new block if not allowed
         if (data?.disableNewBlocks) {
           return insertBreak();
         }
 
-        // console.log('insert block');
-        // insertBreak();
-        // deconstructToVoltoBlocks(editor);
+        // TODO: another method would be to simply insert a break and call
+        // deconstructToVoltoBlocks
         ReactDOM.unstable_batchedUpdates(() => {
           const [top, bottom] = splitEditorInTwoFragments(editor);
           setEditorContent(editor, top);

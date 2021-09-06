@@ -55,6 +55,7 @@ a link inline element as children at the same time. The type of children
 allowed is determined by the first child, and any other non-conforming children
 are removed. This ensures that common richtext behaviors like "splitting
 a block in two" function consistently.
+
 - Inline nodes cannot be the first or last child of a parent block, nor can it
 be next to another inline node in the children array. If this is the case, an
 empty text node will be added to correct this to be in compliance with the

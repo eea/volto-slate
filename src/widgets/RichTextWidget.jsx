@@ -22,15 +22,7 @@ const SlateRichTextWidget = (props) => {
     properties,
   } = props;
   const [selected, setSelected] = React.useState(focus);
-  // make editor.getBlockProps available for extensions
-  const withBlockProperties = React.useCallback(
-    (editor) => {
-      editor.getBlockProps = () => props;
-      editor.isNotTextBlock = true;
-      return editor;
-    },
-    [props],
-  );
+
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -58,7 +50,6 @@ const SlateRichTextWidget = (props) => {
             onChange(id, newValue);
           }}
           block={block}
-          renderExtensions={[withBlockProperties]}
           selected={selected}
           properties={properties}
           placeholder={placeholder}

@@ -8,4 +8,6 @@ export const withInsertData = (editor) => {
     deconstructToVoltoBlocks(editor);
     return result;
   };
+
+  return editor;
 };

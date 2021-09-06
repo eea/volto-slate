@@ -103,8 +103,8 @@ const HtmlSlateWidget = (props) => {
           <MemoryRouter>{serializeNodes(value || [])}</MemoryRouter>
         </Provider>,
       );
-      // console.log('toHtml html', html);
-      // console.log('toHtml value', JSON.stringify(value));
+      console.log('toHtml value', JSON.stringify(value));
+      console.log('toHtml html', html);
 
       return {
         'content-type': value ? value['content-type'] : 'text/html',
@@ -131,7 +131,7 @@ const HtmlSlateWidget = (props) => {
       // Editor.normalize(editor);
       // TODO: need to add {text: ""} placeholders between elements
       const res = data.length ? data : [createEmptyParagraph()];
-      // console.log('from html', { html: value?.data, res });
+      console.log('from html', { html: value?.data, res });
       return res;
     },
     [editor],

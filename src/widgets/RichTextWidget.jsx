@@ -1,14 +1,15 @@
 /**
- * WysiwygWidget container.
- * @module components/manage/WysiwygWidget/WysiwygWidget
+ * A Slate widget that uses internal JSON representation as its value
+ *
  */
 
 import React from 'react';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 
-import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
+
+import './style.css';
 
 const SlateRichTextWidget = (props) => {
   const {

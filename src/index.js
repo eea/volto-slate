@@ -85,7 +85,7 @@ export function asDefault(config) {
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
 
-  config.widgets.widget.richtext = HtmlSlateWidget; // BBB
+  config.widgets.widget.richtext = HtmlSlateWidget;
 
   // TODO: handle title and description blocks
   return config;

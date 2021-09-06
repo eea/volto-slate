@@ -88,16 +88,10 @@ const HtmlSlateWidget = (props) => {
     placeholder,
     properties,
   } = props;
-  // placeholde
+
   const [selected, setSelected] = React.useState(focus);
 
-  const editor = React.useMemo(() => {
-    const editor = makeEditor();
-    editor.isNotTextBlock = true;
-    // make editor.getBlockProps available for extensions
-    editor.getBlockProps = () => null;
-    return editor;
-  }, []);
+  const editor = React.useMemo(() => makeEditor(), []);
 
   const token = useSelector((state) => state.userSession.token);
 

@@ -3,7 +3,6 @@ import { deserialize } from 'volto-slate/editor/deserialize';
 import {
   createDefaultBlock,
   normalizeBlockNodes,
-  deconstructToVoltoBlocks,
   MIMETypeName,
 } from 'volto-slate/utils';
 
@@ -46,7 +45,6 @@ export const insertData = (editor) => {
       const nodes = normalizeBlockNodes(editor, fragment);
       Transforms.insertNodes(editor, nodes);
 
-      if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
       return true;
     },
     'text/plain': (dt, fullMime) => {
@@ -72,9 +70,6 @@ export const insertData = (editor) => {
       const nodes = normalizeBlockNodes(editor, fragment);
       Transforms.insertNodes(editor, nodes);
 
-      // TODO: This used to solve a problem when pasting images. What is it?
-      // Transforms.deselect(editor);
-      if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
       return true;
     },
   };

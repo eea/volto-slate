@@ -25,7 +25,7 @@ export const withSplitBlocksOnBreak = (editor) => {
   const { insertBreak } = editor;
 
   editor.insertBreak = () => {
-    // console.log('insert break');
+    console.log('insert break');
     // if selection is expanded, delete it
     if (rangeIsInSplittableNode(editor, editor.selection)) {
       const block = Editor.parent(editor, editor.selection);

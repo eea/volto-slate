@@ -139,7 +139,7 @@ class SlateEditor extends Component {
   }
 
   createEditor() {
-    const editor = makeEditor();
+    const editor = makeEditor({ extensions: this.props.extensions });
 
     // When the editor loses focus it no longer has a valid selections. This
     // makes it impossible to have complex types of interactions (like filling

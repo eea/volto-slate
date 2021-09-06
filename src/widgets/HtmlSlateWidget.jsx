@@ -12,12 +12,40 @@ import SlateEditor from 'volto-slate/editor/SlateEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
 import deserialize from 'volto-slate/editor/deserialize';
 import { Provider, useSelector } from 'react-redux';
-import { normalizeBlockNodes } from 'volto-slate/utils';
+import { createDefaultBlock } from 'volto-slate/utils';
+import { Text } from 'slate';
 // import { Editor } from 'slate';
 
 import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
 import makeEditor from 'volto-slate/editor/makeEditor';
+
+export function normalizeBlockNodes(editor, children) {
+  // Basic normalization of slate content. Make sure that no inline element is
+  // alone, without a block element parent.
+  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
+  const nodes = [];
+  let inlinesBlock = null;
+
+  const isInline = (n) =>
+    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
+
+  children.forEach((node) => {
+    if (!isInline(node)) {
+      inlinesBlock = null;
+      nodes.push(node);
+    } else {
+      node = typeof node === 'string' ? { text: node } : node;
+      if (!inlinesBlock) {
+        inlinesBlock = createDefaultBlock([node]);
+        nodes.push(inlinesBlock);
+      } else {
+        inlinesBlock.children.push(node);
+      }
+    }
+  });
+  return nodes;
+}
 
 const HtmlSlateWidget = (props) => {
   const {

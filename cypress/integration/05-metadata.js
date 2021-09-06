@@ -12,6 +12,7 @@ describe('Block Tests', () => {
       .wait(1000)
       .type('Colorless green ideas sleep furiously.');
 
+    // Bold
     cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
       'Colorless green',
     );
@@ -19,6 +20,25 @@ describe('Block Tests', () => {
     cy.wait(1000);
     cy.get('.slate-inline-toolbar .button-wrapper a[title="Bold"]').click();
 
+    // Bullet list
+    cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
+      'Colorless green',
+    );
+    cy.wait(1000);
+    cy.get(
+      '.slate-inline-toolbar .button-wrapper a[title="Bulleted list"]',
+    ).click();
+
+    // Remove bullet list
+    cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
+      'Colorless green',
+    );
+    cy.wait(1000);
+    cy.get(
+      '.slate-inline-toolbar .button-wrapper a[title="Bulleted list"]',
+    ).click();
+
+    // Link
     cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
       'furiously',
     );

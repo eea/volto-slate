@@ -1,10 +1,10 @@
 import { slateBeforeEach, slateAfterEach } from '../support';
 
 describe('Block Tests', () => {
-  beforeEach(slateBeforeEach);
+  beforeEach(() => slateBeforeEach('News Item'));
   afterEach(slateAfterEach);
 
-  it('As editor I can add a link to a text block', function () {
+  it('As editor I can add a News Item with Slate RichText', function () {
     // Complete chained commands
     cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
@@ -13,26 +13,15 @@ describe('Block Tests', () => {
       .type('Colorless green ideas sleep furiously.');
 
     cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
-      'furiously',
+      'Colorless green',
     );
 
-    // This also works
-    cy.get('.content-area .slate-editor [contenteditable=true]')
-      .focus()
-      .click()
-      .wait(1000)
-      .type('Colorless green ideas sleep furiously.')
-      .setSelection('furiously');
+    cy.wait(1000);
+    cy.get('.slate-inline-toolbar .button-wrapper a[title="Bold"]').click();
 
-    // As a function
-    const getSlateEditorAndType = (selector, type) => {
-      return cy.get(selector).focus().click().wait(1000).type(type);
-    };
-
-    getSlateEditorAndType(
-      '.content-area .slate-editor [contenteditable=true]',
-      'Colorless green ideas sleep furiously.',
-    ).setSelection('furiously');
+    cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
+      'furiously',
+    );
 
     cy.wait(1000);
 

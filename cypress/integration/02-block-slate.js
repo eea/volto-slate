@@ -24,6 +24,6 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain our changes
-    cy.get('.ui.container p').contains('Hello Slate World');
+    cy.contains('Hello Slate World');
   });
 });

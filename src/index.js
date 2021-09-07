@@ -10,6 +10,7 @@ import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
 import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
+import HtmlSlateWidget from './widgets/HtmlSlateWidget';
 
 export default (config) => {
   config = [installSlate, installTextBlock, installTableBlock].reduce(
@@ -37,6 +38,7 @@ export default (config) => {
   config.widgets.widget.blocks_browser = BlocksBrowserWidget;
   config.widgets.widget.slate = RichTextWidget;
   config.widgets.widget.slate_richtext = RichTextWidget; // BBB
+  config.widgets.widget.slate_html = HtmlSlateWidget;
 
   // volto-widgets-view
   if (config.widgets.views?.widget) {
@@ -74,7 +76,7 @@ export function tableButton(config) {
   return installTable(config);
 }
 
-export function asDefault(config) {
+export function asDefaultBlock(config) {
   config.settings.defaultBlockType = 'slate';
 
   config.blocks.blocksConfig.slateTable.title = 'Table';
@@ -84,5 +86,19 @@ export function asDefault(config) {
   config.blocks.blocksConfig.table.restricted = true;
 
   // TODO: handle title and description blocks
+  return config;
+}
+
+export function asDefaultRichText(config) {
+  config.widgets.widget.richtext = HtmlSlateWidget;
+  return config;
+}
+
+export function asDefault(config) {
+  asDefaultBlock(config);
+
+  // TODO: Fix issues and enable by default slate for richtext
+  // asDefaultRichText(config);
+
   return config;
 }

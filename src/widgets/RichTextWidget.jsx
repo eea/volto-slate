@@ -1,14 +1,15 @@
 /**
- * WysiwygWidget container.
- * @module components/manage/WysiwygWidget/WysiwygWidget
+ * A Slate widget that uses internal JSON representation as its value
+ *
  */
 
 import React from 'react';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 
-import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
+
+import './style.css';
 
 const SlateRichTextWidget = (props) => {
   const {
@@ -22,15 +23,7 @@ const SlateRichTextWidget = (props) => {
     properties,
   } = props;
   const [selected, setSelected] = React.useState(focus);
-  // make editor.getBlockProps available for extensions
-  const withBlockProperties = React.useCallback(
-    (editor) => {
-      editor.getBlockProps = () => props;
-      editor.isNotTextBlock = true;
-      return editor;
-    },
-    [props],
-  );
+
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -58,7 +51,6 @@ const SlateRichTextWidget = (props) => {
             onChange(id, newValue);
           }}
           block={block}
-          renderExtensions={[withBlockProperties]}
           selected={selected}
           properties={properties}
           placeholder={placeholder}

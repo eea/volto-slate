@@ -127,7 +127,7 @@ export const serializeNodes = (nodes, getAttributes, extras = {}) => {
 /**
  * Get the concatenated text string of a node's content.
  *
- * Note that this WILL include spaces between block node leaves in contrary to
+ * Note that this WILL include spaces between block node leafs in contrary to
  * the original slate method. This function joins text of nodes with
  * separating spaces to produce a string for indexing purposes.
  *

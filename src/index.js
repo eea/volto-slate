@@ -76,7 +76,7 @@ export function tableButton(config) {
   return installTable(config);
 }
 
-export function asDefault(config) {
+export function asDefaultBlock(config) {
   config.settings.defaultBlockType = 'slate';
 
   config.blocks.blocksConfig.slateTable.title = 'Table';
@@ -85,8 +85,20 @@ export function asDefault(config) {
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
 
-  config.widgets.widget.richtext = HtmlSlateWidget;
-
   // TODO: handle title and description blocks
+  return config;
+}
+
+export function asDefaultRichText(config) {
+  config.widgets.widget.richtext = HtmlSlateWidget;
+  return config;
+}
+
+export function asDefault(config) {
+  asDefaultBlock(config);
+
+  // TODO: Fix issues and enable by default slate for richtext
+  // asDefaultRichText(config);
+
   return config;
 }

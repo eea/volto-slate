@@ -4,7 +4,7 @@ describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
-  it('As editor I can format text via slate toolbar', function () {
+  it('As editor I can add links', function () {
     // Complete chained commands
     cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()

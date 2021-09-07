@@ -33,7 +33,6 @@ describe('Block Tests', () => {
       cy.waitForResourceToLoad('my-page');
 
       // then the page view should contain a link
-      cy.contains('Colorless green ideas sleep furiously.');
       cy.get('#page-document ol li:first-child').contains('Colorless green ideas');
       cy.get('#page-document ol li:last-child').contains('sleep furiously.');
   });
@@ -73,7 +72,6 @@ describe('Block Tests', () => {
       cy.waitForResourceToLoad('my-page');
 
       // then the page view should contain a link
-      cy.contains('Colorless green ideas sleep furiously.');
       cy.get('#page-document p:first-of-type').contains('Colorless green ideas');
       cy.get('#page-document p:last-of-type').contains('sleep furiously.');
   });

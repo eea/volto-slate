@@ -6,7 +6,7 @@ describe('Block Tests', () => {
 
   it('As editor I can format text via slate toolbar', function () {
     // Complete chained commands
-    cy.getSlateEditorAndType('Colorless green ideas sleep furiously. (CO2 m3)');
+    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // Bold
     cy.setSlateSelection('Colorless');
@@ -39,30 +39,6 @@ describe('Block Tests', () => {
     // Blockquote
     cy.setSlateSelection('sleep', 'furiously');
     cy.clickSlateButton('Blockquote');
-
-    // Subscript
-    cy.setSlateSelection('2');
-    cy.clickSlateButton('Subscript');
-
-    // Remove Subscript
-    cy.setSlateSelection('2');
-    cy.clickSlateButton('Subscript');
-
-    // Re-Add Subscript
-    cy.setSlateSelection('2');
-    cy.clickSlateButton('Subscript');
-
-    // Superscript
-    cy.setSlateSelection('3');
-    cy.clickSlateButton('Superscript');
-
-    // Remove superscript
-    cy.setSlateSelection('3');
-    cy.clickSlateButton('Superscript');
-
-    // Re-add superscript
-    cy.setSlateSelection('3');
-    cy.clickSlateButton('Superscript');
 
     // Remove bold
     cy.setSlateSelection('Colorless');
@@ -97,7 +73,5 @@ describe('Block Tests', () => {
 
     // then the page view should contain our changes
     cy.contains('Colorless green ideas sleep furiously.');
-    cy.get('#page-document sub').contains('2');
-    cy.get('#page-document sup').contains('3');
   });
 });

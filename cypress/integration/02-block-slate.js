@@ -12,7 +12,7 @@ describe('Block Tests', () => {
       .type('Hello Slate World')
       .type('{enter}');
 
-    cy.wait(500);
+    cy.wait(1000);
 
     // Save
     cy.get('#toolbar-save').click();

@@ -45,7 +45,7 @@ describe('Block Tests', () => {
 
     // then the page view should contain a link
     cy.contains('Colorless green ideas sleep furiously.');
-    cy.get('#page-document p a')
+    cy.get('[id="page-document"] p a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
   });

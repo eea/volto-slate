@@ -9,18 +9,11 @@ describe('Block Tests', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // List
-    cy.get('.slate-editor.selected [contenteditable=true]')
-      .setSelection('green')
-      .wait(1000);
-    cy.get(
-      '.slate-inline-toolbar .button-wrapper a[title="Numbered list"]',
-    ).click();
+    cy.setSlateSelection('green');
+    cy.clickSlateButton('Numbered list');
 
     // Split list
-    cy.get('.slate-editor.selected [contenteditable=true]')
-      .setCursor('ideas')
-      .wait(1000)
-      .type('{enter}');
+    cy.setSlateCursor('ideas').type('{enter}');
 
     cy.wait(1000);
 
@@ -34,10 +27,8 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain a link
-    cy.get('#page-document ol li:first-child').contains(
-      'Colorless green ideas',
-    );
-    cy.get('#page-document ol li:last-child').contains('sleep furiously.');
+    cy.get('[id="page-document"] ol li:first-child').contains('Colorless green ideas');
+    cy.get('[id="page-document"] ol li:last-child').contains('sleep furiously.');
   });
 
   it('As editor I can remove numbered lists', function () {
@@ -67,7 +58,7 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain a link
-    cy.get('#page-document p:first-of-type').contains('Colorless green ideas');
-    cy.get('#page-document p:last-of-type').contains('sleep furiously.');
+    cy.get('[id="page-document"] p:first-of-type').contains('Colorless green ideas');
+    cy.get('[id="page-document"] p:last-of-type').contains('sleep furiously.');
   });
 });

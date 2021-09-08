@@ -125,6 +125,104 @@ Cypress.Commands.add(
   },
 );
 
+// --- Add DX Content-Type ----------------------------------------------------------
+Cypress.Commands.add('addContentType', (name) => {
+  let api_url, auth;
+  api_url =
+    Cypress.env('API_PATH') ||
+    'http://localhost:8080/Plone/@controlpanels/dexterity-types';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'POST',
+      url: `${api_url}/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {
+        title: name,
+      },
+    })
+    .then(() => console.log(`${name} content-type added.`));
+});
+
+// --- Remove DX behavior ----------------------------------------------------------
+Cypress.Commands.add('removeContentType', (name) => {
+  let api_url, auth;
+  api_url =
+    Cypress.env('API_PATH') ||
+    'http://localhost:8080/Plone/@controlpanels/dexterity-types';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'DELETE',
+      url: `${api_url}/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {},
+    })
+    .then(() => console.log(`${name} content-type removed.`));
+});
+
+// --- Add DX field ----------------------------------------------------------
+Cypress.Commands.add('addSlateJSONField', (type, name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone/@types';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'POST',
+      url: `${api_url}/${type}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {
+        id: name,
+        title: name,
+        description: 'Slate JSON Field',
+        factory: 'SlateJSONField',
+        required: false,
+      },
+    })
+    .then(() => console.log(`${name} SlateJSONField field added to ${type}`));
+});
+
+// --- Remove DX field ----------------------------------------------------------
+Cypress.Commands.add('removeSlateJSONField', (type, name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone/@types';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'DELETE',
+      url: `${api_url}/${type}/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {},
+    })
+    .then(() =>
+      console.log(`${name} SlateJSONField field removed from ${type}`),
+    );
+});
+
 // --- REMOVE CONTENT --------------------------------------------------------
 Cypress.Commands.add('removeContent', (path) => {
   let api_url, auth;

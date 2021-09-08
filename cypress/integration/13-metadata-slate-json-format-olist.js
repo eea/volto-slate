@@ -1,16 +1,16 @@
-import { slateBeforeEach, slateAfterEach } from '../support';
+import { slateJsonBeforeEach, slateJsonAfterEach } from '../support';
 
-describe('Block Tests: Bulleted lists', () => {
-  beforeEach(slateBeforeEach);
-  afterEach(slateAfterEach);
+describe('Metadata Slate JSON Tests: Numbered lists', () => {
+  beforeEach(slateJsonBeforeEach);
+  afterEach(slateJsonAfterEach);
 
-  it('As editor I can add bulleted lists', function () {
+  it('As editor I can add numbered lists', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // List
     cy.setSlateSelection('green');
-    cy.clickSlateButton('Bulleted list');
+    cy.clickSlateButton('Numbered list');
 
     // Split list
     cy.setSlateCursor('ideas').type('{enter}');
@@ -19,28 +19,28 @@ describe('Block Tests: Bulleted lists', () => {
     cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] ul li:first-child').contains(
+    cy.get('[id="page-document"] ol li:first-child').contains(
       'Colorless green ideas',
     );
-    cy.get('[id="page-document"] ul li:last-child').contains(
+    cy.get('[id="page-document"] ol li:last-child').contains(
       'sleep furiously.',
     );
   });
 
-  it('As editor I can remove bulleted lists', function () {
+  it('As editor I can remove numbered lists', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // List
     cy.setSlateSelection('green');
-    cy.clickSlateButton('Bulleted list');
+    cy.clickSlateButton('Numbered list');
 
     // Split list
     cy.setSlateCursor('ideas').type('{enter}');
 
     // Remove list
     cy.setSlateSelection('green', 'sleep');
-    cy.clickSlateButton('Bulleted list');
+    cy.clickSlateButton('Numbered list');
 
     // Save
     cy.toolbarSave();

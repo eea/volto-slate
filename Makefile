@@ -51,7 +51,7 @@ start-test-backend: ## Start Test Plone Backend
 start-docker-backend:
 	@echo "$(GREEN)==> Start Plone Backend$(RESET)"
 	docker pull plone
-	docker run -it --rm -e SITE="Plone" -e ADDONS="eea.schema.slate" -e VERSIONS="plone.schema=1.3.0" -e PROFILES="profile-plone.restapi:blocks" -p 8080:8080 plone fg
+	docker run -it --rm -e SITE="Plone" -e ADDONS="eea.schema.slate" -e VERSIONS="plone.schema=1.3.0 plone.restapi=8.9.1" -e PROFILES="profile-plone.restapi:blocks" -p 8080:8080 plone fg
 
 .PHONY: help
 help:		## Show this help.

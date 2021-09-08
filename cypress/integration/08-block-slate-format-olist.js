@@ -6,75 +6,68 @@ describe('Block Tests', () => {
 
   it('As editor I can add numbered lists', function () {
     // Complete chained commands
-    cy.get('.content-area .slate-editor [contenteditable=true]')
-      .focus()
-      .click()
+    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
+
+    // List
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .setSelection('green')
+      .wait(1000);
+    cy.get(
+      '.slate-inline-toolbar .button-wrapper a[title="Numbered list"]',
+    ).click();
+
+    // Split list
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .setCursor('ideas')
       .wait(1000)
-      .type('Colorless green ideas sleep furiously.');
+      .type('{enter}');
 
-      // List
-      cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
-        'green',
-      ).wait(1000);
-      cy.get('.slate-inline-toolbar .button-wrapper a[title="Numbered list"]').click();
-  
-      // Split list
-      cy.get('.slate-editor.selected [contenteditable=true]').setCursor(
-        'ideas',
-      ).wait(1000).type('{enter}');
+    cy.wait(1000);
 
-      // Save
-      cy.get('#toolbar-save').click();
-      cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-      cy.waitForResourceToLoad('@navigation');
-      cy.waitForResourceToLoad('@breadcrumbs');
-      cy.waitForResourceToLoad('@actions');
-      cy.waitForResourceToLoad('@types');
-      cy.waitForResourceToLoad('my-page');
+    // Save
+    cy.get('#toolbar-save').click();
+    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
+    cy.waitForResourceToLoad('@navigation');
+    cy.waitForResourceToLoad('@breadcrumbs');
+    cy.waitForResourceToLoad('@actions');
+    cy.waitForResourceToLoad('@types');
+    cy.waitForResourceToLoad('my-page');
 
-      // then the page view should contain a link
-      cy.contains('Colorless green ideas sleep furiously.');
-      cy.get('#page-document ol li:first-child').contains('Colorless green ideas');
-      cy.get('#page-document ol li:last-child').contains('sleep furiously.');
+    // then the page view should contain a link
+    cy.get('#page-document ol li:first-child').contains(
+      'Colorless green ideas',
+    );
+    cy.get('#page-document ol li:last-child').contains('sleep furiously.');
   });
 
   it('As editor I can remove numbered lists', function () {
     // Complete chained commands
-    cy.get('.content-area .slate-editor [contenteditable=true]')
-      .focus()
-      .click()
-      .wait(1000)
-      .type('Colorless green ideas sleep furiously.');
+    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
-      // List
-      cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
-        'green',
-      ).wait(1000);
-      cy.get('.slate-inline-toolbar .button-wrapper a[title="Numbered list"]').click();
-  
-      // Split list
-      cy.get('.slate-editor.selected [contenteditable=true]').setCursor(
-        'ideas',
-      ).wait(1000).type('{enter}');
+    // List
+    cy.setSlateSelection('green');
+    cy.clickSlateButton('Numbered list');
 
-      // Remove list
-      cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
-        'green', 'sleep'
-      ).wait(1000);
-      cy.get('.slate-inline-toolbar .button-wrapper a[title="Numbered list"]').click();
+    // Split list
+    cy.setSlateCursor('ideas').type('{enter}');
 
-      // Save
-      cy.get('#toolbar-save').click();
-      cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-      cy.waitForResourceToLoad('@navigation');
-      cy.waitForResourceToLoad('@breadcrumbs');
-      cy.waitForResourceToLoad('@actions');
-      cy.waitForResourceToLoad('@types');
-      cy.waitForResourceToLoad('my-page');
+    // Remove list
+    cy.setSlateSelection('green', 'sleep');
+    cy.clickSlateButton('Numbered list');
 
-      // then the page view should contain a link
-      cy.contains('Colorless green ideas sleep furiously.');
-      cy.get('#page-document p:first-of-type').contains('Colorless green ideas');
-      cy.get('#page-document p:last-of-type').contains('sleep furiously.');
+    cy.wait(1000);
+
+    // Save
+    cy.get('#toolbar-save').click();
+    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
+    cy.waitForResourceToLoad('@navigation');
+    cy.waitForResourceToLoad('@breadcrumbs');
+    cy.waitForResourceToLoad('@actions');
+    cy.waitForResourceToLoad('@types');
+    cy.waitForResourceToLoad('my-page');
+
+    // then the page view should contain a link
+    cy.get('#page-document p:first-of-type').contains('Colorless green ideas');
+    cy.get('#page-document p:last-of-type').contains('sleep furiously.');
   });
 });

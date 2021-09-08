@@ -99,7 +99,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   ) {
     // TODO: should here be handled the cases when there are more strings in
     // `children` or when there are besides strings other types of nodes too?
-    const p = { type: 'div', children: [] };
+    const p = { type: 'div', children: [{ text: '' }] };
     p.children[0].text = children[0];
     children = [p];
   }

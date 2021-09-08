@@ -37,5 +37,11 @@ describe('Block Tests', () => {
         },
       ]);
     });
+
+    // Save
+    cy.toolbarSave();
+
+    cy.contains('hello, ');
+    cy.contains('world');
   });
 });

@@ -15,16 +15,8 @@ describe('Block Tests', () => {
     // Split list
     cy.setSlateCursor('ideas').type('{enter}');
 
-    cy.wait(1000);
-
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('@navigation');
-    cy.waitForResourceToLoad('@breadcrumbs');
-    cy.waitForResourceToLoad('@actions');
-    cy.waitForResourceToLoad('@types');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain a link
     cy.get('[id="page-document"] ul li:first-child').contains(
@@ -50,16 +42,8 @@ describe('Block Tests', () => {
     cy.setSlateSelection('green', 'sleep');
     cy.clickSlateButton('Bulleted list');
 
-    cy.wait(1000);
-
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('@navigation');
-    cy.waitForResourceToLoad('@breadcrumbs');
-    cy.waitForResourceToLoad('@actions');
-    cy.waitForResourceToLoad('@types');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain a link
     cy.get('[id="page-document"] p:first-of-type').contains(

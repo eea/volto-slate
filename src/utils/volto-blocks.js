@@ -167,7 +167,7 @@ export function deconstructToVoltoBlocks(editor) {
   // For the Volto blocks manipulation we do low-level changes to the context
   // form state, as that ensures a better performance (no un-needed UI updates)
 
-  if (editor.isNotTextBlock) return;
+  if (!editor.getBlockProps) return;
 
   const blockProps = editor.getBlockProps();
   const { slate } = config.settings;

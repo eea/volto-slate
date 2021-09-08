@@ -248,8 +248,7 @@ export const toggleFormatAsListItem = (editor, format) => {
   // });
 
   // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
-
-  if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
+  deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -264,7 +263,7 @@ export const switchListType = (editor, format) => {
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
 
-  if (!editor.isNotTextBlock) deconstructToVoltoBlocks(editor);
+  deconstructToVoltoBlocks(editor);
 };
 
 export const changeBlockToList = (editor, format) => {

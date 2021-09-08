@@ -19,12 +19,8 @@ describe('RichText Tests: numbered lists', () => {
     cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] ol li:first-child').contains(
-      'Colorless green ideas',
-    );
-    cy.get('[id="page-document"] ol li:last-child').contains(
-      'sleep furiously.',
-    );
+    cy.get('[id="view"] ol li:first-child').contains('Colorless green ideas');
+    cy.get('[id="view"] ol li:last-child').contains('sleep furiously.');
   });
 
   it('As editor I can remove numbered lists', function () {
@@ -46,9 +42,7 @@ describe('RichText Tests: numbered lists', () => {
     cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] p:first-of-type').contains(
-      'Colorless green ideas',
-    );
-    cy.get('[id="page-document"] p:last-of-type').contains('sleep furiously.');
+    cy.get('[id="view"] p:first-of-type').contains('Colorless green ideas');
+    cy.get('[id="view"] p:last-of-type').contains('sleep furiously.');
   });
 });

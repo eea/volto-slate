@@ -24,7 +24,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] strong').contains('Colorless');
+    cy.get('[id="view"] strong').contains('Colorless');
   });
 
   it('Italic', function () {
@@ -47,7 +47,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] em').contains('Colorless');
+    cy.get('[id="view"] em').contains('Colorless');
   });
 
   it('Underline', function () {
@@ -70,7 +70,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] u').contains('Colorless');
+    cy.get('[id="view"] u').contains('Colorless');
   });
 
   it('Strikethrough', function () {
@@ -93,7 +93,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] s').contains('Colorless');
+    cy.get('[id="view"] s').contains('Colorless');
   });
 
   it('Title', function () {
@@ -116,7 +116,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] h2').contains('Colorless');
+    cy.get('[id="view"] h2').contains('Colorless');
   });
 
   it('Subtitle', function () {
@@ -139,7 +139,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] h3').contains('Colorless');
+    cy.get('[id="view"] h3').contains('Colorless');
   });
 
   it('Heading 4', function () {
@@ -162,7 +162,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] h4').contains('Colorless');
+    cy.get('[id="view"] h4').contains('Colorless');
   });
 
   it('Blockquote', function () {
@@ -185,7 +185,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] blockquote').contains('Colorless');
+    cy.get('[id="view"] blockquote').contains('Colorless');
   });
 
   it('Superscript', function () {
@@ -208,7 +208,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] sup').contains('Colorless');
+    cy.get('[id="view"] sup').contains('Colorless');
   });
 
   it('Subscript', function () {
@@ -231,6 +231,6 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] sub').contains('Colorless');
+    cy.get('[id="view"] sub').contains('Colorless');
   });
 });

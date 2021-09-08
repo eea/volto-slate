@@ -282,6 +282,47 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add(
+  'getSlateEditorAndType',
+  (type) => {
+    cy.get('.content-area .slate-editor [contenteditable=true]')
+      .focus()
+      .click()
+      .wait(1000)
+      .type(type);
+  },
+);
+
+Cypress.Commands.add(
+  'setSlateSelection',
+  (subject, query, endQuery) => {
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .focus()
+      .click()
+      .setSelection(subject, query, endQuery)
+      .wait(1000);
+  },
+);
+
+Cypress.Commands.add(
+  'setSlateCursor',
+  (subject, query, endQuery) => {
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .focus()
+      .click()
+      .setCursor(subject, query, endQuery)
+      .wait(1000);
+  },
+);
+
+Cypress.Commands.add(
+  'clickSlateButton',
+  (button) => {
+    cy.get(`.slate-inline-toolbar .button-wrapper a[title="${button}"]`).click();
+  },
+);
+
+
 // Low level command reused by `setCursorBefore` and `setCursorAfter`, equal to `setCursorAfter`
 Cypress.Commands.add(
   'setCursor',

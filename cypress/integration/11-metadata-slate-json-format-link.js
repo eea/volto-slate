@@ -1,8 +1,8 @@
-import { slateBeforeEach, slateAfterEach } from '../support';
+import { slateJsonBeforeEach, slateJsonAfterEach } from '../support';
 
-describe('Block Tests: Links', () => {
-  beforeEach(slateBeforeEach);
-  afterEach(slateAfterEach);
+describe('Metadata Slate JSON Tests: Links', () => {
+  beforeEach(slateJsonBeforeEach);
+  afterEach(slateJsonAfterEach);
 
   it('As editor I can add links', function () {
     // Complete chained commands

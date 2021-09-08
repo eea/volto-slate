@@ -1,8 +1,8 @@
-import { slateBeforeEach, slateAfterEach } from '../support';
+import { slateJsonBeforeEach, slateJsonAfterEach } from '../support';
 
-describe('Block Tests: Bulleted lists', () => {
-  beforeEach(slateBeforeEach);
-  afterEach(slateAfterEach);
+describe('Metadata Slate JSON Tests: Bulleted lists', () => {
+  beforeEach(slateJsonBeforeEach);
+  afterEach(slateJsonAfterEach);
 
   it('As editor I can add bulleted lists', function () {
     // Complete chained commands

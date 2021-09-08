@@ -1,8 +1,8 @@
-import { slateBeforeEach, slateAfterEach } from '../support';
+import { slateJsonBeforeEach, slateJsonAfterEach } from '../support';
 
-describe('Block Tests: Basic text format', () => {
-  beforeEach(slateBeforeEach);
-  afterEach(slateAfterEach);
+describe('Metadata Slate JSON Tests: Basic text format', () => {
+  beforeEach(slateJsonBeforeEach);
+  afterEach(slateJsonAfterEach);
 
   it('Bold', function () {
     // Complete chained commands

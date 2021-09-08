@@ -1,6 +1,6 @@
 import { slateBeforeEach, slateAfterEach } from '../support';
 
-describe('Block Tests', () => {
+describe('Block Tests: Numbered lists', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 

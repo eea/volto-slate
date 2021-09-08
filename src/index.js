@@ -11,7 +11,7 @@ import installCallout from './editor/plugins/Callout';
 import installTable from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
 import HtmlSlateWidget from './widgets/HtmlSlateWidget';
-import DefaultSlateView  from './components/themes/View/DefaultSlateView';
+import DefaultSlateView from './components/themes/View/DefaultSlateView';
 
 export default (config) => {
   config = [installSlate, installTextBlock, installTableBlock].reduce(

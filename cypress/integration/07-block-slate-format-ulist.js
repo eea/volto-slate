@@ -27,8 +27,12 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] ul li:first-child').contains('Colorless green ideas');
-    cy.get('[id="page-document"] ul li:last-child').contains('sleep furiously.');
+    cy.get('[id="page-document"] ul li:first-child').contains(
+      'Colorless green ideas',
+    );
+    cy.get('[id="page-document"] ul li:last-child').contains(
+      'sleep furiously.',
+    );
   });
 
   it('As editor I can remove bulleted lists', function () {
@@ -58,7 +62,9 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] p:first-of-type').contains('Colorless green ideas');
+    cy.get('[id="page-document"] p:first-of-type').contains(
+      'Colorless green ideas',
+    );
     cy.get('[id="page-document"] p:last-of-type').contains('sleep furiously.');
   });
 });

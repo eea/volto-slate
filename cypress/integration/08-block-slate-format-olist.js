@@ -9,15 +9,18 @@ describe('Block Tests', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // List
-    cy.get('.slate-editor.selected [contenteditable=true]').setSelection(
-      'green',
-    ).wait(1000);
-    cy.get('.slate-inline-toolbar .button-wrapper a[title="Numbered list"]').click();
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .setSelection('green')
+      .wait(1000);
+    cy.get(
+      '.slate-inline-toolbar .button-wrapper a[title="Numbered list"]',
+    ).click();
 
     // Split list
-    cy.get('.slate-editor.selected [contenteditable=true]').setCursor(
-      'ideas',
-    ).wait(1000).type('{enter}');
+    cy.get('.slate-editor.selected [contenteditable=true]')
+      .setCursor('ideas')
+      .wait(1000)
+      .type('{enter}');
 
     cy.wait(1000);
 
@@ -31,7 +34,9 @@ describe('Block Tests', () => {
     cy.waitForResourceToLoad('my-page');
 
     // then the page view should contain a link
-    cy.get('#page-document ol li:first-child').contains('Colorless green ideas');
+    cy.get('#page-document ol li:first-child').contains(
+      'Colorless green ideas',
+    );
     cy.get('#page-document ol li:last-child').contains('sleep furiously.');
   });
 

@@ -17,7 +17,7 @@ describe('Block Tests', () => {
     cy.clickSlateButton('Italic');
 
     // Underline
-    cy.setSlateSelection('green', 'ideas')
+    cy.setSlateSelection('green', 'ideas');
     cy.clickSlateButton('Underline');
 
     // Strikethrough

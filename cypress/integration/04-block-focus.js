@@ -10,10 +10,14 @@ describe('Block Tests', () => {
     cy.setSlateSelection('furiously');
 
     // This also works
-    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.').setSelection('furiously');
+    cy.getSlateEditorAndType(
+      'Colorless green ideas sleep furiously.',
+    ).setSelection('furiously');
 
     // This also works
-    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.').setSlateSelection('furiously');
+    cy.getSlateEditorAndType(
+      'Colorless green ideas sleep furiously.',
+    ).setSlateSelection('furiously');
 
     cy.get('#toolbar-save').click();
     cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');

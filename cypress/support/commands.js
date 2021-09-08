@@ -310,6 +310,19 @@ Cypress.Commands.add('clickSlateButton', (button) => {
   cy.get(`.slate-inline-toolbar .button-wrapper a[title="${button}"]`).click();
 });
 
+Cypress.Commands.add('toolbarSave', () => {
+  cy.wait(1000);
+
+  // Save
+  cy.get('#toolbar-save').click();
+  cy.waitForResourceToLoad('@navigation');
+  cy.waitForResourceToLoad('@breadcrumbs');
+  cy.waitForResourceToLoad('@actions');
+  cy.waitForResourceToLoad('@types');
+  cy.waitForResourceToLoad('my-page');
+  cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
+});
+
 // Low level command reused by `setCursorBefore` and `setCursorAfter`, equal to `setCursorAfter`
 Cypress.Commands.add(
   'setCursor',

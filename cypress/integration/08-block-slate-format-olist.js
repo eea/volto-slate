@@ -15,20 +15,16 @@ describe('Block Tests', () => {
     // Split list
     cy.setSlateCursor('ideas').type('{enter}');
 
-    cy.wait(1000);
-
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('@navigation');
-    cy.waitForResourceToLoad('@breadcrumbs');
-    cy.waitForResourceToLoad('@actions');
-    cy.waitForResourceToLoad('@types');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] ol li:first-child').contains('Colorless green ideas');
-    cy.get('[id="page-document"] ol li:last-child').contains('sleep furiously.');
+    cy.get('[id="page-document"] ol li:first-child').contains(
+      'Colorless green ideas',
+    );
+    cy.get('[id="page-document"] ol li:last-child').contains(
+      'sleep furiously.',
+    );
   });
 
   it('As editor I can remove numbered lists', function () {
@@ -46,19 +42,13 @@ describe('Block Tests', () => {
     cy.setSlateSelection('green', 'sleep');
     cy.clickSlateButton('Numbered list');
 
-    cy.wait(1000);
-
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('@navigation');
-    cy.waitForResourceToLoad('@breadcrumbs');
-    cy.waitForResourceToLoad('@actions');
-    cy.waitForResourceToLoad('@types');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] p:first-of-type').contains('Colorless green ideas');
+    cy.get('[id="page-document"] p:first-of-type').contains(
+      'Colorless green ideas',
+    );
     cy.get('[id="page-document"] p:last-of-type').contains('sleep furiously.');
   });
 });

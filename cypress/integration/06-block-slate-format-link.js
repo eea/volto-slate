@@ -32,16 +32,8 @@ describe('Block Tests', () => {
       .type('https://google.com{enter}');
     cy.get('.sidebar-container .form .header button:first-of-type').click();
 
-    cy.wait(1000);
-
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('@navigation');
-    cy.waitForResourceToLoad('@breadcrumbs');
-    cy.waitForResourceToLoad('@actions');
-    cy.waitForResourceToLoad('@types');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain a link
     cy.contains('Colorless green ideas sleep furiously.');

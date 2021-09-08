@@ -282,6 +282,47 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add('getSlateEditorAndType', (type) => {
+  cy.get('.content-area .slate-editor [contenteditable=true]')
+    .focus()
+    .click()
+    .wait(1000)
+    .type(type);
+});
+
+Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
+  cy.get('.slate-editor.selected [contenteditable=true]')
+    .focus()
+    .click()
+    .setSelection(subject, query, endQuery)
+    .wait(1000);
+});
+
+Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
+  cy.get('.slate-editor.selected [contenteditable=true]')
+    .focus()
+    .click()
+    .setCursor(subject, query, endQuery)
+    .wait(1000);
+});
+
+Cypress.Commands.add('clickSlateButton', (button) => {
+  cy.get(`.slate-inline-toolbar .button-wrapper a[title="${button}"]`).click();
+});
+
+Cypress.Commands.add('toolbarSave', () => {
+  cy.wait(1000);
+
+  // Save
+  cy.get('#toolbar-save').click();
+  cy.waitForResourceToLoad('@navigation');
+  cy.waitForResourceToLoad('@breadcrumbs');
+  cy.waitForResourceToLoad('@actions');
+  cy.waitForResourceToLoad('@types');
+  cy.waitForResourceToLoad('my-page');
+  cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
+});
+
 // Low level command reused by `setCursorBefore` and `setCursorAfter`, equal to `setCursorAfter`
 Cypress.Commands.add(
   'setCursor',

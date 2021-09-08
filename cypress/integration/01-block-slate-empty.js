@@ -13,9 +13,7 @@ describe('Block Tests', () => {
       .contains('My Add-on Page');
 
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain our changes
     cy.contains('My Add-on Page');

@@ -47,6 +47,11 @@ start-test-backend: ## Start Test Plone Backend
 	@echo "$(GREEN)==> Start Test Plone Backend$(RESET)"
 	ZSERVER_PORT=55001 CONFIGURE_PACKAGES=plone.app.contenttypes,plone.restapi,kitconcept.volto,kitconcept.volto.cors,eea.volto.slate APPLY_PROFILES=plone.app.contenttypes:plone-content,plone.restapi:default,kitconcept.volto:default-homepage,eea.volto.slate:default ./api/bin/robot-server plone.app.robotframework.testing.PLONE_ROBOT_TESTING
 
+.PHONY: start-docker-backend
+start-docker-backend:
+	@echo "$(GREEN)==> Start Plone Backend$(RESET)"
+	docker pull plone
+	docker run -it --rm -e SITE="Plone" -e ADDONS="eea.schema.slate" -e VERSIONS="plone.schema=1.3.0" -e PROFILES="profile-plone.restapi:blocks" -p 8080:8080 plone fg
 
 .PHONY: help
 help:		## Show this help.

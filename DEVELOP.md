@@ -5,14 +5,32 @@
 1. Assuming everything is right about your development environment, make
    a clone of this repo, then:
 
-    make build-frontend
+    make
 
 1. This will create a `project` folder with a bootstrapped Volto.
 
-    cd project
+    cd volto-slate/project
     yarn start
 
 Just change the code in your clone and it will automatically refresh Volto!
+
+## Cypress tests
+
+### Start backend
+
+    cd volto-slate
+    make start-docker-backend
+
+### Start frontend
+
+    make
+    cd project
+    yarn start
+
+### Open cypress
+
+    cd volto-slate
+    yarn cypress:open
 
 ## Develop
 

@@ -20,7 +20,6 @@ import {
 import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
   breakList,
-  normalizeNode,
   withDeserializers,
   withInsertData,
   withLists,
@@ -37,7 +36,6 @@ export default (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
-      normalizeNode,
       withLists,
       withInsertData,
       withSplitBlocksOnBreak,

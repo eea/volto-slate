@@ -38,9 +38,10 @@ const normalizeToSlate = (editor, nodes) => {
         children.reduce((acc, node, index) => {
           return index === 0 && editor.isInline(node)
             ? [{ text: '' }, node]
-            : index === children.length - 1
+            : index === children.length - 1 && editor.isInline(node)
             ? [...acc, node, { text: '' }]
-            : [...acc, node, { text: '' }];
+            : // TODO: add other conditions
+              [...acc, node];
         }, []),
       );
     }

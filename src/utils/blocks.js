@@ -5,7 +5,6 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 import _ from 'lodash';
 
 // case sensitive; first in an inner array is the default and preffered format
@@ -248,7 +247,7 @@ export const toggleBlock = (editor, format) => {
   if (isListItem && !wantsList) {
     toggleFormatAsListItem(editor, format);
   } else if (isListItem && wantsList && !isActive) {
-    switchListType(editor, format); // this will deconstruct to Volto blocks
+    switchListType(editor, format);
   } else if (!isListItem && wantsList) {
     changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {
@@ -265,31 +264,14 @@ export const toggleBlock = (editor, format) => {
 };
 
 /*
- * Applies a block format unto a list item. Will split the list and deconstruct the
- * block
+ * Applies a block format to a list item. Will split the list
  */
 export const toggleFormatAsListItem = (editor, format) => {
-  // const { slate } = config.settings;
-  // const pathRef = Editor.pathRef(editor, editor.selection);
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) => slate.listTypes.includes(n.type),
-  //   split: true,
-  //   mode: 'all',
-  // });
-
   Transforms.setNodes(editor, {
     type: format,
   });
 
   Editor.normalize(editor);
-
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) => n.type === slate.listItemType,
-  //   split: true,
-  // });
-
-  // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
-  deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -303,8 +285,6 @@ export const switchListType = (editor, format) => {
   });
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
-
-  deconstructToVoltoBlocks(editor);
 };
 
 export const changeBlockToList = (editor, format) => {

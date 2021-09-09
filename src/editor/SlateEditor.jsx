@@ -154,7 +154,7 @@ class SlateEditor extends Component {
 
   handleChange(value) {
     if (this.props.onChange && !isEqual(value, this.props.value)) {
-      this.props.onChange(value);
+      this.props.onChange(value, this.editor);
     }
   }
 

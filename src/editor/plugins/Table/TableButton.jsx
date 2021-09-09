@@ -7,7 +7,6 @@ import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
 import { Editor, Transforms } from 'slate';
-import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
 const TableButton = ({ ...props }) => {
   const editor = useSlate();
@@ -75,8 +74,6 @@ const TableButton = ({ ...props }) => {
       Transforms.insertNodes(editor, [table], {
         at: Editor.end(editor, []),
       });
-
-      deconstructToVoltoBlocks(editor);
     },
     [createEmptyRow, editor],
   );

@@ -1,6 +1,6 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 import { Editor, Transforms } from 'slate';
-import { isBlockActive, deconstructToVoltoBlocks } from 'volto-slate/utils';
+import { isBlockActive } from 'volto-slate/utils';
 import config from '@plone/volto/registry';
 
 /**
@@ -133,8 +133,6 @@ export const toggleBlockStyleAsListItem = (editor, style) => {
   });
 
   toggleBlockStyleInSelection(editor, style);
-
-  deconstructToVoltoBlocks(editor);
 };
 
 /*

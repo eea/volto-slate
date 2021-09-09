@@ -1,21 +1,29 @@
+import ReactDOM from 'react-dom';
 import React from 'react';
 import { connect } from 'react-redux';
 import { readAsDataURL } from 'promise-file-reader';
 import Dropzone from 'react-dropzone';
-
+import { defineMessages, useIntl } from 'react-intl';
+import { useInView } from 'react-intersection-observer';
 import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 
-import InlineForm from '@plone/volto/components/manage/Form/InlineForm';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import config from '@plone/volto/registry';
-import { SidebarPortal, BlockChooserButton } from '@plone/volto/components';
+import {
+  InlineForm,
+  SidebarPortal,
+  BlockChooserButton,
+} from '@plone/volto/components';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
-import { createImageBlock, parseDefaultSelection } from 'volto-slate/utils';
+import {
+  createImageBlock,
+  parseDefaultSelection,
+  deconstructToVoltoBlocks,
+} from 'volto-slate/utils';
 import { uploadContent } from 'volto-slate/actions';
-// import { useIsomorphicLayoutEffect } from 'volto-slate/hooks';
 import { Transforms } from 'slate';
 
 import ShortcutListing from './ShortcutListing';
@@ -24,10 +32,6 @@ import { handleKey, handleKeyDetached } from './keyboard';
 import TextBlockSchema from './schema';
 
 import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
-
-import { defineMessages, useIntl } from 'react-intl';
-
-import { useInView } from 'react-intersection-observer';
 
 import './css/editor.css';
 
@@ -211,12 +215,15 @@ export const DefaultTextBlockEditor = (props) => {
                       onSelectBlock(block);
                     }
                   }}
-                  onChange={(value, selection) => {
-                    onChangeBlock(block, {
-                      ...data,
-                      value,
-                      plaintext: serializeNodesToText(value || []),
-                      // TODO: also add html serialized value
+                  onChange={(value, editor) => {
+                    ReactDOM.unstable_batchedUpdates(() => {
+                      onChangeBlock(block, {
+                        ...data,
+                        value,
+                        plaintext: serializeNodesToText(value || []),
+                        // TODO: also add html serialized value
+                      });
+                      deconstructToVoltoBlocks(editor);
                     });
                   }}
                   onKeyDown={handleKey}
@@ -317,7 +324,7 @@ export const DetachedTextBlockEditor = (props) => {
             onSelectBlock(block);
           }
         }}
-        onChange={(value, selection) => {
+        onChange={(value, selection, editor) => {
           onChangeBlock(block, {
             ...data,
             value,

@@ -20,7 +20,7 @@ import './style.css';
 import { createEmptyParagraph } from '../utils/blocks';
 import makeEditor from 'volto-slate/editor/makeEditor';
 
-const normalizeToSlate = (editor, nodes) => {
+const normalizeToSlateConstraints = (editor, nodes) => {
   // Normalizes a slate value (a list of nodes) to slate constraints
   //
   // Slate built-in constraint:
@@ -33,15 +33,18 @@ const normalizeToSlate = (editor, nodes) => {
     const { children = [] } = node;
 
     if (children.length) {
-      node.children = normalizeToSlate(
+      node.children = normalizeToSlateConstraints(
         editor,
         children.reduce((acc, node, index) => {
           return index === 0 && editor.isInline(node)
             ? [{ text: '' }, node]
             : index === children.length - 1 && editor.isInline(node)
             ? [...acc, node, { text: '' }]
-            : // TODO: add other conditions
-              [...acc, node];
+            : index > 0 &&
+              editor.isInline(children[index - 1]) &&
+              editor.isInline(node)
+            ? [...acc, { text: '' }, node]
+            : [...acc, node];
         }, []),
       );
     }
@@ -50,7 +53,7 @@ const normalizeToSlate = (editor, nodes) => {
 };
 
 export function normalizeBlockNodes(editor, children) {
-  // Basic normalization of slate content.
+  // Top-level normalization of slate content.
   // Make sure that no inline element is alone, without a block element parent.
 
   const isInline = (n) =>
@@ -74,7 +77,7 @@ export function normalizeBlockNodes(editor, children) {
     }
   });
 
-  nodes = normalizeToSlate(editor, nodes);
+  nodes = normalizeToSlateConstraints(editor, nodes);
   return nodes;
 }
 

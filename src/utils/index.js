@@ -10,5 +10,3 @@ export * from './random';
 export * from './selection';
 export * from './volto-blocks';
 export * from './mime-types';
-
-// export * from './todo';

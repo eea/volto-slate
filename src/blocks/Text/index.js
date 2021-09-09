@@ -21,7 +21,6 @@ import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
   breakList,
   withDeserializers,
-  withInsertData,
   withLists,
   withSplitBlocksOnBreak,
 } from './extensions';
@@ -37,8 +36,7 @@ export default (config) => {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
       withLists,
-      withInsertData,
-      withSplitBlocksOnBreak,
+      withSplitBlocksOnBreak, // TODO: do we still need this one?
       withDeleteSelectionOnEnter,
       withDeserializers,
       breakList,

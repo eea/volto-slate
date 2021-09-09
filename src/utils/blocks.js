@@ -76,30 +76,65 @@ come up with a way to reduce or remove a built-in constraint with a different
 approach, we're all ears!
  *
  */
+
+const normalizeToSlateConstraints = (editor, nodes) => {
+  // Normalizes a slate value (a list of nodes) to slate constraints
+  //
+  // Slate built-in constraint:
+  // - Inline nodes cannot be the first or last child of a parent block, nor
+  // can it be next to another inline node in the children array. If this is
+  // the case, an empty text node will be added to correct this to be in
+  // compliance with the constraint.
+
+  nodes.forEach((node) => {
+    const { children = [] } = node;
+
+    if (children.length) {
+      node.children = normalizeToSlateConstraints(
+        editor,
+        children.reduce((acc, node, index) => {
+          return index === 0 && editor.isInline(node)
+            ? [{ text: '' }, node]
+            : index === children.length - 1 && editor.isInline(node)
+            ? [...acc, node, { text: '' }]
+            : index > 0 &&
+              editor.isInline(children[index - 1]) &&
+              editor.isInline(node)
+            ? [...acc, { text: '' }, node]
+            : [...acc, node];
+        }, []),
+      );
+    }
+  });
+  return nodes;
+};
+
 export function normalizeBlockNodes(editor, children) {
-  // Basic normalization of slate content. Make sure that no inline element is
-  // alone, without a block element parent.
-  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
-  const nodes = [];
-  let inlinesBlock = null;
+  // Top-level normalization of slate content.
+  // Make sure that no inline element is alone, without a block element parent.
 
   const isInline = (n) =>
     typeof n === 'string' || Text.isText(n) || editor.isInline(n);
 
+  let nodes = [];
+  let currentBlockNode = null;
+
   children.forEach((node) => {
-    if (!isInline(node)) {
-      inlinesBlock = null;
-      nodes.push(node);
-    } else {
+    if (isInline(node)) {
       node = typeof node === 'string' ? { text: node } : node;
-      if (!inlinesBlock) {
-        inlinesBlock = createDefaultBlock([node]);
-        nodes.push(inlinesBlock);
+      if (!currentBlockNode) {
+        currentBlockNode = createDefaultBlock([node]);
+        nodes.push(currentBlockNode);
       } else {
-        inlinesBlock.children.push(node);
+        currentBlockNode.children.push(node);
       }
+    } else {
+      currentBlockNode = null;
+      nodes.push(node);
     }
   });
+
+  nodes = normalizeToSlateConstraints(editor, nodes);
   return nodes;
 }
 

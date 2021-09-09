@@ -227,6 +227,7 @@ export function deconstructToVoltoBlocks(editor) {
       ].filter((id) => id !== blockProps.block),
     };
 
+    // TODO: use onChangeFormData instead of this API style
     ReactDOM.unstable_batchedUpdates(() => {
       onChangeField(blocksFieldname, blocksData);
       onChangeField(blocksLayoutFieldname, layoutData);

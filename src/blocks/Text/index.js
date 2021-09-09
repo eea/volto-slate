@@ -87,7 +87,7 @@ export default (config) => {
     ],
 
     // These elements will get an id, to make them targets in TOC
-    topLevelTargetElements: ['h1', 'h2', 'h3', 'h4'],
+    topLevelTargetElements: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 
     ...config.settings.slate, // TODO: is this correct for volto-slate addons?
   };
@@ -119,12 +119,11 @@ export default (config) => {
     },
     tocEntry: (block = {}, tocData) => {
       // integration with volto-block-toc
-      const headlines = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
       const { value, override_toc, entry_text, level, plaintext } = block;
       const type = value?.[0]?.type;
       return override_toc && level
         ? [parseInt(level.slice(1)), entry_text]
-        : headlines.includes(type)
+        : config.settings.slate.topLevelTargetElements.includes(type)
         ? [parseInt(type.slice(1)), plaintext]
         : null;
     },

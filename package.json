@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "react-intersection-observer": "^8.32.0",
-    "@eeacms/volto-object-widget": ">=2.2.3",
+    "@eeacms/volto-object-widget": "*",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",

@@ -93,13 +93,19 @@ const normalizeToSlateConstraints = (editor, nodes) => {
       node.children = normalizeToSlateConstraints(
         editor,
         children.reduce((acc, node, index) => {
-          return index === 0 && editor.isInline(node)
+          const isFirstInline = index === 0 && editor.isInline(node);
+          const isLastInline =
+            index === children.length - 1 && editor.isInline(node);
+          const isBetweenInlines =
+            index > 0 &&
+            editor.isInline(children[index - 1]) &&
+            editor.isInline(node);
+
+          return isFirstInline
             ? [{ text: '' }, node]
-            : index === children.length - 1 && editor.isInline(node)
+            : isLastInline
             ? [...acc, node, { text: '' }]
-            : index > 0 &&
-              editor.isInline(children[index - 1]) &&
-              editor.isInline(node)
+            : isBetweenInlines
             ? [...acc, { text: '' }, node]
             : [...acc, node];
         }, []),

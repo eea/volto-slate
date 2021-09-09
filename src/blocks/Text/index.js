@@ -23,6 +23,7 @@ import {
   withDeserializers,
   withLists,
   withSplitBlocksOnBreak,
+  withIsSelected,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
@@ -39,6 +40,7 @@ export default (config) => {
       withSplitBlocksOnBreak, // TODO: do we still need this one?
       withDeleteSelectionOnEnter,
       withDeserializers,
+      withIsSelected,
       breakList,
     ],
 

@@ -1,6 +1,7 @@
 import { createEditor } from 'slate'; // , Transforms
 import { withReact } from 'slate-react';
 import { withHistory } from 'slate-history';
+import { ReactEditor } from 'slate-react';
 
 import config from '@plone/volto/registry';
 
@@ -20,6 +21,7 @@ export default function makeEditor(options = {}) {
   editor.dataTransferHandlers = {};
 
   const plugins = [...defaultExtensions, ...extensions];
+  editor.isSelected = () => ReactEditor.isFocused(editor);
 
   return plugins.reduce((acc, extender) => extender(acc), editor);
 }

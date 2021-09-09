@@ -5,6 +5,9 @@ import config from '@plone/volto/registry';
 import { hasRangeSelection } from 'volto-slate/utils';
 import { ReactEditor } from 'slate-react';
 
+/**
+ * The main Slate toolbar. All the others are just wrappers, UI or used here
+ */
 const InlineToolbar = (props) => {
   const {
     editor,

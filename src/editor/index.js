@@ -1,6 +1,7 @@
 import * as slateConfig from './config';
 import installDefaultPlugins from './plugins';
-export SlateEditor, { EditorReference } from './SlateEditor';
+export SlateEditor from './SlateEditor';
+export EditorReference from './EditorReference';
 
 export default (config) => {
   config.settings.slate = {

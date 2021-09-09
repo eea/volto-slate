@@ -11,3 +11,4 @@ export Toolbar from './Toolbar';
 export ToolbarButton from './ToolbarButton';
 export MarkElementButton from './MarkElementButton';
 export PositionedToolbar from './PositionedToolbar';
+export InlineToolbar from './InlineToolbar';

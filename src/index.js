@@ -101,9 +101,6 @@ export function asDefaultRichText(config) {
 
 export function asDefault(config) {
   asDefaultBlock(config);
-
-  // TODO: Fix issues and enable by default slate for richtext
-  // asDefaultRichText(config);
-
+  asDefaultRichText(config);
   return config;
 }

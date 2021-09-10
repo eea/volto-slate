@@ -26,7 +26,60 @@ export const isWhitespace = (c) => {
   );
 };
 
+/**
+ * Excerpt from Slate documentation, kept here for posterity:
+ * See https://docs.slatejs.org/concepts/11-normalizing#built-in-constraints
+
+## Built-in Constraints
+
+Slate editors come with a few built-in constraints out of the box. These
+constraints are there to make working with content much more predictable than
+standard contenteditable. All of the built-in logic in Slate depends on these
+constraints, so unfortunately you cannot omit them. They are...
+
+- All Element nodes must contain at least one Text descendant. If an element node
+does not contain any children, an empty text node will be added as its only
+child. This constraint exists to ensure that the selection's anchor and focus
+points (which rely on referencing text nodes) can always be placed inside any
+node. With this, empty elements (or void elements) wouldn't be selectable.
+
+- Two adjacent texts with the same custom properties will be merged. If two
+adjacent text nodes have the same formatting, they're merged into a single text
+node with a combined text string of the two. This exists to prevent the text
+nodes from only ever expanding in count in the document, since both adding and
+removing formatting results in splitting text nodes.
+
+- Block nodes can only contain other blocks, or inline and text nodes. For
+example, a paragraph block cannot have another paragraph block element and
+a link inline element as children at the same time. The type of children
+allowed is determined by the first child, and any other non-conforming children
+are removed. This ensures that common richtext behaviors like "splitting
+a block in two" function consistently.
+
+- Inline nodes cannot be the first or last child of a parent block, nor can it
+be next to another inline node in the children array. If this is the case, an
+empty text node will be added to correct this to be in compliance with the
+constraint.
+
+- The top-level editor node can only contain block nodes. If any of the
+top-level children are inline or text nodes they will be removed. This ensures
+that there are always block nodes in the editor so that behaviors like
+"splitting a block in two" work as expected.
+
+- These default constraints are all mandated because they make working with
+Slate documents much more predictable.
+
+Although these constraints are the best we've come up with now, we're always
+looking for ways to have Slate's built-in constraints be less constraining if
+possible—as long as it keeps standard behaviors easy to reason about. If you
+come up with a way to reduce or remove a built-in constraint with a different
+approach, we're all ears!
+ *
+ */
 export function normalizeBlockNodes(editor, children) {
+  // Basic normalization of slate content. Make sure that no inline element is
+  // alone, without a block element parent.
+  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
   const nodes = [];
   let inlinesBlock = null;
 
@@ -195,7 +248,6 @@ export const toggleFormatAsListItem = (editor, format) => {
   // });
 
   // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
-
   deconstructToVoltoBlocks(editor);
 };
 
@@ -249,7 +301,7 @@ export const getAllBlocks = (properties, blocks) => {
   const blocksFieldName = getBlocksFieldname(properties);
   const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  for (const n of properties[blocksLayoutFieldname]?.items || []) {
+  for (const n of properties?.[blocksLayoutFieldname]?.items || []) {
     const block = properties[blocksFieldName][n];
     // TODO Make this configurable via block config getBlocks
     if (

@@ -3,7 +3,6 @@ import { deserialize } from 'volto-slate/editor/deserialize';
 import {
   createDefaultBlock,
   normalizeBlockNodes,
-  deconstructToVoltoBlocks,
   MIMETypeName,
 } from 'volto-slate/utils';
 
@@ -15,10 +14,6 @@ export const insertData = (editor) => {
       const parsed = JSON.parse(decoded);
       editor.beforeInsertFragment && editor.beforeInsertFragment(parsed);
       editor.insertFragment(parsed);
-
-      if (editor.getBlockProps) {
-        deconstructToVoltoBlocks(editor);
-      }
 
       return true;
     },
@@ -33,28 +28,23 @@ export const insertData = (editor) => {
       let fragment; //  = deserialize(editor, body);
 
       const val = deserialize(editor, body);
-      // console.log('body', dt);
-      // console.log('deserialized', val);
-
       fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
-      if (Editor.string(editor, [])) {
-        if (
-          Array.isArray(fragment) &&
-          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
-        ) {
-          // TODO: we want normalization also when dealing with fragments
-          Transforms.insertFragment(editor, fragment);
-          return true;
-        }
+      if (
+        Editor.string(editor, []) &&
+        Array.isArray(fragment) &&
+        fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+      ) {
+        // TODO: we want normalization also when dealing with fragments
+        // Transforms.insertFragment(editor, fragment);
+        editor.insertFragment(fragment);
+        return true;
       }
 
       const nodes = normalizeBlockNodes(editor, fragment);
-      // console.log('nodes', nodes);
       Transforms.insertNodes(editor, nodes);
 
-      deconstructToVoltoBlocks(editor);
       return true;
     },
     'text/plain': (dt, fullMime) => {
@@ -77,16 +67,9 @@ export const insertData = (editor) => {
         }
       }
 
-      // console.log('fragment', fragment);
       const nodes = normalizeBlockNodes(editor, fragment);
-      // console.log('insert nodes', nodes);
       Transforms.insertNodes(editor, nodes);
 
-      // TODO: This used to solve a problem when pasting images. What is it?
-      // Transforms.deselect(editor);
-      if (editor.getBlockProps) {
-        deconstructToVoltoBlocks(editor);
-      }
       return true;
     },
   };
@@ -104,6 +87,7 @@ export const insertData = (editor) => {
       editor.beforeInsertData(data);
     }
 
+    // debugger;
     for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
       const dt = editor.dataTransferFormatsOrder[i];
       if (dt === 'files') {

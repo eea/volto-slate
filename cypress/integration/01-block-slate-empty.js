@@ -9,13 +9,11 @@ describe('Block Tests', () => {
       .clear()
       .type('My Add-on Page')
       .type('{enter}')
-      .get('.documentFirstHeading span[data-text]')
+      .get('.content-area .documentFirstHeading span[data-text]')
       .contains('My Add-on Page');
 
     // Save
-    cy.get('#toolbar-save').click();
-    cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
-    cy.waitForResourceToLoad('my-page');
+    cy.toolbarSave();
 
     // then the page view should contain our changes
     cy.contains('My Add-on Page');

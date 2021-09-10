@@ -125,6 +125,100 @@ Cypress.Commands.add(
   },
 );
 
+// --- Add DX Content-Type ----------------------------------------------------------
+Cypress.Commands.add('addContentType', (name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'POST',
+      url: `${api_url}/@controlpanels/dexterity-types/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {
+        title: name,
+      },
+    })
+    .then(() => console.log(`${name} content-type added.`));
+});
+
+// --- Remove DX behavior ----------------------------------------------------------
+Cypress.Commands.add('removeContentType', (name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'DELETE',
+      url: `${api_url}/@controlpanels/dexterity-types/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {},
+    })
+    .then(() => console.log(`${name} content-type removed.`));
+});
+
+// --- Add DX field ----------------------------------------------------------
+Cypress.Commands.add('addSlateJSONField', (type, name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'POST',
+      url: `${api_url}/@types/${type}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {
+        id: name,
+        title: name,
+        description: 'Slate JSON Field',
+        factory: 'SlateJSONField',
+        required: false,
+      },
+    })
+    .then(() => console.log(`${name} SlateJSONField field added to ${type}`));
+});
+
+// --- Remove DX field ----------------------------------------------------------
+Cypress.Commands.add('removeSlateJSONField', (type, name) => {
+  let api_url, auth;
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
+  auth = {
+    user: 'admin',
+    pass: 'admin',
+  };
+  return cy
+    .request({
+      method: 'DELETE',
+      url: `${api_url}/@types/${type}/${name}`,
+      headers: {
+        Accept: 'application/json',
+      },
+      auth: auth,
+      body: {},
+    })
+    .then(() =>
+      console.log(`${name} SlateJSONField field removed from ${type}`),
+    );
+});
+
 // --- REMOVE CONTENT --------------------------------------------------------
 Cypress.Commands.add('removeContent', (path) => {
   let api_url, auth;
@@ -281,6 +375,47 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add('getSlateEditorAndType', (type) => {
+  cy.get('.content-area .slate-editor [contenteditable=true]')
+    .focus()
+    .click()
+    .wait(1000)
+    .type(type);
+});
+
+Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
+  cy.get('.slate-editor.selected [contenteditable=true]')
+    .focus()
+    .click()
+    .setSelection(subject, query, endQuery)
+    .wait(1000);
+});
+
+Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
+  cy.get('.slate-editor.selected [contenteditable=true]')
+    .focus()
+    .click()
+    .setCursor(subject, query, endQuery)
+    .wait(1000);
+});
+
+Cypress.Commands.add('clickSlateButton', (button) => {
+  cy.get(`.slate-inline-toolbar .button-wrapper a[title="${button}"]`).click();
+});
+
+Cypress.Commands.add('toolbarSave', () => {
+  cy.wait(1000);
+
+  // Save
+  cy.get('#toolbar-save').click();
+  cy.waitForResourceToLoad('@navigation');
+  cy.waitForResourceToLoad('@breadcrumbs');
+  cy.waitForResourceToLoad('@actions');
+  cy.waitForResourceToLoad('@types');
+  cy.waitForResourceToLoad('my-page');
+  cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
+});
 
 // Low level command reused by `setCursorBefore` and `setCursorAfter`, equal to `setCursorAfter`
 Cypress.Commands.add(

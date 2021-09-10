@@ -23,7 +23,7 @@ import './commands';
 import '@cypress/code-coverage/support';
 coverage-end */
 
-export const slateBeforeEach = () => {
+export const slateBeforeEach = (contentType = 'Document') => {
   cy.autologin();
   cy.createContent({
     contentType: 'Folder',
@@ -31,7 +31,7 @@ export const slateBeforeEach = () => {
     contentTitle: 'Cypress',
   });
   cy.createContent({
-    contentType: 'Document',
+    contentType: contentType,
     contentId: 'my-page',
     contentTitle: 'My Page',
     path: 'cypress',
@@ -43,12 +43,24 @@ export const slateBeforeEach = () => {
   cy.waitForResourceToLoad('@types');
   cy.waitForResourceToLoad('my-page');
   cy.navigate('/cypress/my-page/edit');
-  cy.get(`.block.title [data-contents]`);
 };
 
 export const slateAfterEach = () => {
   cy.autologin();
   cy.removeContent('cypress');
+};
+
+export const slateJsonBeforeEach = (contentType = 'slate') => {
+  cy.autologin();
+  cy.addContentType(contentType);
+  cy.addSlateJSONField(contentType, 'slate');
+  slateBeforeEach(contentType);
+};
+
+export const slateJsonAfterEach = (contentType = 'slate') => {
+  cy.autologin();
+  cy.removeContentType(contentType);
+  slateAfterEach();
 };
 
 export const getSelectedSlateEditor = () => {

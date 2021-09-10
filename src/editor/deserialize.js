@@ -1,10 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import {
-  normalizeBlockNodes,
-  isWhitespace,
-  createEmptyParagraph,
-} from 'volto-slate/utils';
+import { normalizeBlockNodes, isWhitespace } from 'volto-slate/utils';
 import {
   TD,
   TH,
@@ -19,7 +15,7 @@ const isInline = (node) =>
   (node.nodeType === TEXT_NODE || INLINE_ELEMENTS.includes(node.nodeName));
 
 /**
- * Deserializes to an object or an Array.
+ * Deserialize to an object or an Array.
  */
 export const deserialize = (editor, el) => {
   // console.log('deserialize el:', el);
@@ -54,7 +50,7 @@ export const deserialize = (editor, el) => {
       // });
       // if it's empty text between 2 tags, it should be ignored
       return isInline(el.previousSibling) || isInline(el.nextSibling)
-        ? ' ' // perceptually multiple whitespaces render as a single space
+        ? ' ' // perceptually multiple whitespace render as a single space
         : null;
     }
     return el.textContent
@@ -93,6 +89,7 @@ export const deserializeChildren = (parent, editor) =>
     .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
+  // if (tagname === 'h2') debugger;
   let children = deserializeChildren(el, editor).filter((n) => n !== null);
 
   if (
@@ -102,7 +99,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   ) {
     // TODO: should here be handled the cases when there are more strings in
     // `children` or when there are besides strings other types of nodes too?
-    const p = createEmptyParagraph();
+    const p = { type: 'div', children: [{ text: '' }] };
     p.children[0].text = children[0];
     children = [p];
   }
@@ -208,3 +205,5 @@ export const preTagDeserializer = (editor, el) => {
 
   return blockTagDeserializer(nodeName)(editor, parent);
 };
+
+export default deserialize;

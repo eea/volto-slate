@@ -1,16 +1,21 @@
 .vscode/
-.eslintrc.js
 .history
+.eslintrc.js
+project
 logs
 *.log
 npm-debug.log*
 .DS_Store
 *.swp
 yarn-error.log
+yarn.lock
+package-lock.json
 
 node_modules
 build
 dist
+cypress/videos
+cypress/reports
 screenshots
 videos
 .env.local

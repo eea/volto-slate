@@ -51,6 +51,8 @@ volto-slate provides several optional configuration:
   similar to Volto
 - `simpleLink` reuses Volto's link plugin and makes for a better replacement
   of Volto's rich text editor.
+- `tableButton` adds table button to Slate toolbar in order to easily insert
+  Table block after.
 
 ## Features
 

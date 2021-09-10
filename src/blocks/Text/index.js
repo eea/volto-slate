@@ -19,12 +19,12 @@ import {
 } from './keyboard';
 import { withDeleteSelectionOnEnter } from 'volto-slate/editor/extensions';
 import {
-  withSplitBlocksOnBreak,
-  withDeserializers,
   breakList,
-  // withParagraphs,
+  normalizeNode,
+  withDeserializers,
+  withInsertData,
   withLists,
-  normalizeBlocks,
+  withSplitBlocksOnBreak,
 } from './extensions';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
@@ -37,12 +37,13 @@ export default (config) => {
   config.settings.slate = {
     // TODO: should we inverse order? First here gets executed last
     textblockExtensions: [
+      normalizeNode,
       withLists,
+      withInsertData,
       withSplitBlocksOnBreak,
       withDeleteSelectionOnEnter,
       withDeserializers,
       breakList,
-      normalizeBlocks,
     ],
 
     // Pluggable handlers for the onKeyDown event of <Editable />

@@ -1,5 +1,4 @@
 import { Node, Range } from 'slate';
-import { ReactEditor } from 'slate-react';
 
 import config from '@plone/volto/registry';
 

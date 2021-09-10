@@ -128,9 +128,7 @@ Cypress.Commands.add(
 // --- Add DX Content-Type ----------------------------------------------------------
 Cypress.Commands.add('addContentType', (name) => {
   let api_url, auth;
-  api_url =
-    Cypress.env('API_PATH') ||
-    'http://localhost:8080/Plone/@controlpanels/dexterity-types';
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
   auth = {
     user: 'admin',
     pass: 'admin',
@@ -138,7 +136,7 @@ Cypress.Commands.add('addContentType', (name) => {
   return cy
     .request({
       method: 'POST',
-      url: `${api_url}/${name}`,
+      url: `${api_url}/@controlpanels/dexterity-types/${name}`,
       headers: {
         Accept: 'application/json',
       },
@@ -153,9 +151,7 @@ Cypress.Commands.add('addContentType', (name) => {
 // --- Remove DX behavior ----------------------------------------------------------
 Cypress.Commands.add('removeContentType', (name) => {
   let api_url, auth;
-  api_url =
-    Cypress.env('API_PATH') ||
-    'http://localhost:8080/Plone/@controlpanels/dexterity-types';
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
   auth = {
     user: 'admin',
     pass: 'admin',
@@ -163,7 +159,7 @@ Cypress.Commands.add('removeContentType', (name) => {
   return cy
     .request({
       method: 'DELETE',
-      url: `${api_url}/${name}`,
+      url: `${api_url}/@controlpanels/dexterity-types/${name}`,
       headers: {
         Accept: 'application/json',
       },
@@ -176,7 +172,7 @@ Cypress.Commands.add('removeContentType', (name) => {
 // --- Add DX field ----------------------------------------------------------
 Cypress.Commands.add('addSlateJSONField', (type, name) => {
   let api_url, auth;
-  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone/@types';
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
   auth = {
     user: 'admin',
     pass: 'admin',
@@ -184,7 +180,7 @@ Cypress.Commands.add('addSlateJSONField', (type, name) => {
   return cy
     .request({
       method: 'POST',
-      url: `${api_url}/${type}`,
+      url: `${api_url}/@types/${type}`,
       headers: {
         Accept: 'application/json',
       },
@@ -203,7 +199,7 @@ Cypress.Commands.add('addSlateJSONField', (type, name) => {
 // --- Remove DX field ----------------------------------------------------------
 Cypress.Commands.add('removeSlateJSONField', (type, name) => {
   let api_url, auth;
-  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone/@types';
+  api_url = Cypress.env('API_PATH') || 'http://localhost:8080/Plone';
   auth = {
     user: 'admin',
     pass: 'admin',
@@ -211,7 +207,7 @@ Cypress.Commands.add('removeSlateJSONField', (type, name) => {
   return cy
     .request({
       method: 'DELETE',
-      url: `${api_url}/${type}/${name}`,
+      url: `${api_url}/@types/${type}/${name}`,
       headers: {
         Accept: 'application/json',
       },

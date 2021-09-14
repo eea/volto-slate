@@ -5,7 +5,6 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 import _ from 'lodash';
 
 // case sensitive; first in an inner array is the default and preffered format
@@ -76,30 +75,71 @@ come up with a way to reduce or remove a built-in constraint with a different
 approach, we're all ears!
  *
  */
+
+const normalizeToSlateConstraints = (editor, nodes) => {
+  // Normalizes a slate value (a list of nodes) to slate constraints
+  //
+  // Slate built-in constraint:
+  // - Inline nodes cannot be the first or last child of a parent block, nor
+  // can it be next to another inline node in the children array. If this is
+  // the case, an empty text node will be added to correct this to be in
+  // compliance with the constraint.
+
+  nodes.forEach((node) => {
+    const { children = [] } = node;
+
+    if (children.length) {
+      node.children = normalizeToSlateConstraints(
+        editor,
+        children.reduce((acc, node, index) => {
+          const isFirstInline = index === 0 && editor.isInline(node);
+          const isLastInline =
+            index === children.length - 1 && editor.isInline(node);
+          const isBetweenInlines =
+            index > 0 &&
+            editor.isInline(children[index - 1]) &&
+            editor.isInline(node);
+
+          return isFirstInline
+            ? [{ text: '' }, node]
+            : isLastInline
+            ? [...acc, node, { text: '' }]
+            : isBetweenInlines
+            ? [...acc, { text: '' }, node]
+            : [...acc, node];
+        }, []),
+      );
+    }
+  });
+  return nodes;
+};
+
 export function normalizeBlockNodes(editor, children) {
-  // Basic normalization of slate content. Make sure that no inline element is
-  // alone, without a block element parent.
-  // TODO: should move to the SlateEditor/extensions/normalizeNode.js
-  const nodes = [];
-  let inlinesBlock = null;
+  // Top-level normalization of slate content.
+  // Make sure that no inline element is alone, without a block element parent.
 
   const isInline = (n) =>
     typeof n === 'string' || Text.isText(n) || editor.isInline(n);
 
+  let nodes = [];
+  let currentBlockNode = null;
+
   children.forEach((node) => {
-    if (!isInline(node)) {
-      inlinesBlock = null;
-      nodes.push(node);
-    } else {
+    if (isInline(node)) {
       node = typeof node === 'string' ? { text: node } : node;
-      if (!inlinesBlock) {
-        inlinesBlock = createDefaultBlock([node]);
-        nodes.push(inlinesBlock);
+      if (!currentBlockNode) {
+        currentBlockNode = createDefaultBlock([node]);
+        nodes.push(currentBlockNode);
       } else {
-        inlinesBlock.children.push(node);
+        currentBlockNode.children.push(node);
       }
+    } else {
+      currentBlockNode = null;
+      nodes.push(node);
     }
   });
+
+  nodes = normalizeToSlateConstraints(editor, nodes);
   return nodes;
 }
 
@@ -207,7 +247,7 @@ export const toggleBlock = (editor, format) => {
   if (isListItem && !wantsList) {
     toggleFormatAsListItem(editor, format);
   } else if (isListItem && wantsList && !isActive) {
-    switchListType(editor, format); // this will deconstruct to Volto blocks
+    switchListType(editor, format);
   } else if (!isListItem && wantsList) {
     changeBlockToList(editor, format);
   } else if (!isListItem && !wantsList) {
@@ -224,31 +264,14 @@ export const toggleBlock = (editor, format) => {
 };
 
 /*
- * Applies a block format unto a list item. Will split the list and deconstruct the
- * block
+ * Applies a block format to a list item. Will split the list
  */
 export const toggleFormatAsListItem = (editor, format) => {
-  // const { slate } = config.settings;
-  // const pathRef = Editor.pathRef(editor, editor.selection);
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) => slate.listTypes.includes(n.type),
-  //   split: true,
-  //   mode: 'all',
-  // });
-
   Transforms.setNodes(editor, {
     type: format,
   });
 
   Editor.normalize(editor);
-
-  // Transforms.unwrapNodes(editor, {
-  //   match: (n) => n.type === slate.listItemType,
-  //   split: true,
-  // });
-
-  // console.log('toggleFormatAsListItem', JSON.parse(JSON.stringify(pathRef)));
-  deconstructToVoltoBlocks(editor);
 };
 
 /*
@@ -262,8 +285,6 @@ export const switchListType = (editor, format) => {
   });
   const block = { type: format, children: [] };
   Transforms.wrapNodes(editor, block);
-
-  deconstructToVoltoBlocks(editor);
 };
 
 export const changeBlockToList = (editor, format) => {

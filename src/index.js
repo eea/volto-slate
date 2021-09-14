@@ -102,7 +102,7 @@ export function asDefaultRichText(config) {
 export function asDefault(config) {
   asDefaultBlock(config);
 
-  // TODO: Fix issues and enable by default slate for richtext
+  // TODO: See cypress
   // asDefaultRichText(config);
 
   return config;

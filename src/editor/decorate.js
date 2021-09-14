@@ -1,5 +1,4 @@
 import { Node, Range } from 'slate';
-import { ReactEditor } from 'slate-react';
 
 import config from '@plone/volto/registry';
 
@@ -43,13 +42,7 @@ export const highlightByType = (editor, [node, path], ranges) => {
  * @param {Array} ranges
  */
 export function highlightSelection(editor, [node, path], ranges) {
-  let selected = ReactEditor.isFocused(editor);
-
-  // Compatibility with Volto blocks
-  if (editor.getBlockProps) {
-    const blockProps = editor.getBlockProps();
-    selected = blockProps.selected;
-  }
+  let selected = editor.isSelected();
 
   if (selected && !editor.selection && editor.getSavedSelection()) {
     const newSelection = editor.getSavedSelection();

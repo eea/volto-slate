@@ -1,6 +1,5 @@
 export * from './blocks';
 export * from './editor';
-export * from './hacks';
 export * from './internals';
 export * from './lists';
 export * from './marks';
@@ -10,5 +9,3 @@ export * from './random';
 export * from './selection';
 export * from './volto-blocks';
 export * from './mime-types';
-
-// export * from './todo';

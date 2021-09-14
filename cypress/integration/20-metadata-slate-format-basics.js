@@ -93,9 +93,7 @@ describe('RichText Tests: format text via slate toolbar', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-
-    // cy.get('[id="view"] s').contains('Colorless');
-    cy.get('[id="view"]').contains('Colorless');
+    cy.get('[id="view"] s').contains('Colorless');
   });
 
   it('Title', function () {

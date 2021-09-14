@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { Node, Transforms } from 'slate'; // , Transforms
-import { useSlate, Slate, Editable, ReactEditor } from 'slate-react';
+import { Slate, Editable, ReactEditor } from 'slate-react';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
 
@@ -9,83 +9,15 @@ import config from '@plone/volto/registry';
 
 import { Element, Leaf } from './render';
 import makeEditor from './makeEditor';
-import { SlateToolbar, SlateContextToolbar } from './ui';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import {
-  hasRangeSelection,
-  toggleInlineFormat,
-  toggleMark,
-} from 'volto-slate/utils';
+import { toggleInlineFormat, toggleMark } from 'volto-slate/utils';
+import { InlineToolbar } from './ui';
 import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
-
-/**
- * A component that can lift the editor to higher level
- *
- * Use like:
- * <SlateEditor ...><EditorReference onHasEditor=((editor) =>
- * this.setState({editor}) /></SlateEditor>
- *
- * With this you have access to the Slate editor "out of tree".
- */
-export const EditorReference = ({ onHasEditor }) => {
-  const editor = useSlate();
-  React.useEffect(() => {
-    onHasEditor(editor);
-  }, [onHasEditor, editor]);
-  return null;
-};
-
-const Toolbar = (props) => {
-  const {
-    editor,
-    className,
-    showExpandedToolbar,
-    setShowExpandedToolbar,
-  } = props;
-
-  const { slate } = config.settings;
-  const [showMainToolbar, setShowMainToolbar] = React.useState(
-    !!(editor.selection && hasRangeSelection(editor)),
-  );
-
-  React.useEffect(() => {
-    const el = ReactEditor.toDOMNode(editor, editor);
-    const toggleToolbar = () => {
-      const selection = window.getSelection();
-      const { activeElement } = window.document;
-      if (activeElement !== el) return;
-      if (!selection.isCollapsed && !showMainToolbar) {
-        setShowMainToolbar(true);
-      } else if (selection.isCollapsed && showMainToolbar) {
-        setShowMainToolbar(false);
-      }
-    };
-    window.document.addEventListener('selectionchange', toggleToolbar);
-    return () => document.removeEventListener('selectionchange', toggleToolbar);
-  }, [editor, showMainToolbar]);
-
-  return (
-    <>
-      <SlateToolbar
-        className={className}
-        selected={true}
-        enableExpando={slate.enableExpandedToolbar}
-        showExpandedToolbar={showExpandedToolbar}
-        setShowExpandedToolbar={setShowExpandedToolbar}
-        show={showMainToolbar}
-      />
-      <SlateContextToolbar
-        editor={editor}
-        plugins={slate.contextToolbarButtons}
-      />
-    </>
-  );
-};
 
 const handleHotKeys = (editor, event, config) => {
   let wasHotkey = false;
@@ -154,7 +86,7 @@ class SlateEditor extends Component {
 
   handleChange(value) {
     if (this.props.onChange && !isEqual(value, this.props.value)) {
-      this.props.onChange(value);
+      this.props.onChange(value, this.editor);
     }
   }
 
@@ -275,7 +207,11 @@ class SlateEditor extends Component {
             value={value || slate.defaultValue()}
             onChange={this.handleChange}
           >
-            {selected ? <Toolbar editor={editor} className={className} /> : ''}
+            {selected ? (
+              <InlineToolbar editor={editor} className={className} />
+            ) : (
+              ''
+            )}
             <Editable
               tabIndex={this.props.tabIndex || 0}
               readOnly={readOnly}

@@ -6,76 +6,17 @@ import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import configureStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider, useSelector } from 'react-redux';
 
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
+import makeEditor from 'volto-slate/editor/makeEditor';
 import deserialize from 'volto-slate/editor/deserialize';
-import { Provider, useSelector } from 'react-redux';
-import { createDefaultBlock } from 'volto-slate/utils';
-import { Text } from 'slate';
-// import { Editor } from 'slate';
+
+import { createEmptyParagraph, normalizeBlockNodes } from 'volto-slate/utils';
 
 import './style.css';
-import { createEmptyParagraph } from '../utils/blocks';
-import makeEditor from 'volto-slate/editor/makeEditor';
-
-const normalizeToSlate = (editor, nodes) => {
-  // Normalizes a slate value (a list of nodes) to slate constraints
-  //
-  // Slate built-in constraint:
-  // - Inline nodes cannot be the first or last child of a parent block, nor
-  // can it be next to another inline node in the children array. If this is
-  // the case, an empty text node will be added to correct this to be in
-  // compliance with the constraint.
-
-  nodes.forEach((node) => {
-    const { children = [] } = node;
-
-    if (children.length) {
-      node.children = normalizeToSlate(
-        editor,
-        children.reduce((acc, node, index) => {
-          return index === 0 && editor.isInline(node)
-            ? [{ text: '' }, node]
-            : index === children.length - 1
-            ? [...acc, node, { text: '' }]
-            : [...acc, node, { text: '' }];
-        }, []),
-      );
-    }
-  });
-  return nodes;
-};
-
-export function normalizeBlockNodes(editor, children) {
-  // Basic normalization of slate content.
-  // Make sure that no inline element is alone, without a block element parent.
-
-  const isInline = (n) =>
-    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
-
-  let nodes = [];
-  let currentBlockNode = null;
-
-  children.forEach((node) => {
-    if (isInline(node)) {
-      node = typeof node === 'string' ? { text: node } : node;
-      if (!currentBlockNode) {
-        currentBlockNode = createDefaultBlock([node]);
-        nodes.push(currentBlockNode);
-      } else {
-        currentBlockNode.children.push(node);
-      }
-    } else {
-      currentBlockNode = null;
-      nodes.push(node);
-    }
-  });
-
-  nodes = normalizeToSlate(editor, nodes);
-  return nodes;
-}
 
 const HtmlSlateWidget = (props) => {
   const {

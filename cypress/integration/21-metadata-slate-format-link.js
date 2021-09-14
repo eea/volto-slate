@@ -1,8 +1,8 @@
-import { slateJsonBeforeEach, slateJsonAfterEach } from '../support';
+import { slateBeforeEach, slateAfterEach } from '../support';
 
-describe('Metadata Slate JSON Tests: Links', () => {
-  beforeEach(slateJsonBeforeEach);
-  afterEach(slateJsonAfterEach);
+describe('RichText Tests: Add links', () => {
+  beforeEach(() => slateBeforeEach('News Item'));
+  afterEach(slateAfterEach);
 
   it('As editor I can add links', function () {
     // Complete chained commands
@@ -37,10 +37,10 @@ describe('Metadata Slate JSON Tests: Links', () => {
 
     // then the page view should contain a link
     cy.contains('Colorless green ideas sleep furiously.');
-    cy.get('[id="page-document"] p a')
+    cy.get('[id="view"] p a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
-    cy.get('[id="page-document"] p a').contains('green ideas sleep');
+    cy.get('[id="view"] p a').contains('green ideas sleep');
   });
 
   it('As editor I can add multiple lines and add links', function () {
@@ -79,16 +79,15 @@ describe('Metadata Slate JSON Tests: Links', () => {
     // Save
     cy.toolbarSave();
 
-    // then the page view should contain our links
+    // then the page view should contain a link
     cy.get('.slate.widget p:first-of-type a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
     cy.get('.slate.widget p:first-of-type a').contains('Colorless green ideas');
-
     cy.get('.slate-widget p:last-of-type a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
-    cy.get('.slate-widget p:last-of-type a').contains('sleep furiously');
+    cy.get('.slate-widget p:last-of-type a').contains('sleep furiously.');
   });
 
   it('As editor I can select multiple paragraphs and add links', function () {
@@ -126,15 +125,14 @@ describe('Metadata Slate JSON Tests: Links', () => {
     // Save
     cy.toolbarSave();
 
-    // then the page view should contain our link
+    // then the page view should contain a link
     cy.get('.slate.widget p:first-of-type a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
     cy.get('.slate.widget p:first-of-type a').contains('Colorless green ideas');
-
     cy.get('.slate-widget p:last-of-type a')
       .should('have.attr', 'href')
       .and('include', 'https://google.com');
-    cy.get('.slate-widget p:last-of-type a').contains('sleep furiously');
+    cy.get('.slate-widget p:last-of-type a').contains('sleep furiously.');
   });
 });

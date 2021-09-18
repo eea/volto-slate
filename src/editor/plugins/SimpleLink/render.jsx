@@ -19,7 +19,12 @@ export const LinkElement = (props) => {
   return mode === 'view' ? (
     <ViewLink {...(element.data || {})}>{children}</ViewLink>
   ) : (
-    <a {...attributes} className="slate-editor-link" href={element.data?.url}>
+    <a
+      {...attributes}
+      className="slate-editor-link"
+      href={element.data?.url}
+      onClick={(e) => e.preventDefault()}
+    >
       {Array.isArray(children)
         ? children.map((child, i) => {
             if (child?.props?.decorations) {

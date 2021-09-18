@@ -531,8 +531,9 @@ class Edit extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.select && !this.props.selected)
+    if (prevProps.selected && !this.props.selected) {
       this.setState({ selected: null });
+    }
   }
 
   /**
@@ -648,6 +649,8 @@ class Edit extends Component {
                       key={cell.key}
                       as={cell.type === 'header' ? 'th' : 'td'}
                       className={
+                        this.props.selected &&
+                        this.state.selected &&
                         rowIndex === this.state.selected.row &&
                         cellIndex === this.state.selected.cell &&
                         this.props.selected
@@ -661,6 +664,8 @@ class Edit extends Component {
                         cell={cellIndex}
                         onSelectCell={this.onSelectCell}
                         selected={
+                          this.props.selected &&
+                          this.state.selected &&
                           rowIndex === this.state.selected.row &&
                           cellIndex === this.state.selected.cell
                         }
@@ -678,7 +683,7 @@ class Edit extends Component {
             </Table.Body>
           </Table>
         )}
-        {this.props.selected && this.state.isClient && (
+        {this.props.selected && this.state.selected && this.state.isClient && (
           <Portal node={document.getElementById('sidebar-properties')}>
             <Form method="post" onSubmit={(event) => event.preventDefault()}>
               <Segment secondary attached>

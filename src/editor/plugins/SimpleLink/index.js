@@ -3,6 +3,7 @@ import { defineMessages } from 'react-intl'; // , defineMessages
 import { ReactEditor, useSlate } from 'slate-react';
 import { useSelector, useDispatch } from 'react-redux';
 import AddLinkForm from '@plone/volto/components/manage/AnchorPlugin/components/LinkButton/AddLinkForm';
+import { isEqual } from 'lodash';
 import {
   _insertElement,
   _unwrapElement,
@@ -56,6 +57,7 @@ const SimpleLinkEditor = (props) => {
     getActiveElement,
     unwrapElement,
     insertElement,
+    isActiveElement,
   } = props;
   const showEditor = useSelector((state) => {
     return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
@@ -65,7 +67,19 @@ const SimpleLinkEditor = (props) => {
   const dispatch = useDispatch();
 
   const active = getActiveElement(editor);
-  const [node] = active || [];
+  const isElement = isActiveElement(editor);
+
+  const [elementNode] = active || [];
+  const [savedActiveElement, setSavedActiveElement] = React.useState(null);
+
+  React.useEffect(() => {
+    if (isElement && !isEqual(elementNode, savedActiveElement)) {
+      setSavedActiveElement(elementNode);
+      // setFormData(elementNode.data || {});
+    } else if (!isElement) {
+      setSavedActiveElement(null);
+    }
+  }, [elementNode, isElement, savedActiveElement]);
 
   if (showEditor && !savedPosition.current) {
     savedPosition.current = getPositionStyle();
@@ -76,7 +90,7 @@ const SimpleLinkEditor = (props) => {
       <AddLinkForm
         block="draft-js"
         placeholder={'Add link'}
-        data={{ url: node?.data?.url || '' }}
+        data={{ url: savedActiveElement?.data?.url || '' }}
         theme={{}}
         onChangeValue={(url) => {
           if (!active) {

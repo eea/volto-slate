@@ -42,6 +42,7 @@ class Cell extends Component {
     ) {
       this.props.onSelectCell(this.props.row, this.props.cell);
 
+      // Wait for Slate to initialize before asking it to focus
       if (this.state.editor) {
         setTimeout(
           () => !this.isUnmounted && ReactEditor.focus(this.state.editor),

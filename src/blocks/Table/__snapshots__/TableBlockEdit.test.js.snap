@@ -5,7 +5,7 @@ exports[`renders an edit table block component 1`] = `
   className="block table"
 >
   <table
-    className="ui table"
+    className="ui table slate-table-block"
   >
     <tbody
       className=""

@@ -2,7 +2,7 @@
 
 exports[`renders a view table component 1`] = `
 <table
-  className="ui table"
+  className="ui table slate-table-block"
 >
   <tbody
     className=""

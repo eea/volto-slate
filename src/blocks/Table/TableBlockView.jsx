@@ -30,6 +30,7 @@ const View = ({ data }) => {
           celled={data.table.celled}
           inverted={data.table.inverted}
           striped={data.table.striped}
+          className="slate-table-block"
         >
           <Table.Body>
             {map(data.table.rows, (row) => (

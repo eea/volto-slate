@@ -1,180 +1,145 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2021-09-20T15:08:13.917Z\n"
-"Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
-"Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"Language-Code: en\n"
-"Language-Name: English\n"
-"Preferred-Encodings: utf-8\n"
-"Domain: volto\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: \n"
+"Language-Team: \n"
+"Content-Type: \n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
 
 #: editor/plugins/SimpleLink/index
-# defaultMessage: Add link
 msgid "Add link"
-msgstr ""
+msgstr "Link hinzufügen"
 
 #: editor/plugins/StyleMenu/StyleMenu
-# defaultMessage: All Styles Applied
 msgid "All Styles Applied"
-msgstr ""
+msgstr "Alle Formatierungen angewendet"
 
 #: widgets/BlocksBrowser/BlocksBrowserNav
-# defaultMessage: Back
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 #: widgets/BlocksBrowser/BlocksBrowserNav
-# defaultMessage: Browse
 msgid "Browse"
-msgstr ""
+msgstr "Durchsuchen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Cell
 msgid "Cell"
-msgstr ""
+msgstr "Zelle"
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
-# defaultMessage: Choose Target
 msgid "Choose Target"
-msgstr ""
+msgstr "Ziel auswählen"
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
-# defaultMessage: Delete
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Delete col
 msgid "Delete col"
-msgstr ""
+msgstr "Spalte löschen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Delete row
 msgid "Delete row"
-msgstr ""
+msgstr "Zeile löschen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Divide each row into separate cells
 msgid "Divide each row into separate cells"
-msgstr ""
+msgstr "Jede Zeile in einzelne Zellen teilen"
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
-# defaultMessage: Edit
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: components/ElementEditor/messages
-# defaultMessage: Edit element
 msgid "Edit element"
-msgstr ""
+msgstr "Element bearbeiten"
 
 #: editor/plugins/Link/index
 #: editor/plugins/SimpleLink/index
-# defaultMessage: Edit link
 msgid "Edit link"
-msgstr ""
+msgstr "Link bearbeiten"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Fixed width table cells
 msgid "Fixed width table cells"
-msgstr ""
+msgstr "Zellen mit fester Breite"
 
 #: editor/plugins/StyleMenu/StyleMenu
-# defaultMessage: Font Style
 msgid "Font Style"
-msgstr ""
+msgstr "Schriftart"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Insert col after
 msgid "Insert col after"
-msgstr ""
+msgstr "Spalte dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Insert col before
 msgid "Insert col before"
-msgstr ""
+msgstr "Spalte davor einfügen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Insert row after
 msgid "Insert row after"
-msgstr ""
+msgstr "Zeile dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Insert row before
 msgid "Insert row before"
-msgstr ""
+msgstr "Zeile davor einfügen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Make the table compact
 msgid "Make the table compact"
-msgstr ""
+msgstr "Tabelle komprimieren"
 
 #: editor/plugins/StyleMenu/StyleMenu
-# defaultMessage: No Style
 msgid "No Style"
-msgstr ""
+msgstr "Keine Formatierung"
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
-# defaultMessage: No items selected
 msgid "No items selected"
-msgstr ""
+msgstr "Keine Elemente ausgewählt"
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
-# defaultMessage: Open object browser
 msgid "Open object browser"
-msgstr ""
+msgstr "Objektsucher öffnen"
 
 #: editor/plugins/StyleMenu/StyleMenu
-# defaultMessage: Paragraph Style
 msgid "Paragraph Style"
-msgstr ""
+msgstr "Abschnittsformatierung"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Reduce complexity
 msgid "Reduce complexity"
-msgstr ""
+msgstr "Komplexität vereinfachen"
 
 #: components/ElementEditor/messages
-# defaultMessage: Remove element
 msgid "Remove element"
-msgstr ""
+msgstr "Element entfernen"
 
 #: editor/plugins/Link/index
-# defaultMessage: Remove link
 msgid "Remove link"
-msgstr ""
+msgstr "Link entferenen"
 
 #: widgets/BlocksBrowser/BlocksBrowserNav
-# defaultMessage: Select
 msgid "Select"
-msgstr ""
+msgstr "Auswählen"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Stripe alternate rows with color
 msgid "Stripe alternate rows with color"
-msgstr ""
+msgstr "Zeilen im Wechsel einfärben"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Table
 msgid "Table"
-msgstr ""
+msgstr "Tabelle"
 
 #: blocks/Table/TableBlockEdit
-# defaultMessage: Table color inverted
 msgid "Table color inverted"
-msgstr ""
+msgstr "Tabellenfarbe invertiert"
 
 #: blocks/Text/TextBlockEdit
-# defaultMessage: Type text…
 msgid "Type text…"
-msgstr ""
+msgstr "Text eingeben"
 
 #: components/themes/View/DefaultSlateView
-# defaultMessage: Unknown Block {block}
 msgid "Unknown Block"
-msgstr ""
+msgstr "Unbekannter Block"

@@ -15,6 +15,7 @@ const ElementToolbarButton = (props) => {
   const editor = useSlate();
   const isElement = isActiveElement(editor);
   const dispatch = useDispatch();
+  const pid = `${editor.uid}-${pluginId}`;
 
   const omittedProps = [
     'insertElement',
@@ -31,7 +32,7 @@ const ElementToolbarButton = (props) => {
           active={isElement}
           onMouseDown={() => {
             if (!isElement) insertElement(editor, {});
-            dispatch(setPluginOptions(pluginId, { show_sidebar_editor: true }));
+            dispatch(setPluginOptions(pid, { show_sidebar_editor: true }));
           }}
           icon={toolbarButtonIcon}
         />

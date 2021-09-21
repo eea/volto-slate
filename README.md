@@ -23,20 +23,6 @@ issues, the API starts to stabilize and we've already started several addons
 based on it: https://github.com/eea/volto-slate-metadata-mentions/ and
 https://github.com/eea/volto-slate-zotero
 
-## Upgrades
-
-### Upgrade to 3.x.x
-
-* Removed all deprecated, already in Volto Core, `futurevolto` components:
-  * `SidebarPopup`
-  * `ObjectWidget`
-  * `ObjectBrowserWidget`
-  * `helpers/Blocks`
-* Table `inline button` and `copy&paste` support is not installed by default anymore.
-  You'll need to explicitly import the `tableButton` profile like:
-  * `volto:asDefault,tableButton`
-  * `volto-slate:minimalDefault,simpleLink,tableButton`
-
 ## Why
 
 Some of the main reasons that drove us to create volto-slate instead of
@@ -55,6 +41,27 @@ enhancing Volto's draftjs implementation:
 - Because Slate's internal storage uses a tree modeled on the DOM pattern, its
   final rendered output is very clean. Note: The Slate editor value is a JSON
   object, similar to the Draftjs based implementation.
+
+## Upgrades
+
+### Upgrade to 4.x.x
+
+* Namespace the plugins [#156](https://github.com/eea/volto-slate/pull/156):
+  * Make sure you upgrade your slate plugins to use the new slate namespaced plugin ids.
+  See for example `volto-slate-footnote` [#23](https://github.com/eea/volto-slate-footnote/pull/23/commits/efdc07041097a6edf608b377141fba15fbee65cf)
+
+
+### Upgrade to 3.x.x
+
+* Removed all deprecated, already in Volto Core, `futurevolto` components:
+  * `SidebarPopup`
+  * `ObjectWidget`
+  * `ObjectBrowserWidget`
+  * `helpers/Blocks`
+* Table `inline button` and `copy&paste` support is not installed by default anymore.
+  You'll need to explicitly import the `tableButton` profile like:
+  * `volto:asDefault,tableButton`
+  * `volto-slate:minimalDefault,simpleLink,tableButton`
 
 ## Available profiles.
 

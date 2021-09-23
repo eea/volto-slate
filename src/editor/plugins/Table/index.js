@@ -13,12 +13,16 @@ export default function install(config) {
     ...tableElements,
   };
 
+  return config;
+}
+
+export const installTableButton = (config) => {
+  const { slate } = config.settings;
   slate.buttons.table = (props) => <TableButton {...props} title="Table" />;
   slate.toolbarButtons = [...(slate.toolbarButtons || []), 'table'];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),
     'table',
   ];
-
   return config;
-}
+};

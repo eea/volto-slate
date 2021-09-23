@@ -12,6 +12,7 @@ import _ from 'lodash';
 const formatAliases = [
   ['strong', 'b'],
   ['em', 'i'],
+  ['del', 's'],
 ];
 
 /**

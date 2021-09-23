@@ -93,7 +93,7 @@ describe('Block Tests: Basic text format', () => {
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] s').contains('Colorless');
+    cy.get('[id="page-document"] del').contains('Colorless');
   });
 
   it('Title', function () {

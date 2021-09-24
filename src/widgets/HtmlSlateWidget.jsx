@@ -7,6 +7,7 @@ import ReactDOMServer from 'react-dom/server';
 import configureStore from 'redux-mock-store';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider, useSelector } from 'react-redux';
+import { defineMessages, injectIntl } from 'react-intl';
 
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
@@ -15,8 +16,18 @@ import makeEditor from 'volto-slate/editor/makeEditor';
 import deserialize from 'volto-slate/editor/deserialize';
 
 import { createEmptyParagraph, normalizeBlockNodes } from 'volto-slate/utils';
+import { ErrorBoundary } from './ErrorBoundary';
 
 import './style.css';
+
+const messages = defineMessages({
+  error: {
+    id:
+      'An error has occurred while editing "{name}" field. We have been notified and we are looking into it. Please save your work and retry. If the issue persists please contact the site administrator.',
+    defaultMessage:
+      'An error has occurred while editing "{name}" field. We have been notified and we are looking into it. Please save your work and retry. If the issue persists please contact the site administrator.',
+  },
+});
 
 const HtmlSlateWidget = (props) => {
   const {
@@ -28,6 +39,7 @@ const HtmlSlateWidget = (props) => {
     block,
     placeholder,
     properties,
+    intl,
   } = props;
 
   const [selected, setSelected] = React.useState(focus);
@@ -90,23 +102,25 @@ const HtmlSlateWidget = (props) => {
         }}
         onKeyDown={() => {}}
       >
-        <SlateEditor
-          className={className}
-          id={id}
-          name={id}
-          value={fromHtml(value)}
-          onChange={(newValue) => {
-            onChange(id, toHtml(newValue));
-          }}
-          block={block}
-          renderExtensions={[]}
-          selected={selected}
-          properties={properties}
-          placeholder={placeholder}
-        />
+        <ErrorBoundary name={intl.formatMessage(messages.error, { name: id })}>
+          <SlateEditor
+            className={className}
+            id={id}
+            name={id}
+            value={fromHtml(value)}
+            onChange={(newValue) => {
+              onChange(id, toHtml(newValue));
+            }}
+            block={block}
+            renderExtensions={[]}
+            selected={selected}
+            properties={properties}
+            placeholder={placeholder}
+          />
+        </ErrorBoundary>
       </div>
     </FormFieldWrapper>
   );
 };
 
-export default HtmlSlateWidget;
+export default injectIntl(HtmlSlateWidget);

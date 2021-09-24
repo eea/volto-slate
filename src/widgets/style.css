@@ -14,3 +14,8 @@
 .metadata.mention.slate.widget > :last-child {
   display: inline;
 }
+
+.error {
+  color: #f00;
+  white-space: normal;
+}

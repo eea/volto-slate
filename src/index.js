@@ -8,7 +8,7 @@ import RichTextWidgetView from './widgets/RichTextWidgetView';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
 import HashLink from './editor/plugins/Link/AppExtras/HashLink';
 import installCallout from './editor/plugins/Callout';
-import installTable from './editor/plugins/Table';
+import { installTableButton } from './editor/plugins/Table';
 import installSimpleLink from './editor/plugins/SimpleLink';
 import HtmlSlateWidget from './widgets/HtmlSlateWidget';
 import DefaultSlateView from './components/themes/View/DefaultSlateView';
@@ -78,7 +78,7 @@ export function simpleLink(config) {
 }
 
 export function tableButton(config) {
-  return installTable(config);
+  return installTableButton(config);
 }
 
 export function asDefaultBlock(config) {

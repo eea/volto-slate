@@ -20,8 +20,9 @@ export default (options) => (editor) => {
   } = options;
   const intl = useIntl();
   const dispatch = useDispatch();
+  const pid = `${editor.uid}-${pluginId}`;
   const showEditor = useSelector(
-    (state) => state['slate_plugins']?.[pluginId]?.show_sidebar_editor,
+    (state) => state['slate_plugins']?.[pid]?.show_sidebar_editor,
   );
 
   return isActiveElement(editor) ? (
@@ -32,7 +33,11 @@ export default (options) => (editor) => {
         active={showEditor}
         aria-label={intl.formatMessage(messages.edit)}
         onMouseDown={() => {
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: true }));
+          dispatch(
+            setPluginOptions(pid, {
+              show_sidebar_editor: true,
+            }),
+          );
         }}
       />
       <ToolbarButton

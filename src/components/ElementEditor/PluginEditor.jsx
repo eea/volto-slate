@@ -64,6 +64,7 @@ const PluginEditor = (props) => {
 
   const SchemaProvider = schemaProvider ? schemaProvider : BaseSchemaProvider;
 
+  const pid = `${editor.uid}-${pluginId}`;
   return (
     <SchemaProvider {...props} data={formData}>
       {(schema) => (
@@ -87,7 +88,9 @@ const PluginEditor = (props) => {
                 onClick={() => {
                   saveDataToEditor(formData);
                   dispatch(
-                    setPluginOptions(pluginId, { show_sidebar_editor: false }),
+                    setPluginOptions(pid, {
+                      show_sidebar_editor: false,
+                    }),
                   );
                   ReactEditor.focus(editor);
                 }}
@@ -98,7 +101,9 @@ const PluginEditor = (props) => {
                 onClick={() => {
                   checkForCancel();
                   dispatch(
-                    setPluginOptions(pluginId, { show_sidebar_editor: false }),
+                    setPluginOptions(pid, {
+                      show_sidebar_editor: false,
+                    }),
                   );
                   setFormData({});
                   ReactEditor.focus(editor);

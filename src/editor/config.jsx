@@ -69,7 +69,7 @@ export const buttons = {
   strikethrough: (props) => (
     <MarkElementButton
       title="Strikethrough"
-      format="s"
+      format="del"
       icon={strikethroughIcon}
       {...props}
     />
@@ -178,6 +178,7 @@ export const hotkeys = {
   'mod+b': { format: 'strong', type: 'inline' },
   'mod+i': { format: 'em', type: 'inline' },
   'mod+u': { format: 'u', type: 'inline' },
+  'mod+s': { format: 'del', type: 'inline' },
   // 'mod+`': { format: 'code', type: 'inline' },
   // TODO: more hotkeys, including from plugins!
 };
@@ -232,7 +233,8 @@ export const elements = {
     return <strong>{children}</strong>;
   },
   u: ({ children }) => <u>{children}</u>,
-  s: ({ children }) => <s>{children}</s>,
+  s: ({ children }) => <del>{children}</del>,
+  del: ({ children }) => <del>{children}</del>,
   sub: ({ children }) => <sub>{children}</sub>,
   sup: ({ children }) => <sup>{children}</sup>,
   code: ({ children }) => <code>{children}</code>,
@@ -244,7 +246,7 @@ export const inlineElements = [
   'b',
   'strong',
   'u',
-  's',
+  'del',
   'sub',
   'sup',
   'code',
@@ -273,7 +275,7 @@ export const htmlTagsToSlate = {
   SPAN: spanTagDeserializer,
 
   BLOCKQUOTE: blockTagDeserializer('blockquote'),
-  DEL: blockTagDeserializer('s'),
+  DEL: blockTagDeserializer('del'),
   EM: blockTagDeserializer('em'),
   H1: blockTagDeserializer('h1'),
   H2: blockTagDeserializer('h2'),
@@ -283,7 +285,7 @@ export const htmlTagsToSlate = {
   H6: blockTagDeserializer('h6'),
   I: blockTagDeserializer('i'),
   P: blockTagDeserializer('p'),
-  S: blockTagDeserializer('s'),
+  S: blockTagDeserializer('del'),
   STRONG: blockTagDeserializer('strong'),
   SUB: blockTagDeserializer('sub'),
   SUP: blockTagDeserializer('sup'),

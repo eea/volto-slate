@@ -4,6 +4,7 @@ import { Node, Transforms } from 'slate'; // , Transforms
 import { Slate, Editable, ReactEditor } from 'slate-react';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 
 import config from '@plone/volto/registry';
 
@@ -54,9 +55,12 @@ class SlateEditor extends Component {
 
     this.savedSelection = null;
 
+    const uid = uuid();
+
     this.state = {
-      editor: this.createEditor(),
+      editor: this.createEditor(uid),
       showExpandedToolbar: config.settings.slate.showExpandedToolbar,
+      uid,
     };
 
     this.editor = null;
@@ -70,7 +74,7 @@ class SlateEditor extends Component {
     this.savedSelection = selection;
   }
 
-  createEditor() {
+  createEditor(uid) {
     const editor = makeEditor({ extensions: this.props.extensions });
 
     // When the editor loses focus it no longer has a valid selections. This
@@ -80,6 +84,7 @@ class SlateEditor extends Component {
 
     editor.getSavedSelection = this.getSavedSelection;
     editor.setSavedSelection = this.setSavedSelection;
+    editor.uid = uid || this.state.uid;
 
     return editor;
   }

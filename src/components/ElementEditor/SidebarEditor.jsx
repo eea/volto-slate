@@ -10,9 +10,10 @@ import { setPluginOptions } from 'volto-slate/actions';
 
 const SidebarEditor = (props) => {
   const { editor, pluginId, getActiveElement, pluginEditor } = props;
+  const pid = `${editor.uid}-${pluginId}`;
   const PluginEditor = pluginEditor;
   const showEditor = useSelector((state) => {
-    return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
+    return state['slate_plugins']?.[pid]?.show_sidebar_editor;
   });
 
   const dispatch = useDispatch();
@@ -28,8 +29,8 @@ const SidebarEditor = (props) => {
   // Hide the editor when switching to another text element
   React.useEffect(() => {
     if (!active)
-      dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
-  }, [active, dispatch, pluginId]);
+      dispatch(setPluginOptions(pid, { show_sidebar_editor: false }));
+  }, [active, dispatch, pluginId, pid]);
 
   editor.isSidebarOpen = showEditor && active;
 

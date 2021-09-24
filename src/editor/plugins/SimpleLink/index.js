@@ -57,8 +57,9 @@ const SimpleLinkEditor = (props) => {
     unwrapElement,
     insertElement,
   } = props;
+  const pid = `${editor.uid}-${pluginId}`;
   const showEditor = useSelector((state) => {
-    return state['slate_plugins']?.[pluginId]?.show_sidebar_editor;
+    return state['slate_plugins']?.[pid]?.show_sidebar_editor;
   });
   const savedPosition = React.useRef();
 
@@ -88,7 +89,7 @@ const SimpleLinkEditor = (props) => {
             insertElement(editor, { url });
           }
           ReactEditor.focus(editor);
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          dispatch(setPluginOptions(pid, { show_sidebar_editor: false }));
           savedPosition.current = null;
         }}
         onClear={() => {
@@ -100,7 +101,7 @@ const SimpleLinkEditor = (props) => {
           editor.savedSelection = newSelection;
         }}
         onOverrideContent={(c) => {
-          dispatch(setPluginOptions(pluginId, { show_sidebar_editor: false }));
+          dispatch(setPluginOptions(pid, { show_sidebar_editor: false }));
           savedPosition.current = null;
         }}
       />
@@ -137,8 +138,9 @@ export default (config) => {
         active={isElement}
         onMouseDown={() => {
           // if (!isElement) insertElement(editor, {});
+          const pid = `${editor.uid}-${PLUGINID}`;
           editor.savedSelection = JSON.parse(JSON.stringify(editor.selection));
-          dispatch(setPluginOptions(PLUGINID, { show_sidebar_editor: true }));
+          dispatch(setPluginOptions(pid, { show_sidebar_editor: true }));
         }}
       />
     );

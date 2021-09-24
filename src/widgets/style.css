@@ -16,6 +16,6 @@
 }
 
 .error {
-  white-space: normal;
   color: #f00;
+  white-space: normal;
 }

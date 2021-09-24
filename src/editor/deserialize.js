@@ -50,7 +50,7 @@ export const deserialize = (editor, el) => {
       // });
       // if it's empty text between 2 tags, it should be ignored
       return isInline(el.previousSibling) || isInline(el.nextSibling)
-        ? ' ' // perceptually multiple whitespace render as a single space
+        ? el.textContent // perceptually multiple whitespace render as a single space
         : null;
     }
     return el.textContent

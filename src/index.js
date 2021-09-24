@@ -101,7 +101,9 @@ export function asDefaultRichText(config) {
 
 export function asDefault(config) {
   asDefaultBlock(config);
-  asDefaultRichText(config);
+
+  // TODO: See cypress
+  // asDefaultRichText(config);
 
   return config;
 }

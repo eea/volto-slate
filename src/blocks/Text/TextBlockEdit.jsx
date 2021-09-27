@@ -156,6 +156,18 @@ export const DefaultTextBlockEditor = (props) => {
     [defaultSelection, block, saveSlateBlockSelection],
   );
 
+  const onEditorChange = (value, editor) => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      onChangeBlock(block, {
+        ...data,
+        value,
+        plaintext: serializeNodesToText(value || []),
+        // TODO: also add html serialized value
+      });
+      deconstructToVoltoBlocks(editor);
+    });
+  };
+
   // Get editing instructions from block settings or props
   let instructions = data?.instructions?.data || data?.instructions;
   if (!instructions || instructions === '<p><br/></p>') {
@@ -215,17 +227,7 @@ export const DefaultTextBlockEditor = (props) => {
                       onSelectBlock(block);
                     }
                   }}
-                  onChange={(value, editor) => {
-                    ReactDOM.unstable_batchedUpdates(() => {
-                      onChangeBlock(block, {
-                        ...data,
-                        value,
-                        plaintext: serializeNodesToText(value || []),
-                        // TODO: also add html serialized value
-                      });
-                      deconstructToVoltoBlocks(editor);
-                    });
-                  }}
+                  onChange={(value, editor) => onEditorChange(value, editor)}
                   onKeyDown={handleKey}
                   selected={selected}
                   placeholder={placeholder}

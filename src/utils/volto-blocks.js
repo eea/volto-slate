@@ -138,6 +138,19 @@ export function getPreviousVoltoBlock(index, properties) {
   return [prevBlock, prevBlockId];
 }
 
+//check for existing img childs
+const checkContainImg = (elements) => {
+  var check = false;
+  elements.forEach((e) =>
+    e.children.forEach((c) => {
+      if (c && c.type && c.type === 'img') {
+        check = true;
+      }
+    }),
+  );
+  return check;
+};
+
 /**
  * The editor has the properties `dataTransferHandlers` (object) and
  * `dataTransferFormatsOrder` and in `dataTransferHandlers` are functions which
@@ -175,11 +188,42 @@ export function deconstructToVoltoBlocks(editor) {
 
   return new Promise((resolve, reject) => {
     if (!editor?.children) return;
-    if (editor.children.length === 1) {
+
+    var _editor = editor;
+
+    if (_editor.children.length === 1) {
       return resolve([blockProps.block]);
     }
 
-    const { properties, onChangeField, onSelectBlock } = editor.getBlockProps();
+    //catch for urls that will split the block.
+    //This containsImage checks if the new top-level child contains an image
+    var containsImage = checkContainImg(_editor.children);
+
+    //dont split into new blocks if it's an url. skip this if it has imgs
+    if (_editor.children.length > 1 && !containsImage) {
+      var newChildren = [];
+      _editor.children.forEach((child) =>
+        child.children.forEach((nephew) => newChildren.push({ ...nephew })),
+      );
+      _editor = {
+        ...editor,
+        children: [
+          {
+            ...editor.children[0],
+            children:
+              editor.children.length > 1
+                ? newChildren
+                : [...editor.children[0].children],
+          },
+        ],
+      };
+    }
+
+    const {
+      properties,
+      onChangeField,
+      onSelectBlock,
+    } = _editor.getBlockProps();
     const blocksFieldname = getBlocksFieldname(properties);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
@@ -187,20 +231,20 @@ export function deconstructToVoltoBlocks(editor) {
     let blocks = [];
 
     // TODO: should use Editor.levels() instead of Node.children
-    const pathRefs = Array.from(Node.children(editor, [])).map(([, path]) =>
-      Editor.pathRef(editor, path),
+    const pathRefs = Array.from(Node.children(_editor, [])).map(([, path]) =>
+      Editor.pathRef(_editor, path),
     );
 
     for (const pathRef of pathRefs) {
       // extra nodes are always extracted after the text node
       let extras = voltoBlockEmiters
-        .map((emit) => emit(editor, pathRef))
+        .map((emit) => emit(_editor, pathRef))
         .flat(1);
 
       // The node might have been replaced with a Volto block
       if (pathRef.current) {
-        const [childNode] = Editor.node(editor, pathRef.current);
-        if (childNode && !Editor.isEmpty(editor, childNode))
+        const [childNode] = Editor.node(_editor, pathRef.current);
+        if (childNode && !Editor.isEmpty(_editor, childNode))
           blocks.push(syncCreateSlateBlock([childNode]));
       }
       blocks = [...blocks, ...extras];

@@ -138,7 +138,7 @@ export function getPreviousVoltoBlock(index, properties) {
   return [prevBlock, prevBlockId];
 }
 
-//check for existing img childs
+//check for existing img children
 const checkContainImg = (elements) => {
   var check = false;
   elements.forEach((e) =>
@@ -148,6 +148,17 @@ const checkContainImg = (elements) => {
       }
     }),
   );
+  return check;
+};
+
+//check for existing table children
+const checkContainTable = (elements) => {
+  var check = false;
+  elements.forEach((e) => {
+    if (e && e.type && e.type === 'table') {
+      check = true;
+    }
+  });
   return check;
 };
 
@@ -190,7 +201,6 @@ export function deconstructToVoltoBlocks(editor) {
     if (!editor?.children) return;
 
     var _editor = editor;
-
     if (_editor.children.length === 1) {
       return resolve([blockProps.block]);
     }
@@ -198,9 +208,9 @@ export function deconstructToVoltoBlocks(editor) {
     //catch for urls that will split the block.
     //This containsImage checks if the new top-level child contains an image
     var containsImage = checkContainImg(_editor.children);
-
+    var containsTable = checkContainTable(_editor.children);
     //dont split into new blocks if it's an url. skip this if it has imgs
-    if (_editor.children.length > 1 && !containsImage) {
+    if (_editor.children.length > 1 && !containsImage && !containsTable) {
       var newChildren = [];
       _editor.children.forEach((child) =>
         child.children.forEach((nephew) => newChildren.push({ ...nephew })),

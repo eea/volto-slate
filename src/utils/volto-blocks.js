@@ -205,29 +205,29 @@ export function deconstructToVoltoBlocks(editor) {
       return resolve([blockProps.block]);
     }
 
-    //catch for urls that will split the block.
-    //This containsImage checks if the new top-level child contains an image
-    var containsImage = checkContainImg(_editor.children);
-    var containsTable = checkContainTable(_editor.children);
-    //dont split into new blocks if it's an url. skip this if it has imgs
-    if (_editor.children.length > 1 && !containsImage && !containsTable) {
-      var newChildren = [];
-      _editor.children.forEach((child) =>
-        child.children.forEach((nephew) => newChildren.push({ ...nephew })),
-      );
-      _editor = {
-        ...editor,
-        children: [
-          {
-            ...editor.children[0],
-            children:
-              editor.children.length > 1
-                ? newChildren
-                : [...editor.children[0].children],
-          },
-        ],
-      };
-    }
+    // //catch for urls that will split the block.
+    // //This containsImage checks if the new top-level child contains an image
+    // var containsImage = checkContainImg(_editor.children);
+    // var containsTable = checkContainTable(_editor.children);
+    // //dont split into new blocks if it's an url. skip this if it has imgs
+    // if (_editor.children.length > 1 && !containsImage && !containsTable) {
+    //   var newChildren = [];
+    //   _editor.children.forEach((child) =>
+    //     child.children.forEach((nephew) => newChildren.push({ ...nephew })),
+    //   );
+    //   _editor = {
+    //     ...editor,
+    //     children: [
+    //       {
+    //         ...editor.children[0],
+    //         children:
+    //           editor.children.length > 1
+    //             ? newChildren
+    //             : [...editor.children[0].children],
+    //       },
+    //     ],
+    //   };
+    // }
 
     const {
       properties,

@@ -5,7 +5,7 @@ pipeline {
         GIT_NAME = "volto-slate"
         NAMESPACE = ""
         DEPENDENCIES = "volto-slate:asDefault,asDefaultRichText"
-        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims"
+        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims,sustainability.eionet.europa.eu"
         PLONE_VERSIONS = "plone.schema=1.3.0 plone.restapi=8.9.1"
         PLONE_ADDONS = "eea.schema.slate"
     }

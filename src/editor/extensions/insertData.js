@@ -50,11 +50,37 @@ export const insertData = (editor) => {
     'text/plain': (dt, fullMime) => {
       const text = dt;
       if (!text) return;
+
       const paras = text.split('\n');
       const fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
       // return insertData(data);
 
+      // check if fragment is p with text and insert as fragment if so
+
+      const fragmentContainsText = (f) => {
+        var trigger = false;
+        if (f && f[0]) {
+          f.forEach((frag) => {
+            if (frag.type === 'p') {
+              if (frag.children) {
+                frag.children.forEach((child) => {
+                  if (child.text) {
+                    trigger = true;
+                  }
+                });
+              }
+            }
+          });
+        }
+        return trigger;
+      };
+
       // When there's already text in the editor, insert a fragment, not nodes
+      const containsText = fragmentContainsText(fragment);
+      if (fragment && containsText) {
+        Transforms.insertFragment(editor, fragment);
+      }
+
       if (Editor.string(editor, [])) {
         if (
           Array.isArray(fragment) &&
@@ -68,7 +94,9 @@ export const insertData = (editor) => {
       }
 
       const nodes = normalizeBlockNodes(editor, fragment);
-      Transforms.insertNodes(editor, nodes);
+      if (!containsText) {
+        Transforms.insertNodes(editor, nodes);
+      }
 
       return true;
     },

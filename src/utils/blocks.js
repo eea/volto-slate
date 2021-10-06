@@ -104,10 +104,10 @@ const normalizeToSlateConstraints = (editor, nodes) => {
           return isFirstInline
             ? [{ text: '' }, node]
             : isLastInline
-              ? [...acc, node, { text: '' }]
-              : isBetweenInlines
-                ? [...acc, { text: '' }, node]
-                : [...acc, node];
+            ? [...acc, node, { text: '' }]
+            : isBetweenInlines
+            ? [...acc, { text: '' }, node]
+            : [...acc, node];
         }, []),
       );
     }
@@ -148,7 +148,7 @@ export function normalizeBlockNodes(editor, children) {
  * Partially normalizes nodes of type 'a' which are inline (adds an empty Text
  * inside them if empty) and puts an empty Text after the last 'a' inside a
  * block. This function is recursive.
- * 
+ *
  * In future it might be useful to create a more general normalizeInlineNodes
  * function or even use Editor.normalize feature of Slate Editor interface after
  * putting the `children` inside an `editor`.

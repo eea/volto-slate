@@ -106,7 +106,7 @@ const HtmlSlateWidget = (props) => {
         onClick={() => {
           setSelected(true);
         }}
-        onKeyDown={() => { }}
+        onKeyDown={() => {}}
       >
         <ErrorBoundary name={intl.formatMessage(messages.error, { name: id })}>
           <SlateEditor

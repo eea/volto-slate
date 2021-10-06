@@ -15,7 +15,11 @@ import { serializeNodes } from 'volto-slate/editor/render';
 import makeEditor from 'volto-slate/editor/makeEditor';
 import deserialize from 'volto-slate/editor/deserialize';
 
-import { createEmptyParagraph, normalizeBlockNodes } from 'volto-slate/utils';
+import {
+  createEmptyParagraph,
+  normalizeBlockNodes,
+  normalizeLinkNodes,
+} from 'volto-slate/utils';
 import { ErrorBoundary } from './ErrorBoundary';
 
 import './style.css';
@@ -80,6 +84,8 @@ const HtmlSlateWidget = (props) => {
       let data = deserialize(editor, body);
       data = normalizeBlockNodes(editor, data);
 
+      data = normalizeLinkNodes(editor, data);
+
       // editor.children = data;
       // Editor.normalize(editor);
       // TODO: need to add {text: ""} placeholders between elements
@@ -100,7 +106,7 @@ const HtmlSlateWidget = (props) => {
         onClick={() => {
           setSelected(true);
         }}
-        onKeyDown={() => {}}
+        onKeyDown={() => { }}
       >
         <ErrorBoundary name={intl.formatMessage(messages.error, { name: id })}>
           <SlateEditor

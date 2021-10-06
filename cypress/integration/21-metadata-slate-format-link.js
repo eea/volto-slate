@@ -43,7 +43,7 @@ describe('RichText Tests: Add links', () => {
     cy.get('[id="view"] p a').contains('green ideas sleep');
   });
 
-  it.only('As editor I can add multiple lines and add links', function () {
+  it('As editor I can add multiple lines and add links', function () {
     // Complete chained commands
     cy.getSlateEditorAndType(
       'Colorless green ideas{enter}{enter}sleep furiously.',

@@ -15,7 +15,11 @@ import { serializeNodes } from 'volto-slate/editor/render';
 import makeEditor from 'volto-slate/editor/makeEditor';
 import deserialize from 'volto-slate/editor/deserialize';
 
-import { createEmptyParagraph, normalizeBlockNodes } from 'volto-slate/utils';
+import {
+  createEmptyParagraph,
+  normalizeBlockNodes,
+  normalizeLinkNodes,
+} from 'volto-slate/utils';
 import { ErrorBoundary } from './ErrorBoundary';
 
 import './style.css';
@@ -79,6 +83,8 @@ const HtmlSlateWidget = (props) => {
           : parsed.body;
       let data = deserialize(editor, body);
       data = normalizeBlockNodes(editor, data);
+
+      data = normalizeLinkNodes(editor, data);
 
       // editor.children = data;
       // Editor.normalize(editor);

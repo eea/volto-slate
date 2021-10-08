@@ -345,7 +345,9 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
 Cypress.Commands.add('selection', { prevSubject: true }, (subject, fn) => {
   cy.wrap(subject).trigger('mousedown').then(fn).trigger('mouseup');
 
+  // TODO: this does not work sometimes
   cy.document().trigger('selectionchange');
+
   return cy.wrap(subject);
 });
 

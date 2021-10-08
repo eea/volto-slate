@@ -1,7 +1,7 @@
+import ReactDOM from 'react-dom';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { Editor } from 'slate';
 import {
-  // isCursorInList,
   getPreviousVoltoBlock,
   getNextVoltoBlock,
   isCursorAtBlockStart,
@@ -9,83 +9,100 @@ import {
   mergeSlateWithBlockBackward,
   mergeSlateWithBlockForward,
 } from 'volto-slate/utils';
+import {
+  changeBlock,
+  deleteBlock,
+  getBlocksFieldname,
+  getBlocksLayoutFieldname,
+} from '@plone/volto/helpers';
 
+/**
+ * Joins the current block with the previous block to make a single block.
+ * @param {Editor} editor
+ * @param {KeyboardEvent} event
+ */
 export function joinWithPreviousBlock({ editor, event }) {
-  // TODO: read block values not from editor properties, but from block
-  // properties
-
   if (!isCursorAtBlockStart(editor)) return;
+
   const blockProps = editor.getBlockProps();
   const {
     block,
     index,
     saveSlateBlockSelection,
-    onChangeBlock,
-    onDeleteBlock,
     onSelectBlock,
+    data,
+    properties,
+    onChangeField,
   } = blockProps;
 
-  const { formContext } = editor;
-  const properties = formContext.contextData.formData;
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  const [otherBlock = {}, otherBlockId] = getPreviousVoltoBlock(
-    index,
-    properties,
-  );
+  const prev = getPreviousVoltoBlock(index, properties);
+  if (!prev) return;
+  const [otherBlock = {}, otherBlockId] = prev;
 
-  if (otherBlock['@type'] !== 'slate') return;
+  // Don't join with required blocks
+  if (data?.required || otherBlock?.required || otherBlock['@type'] !== 'slate')
+    return;
 
   event.stopPropagation();
   event.preventDefault();
 
+  // If the Editor contains no characters TODO: clarify if this special case
+  // really needs to be handled or not. In `joinWithNextBlock` it is not
+  // handled.
   const text = Editor.string(editor, []);
   if (!text) {
-    // we're dealing with an empty paragraph, no sense in merging
     const cursor = getBlockEndAsRange(otherBlock);
-    saveSlateBlockSelection(otherBlockId, cursor);
+    const newFormData = deleteBlock(properties, block);
 
-    setTimeout(() => {
-      onDeleteBlock(block, false);
+    ReactDOM.unstable_batchedUpdates(() => {
+      saveSlateBlockSelection(otherBlockId, cursor);
+
+      onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+      onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+
       onSelectBlock(otherBlockId);
-    }, 10);
+    });
+
     return true;
   }
 
+  // Else the editor contains characters, so we merge the current block's
+  // `editor` with the block before, `otherBlock`.
   mergeSlateWithBlockBackward(editor, otherBlock);
 
-  // const selection = JSON.parse(JSON.stringify(editor.selection));
   const combined = JSON.parse(JSON.stringify(editor.children));
 
-  // TODO: don't remove undo history, etc
-  // Should probably save both undo histories, so that the blocks are split,
-  // the undos can be restored??
-  // TODO: after Enter, the current filled-with-previous-block
-  // block is visible for a fraction of second
+  // TODO: don't remove undo history, etc Should probably save both undo
+  // histories, so that the blocks are split, the undos can be restored??
 
-  const cursor = getBlockEndAsRange(otherBlock);
-  saveSlateBlockSelection(otherBlockId, cursor);
+  const formData = changeBlock(properties, otherBlockId, {
+    '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
+    value: combined,
+    plaintext: serializeNodesToText(combined || []),
+  });
+  const cursor = getBlockEndAsRange(formData[blocksFieldname][otherBlockId]);
+  const newFormData = deleteBlock(formData, block);
 
-  // setTimeout ensures setState has been successfully executed in Form.jsx.
-  // See https://github.com/plone/volto/issues/1519
-  setTimeout(() => {
-    onChangeBlock(otherBlockId, {
-      '@type': 'slate',
-      value: combined,
-      plaintext: serializeNodesToText(combined || []),
-    });
-    setTimeout(() => {
-      onDeleteBlock(block, false);
-      onSelectBlock(otherBlockId);
-    }, 10);
+  ReactDOM.unstable_batchedUpdates(() => {
+    saveSlateBlockSelection(otherBlockId, cursor);
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(otherBlockId);
   });
 
   return true;
 }
 
+/**
+ * Joins the current block (which has the cursor) with the next block to make a
+ * single block.
+ * @param {Editor} editor
+ * @param {KeyboardEvent} event
+ */
 export function joinWithNextBlock({ editor, event }) {
-  // TODO: read block values not from editor properties, but from block
-  // properties
-
   if (!isCursorAtBlockEnd(editor)) return;
 
   const blockProps = editor.getBlockProps();
@@ -93,128 +110,69 @@ export function joinWithNextBlock({ editor, event }) {
     block,
     index,
     saveSlateBlockSelection,
-    onChangeBlock,
-    onDeleteBlock,
     onSelectBlock,
+    data,
   } = blockProps;
 
-  const { formContext } = editor;
-  const properties = formContext.contextData.formData;
-
+  const { properties, onChangeField } = editor.getBlockProps();
   const [otherBlock = {}, otherBlockId] = getNextVoltoBlock(index, properties);
 
-  if (otherBlock['@type'] !== 'slate') return;
+  // Don't join with required blocks
+  if (data?.required || otherBlock?.required || otherBlock['@type'] !== 'slate')
+    return;
 
   event.stopPropagation();
   event.preventDefault();
 
   mergeSlateWithBlockForward(editor, otherBlock);
 
-  const selection = JSON.parse(JSON.stringify(editor.selection));
+  const cursor = JSON.parse(JSON.stringify(editor.selection));
   const combined = JSON.parse(JSON.stringify(editor.children));
 
-  // TODO: don't remove undo history, etc
-  // Should probably save both undo histories, so that the blocks are split,
-  // the undos can be restored??
-  // TODO: after Enter, the current filled-with-previous-block
-  // block is visible for a fraction of second
+  // TODO: don't remove undo history, etc Should probably save both undo
+  // histories, so that the blocks are split, the undos can be restored??
 
-  const cursor = selection;
-  saveSlateBlockSelection(otherBlockId, cursor);
+  const blocksFieldname = getBlocksFieldname(properties);
+  const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
-  // setTimeout ensures setState has been successfully executed in Form.jsx.
-  // See https://github.com/plone/volto/issues/1519
-  setTimeout(() => {
-    onChangeBlock(otherBlockId, {
-      '@type': 'slate',
-      value: combined,
-      plaintext: serializeNodesToText(combined || []),
-    });
-    setTimeout(() => {
-      onDeleteBlock(block, false);
-      onSelectBlock(otherBlockId);
-    });
+  const formData = changeBlock(properties, otherBlockId, {
+    // TODO: use a constant specified in src/constants.js instead of 'slate'
+    '@type': 'slate',
+    value: combined,
+    plaintext: serializeNodesToText(combined || []),
   });
+  const newFormData = deleteBlock(formData, block);
 
+  ReactDOM.unstable_batchedUpdates(() => {
+    saveSlateBlockSelection(otherBlockId, cursor);
+    onChangeField(blocksFieldname, newFormData[blocksFieldname]);
+    onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
+    onSelectBlock(otherBlockId);
+  });
   return true;
 }
 
-/*
- * Join current block with neighbor block, if the blocks are compatible.
+/**
+ * @param {object} block The Volto object representing the configuration and
+ * contents of a Volto Block of type Slate Text.
+ * @returns {Range} The collapsed Slate Range that represents the last position
+ * the text cursor can take inside the given block.
  */
-export function joinWithNeighborBlock(
-  getNeighborVoltoBlock,
-  getCursorPosition,
-  isValidOp,
-  mergeOp,
-) {
-  return ({ editor, event }) => {
-    // TODO: read block values not from editor properties, but from block
-    // properties
-    const blockProps = editor.getBlockProps();
-    const {
-      block,
-      index,
-      saveSlateBlockSelection,
-      onChangeBlock,
-      onDeleteBlock,
-      onSelectBlock,
-    } = blockProps;
-
-    const { formContext } = editor;
-    const properties = formContext.contextData.formData;
-
-    const [otherBlock = {}, otherBlockId] = getNeighborVoltoBlock(
-      index,
-      properties,
-    );
-
-    if (!isValidOp(editor)) return;
-
-    if (otherBlock['@type'] !== 'slate') return;
-
-    event.stopPropagation();
-    event.preventDefault();
-
-    mergeOp(editor, otherBlock);
-
-    const selection = JSON.parse(JSON.stringify(editor.selection));
-    const combined = JSON.parse(JSON.stringify(editor.children));
-
-    // TODO: don't remove undo history, etc
-    // Should probably save both undo histories, so that the blocks are split,
-    // the undos can be restored??
-    // TODO: after Enter, the current filled-with-previous-block
-    // block is visible for a fraction of second
-
-    const cursor = getCursorPosition(otherBlock, selection);
-    saveSlateBlockSelection(otherBlockId, cursor);
-
-    // setTimeout ensures setState has been successfully executed in Form.jsx.
-    // See https://github.com/plone/volto/issues/1519
-    setTimeout(() => {
-      onChangeBlock(otherBlockId, {
-        '@type': 'slate',
-        value: combined,
-        plaintext: serializeNodesToText(combined || []),
-      });
-      setTimeout(() => {
-        onDeleteBlock(block, false);
-        onSelectBlock(otherBlockId);
-      });
-    });
-
-    return true;
-  };
-}
-
 function getBlockEndAsRange(block) {
+  // The value of the Slate Text Volto block.
   const { value } = block;
+  // The Slate Path representing the last root-level Slate block inside the
+  // Volto block.
   const location = [value.length - 1];
+  // The Slate Node that represents all the contents of the given Volto block.
   const editor = { children: value };
+  // The path of the last Slate Node in the last Slate Path computed above.
   const path = Editor.last(editor, location)[1];
+  // The last Text node (leaf node) entry inside the path computed just above.
   const [leaf, leafpath] = Editor.leaf(editor, path);
+  // The offset of the Points in the collapsed Range computed below:
   const offset = (leaf.text || '').length;
+
   return {
     anchor: { path: leafpath, offset },
     focus: { path: leafpath, offset },

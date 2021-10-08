@@ -7,9 +7,8 @@ import tableSVG from '@plone/volto/icons/table.svg';
 import TableContainer from './TableContainer';
 import './less/table.less';
 import { Editor, Transforms } from 'slate';
-import { deconstructToVoltoBlocks } from 'volto-slate/utils';
 
-const TableButton = () => {
+const TableButton = ({ ...props }) => {
   const editor = useSlate();
 
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -75,8 +74,6 @@ const TableButton = () => {
       Transforms.insertNodes(editor, [table], {
         at: Editor.end(editor, []),
       });
-
-      deconstructToVoltoBlocks(editor);
     },
     [createEmptyRow, editor],
   );
@@ -91,6 +88,7 @@ const TableButton = () => {
         }}
         trigger={
           <ToolbarButton
+            {...props}
             className="slate-table-dropdown-button"
             onClick={() => {
               if (dropdownOpen) {

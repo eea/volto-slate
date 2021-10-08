@@ -1,7 +1,6 @@
-import { Node } from 'slate';
-import { ReactEditor } from 'slate-react';
+import { Node, Range } from 'slate';
 
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 /**
  * highlightByType.
@@ -11,7 +10,7 @@ import { settings } from '~/config';
  * @param {} ranges
  */
 export const highlightByType = (editor, [node, path], ranges) => {
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { nodeTypesToHighlight } = slate;
 
   if (nodeTypesToHighlight.includes(node.type)) {
@@ -43,24 +42,22 @@ export const highlightByType = (editor, [node, path], ranges) => {
  * @param {Array} ranges
  */
 export function highlightSelection(editor, [node, path], ranges) {
-  let selected = ReactEditor.isFocused(editor);
+  let selected = editor.isSelected();
 
-  // Compatibility with Volto blocks
-  if (editor.getBlockProps) {
-    const blockProps = editor.getBlockProps();
-    selected = blockProps.selected;
-  }
-
-  if (selected && !editor.selection && editor.savedSelection) {
-    const newSelection = editor.savedSelection;
+  if (selected && !editor.selection && editor.getSavedSelection()) {
+    const newSelection = editor.getSavedSelection();
     if (JSON.stringify(path) === JSON.stringify(newSelection.anchor.path)) {
       const range = {
         ...newSelection,
         highlight: true,
         isSelection: true,
       };
-      ranges.push(range);
+      if (Range.isExpanded(range)) {
+        ranges.push(range);
+      }
     }
   }
+  // if (ranges.length) console.log('RANGES!', ranges, editor.children);
+  // console.log(node, path, editor.savedSelection);
   return ranges;
 }

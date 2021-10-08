@@ -1,23 +1,10 @@
-/**
- * Edit text cell block.
- * @module volto-slate/Table/Cell
- */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { SlateEditor } from 'volto-slate/editor';
+import { EditorReference, SlateEditor } from 'volto-slate/editor';
+import { ReactEditor } from 'slate-react';
+import config from '@plone/volto/registry';
 
-/**
- * Edit text cell class.
- * @class Cell
- * @extends Component
- */
 class Cell extends Component {
-  /**
-   * Property types.
-   * @property {Object} propTypes Property types.
-   * @static
-   */
   static propTypes = {
     onSelectCell: PropTypes.func.isRequired,
     row: PropTypes.number,
@@ -28,104 +15,71 @@ class Cell extends Component {
     isTableBlockSelected: PropTypes.bool,
   };
 
-  /**
-   * Default properties
-   * @property {Object} defaultProps Default properties.
-   * @static
-   */
   static defaultProps = {};
 
-  /**
-   * Constructor
-   * @method constructor
-   * @param {Object} props Component properties
-   * @constructs Cell
-   */
   constructor(props) {
     super(props);
 
-    this.state = {
-      selected: this.props.selected,
-    };
-    // if (!__SERVER__) {
-    // }
+    this.onChange = this.onChange.bind(this);
+    this.handleContainerFocus = this.handleContainerFocus.bind(this);
+    this.state = { editor: null };
+    this.tableblockExtensions = config.settings.slate.tableblockExtensions;
   }
 
-  /**
-   * Component did mount lifecycle method
-   * @method componentDidMount
-   * @returns {undefined}
-   */
-  componentDidMount() {
-    this.state.selected &&
-      this.props.onSelectCell(this.props.row, this.props.cell);
+  componentWillUnmount() {
+    this.isUnmounted = true;
   }
 
-  handleBlur() {
-    this.setState({ selected: false });
-  }
-
-  handleFocus() {
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
-  }
-
-  /**
-   * Component will receive props
-   * @method componentWillReceiveProps
-   * @param {Object} nextProps Next properties
-   * @returns {undefined}
-   */
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     if (
-      nextProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      prevProps.isTableBlockSelected !== this.props.isTableBlockSelected &&
+      this.props.isTableBlockSelected &&
       this.props.cell === 0 &&
-      this.props.row === 0
+      this.props.row === 0 &&
+      (!this.props.selectedCell ||
+        (this.props.selectedCell.row === 0 &&
+          this.props.selectedCell.cell === 0))
     ) {
-      this.setState({ selected: this.props.selected });
+      this.props.onSelectCell(this.props.row, this.props.cell);
+
+      // Wait for Slate to initialize before asking it to focus
+      if (this.state.editor) {
+        setTimeout(
+          () => !this.isUnmounted && ReactEditor.focus(this.state.editor),
+          0,
+        );
+      }
     }
   }
 
-  /**
-   * Change handler
-   * @method onChange
-   * @param {array} val Current value in the Slate editor.
-   * @returns {undefined}
-   */
   onChange(val) {
     this.props.onChange(this.props.row, this.props.cell, [...val]);
   }
 
   handleContainerFocus() {
-    this.setState({ selected: true }, () => {
-      this.props.onSelectCell(this.props.row, this.props.cell);
-    });
+    this.props.onSelectCell(this.props.row, this.props.cell);
   }
 
-  /**
-   * Render method.
-   * @method render
-   * @returns {string} Markup for the component.
-   */
   render() {
-    // if (__SERVER__) {
-    //   return <div />;
-    // }
-
-    // TODO: Tab works well to go through cells in the table, but Shift-Tab does nothing
     return (
-      // The tabIndex is required for the keyboard navigation
-      /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-      <div onFocus={this.handleContainerFocus.bind(this)} tabIndex={0}>
+      __CLIENT__ && (
         <SlateEditor
-          onChange={this.onChange.bind(this)}
+          tabIndex={0}
+          onChange={this.onChange}
+          extensions={this.tableblockExtensions}
           value={this.props.value}
-          selected={this.state.selected}
-          onFocus={this.handleFocus.bind(this)}
-          onBlur={this.handleBlur.bind(this)}
-        />
-      </div>
+          selected={this.props.selected}
+          onFocus={this.handleContainerFocus}
+          onClick={this.handleContainerFocus}
+          debug={false}
+        >
+          <EditorReference
+            onHasEditor={(editor) =>
+              !this.state.editor && this.setState({ editor })
+            }
+          />
+        </SlateEditor>
+      )
     );
   }
 }

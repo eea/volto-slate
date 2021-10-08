@@ -1,24 +1,50 @@
-import React from 'react';
+import { defineMessages } from 'react-intl'; // , defineMessages
+import linkSVG from '@plone/volto/icons/link.svg';
+import { makeInlineElementPlugin } from 'volto-slate/components/ElementEditor';
 
-import LinkButton from './LinkButton';
-import { withLinks } from './extensions';
-import { LinkElement } from './render';
 import { LINK } from 'volto-slate/constants';
+import { LinkElement } from './render';
+import { withLink } from './extensions';
 import { linkDeserializer } from './deserialize';
+import LinkEditSchema from './schema';
 
-export default function install(config) {
+const messages = defineMessages({
+  edit: {
+    id: 'Edit link',
+    defaultMessage: 'Edit link',
+  },
+  delete: {
+    id: 'Remove link',
+    defaultMessage: 'Remove link',
+  },
+});
+
+export default (config) => {
   const { slate } = config.settings;
 
-  slate.elements[LINK] = LinkElement;
-  slate.extensions = [...(slate.extensions || []), withLinks];
-
-  slate.buttons.link = (props) => <LinkButton {...props} />;
-  slate.toolbarButtons = [...(slate.toolbarButtons || []), 'link'];
+  slate.toolbarButtons = [...(slate.toolbarButtons || []), LINK];
   slate.expandedToolbarButtons = [
     ...(slate.expandedToolbarButtons || []),
-    'link',
+    LINK,
   ];
 
   slate.htmlTagsToSlate.A = linkDeserializer;
+
+  const opts = {
+    title: 'Link',
+    pluginId: LINK,
+    elementType: LINK,
+    element: LinkElement,
+    isInlineElement: true,
+    editSchema: LinkEditSchema,
+    extensions: [withLink],
+    hasValue: (formData) => !!formData.link,
+    toolbarButtonIcon: linkSVG,
+    messages,
+  };
+
+  const [installLinkEditor] = makeInlineElementPlugin(opts);
+  config = installLinkEditor(config);
+
   return config;
-}
+};

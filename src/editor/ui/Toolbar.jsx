@@ -5,7 +5,13 @@ import { useSlate } from 'slate-react';
 import Separator from './Separator';
 import BasicToolbar from './BasicToolbar';
 
-const Toolbar = ({ toggleButton, children }) => {
+const Toolbar = ({
+  enableExpando = false,
+  toggleButton,
+  className,
+  children,
+  show = true,
+}) => {
   const ref = useRef();
   const editor = useSlate();
 
@@ -17,17 +23,29 @@ const Toolbar = ({ toggleButton, children }) => {
       return;
     }
 
+    if (!show) {
+      el.removeAttribute('style');
+      return;
+    }
+
     const { selection } = editor;
+    // const savedSelection = editor.getSavedSelection();
     if (!selection) {
       el.removeAttribute('style');
       return;
     }
 
-    const domSelection = window.getSelection();
-    // See
-    // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
-    if (domSelection.rangeCount < 1) {
+    if (editor.isSidebarOpen) {
       el.removeAttribute('style');
+      return;
+    }
+
+    const domSelection = window.getSelection();
+    if (domSelection.rangeCount < 1) {
+      // don't do anything here, this happens when opening a focus-stealing
+      // component, in which case we actually want to keep the toolbar open
+      // See
+      // https://stackoverflow.com/questions/22935320/uncaught-indexsizeerror-failed-to-execute-getrangeat-on-selection-0-is-not
       return;
     }
     const domRange = domSelection.getRangeAt(0);
@@ -43,9 +61,9 @@ const Toolbar = ({ toggleButton, children }) => {
 
   return (
     <Portal>
-      <BasicToolbar className="slate-inline-toolbar" ref={ref}>
+      <BasicToolbar className={`slate-inline-toolbar ${className}`} ref={ref}>
         {children}
-        {toggleButton && (
+        {enableExpando && toggleButton && (
           <>
             <Separator />
             {toggleButton}

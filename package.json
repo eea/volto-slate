@@ -1,34 +1,72 @@
 {
   "name": "volto-slate",
-  "version": "0.4.1",
+  "version": "4.0.3",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prettier": "./node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "prettier:fix": "./node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "lint": "./node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
-    "lint:fix": "./node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'"
-  },
-  "author": "Tiberiu Ichim",
-  "license": "ISC",
+  "author": "European Environment Agency: IDM2 A-Team",
+  "license": "MIT",
+  "homepage": "https://github.com/eea/volto-slate",
+  "keywords": [
+    "volto-addon",
+    "volto-slate",
+    "volto-slate-addon",
+    "volto",
+    "plone",
+    "react"
+  ],
+  "addons": [
+    "@eeacms/volto-object-widget"
+  ],
   "dependencies": {
-    "@types/jest": "^25.2.3",
+    "react-intersection-observer": "^8.32.0",
+    "@eeacms/volto-object-widget": "*",
     "classnames": "2.2.6",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
     "jsdom": "16.2.2",
-    "slate": "^0.58.3",
-    "slate-history": "^0.58.3",
-    "slate-hyperscript": "^0.58.3",
-    "slate-plain-serializer": "0.7.13",
-    "slate-react": "^0.58.3",
+    "react-visibility-sensor": "5.1.1",
+    "slate": "^0.66.5",
+    "slate-history": "^0.66.0",
+    "slate-hyperscript": "^0.66.0",
+    "slate-react": "^0.66.4",
     "weak-key": "^1.0.2"
   },
+  "peerDependencies": {
+    "@plone/volto": ">=12.1.2"
+  },
   "devDependencies": {
-    "babel-plugin-istanbul": "6.0.0",
-    "eslint": "7.3.1",
-    "eslint-plugin-react": "^7.20.3",
-    "prettier": "2.0.5"
+    "@testing-library/react": "9.5.0",
+    "@types/jest": "^25.2.3",
+    "@cypress/code-coverage": "^3.9.5",
+    "babel-plugin-transform-class-properties": "^6.24.1"
+  },
+  "resolutions": {
+    "jest-environment-jsdom": "^26.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eea/volto-slate.git"
+  },
+  "scripts": {
+    "release": "release-it",
+    "bootstrap": "node bootstrap",
+    "test": "make test",
+    "test:fix": "make test-update",
+    "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",
+    "stylelint:overrides": "../../../node_modules/.bin/stylelint --syntax less --allow-empty-input 'theme/**/*.overrides' 'src/**/*.overrides'",
+    "stylelint:fix": "yarn stylelint --fix && yarn stylelint:overrides --fix",
+    "prettier": "../../../node_modules/.bin/prettier --single-quote --check 'src/**/*.{js,jsx,json,css,less,md}'",
+    "prettier:fix": "../../../node_modules/.bin/prettier --single-quote --write 'src/**/*.{js,jsx,json,css,less,md}'",
+    "lint": "../../../node_modules/eslint/bin/eslint.js --max-warnings=0 'src/**/*.{js,jsx}'",
+    "lint:fix": "../../../node_modules/eslint/bin/eslint.js --fix 'src/**/*.{js,jsx}'",
+    "cypress:run": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress run; else ../../../node_modules/cypress/bin/cypress run; fi",
+    "cypress:open": "if [ -d ./project ]; then ./project/node_modules/cypress/bin/cypress open; else ../../../node_modules/cypress/bin/cypress open; fi",
+    "i18n": "mv .i18n.babel.config.js babel.config.js; rm -rf build/messages && NODE_ENV=production node src/i18n.js; mv babel.config.js .i18n.babel.config.js",
+    "cypress:start-frontend": "cd ../../../ && RAZZLE_API_PATH=http://localhost:55001/plone yarn start",
+    "ci:cypress:run": "make cypress",
+    "ci:cypress": "start-test ci:test-acceptance-server http-get://localhost:55001/plone ci:cypress:run",
+    "ci:test-acceptance-server": "make test-acceptance-server",
+    "cy:test:fixture:setup": "node cypress/support/reset-fixture.js",
+    "cy:test:fixture:teardown": "node cypress/support/reset-fixture.js teardown"
   }
 }

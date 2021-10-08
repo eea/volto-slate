@@ -1,35 +1,60 @@
+import ReactDOM from 'react-dom';
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Dimmer, Loader, Message } from 'semantic-ui-react';
 import { readAsDataURL } from 'promise-file-reader';
+import Dropzone from 'react-dropzone';
+import { defineMessages, useIntl } from 'react-intl';
+import { useInView } from 'react-intersection-observer';
+import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 
-import { Icon, BlockChooser, SidebarPortal } from '@plone/volto/components';
-import { useFormStateContext } from '@plone/volto/components/manage/Form/FormContext';
-import { uploadContent } from 'volto-slate/actions';
-import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
-import addSVG from '@plone/volto/icons/circle-plus.svg';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
+import {
+  InlineForm,
+  SidebarPortal,
+  BlockChooserButton,
+} from '@plone/volto/components';
 
 import { saveSlateBlockSelection } from 'volto-slate/actions';
 import { SlateEditor } from 'volto-slate/editor';
 import { serializeNodesToText } from 'volto-slate/editor/render';
+import {
+  createImageBlock,
+  parseDefaultSelection,
+  deconstructToVoltoBlocks,
+} from 'volto-slate/utils';
+import { uploadContent } from 'volto-slate/actions';
+import { Transforms } from 'slate';
+
 import ShortcutListing from './ShortcutListing';
-import { handleKey } from './keyboard';
-import Dropzone from 'react-dropzone';
-import './styles.css';
-import { createImageBlock } from 'volto-slate/utils';
+import MarkdownIntroduction from './MarkdownIntroduction';
+import { handleKey, handleKeyDetached } from './keyboard';
+import TextBlockSchema from './schema';
+
+import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
+
+import './css/editor.css';
 
 // TODO: refactor dropzone to separate component wrapper
 
-const TextBlockEdit = (props) => {
+const messages = defineMessages({
+  text: {
+    id: 'Type text…',
+    defaultMessage: 'Type text…',
+  },
+});
+
+const DEBUG = false;
+
+export const DefaultTextBlockEditor = (props) => {
   const {
     block,
+    blocksConfig,
     data,
-    detached,
+    detached = false,
     index,
-    onAddBlock,
     onChangeBlock,
+    onInsertBlock,
     onMutateBlock,
     onSelectBlock,
     pathname,
@@ -38,32 +63,30 @@ const TextBlockEdit = (props) => {
     uploadRequest,
     uploadContent,
     uploadedContent,
+    defaultSelection,
+    saveSlateBlockSelection,
+    allowedBlocks,
+    formTitle,
+    formDescription,
   } = props;
 
-  const { slate } = settings;
+  const { slate } = config.settings;
   const { textblockExtensions } = slate;
   const { value } = data;
 
-  const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
+  // const [addNewBlockOpened, setAddNewBlockOpened] = React.useState();
   const [showDropzone, setShowDropzone] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
   const [newImageId, setNewImageId] = React.useState(null);
 
   const prevReq = React.useRef(null);
 
-  const formContext = useFormStateContext();
-
   const withBlockProperties = React.useCallback(
     (editor) => {
-      editor.getBlockProps = () => {
-        return {
-          ...props,
-        };
-      };
-      editor.formContext = formContext;
+      editor.getBlockProps = () => props;
       return editor;
     },
-    [props, formContext],
+    [props],
   );
 
   const onDrop = React.useCallback(
@@ -102,113 +125,262 @@ const TextBlockEdit = (props) => {
   const imageId = uploadedContent['@id'];
   const prevLoaded = prevReq.current;
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     if (loaded && !loading && !prevLoaded && newImageId !== imageId) {
       const url = flattenToAppURL(imageId);
       setNewImageId(imageId);
-      createImageBlock('', index, {
-        onChangeBlock,
-        onAddBlock,
-      }).then((imageblockid) => {
-        const options = {
-          '@type': 'image',
-          url,
-        };
-        onChangeBlock(imageblockid, options);
-      });
+
+      createImageBlock(url, index, props);
     }
     prevReq.current = loaded;
-  }, [
-    loaded,
-    loading,
-    prevLoaded,
-    imageId,
-    newImageId,
-    index,
-    onChangeBlock,
-    onAddBlock,
-  ]);
+  }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
+
+  const handleUpdate = React.useCallback(
+    (editor) => {
+      // defaultSelection is used for things such as "restoring" the selection
+      // when joining blocks or moving the selection to block start on block
+      // split
+      if (defaultSelection) {
+        const selection = parseDefaultSelection(editor, defaultSelection);
+        if (selection) {
+          setTimeout(() => {
+            Transforms.select(editor, selection);
+            saveSlateBlockSelection(block, null);
+          }, 120);
+          // TODO: use React sync render API
+          // without setTimeout, the join is not correct. Slate uses internally
+          // a 100ms throttle, so setting to a bigger value seems to help
+        }
+      }
+    },
+    [defaultSelection, block, saveSlateBlockSelection],
+  );
+
+  const onEditorChange = (value, editor) => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      onChangeBlock(block, {
+        ...data,
+        value,
+        plaintext: serializeNodesToText(value || []),
+        // TODO: also add html serialized value
+      });
+      deconstructToVoltoBlocks(editor);
+    });
+  };
+
+  // Get editing instructions from block settings or props
+  let instructions = data?.instructions?.data || data?.instructions;
+  if (!instructions || instructions === '<p><br/></p>') {
+    instructions = formDescription;
+  }
+
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
+  const schema = TextBlockSchema(data);
+
+  const disableNewBlocks = data?.disableNewBlocks || detached;
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '0px 0px 200px 0px',
+  });
 
   return (
-    <>
-      <SidebarPortal selected={selected}>
-        <div id="slate-plugin-sidebar"></div>
-        <ShortcutListing />
-      </SidebarPortal>
-
-      <Dropzone
-        disableClick
-        onDrop={onDrop}
-        className="dropzone"
-        onDragOver={() => setShowDropzone(true)}
-        onDragLeave={() => setShowDropzone(false)}
-      >
-        {showDropzone ? (
-          <div className="drop-indicator">
-            {uploading ? (
-              <Dimmer active>
-                <Loader indeterminate>Uploading image</Loader>
-              </Dimmer>
+    <div className="text-slate-editor-inner" ref={ref}>
+      <>
+        <Dropzone
+          disableClick
+          onDrop={onDrop}
+          className="dropzone"
+          onDragOver={() => setShowDropzone(true)}
+          onDragLeave={() => setShowDropzone(false)}
+        >
+          {({ getRootProps, getInputProps }) => {
+            return showDropzone ? (
+              <div className="drop-indicator">
+                {uploading ? (
+                  <Dimmer active>
+                    <Loader indeterminate>Uploading image</Loader>
+                  </Dimmer>
+                ) : (
+                  <Message>
+                    <center>
+                      <img src={imageBlockSVG} alt="" />
+                    </center>
+                  </Message>
+                )}
+              </div>
             ) : (
-              <Message>
-                <center>
-                  <img src={imageBlockSVG} alt="" />
-                </center>
-              </Message>
-            )}
-          </div>
-        ) : (
-          <SlateEditor
-            index={index}
-            properties={properties}
-            onAddBlock={onAddBlock}
-            extensions={textblockExtensions}
-            renderExtensions={[withBlockProperties]}
-            onSelectBlock={onSelectBlock}
-            value={value}
+              <>
+                <SlateEditor
+                  index={index}
+                  readOnly={!inView}
+                  properties={properties}
+                  extensions={textblockExtensions}
+                  renderExtensions={[withBlockProperties]}
+                  value={value}
+                  block={block /* is this needed? */}
+                  onUpdate={handleUpdate}
+                  debug={DEBUG}
+                  onFocus={() => {
+                    if (!selected) {
+                      onSelectBlock(block);
+                    }
+                  }}
+                  onChange={(value, editor) => onEditorChange(value, editor)}
+                  onKeyDown={handleKey}
+                  selected={selected}
+                  placeholder={placeholder}
+                />
+                {DEBUG ? <div>{block}</div> : ''}
+              </>
+            );
+          }}
+        </Dropzone>
+
+        {selected && !data.plaintext && !disableNewBlocks && (
+          <BlockChooserButton
+            data={data}
             block={block}
-            onChange={(value, selection) => {
-              onChangeBlock(block, {
-                ...data,
-                value,
-                plaintext: serializeNodesToText(value || []),
-                // TODO: also add html serialized value
-              });
+            onInsertBlock={(id, value) => {
+              onSelectBlock(onInsertBlock(id, value));
             }}
-            onClick={(ev) => {
-              // this is needed so that the click event does
-              // not bubble up to the Blocks/Block/Edit.jsx component
-              // which attempts to focus the TextBlockEdit on
-              // click and this behavior breaks user selection, e.g.
-              // when clicking once a selected word
-              ev.stopPropagation();
-            }}
-            onKeyDown={handleKey}
-            selected={selected}
-            placeholder={data.placeholder || 'Enter some rich text…'}
+            onMutateBlock={onMutateBlock}
+            allowedBlocks={allowedBlocks}
+            blocksConfig={blocksConfig}
+            size="24px"
+            className="block-add-button"
+            properties={properties}
           />
         )}
-      </Dropzone>
-      {!detached && !data.plaintext && (
-        <Button
-          basic
-          icon
-          onClick={() => setAddNewBlockOpened(!addNewBlockOpened)}
-          className="block-add-button"
-        >
-          <Icon name={addSVG} className="block-add-button" size="24px" />
-        </Button>
-      )}
-      {addNewBlockOpened && (
-        <BlockChooser onMutateBlock={onMutateBlock} currentBlock={block} />
-      )}
-    </>
+
+        <SidebarPortal selected={selected}>
+          <div id="slate-plugin-sidebar"></div>
+          {instructions ? (
+            <Segment attached>
+              <div dangerouslySetInnerHTML={{ __html: instructions }} />
+            </Segment>
+          ) : (
+            <>
+              <ShortcutListing />
+              <MarkdownIntroduction />
+              <InlineForm
+                schema={schema}
+                title={schema.title}
+                onChangeField={(id, value) => {
+                  onChangeBlock(block, {
+                    ...data,
+                    [id]: value,
+                  });
+                }}
+                formData={data}
+              />
+            </>
+          )}
+        </SidebarPortal>
+      </>
+    </div>
+  );
+};
+
+export const DetachedTextBlockEditor = (props) => {
+  const {
+    data,
+    index,
+    properties,
+    onSelectBlock,
+    onChangeBlock,
+    block,
+    selected,
+    formTitle,
+    formDescription,
+  } = props;
+  const { value } = data;
+
+  const schema = TextBlockSchema(data);
+  const intl = useIntl();
+  const placeholder =
+    data.placeholder || formTitle || intl.formatMessage(messages.text);
+  let instructions = data?.instructions?.data || data?.instructions;
+  if (!instructions || instructions === '<p><br/></p>') {
+    instructions = formDescription;
+  }
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+    rootMargin: '0px 0px 200px 0px',
+  });
+
+  return (
+    <div className="text-slate-editor-inner detached-slate-editor" ref={ref}>
+      <SlateEditor
+        index={index}
+        readOnly={!inView}
+        properties={properties}
+        renderExtensions={[]}
+        value={value}
+        block={block /* is this needed? */}
+        debug={DEBUG}
+        onFocus={() => {
+          if (!selected) {
+            onSelectBlock(block);
+          }
+        }}
+        onChange={(value, selection, editor) => {
+          onChangeBlock(block, {
+            ...data,
+            value,
+            plaintext: serializeNodesToText(value || []),
+            // TODO: also add html serialized value
+          });
+        }}
+        selected={selected}
+        placeholder={placeholder}
+        onKeyDown={handleKeyDetached}
+      />
+      <SidebarPortal selected={selected}>
+        <div id="slate-plugin-sidebar"></div>
+        {instructions ? (
+          <Segment attached>
+            <div dangerouslySetInnerHTML={{ __html: instructions }} />
+          </Segment>
+        ) : (
+          <>
+            <ShortcutListing />
+            <MarkdownIntroduction />
+            <InlineForm
+              schema={schema}
+              title={schema.title}
+              onChangeField={(id, value) => {
+                onChangeBlock(block, {
+                  ...data,
+                  [id]: value,
+                });
+              }}
+              formData={data}
+            />
+          </>
+        )}
+      </SidebarPortal>
+    </div>
+  );
+};
+
+const TextBlockEdit = (props) => {
+  return props.detached ? ( // || props.disableNewBlocks
+    <DetachedTextBlockEditor {...props} />
+  ) : (
+    <DefaultTextBlockEditor {...props} />
   );
 };
 
 export default connect(
   (state, props) => {
+    const blockId = props.block;
     return {
+      defaultSelection: blockId
+        ? state.slate_block_selections?.[blockId]
+        : null,
       uploadRequest: state.upload_content?.[props.block]?.upload || {},
       uploadedContent: state.upload_content?.[props.block]?.data || {},
     };

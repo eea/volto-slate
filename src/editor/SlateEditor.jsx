@@ -1,196 +1,299 @@
 import cx from 'classnames';
-import { createEditor, Transforms } from 'slate';
-import { Slate, Editable, withReact, ReactEditor } from 'slate-react';
-import { withHistory } from 'slate-history';
-import React, { useState } from 'react';
+import { isEqual } from 'lodash';
+import { Node, Transforms } from 'slate'; // , Transforms
+import { Slate, Editable, ReactEditor } from 'slate-react';
+import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
+
+import config from '@plone/volto/registry';
 
 import { Element, Leaf } from './render';
-import { SlateToolbar, SlateContextToolbar } from './ui';
-import { settings } from '~/config';
+import makeEditor from './makeEditor';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { fixSelection, hasRangeSelection } from 'volto-slate/utils';
+import { toggleInlineFormat, toggleMark } from 'volto-slate/utils';
+import { InlineToolbar } from './ui';
+import EditorContext from './EditorContext';
 
 import isHotkey from 'is-hotkey';
-import { toggleMark } from 'volto-slate/utils';
 
 import './less/editor.less';
 
-const SlateEditor = ({
-  selected,
-  value,
-  onChange,
-  placeholder,
-  onKeyDown,
-  properties,
-  defaultSelection, // TODO: use useSelector
-  extensions,
-  renderExtensions = [],
-  testingEditorRef,
-  ...rest
-}) => {
-  const { slate } = settings;
+const handleHotKeys = (editor, event, config) => {
+  let wasHotkey = false;
 
-  const [showToolbar, setShowToolbar] = useState(false);
+  for (const hk of Object.entries(config.hotkeys)) {
+    const [shortcut, { format, type }] = hk;
+    if (isHotkey(shortcut, event)) {
+      event.preventDefault();
 
-  const defaultExtensions = slate.extensions;
-  let editor = React.useMemo(() => {
-    const raw = withHistory(withReact(createEditor()));
-    const plugins = [...defaultExtensions, ...extensions];
-    return plugins.reduce((acc, apply) => apply(acc), raw);
-  }, [defaultExtensions, extensions]);
-
-  // renderExtensions is needed because the editor is memoized, so if these
-  // extensions need an updated state (for example to insert updated
-  // blockProps) then we need to always wrap the editor with them
-  editor = renderExtensions.reduce((acc, apply) => apply(acc), editor);
-
-  // Save a copy of the selection in the editor. Sometimes the editor loses its
-  // selection (because it is tied to DOM events). For example, if I'm in the
-  // editor and I open a popup dialog with text inputs, the Slate editor loses
-  // its selection, but I want to keep that selection because my operations
-  // should apply to it).
-
-  const selection = JSON.stringify(editor?.selection || {});
-  const initial_selection = React.useRef();
-  const [savedSelection, setSavedSelection] = React.useState();
-  editor.setSavedSelection = setSavedSelection;
-  editor.savedSelection = savedSelection;
-
-  React.useEffect(() => {
-    if (selected && selection && JSON.parse(selection).anchor) {
-      setSavedSelection(JSON.parse(selection));
-    }
-  }, [selection, selected, editor]);
-
-  /*
-   * We 'restore' the selection because we manipulate it in several cases:
-   * - when blocks are artificially joined, we set the selection at junction
-   * - when moving up, we set it at end of previous blok
-   * - when moving down, we set it at beginning of next block
-   */
-  React.useLayoutEffect(() => {
-    if (selected) {
-      ReactEditor.focus(editor);
-
-      // This makes the Backspace key work properly in block.
-      // Don't remove it, unless this test passes:
-      // - with the Slate block unselected, click in the block.
-      // - Hit backspace. If it deletes, then the test passes
-      fixSelection(editor);
-      setSavedSelection(JSON.parse(JSON.stringify(editor.selection)));
-
-      if (defaultSelection) {
-        if (initial_selection.current !== defaultSelection) {
-          initial_selection.current = defaultSelection;
-          setTimeout(() => Transforms.select(editor, defaultSelection), 0);
-        }
-        return () => ReactEditor.blur(editor);
+      if (type === 'inline') {
+        toggleInlineFormat(editor, format);
+      } else {
+        // type === 'mark'
+        toggleMark(editor, format);
       }
+
+      wasHotkey = true;
     }
-    return () => ReactEditor.blur(editor);
-  }, [editor, selected, defaultSelection]);
-
-  const initialValue = slate.defaultValue();
-
-  // Decorations (such as higlighting node types, selection, etc).
-  const { runtimeDecorators = [] } = slate;
-
-  const multiDecorate = React.useCallback(
-    ([node, path]) => {
-      return runtimeDecorators.reduce(
-        (acc, deco) => deco(editor, [node, path], acc),
-        [],
-      );
-    },
-    [editor, runtimeDecorators],
-  );
-
-  if (testingEditorRef) {
-    testingEditorRef.current = editor;
   }
 
-  const j_value = JSON.stringify(value);
-  const handleChange = React.useCallback(
-    (newValue) => {
-      if (JSON.stringify(newValue) !== j_value) {
-        onChange(newValue);
-      }
-    },
-    [j_value, onChange],
-  );
-
-  return (
-    <div
-      {...rest['debug-values']} // used for `data-` HTML attributes set in the withTestingFeatures HOC
-      className={cx('slate-editor', { 'show-toolbar': showToolbar, selected })}
-    >
-      <Slate
-        editor={editor}
-        value={value || initialValue}
-        onChange={handleChange}
-      >
-        {selected ? (
-          hasRangeSelection(editor) ? (
-            <SlateToolbar
-              selected={selected}
-              showToolbar={showToolbar}
-              setShowToolbar={setShowToolbar}
-            />
-          ) : (
-            <SlateContextToolbar
-              editor={editor}
-              plugins={slate.contextToolbarButtons}
-            />
-          )
-        ) : (
-          ''
-        )}
-        <Editable
-          readOnly={!selected}
-          placeholder={placeholder}
-          renderElement={(props) => <Element {...props} />}
-          renderLeaf={(props) => <Leaf {...props} />}
-          decorate={multiDecorate}
-          onKeyDown={(event) => {
-            let wasHotkey = false;
-
-            for (const hotkey in slate.hotkeys) {
-              if (isHotkey(hotkey, event)) {
-                event.preventDefault();
-                const mark = slate.hotkeys[hotkey];
-                toggleMark(editor, mark);
-                wasHotkey = true;
-              }
-            }
-
-            if (wasHotkey) {
-              return;
-            }
-
-            onKeyDown && onKeyDown({ editor, event });
-          }}
-        />
-        {slate.persistentHelpers.map((Helper, i) => {
-          return <Helper key={i} />;
-        })}
-        {/* <div>{JSON.stringify(savedSelection)}</div> */}
-        {/* <div>{JSON.stringify(editor.selection)}</div> */}
-      </Slate>
-    </div>
-  );
+  return wasHotkey;
 };
+
+// TODO: implement onFocus
+class SlateEditor extends Component {
+  constructor(props) {
+    super(props);
+
+    this.createEditor = this.createEditor.bind(this);
+    this.multiDecorator = this.multiDecorator.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.getSavedSelection = this.getSavedSelection.bind(this);
+    this.setSavedSelection = this.setSavedSelection.bind(this);
+
+    this.savedSelection = null;
+
+    const uid = uuid();
+
+    this.state = {
+      editor: this.createEditor(uid),
+      showExpandedToolbar: config.settings.slate.showExpandedToolbar,
+      uid,
+    };
+
+    this.editor = null;
+    this.selectionTimeout = null;
+  }
+
+  getSavedSelection() {
+    return this.savedSelection;
+  }
+  setSavedSelection(selection) {
+    this.savedSelection = selection;
+  }
+
+  createEditor(uid) {
+    const editor = makeEditor({ extensions: this.props.extensions });
+
+    // When the editor loses focus it no longer has a valid selections. This
+    // makes it impossible to have complex types of interactions (like filling
+    // in another text box, operating a select menu, etc). For this reason we
+    // save the active selection
+
+    editor.getSavedSelection = this.getSavedSelection;
+    editor.setSavedSelection = this.setSavedSelection;
+    editor.uid = uid || this.state.uid;
+
+    return editor;
+  }
+
+  handleChange(value) {
+    if (this.props.onChange && !isEqual(value, this.props.value)) {
+      this.props.onChange(value, this.editor);
+    }
+  }
+
+  multiDecorator([node, path]) {
+    // Decorations (such as higlighting node types, selection, etc).
+    const { runtimeDecorators = [] } = config.settings.slate;
+    return runtimeDecorators.reduce(
+      (acc, deco) => deco(this.state.editor, [node, path], acc),
+      [],
+    );
+  }
+
+  componentDidMount() {
+    // watch the dom change
+
+    if (this.props.selected) {
+      let focused = true;
+      try {
+        focused = ReactEditor.isFocused(this.state.editor);
+      } catch {}
+      if (!focused) {
+        setTimeout(() => {
+          try {
+            ReactEditor.focus(this.state.editor);
+          } catch {}
+        }, 100); // flush
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    this.isUnmounted = true;
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!isEqual(prevProps.extensions, this.props.extensions)) {
+      this.setState({ editor: this.createEditor() });
+      return;
+    }
+
+    const { editor } = this.state;
+
+    if (!prevProps.selected && this.props.selected) {
+      if (!ReactEditor.isFocused(this.state.editor)) {
+        //  || !editor.selection
+        setTimeout(() => {
+          if (window.getSelection().type === 'None') {
+            const match = Node.first(this.state.editor, []);
+            const path = match[1];
+            const point = { path, offset: 0 };
+            const selection = { anchor: point, focus: point };
+            Transforms.select(this.state.editor, selection);
+          }
+
+          ReactEditor.focus(this.state.editor);
+        }, 100); // flush
+      }
+    }
+
+    // if (this.props.selected && this.editor && this.editor.selection) {
+    //   this.editor.setSavedSelection(this.editor.selection);
+
+    if (this.props.selected && this.props.onUpdate) {
+      this.props.onUpdate(editor);
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const { selected = true, value, readOnly } = nextProps;
+    const res =
+      selected ||
+      this.props.selected !== selected ||
+      this.props.readOnly !== readOnly ||
+      !isEqual(value, this.props.value);
+    return res;
+  }
+
+  render() {
+    const {
+      selected,
+      value,
+      placeholder,
+      onKeyDown,
+      testingEditorRef,
+      readOnly,
+      className,
+      renderExtensions = [],
+    } = this.props;
+    const { slate } = config.settings;
+
+    // renderExtensions is needed because the editor is memoized, so if these
+    // extensions need an updated state (for example to insert updated
+    // blockProps) then we need to always wrap the editor with them
+    const editor = renderExtensions.reduce(
+      (acc, apply) => apply(acc),
+      this.state.editor,
+    );
+    this.editor = editor;
+
+    if (testingEditorRef) {
+      testingEditorRef.current = editor;
+    }
+
+    // debug-values are `data-` HTML attributes in withTestingFeatures HOC
+
+    return (
+      <div
+        {...this.props['debug-values']}
+        className={cx('slate-editor', {
+          'show-toolbar': this.state.showExpandedToolbar,
+          selected,
+        })}
+        tabIndex="-1"
+      >
+        <EditorContext.Provider value={editor}>
+          <Slate
+            editor={editor}
+            value={value || slate.defaultValue()}
+            onChange={this.handleChange}
+          >
+            {selected ? (
+              <InlineToolbar editor={editor} className={className} />
+            ) : (
+              ''
+            )}
+            <Editable
+              tabIndex={this.props.tabIndex || 0}
+              readOnly={readOnly}
+              placeholder={placeholder}
+              renderElement={(props) => <Element {...props} />}
+              renderLeaf={(props) => <Leaf {...props} />}
+              decorate={this.multiDecorator}
+              spellCheck={false}
+              onBlur={() => {
+                this.props.onBlur && this.props.onBlur();
+                return null;
+              }}
+              onClick={this.props.onClick}
+              onSelect={(e) => {
+                if (!selected && this.props.onFocus) {
+                  // we can't overwrite the onFocus of Editable, as the onFocus
+                  // in Slate has too much builtin behaviour that's not
+                  // accessible otherwise. Instead we try to detect such an
+                  // event based on observing selected state
+                  if (!editor.selection) setTimeout(this.props.onFocus, 100);
+                }
+
+                if (this.selectionTimeout) clearTimeout(this.selectionTimeout);
+                this.selectionTimeout = setTimeout(() => {
+                  if (
+                    editor.selection &&
+                    !isEqual(editor.selection, this.savedSelection) &&
+                    !this.isUnmounted
+                  ) {
+                    this.setState((state) => ({ update: !this.state.update }));
+                    this.setSavedSelection(
+                      JSON.parse(JSON.stringify(editor.selection)),
+                    );
+                  }
+                }, 200);
+              }}
+              onKeyDown={(event) => {
+                const handled = handleHotKeys(editor, event, slate);
+                if (handled) return;
+                onKeyDown && onKeyDown({ editor, event });
+              }}
+            />
+            {selected &&
+              slate.persistentHelpers.map((Helper, i) => {
+                return <Helper key={i} editor={editor} />;
+              })}
+            {this.props.debug ? (
+              <ul>
+                <li>{selected ? 'selected' : 'no-selected'}</li>
+                <li>
+                  savedSelection: {JSON.stringify(editor.getSavedSelection())}
+                </li>
+                <li>live selection: {JSON.stringify(editor.selection)}</li>
+                <li>children: {JSON.stringify(editor.children)}</li>
+                <li> {selected ? 'selected' : 'notselected'}</li>
+                <li>
+                  {ReactEditor.isFocused(editor) ? 'focused' : 'unfocused'}
+                </li>
+              </ul>
+            ) : (
+              ''
+            )}
+            {this.props.children}
+          </Slate>
+        </EditorContext.Provider>
+      </div>
+    );
+  }
+}
 
 SlateEditor.defaultProps = {
   extensions: [],
+  className: '',
 };
 
 export default connect((state, props) => {
-  const blockId = props.block;
-  return {
-    defaultSelection: state.slate_block_selections?.[blockId],
-  };
+  return {};
 })(
   __CLIENT__ && window?.Cypress
     ? withTestingFeatures(SlateEditor)

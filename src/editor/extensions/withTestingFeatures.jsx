@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReactEditor } from 'slate-react';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
@@ -31,13 +32,28 @@ const withTestingFeatures = (WrappedComponent) => {
       // Slate monitors DOM selection changes automatically
     };
 
+    const onTestSelectRange = (val) => {
+      const newDomRange =
+        val && ReactEditor.toDOMRange(window.focusedSlateEditor, val.detail);
+
+      let selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(newDomRange);
+    };
+
     React.useEffect(() => {
       document.addEventListener('Test_SelectWord', onTestSelectWord);
+      document.addEventListener('Test_SelectRange', onTestSelectRange);
 
       return () => {
         document.removeEventListener('Test_SelectWord', onTestSelectWord);
+        document.removeEventListener('Test_SelectRange', onTestSelectRange);
       };
     });
+
+    const handleFocus = React.useCallback(() => {
+      window.focusedSlateEditor = ref?.current;
+    }, []);
 
     return (
       <WrappedComponent
@@ -50,6 +66,7 @@ const withTestingFeatures = (WrappedComponent) => {
           ),
         }}
         testingEditorRef={ref}
+        onFocus={handleFocus}
         {...props}
       />
     );

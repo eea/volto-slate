@@ -1,18 +1,12 @@
-export const LinkSchema = {
-  title: 'Link',
-  // description:
-  //   'Specify the object to link to. It can be on this site already (Internal), an object you upload (Upload), from an external site (External), an email address (Email), or an anchor on this page (Anchor).',
+import externalSVG from '@plone/volto/icons/link.svg';
+import internalSVG from '@plone/volto/icons/nav.svg';
+import emailSVG from '@plone/volto/icons/email.svg';
+import hashlinkSVG from 'volto-slate/icons/hashlink.svg';
+// import pageLinkSVG from '@plone/volto/icons/show-blocks.svg';
+
+export const EmailLinkSchema = {
+  title: 'Email address',
   fieldsets: [
-    {
-      id: 'internal',
-      title: 'Internal',
-      fields: ['internal_link'],
-    },
-    {
-      id: 'external',
-      title: 'External',
-      fields: ['external_link'],
-    },
     {
       id: 'email',
       title: 'Email',
@@ -20,51 +14,127 @@ export const LinkSchema = {
     },
   ],
   properties: {
-    internal_link: {
-      widget: 'object_browser',
-      title: 'Internal link',
-    },
-    external_link: {
-      title:
-        'External URL (can be relative within this site or absolute if it starts with http:// or https://)',
-    },
     email_address: {
       title: 'Email address',
     },
     email_subject: {
-      title: 'Email subject (optional)',
+      title: 'Email subject',
+      description: 'Optional',
+    },
+  },
+  required: [],
+};
+
+export const InternalLinkSchema = {
+  title: 'Internal link',
+  fieldsets: [
+    {
+      id: 'internal',
+      title: 'Internal',
+      fields: ['internal_link'],
+    },
+  ],
+  properties: {
+    internal_link: {
+      widget: 'object_browser',
+      title: 'Internal link',
+      multiple: false,
+      mode: 'link',
+      selectedItemAttrs: [],
+    },
+  },
+  required: [],
+};
+
+export const InternalHashSchema = {
+  title: 'Internal hash link',
+  fieldsets: [
+    {
+      id: 'hash',
+      title: 'Hash link',
+      fields: ['internal_hash'],
+    },
+  ],
+  properties: {
+    internal_hash: {
+      widget: 'blocks_browser',
+      title: 'Hash link',
+      multiple: false,
+      selectedItemAttrs: [],
+    },
+  },
+  required: [],
+};
+
+export const ExternalLinkSchema = {
+  title: 'External link',
+  fieldsets: [
+    {
+      id: 'external',
+      title: 'External',
+      fields: ['external_link', 'target'],
+    },
+  ],
+  properties: {
+    external_link: {
+      title: 'External URL',
+      description:
+        'URL can be relative within this site or absolute if it starts with http:// or https://',
+    },
+    target: {
+      title: 'Target',
+      choices: [
+        ['_self', 'Open in this window / frame'],
+        ['_blank', 'Open in new window'],
+        ['_parent', 'Open in parent window / frame'],
+        ['_top', 'Open in top frame (replaces all frames)'],
+      ],
     },
   },
   required: [],
 };
 
 const LinkEditSchema = {
-  title: 'Edit link',
+  title: 'Insert link',
   fieldsets: [
     {
       id: 'default',
       title: 'Internal link',
-      fields: ['link', 'target', 'title'],
+      fields: ['link', 'title'],
     },
   ],
   properties: {
-    link: {
-      widget: 'object',
-      schema: LinkSchema,
-    },
-    target: {
-      title: 'Target',
-      choices: [
-        ['', 'Open in this window / frame'],
-        ['_blank', 'Open in new window'],
-        ['_parent', 'Open in parent window / frame'],
-        ['_top', 'Open in top frame (replaces all frames)'],
-      ],
-    },
     title: {
-      title: 'Title',
+      title: 'Link Title',
+    },
+    link: {
+      title: 'Link',
+      widget: 'object_by_type',
+      schemas: [
+        {
+          id: 'internal',
+          icon: internalSVG,
+          schema: InternalLinkSchema,
+        },
+        {
+          id: 'hash',
+          icon: hashlinkSVG,
+          schema: InternalHashSchema,
+        },
+        {
+          id: 'external',
+          icon: externalSVG,
+          schema: ExternalLinkSchema,
+        },
+        {
+          id: 'email',
+          icon: emailSVG,
+          schema: EmailLinkSchema,
+        },
+      ],
     },
   },
   required: [],
 };
+
 export default LinkEditSchema;

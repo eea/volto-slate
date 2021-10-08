@@ -1,73 +1,146 @@
-import { Editor, Text, Transforms, Block } from 'slate';
+import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { settings } from '~/config';
+import {
+  createDefaultBlock,
+  normalizeBlockNodes,
+  MIMETypeName,
+} from 'volto-slate/utils';
 
-/**
- * @param {Text} textNode The (leaf) Text node to wrap.
- *
- * @returns {Block} A Slate block node, of the default block type configured in the Slate settings, containing the given Text node.
- */
-function createBlock(textNode) {
-  return {
-    type: settings.slate.defaultBlockType,
-    children: [textNode],
-  };
-}
-
-/**
- * @summary Inserts in the given editor the feature of being able to paste HTML content in it.
- *
- * @param {Editor} editor A Slate editor object.
- */
 export const insertData = (editor) => {
-  const { insertData } = editor;
+  editor.dataTransferHandlers = {
+    ...editor.dataTransferHandlers,
+    'application/x-slate-fragment': (dt, fullMime) => {
+      const decoded = decodeURIComponent(window.atob(dt));
+      const parsed = JSON.parse(decoded);
+      editor.beforeInsertFragment && editor.beforeInsertFragment(parsed);
+      editor.insertFragment(parsed);
 
-  editor.insertData = (data) => {
-    console.log('data', data);
-    // const text = data.getData('text/rtf');
-    // console.log('text', text);
-    const html = data.getData('text/html');
+      return true;
+    },
+    'text/html': (dt, fullMime) => {
+      const parsed = new DOMParser().parseFromString(dt, 'text/html');
 
-    // editor.htmlTagsToSlate = {
-    //   ...editor.htmlTagsToSlate,
-    //   IMG: deserializeImageTag,
-    // };
+      const body =
+        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+          ? parsed.querySelector('google-sheets-html-origin > table')
+          : parsed.body;
 
-    if (html) {
-      const parsed = new DOMParser().parseFromString(html, 'text/html');
+      let fragment; //  = deserialize(editor, body);
 
-      let fragment = deserialize(editor, parsed.body);
-      console.log('parsed', parsed, fragment);
+      const val = deserialize(editor, body);
+      fragment = Array.isArray(val) ? val : [val];
 
-      if (!Editor.string(editor, [])) {
-        // Delete the empty placeholder paragraph, if we can
-        Transforms.deselect(editor);
-        Transforms.removeNodes(editor);
-
-        // Wrap the text nodes of the fragment in paragraphs
-        fragment = fragment.map((b) =>
-          Editor.isInline(b) || Text.isText(b) ? createBlock(b) : b,
-        );
-        console.log('Pasting in empty block:', fragment);
+      // When there's already text in the editor, insert a fragment, not nodes
+      if (
+        Editor.string(editor, []) &&
+        Array.isArray(fragment) &&
+        fragment.findIndex(
+          (b) => Editor.isInline(editor, b) || Text.isText(b),
+        ) > -1
+      ) {
+        // TODO: we want normalization also when dealing with fragments
+        // Transforms.insertFragment(editor, fragment);
+        editor.insertFragment(fragment);
+        return true;
       }
 
-      // TODO: use Editor.isEmpty(editor, editor);
+      const nodes = normalizeBlockNodes(editor, fragment);
+      Transforms.insertNodes(editor, nodes);
 
-      // TODO: insertNodes works a lot better then insertFragment (needs less cleanup)
-      // but insertFragment is more reliable to get content inserted
-      // We can't afford to insert a fragment, we want Slate to clean up
-      // Editor.insertFragment(editor, fragment);
-      // Transforms.insertFragment(editor, fragment);
+      return true;
+    },
+    'text/plain': (dt, fullMime) => {
+      const text = dt;
+      if (!text) return;
 
-      Transforms.insertNodes(editor, fragment);
-      Transforms.deselect(editor); // Solves a problem when pasting images
+      const paras = text.split('\n');
+      const fragment = paras.map((p) => createDefaultBlock([{ text: p }]));
+      // return insertData(data);
 
-      console.log('AFTER TABLE PASTE', editor.children);
+      // check if fragment is p with text and insert as fragment if so
 
-      return;
+      const fragmentContainsText = (f) => {
+        var trigger = false;
+        if (f && f[0]) {
+          f.forEach((frag) => {
+            if (frag.type === 'p') {
+              if (frag.children) {
+                frag.children.forEach((child) => {
+                  if (child.text) {
+                    trigger = true;
+                  }
+                });
+              }
+            }
+          });
+        }
+        return trigger;
+      };
+
+      // When there's already text in the editor, insert a fragment, not nodes
+      const containsText = fragmentContainsText(fragment);
+      if (fragment && containsText) {
+        Transforms.insertFragment(editor, fragment);
+      }
+
+      if (Editor.string(editor, [])) {
+        if (
+          Array.isArray(fragment) &&
+          fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        ) {
+          // console.log('insert fragment', fragment);
+          // TODO: we want normalization also when dealing with fragments
+          Transforms.insertFragment(editor, fragment);
+          return true;
+        }
+      }
+
+      const nodes = normalizeBlockNodes(editor, fragment);
+      if (!containsText) {
+        Transforms.insertNodes(editor, nodes);
+      }
+
+      return true;
+    },
+  };
+
+  // TODO: use the rtf data to get the embedded images.
+  // const text = data.getData('text/rtf');
+
+  const { insertData } = editor;
+
+  // TODO: move this to extensions/insertData
+  // TODO: update and improve comments & docs related to
+  // `dataTransferFormatsOrder` and `dataTransferHandlers` features
+  editor.insertData = (data) => {
+    if (editor.beforeInsertData) {
+      editor.beforeInsertData(data);
     }
 
-    insertData(data);
+    // debugger;
+    for (let i = 0; i < editor.dataTransferFormatsOrder.length; ++i) {
+      const dt = editor.dataTransferFormatsOrder[i];
+      if (dt === 'files') {
+        const { files } = data;
+        if (files && files.length > 0) {
+          // or handled here
+          return editor.dataTransferHandlers['files'](files);
+        }
+        continue;
+      }
+      const satisfyingFormats = data.types.filter((y) =>
+        new MIMETypeName(dt).matches(new MIMETypeName(y)),
+      );
+      for (let j = 0; j < satisfyingFormats.length; ++j) {
+        const y = satisfyingFormats[j];
+        if (editor.dataTransferHandlers[dt](data.getData(y), y)) {
+          // handled here
+          return true;
+        }
+      }
+    }
+    // not handled until this point
+    return insertData(data);
   };
 
   return editor;

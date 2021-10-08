@@ -7,6 +7,7 @@ import italicIcon from '@plone/volto/icons/italic.svg';
 import listBulletIcon from '@plone/volto/icons/list-bullet.svg';
 import listNumberedIcon from '@plone/volto/icons/list-numbered.svg';
 import subheadingIcon from '@plone/volto/icons/subheading.svg';
+import subTextIcon from '@plone/volto/icons/subtext.svg';
 import underlineIcon from '@plone/volto/icons/underline.svg';
 import strikethroughIcon from '@plone/volto/icons/strikethrough.svg';
 import subindexIcon from '@plone/volto/icons/subindex.svg';
@@ -14,46 +15,109 @@ import superindexIcon from '@plone/volto/icons/superindex.svg';
 
 import { createEmptyParagraph } from 'volto-slate/utils';
 
-import { MarkButton, BlockButton, Separator, Expando } from './ui';
-import { highlightByType, highlightSelection } from './decorate';
 import {
+  MarkButton,
+  MarkElementButton,
+  BlockButton,
+  Separator,
+  Expando,
+} from './ui';
+import { highlightSelection } from './decorate'; // highlightByType,
+import {
+  insertData,
+  isInline,
   withDeleteSelectionOnEnter,
   withDeserializers,
-  insertData,
+  normalizeNode,
 } from './extensions';
 import {
-  inlineTagDeserializer,
+  // inlineTagDeserializer,
   bodyTagDeserializer,
   blockTagDeserializer,
   preTagDeserializer,
   spanTagDeserializer,
+  bTagDeserializer,
+  codeTagDeserializer,
 } from './deserialize';
 
 // Registry of available buttons
 export const buttons = {
-  bold: (props) => <MarkButton format="bold" icon={boldIcon} {...props} />,
+  bold: (props) => (
+    <MarkElementButton
+      title="Bold"
+      format="strong"
+      icon={boldIcon}
+      {...props}
+    />
+  ),
   italic: (props) => (
-    <MarkButton format="italic" icon={italicIcon} {...props} />
+    <MarkElementButton
+      title="Italic"
+      format="em"
+      icon={italicIcon}
+      {...props}
+    />
   ),
   underline: (props) => (
-    <MarkButton format="underline" icon={underlineIcon} {...props} />
+    <MarkElementButton
+      title="Underline"
+      format="u"
+      icon={underlineIcon}
+      {...props}
+    />
   ),
   strikethrough: (props) => (
-    <MarkButton format="strikethrough" icon={strikethroughIcon} {...props} />
+    <MarkElementButton
+      title="Strikethrough"
+      format="del"
+      icon={strikethroughIcon}
+      {...props}
+    />
   ),
-  sub: (props) => <MarkButton format="sub" icon={subindexIcon} {...props} />,
-  sup: (props) => <MarkButton format="sup" icon={superindexIcon} {...props} />,
-  code: (props) => <MarkButton format="code" icon={codeIcon} {...props} />,
+  sub: (props) => (
+    <MarkElementButton
+      title="Subscript"
+      format="sub"
+      icon={subindexIcon}
+      {...props}
+    />
+  ),
+  sup: (props) => (
+    <MarkElementButton
+      title="Superscript"
+      format="sup"
+      icon={superindexIcon}
+      {...props}
+    />
+  ),
+  code: (props) => (
+    <MarkButton title="Code" format="code" icon={codeIcon} {...props} />
+  ),
   'heading-two': (props) => (
-    <BlockButton format="h2" icon={headingIcon} {...props} />
+    <BlockButton title="Title" format="h2" icon={headingIcon} {...props} />
   ),
   'heading-three': (props) => (
-    <BlockButton format="h3" icon={subheadingIcon} {...props} />
+    <BlockButton
+      title="Subtitle"
+      format="h3"
+      icon={subheadingIcon}
+      {...props}
+    />
+  ),
+  'heading-four': (props) => (
+    <BlockButton title="Heading 4" format="h4" icon={subTextIcon} {...props} />
   ),
   'numbered-list': (props) => (
-    <BlockButton format="ol" icon={listNumberedIcon} {...props} />
+    <BlockButton
+      title="Numbered list"
+      format="ol"
+      icon={listNumberedIcon}
+      {...props}
+    />
   ),
-  'bulleted-list': (props) => <BlockButton format="ul" icon={listBulletIcon} />,
+  'bulleted-list': (props) => (
+    <BlockButton title="Bulleted list" format="ul" icon={listBulletIcon} />
+  ),
   separator: (props) => <Separator />,
   expando: (props) => <Expando />,
 };
@@ -66,12 +130,13 @@ export const defaultToolbarButtons = [
   'separator',
   'heading-two',
   'heading-three',
+  'heading-four',
   'separator',
   'sub',
   'sup',
   'separator',
-  'numbered-list',
   'bulleted-list',
+  'numbered-list',
 ];
 
 export const toolbarButtons = [...defaultToolbarButtons];
@@ -104,14 +169,17 @@ export const extensions = [
   withDeleteSelectionOnEnter,
   withDeserializers,
   insertData,
+  isInline,
+  normalizeNode,
 ];
 
 // Default hotkeys and the format they trigger
 export const hotkeys = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+u': 'underline',
-  'mod+`': 'code',
+  'mod+b': { format: 'strong', type: 'inline' },
+  'mod+i': { format: 'em', type: 'inline' },
+  'mod+u': { format: 'u', type: 'inline' },
+  'mod+s': { format: 'del', type: 'inline' },
+  // 'mod+`': { format: 'code', type: 'inline' },
   // TODO: more hotkeys, including from plugins!
 };
 
@@ -121,33 +189,74 @@ export const keyDownHandlers = {};
 // Paragraphs (as default type of blocks) and lists need special handling
 export const listTypes = ['ul', 'ol'];
 export const listItemType = 'li';
+export const tableTypes = [
+  'table',
+  'tbody',
+  'thead',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+];
 export const defaultBlockType = 'p';
 
 // Default rendered elements
 // TODO: expose the IDs in constants.js, for uniformity
 export const elements = {
   default: ({ attributes, children }) => <p {...attributes}>{children}</p>,
+
+  h1: ({ attributes, children }) => <h1 {...attributes}>{children}</h1>,
   h2: ({ attributes, children }) => <h2 {...attributes}>{children}</h2>,
   h3: ({ attributes, children }) => <h3 {...attributes}>{children}</h3>,
+  h4: ({ attributes, children }) => <h4 {...attributes}>{children}</h4>,
+
   li: ({ attributes, children }) => <li {...attributes}>{children}</li>,
   ol: ({ attributes, children }) => <ol {...attributes}>{children}</ol>,
-  p: ({ attributes, children }) => <p {...attributes}>{children}</p>,
-  ul: ({ attributes, children }) => <ul {...attributes}>{children}</ul>,
+  ul: ({ attributes, children }) => {
+    return <ul {...attributes}>{children}</ul>;
+  },
+
+  div: ({ attributes, children }) => <div {...attributes}>{children}</div>,
+  p: ({ attributes, children }) => {
+    return <p {...attributes}>{children}</p>;
+  },
+
+  // While usual slate editor consider these to be Leafs, we treat them as
+  // inline elements because they can sometimes contain elements (ex:
+  // <b><a/></b>
+  em: ({ children }) => <em>{children}</em>,
+  i: ({ children }) => <i>{children}</i>,
+  b: ({ children }) => {
+    return <b>{children}</b>;
+  },
+  strong: ({ children }) => {
+    return <strong>{children}</strong>;
+  },
+  u: ({ children }) => <u>{children}</u>,
+  s: ({ children }) => <del>{children}</del>,
+  del: ({ children }) => <del>{children}</del>,
+  sub: ({ children }) => <sub>{children}</sub>,
+  sup: ({ children }) => <sup>{children}</sup>,
+  code: ({ children }) => <code>{children}</code>,
 };
+
+export const inlineElements = [
+  'em',
+  'i',
+  'b',
+  'strong',
+  'u',
+  'del',
+  'sub',
+  'sup',
+  'code',
+];
 
 // Order of definition here is important (higher = inner element)
 export const leafs = {
-  italic: ({ children }) => <em>{children}</em>,
-  bold: ({ children }) => {
-    return <strong>{children}</strong>;
-  },
-  underline: ({ children }) => <u>{children}</u>,
-  strikethrough: ({ children }) => <s>{children}</s>,
-  sub: ({ children }) => <sub>{children}</sub>,
-  sup: ({ children }) => <sup>{children}</sup>,
-  code: ({ children }) => {
-    return <code>{children}</code>;
-  },
+  // code: ({ children }) => {
+  //   return <code>{children}</code>;
+  // },
 };
 
 export const defaultValue = () => {
@@ -159,34 +268,32 @@ export const defaultValue = () => {
 // Any tag that is not listed here (or added by a plugin) will be stripped
 // (its children will be rendered, though)
 export const htmlTagsToSlate = {
+  B: bTagDeserializer,
   BODY: bodyTagDeserializer,
+  CODE: codeTagDeserializer,
+  PRE: preTagDeserializer,
+  SPAN: spanTagDeserializer,
+
+  BLOCKQUOTE: blockTagDeserializer('blockquote'),
+  DEL: blockTagDeserializer('del'),
+  EM: blockTagDeserializer('em'),
   H1: blockTagDeserializer('h1'),
   H2: blockTagDeserializer('h2'),
   H3: blockTagDeserializer('h3'),
   H4: blockTagDeserializer('h4'),
   H5: blockTagDeserializer('h5'),
   H6: blockTagDeserializer('h6'),
+  I: blockTagDeserializer('i'),
   P: blockTagDeserializer('p'),
-  BLOCKQUOTE: blockTagDeserializer('blockquote'),
-  PRE: preTagDeserializer,
+  S: blockTagDeserializer('del'),
+  STRONG: blockTagDeserializer('strong'),
+  SUB: blockTagDeserializer('sub'),
+  SUP: blockTagDeserializer('sup'),
+  U: blockTagDeserializer('u'),
 
   OL: blockTagDeserializer('ol'),
   UL: blockTagDeserializer('ul'),
   LI: blockTagDeserializer('li'),
-
-  // COMPAT: `B` is omitted here because Google Docs uses `<b>` in weird ways.
-  // TODO: include <b> but identify if is Google Docs <b>
-  // B: bTagDeserializer,
-  CODE: inlineTagDeserializer({ code: true }),
-  DEL: inlineTagDeserializer({ strikethrough: true }),
-  EM: inlineTagDeserializer({ italic: true }),
-  I: inlineTagDeserializer({ italic: true }),
-  S: inlineTagDeserializer({ strikethrough: true }),
-  SPAN: spanTagDeserializer,
-  STRONG: inlineTagDeserializer({ bold: true }),
-  SUB: inlineTagDeserializer({ sub: true }),
-  SUP: inlineTagDeserializer({ sup: true }),
-  U: inlineTagDeserializer({ underline: true }),
 };
 
 // Adds "highlight" decoration in the editor. Used by `highlightByType`

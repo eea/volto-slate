@@ -51,11 +51,6 @@ function addMark(editor, key, value) {
   }
 }
 
-// function isSelectionInline(editor) {
-//   const [node] = Editor.node(editor, editor.selection || editor.savedSelection);
-//   return Text.isText(node) || editor.isInline(node) || editor.isVoid(node);
-// }
-
 export function toggleMark(editor, format) {
   const isActive = isMarkActive(editor, format);
 
@@ -76,13 +71,15 @@ export function toggleMark(editor, format) {
  *
  */
 export function wrapInlineMarkupText(children, wrapper) {
-  if (typeof children === 'string') return wrapper(children);
+  if (typeof children === 'string') {
+    return children ? wrapper(children) : null;
+  }
 
   // TODO: find the deepest child that needs to be replaced.
   // TODO: note: this might trigger warnings about keys
   if (Array.isArray(children)) {
     return children.map((child, index) => {
-      if (typeof child === 'string') {
+      if (typeof child === 'string' && child) {
         return wrapper(children);
       } else {
         return React.cloneElement(
@@ -100,16 +97,3 @@ export function wrapInlineMarkupText(children, wrapper) {
     );
   }
 }
-
-// for (const [node, path] of Editor.nodes(editor, {
-//   match: (node) => editor.isVoid(node),
-// })) {
-//   const children = [];
-//   for (const child of node.children || []) {
-//     children.push({
-//       ...child,
-//       [key]: value,
-//     });
-//   }
-//   // Transforms.
-// }

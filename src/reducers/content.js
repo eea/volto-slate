@@ -5,7 +5,7 @@
  * Customized copy of Volto's content reducer
  */
 
-import { settings } from '~/config';
+import config from '@plone/volto/registry';
 
 import { UPLOAD_CONTENT } from 'volto-slate/constants';
 
@@ -45,7 +45,7 @@ export default function upload_content(state = initialState, action = {}) {
               action.result.items &&
               action.result.items.map((item) => ({
                 ...item,
-                url: item['@id'].replace(settings.apiPath, ''),
+                url: item['@id'].replace(config.settings.apiPath, ''),
               })),
           },
           upload: {

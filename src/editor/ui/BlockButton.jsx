@@ -4,7 +4,7 @@ import { isBlockActive, toggleBlock } from 'volto-slate/utils';
 
 import ToolbarButton from './ToolbarButton';
 
-const BlockButton = ({ format, icon }) => {
+const BlockButton = ({ format, icon, ...props }) => {
   const editor = useSlate();
 
   const isActive = isBlockActive(editor, format);
@@ -13,12 +13,14 @@ const BlockButton = ({ format, icon }) => {
     (event) => {
       event.preventDefault();
       toggleBlock(editor, format);
+      // console.log('toggled', format, editor);
     },
     [editor, format], // , isActive
   );
 
   return (
     <ToolbarButton
+      {...props}
       active={isActive}
       onMouseDown={handleMouseDown}
       icon={icon}

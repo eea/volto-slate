@@ -4,6 +4,7 @@ import {
   isCursorAtBlockEnd,
   getNextVoltoBlock,
   getPreviousVoltoBlock,
+  createDefaultBlock,
 } from 'volto-slate/utils';
 
 /**
@@ -16,15 +17,18 @@ export function goUp({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusPreviousBlock, block, blockNode } = props;
 
-    const { formContext } = editor;
-    const properties = formContext.contextData.formData;
+    // const { formContext } = editor;
+    // const properties = formContext.contextData.formData;
+    const { properties } = editor.getBlockProps();
 
     const prev = getPreviousVoltoBlock(props.index, properties);
     if (!prev || prev[0]?.['@type'] !== 'slate')
       return onFocusPreviousBlock(block, blockNode.current);
 
     const [slateBlock, id] = prev;
-    const pseudoEditor = { children: slateBlock.value };
+    const pseudoEditor = {
+      children: slateBlock.value || [createDefaultBlock()],
+    };
     const match = Node.last(pseudoEditor, []);
     if (!match) return onFocusPreviousBlock(block, blockNode.current);
 
@@ -46,15 +50,18 @@ export function goDown({ editor, event }) {
     const props = editor.getBlockProps();
     const { onFocusNextBlock, block, blockNode } = props;
 
-    const { formContext } = editor;
-    const properties = formContext.contextData.formData;
+    // const { formContext } = editor;
+    // const properties = formContext.contextData.formData;
+    const { properties } = editor.getBlockProps();
 
     const next = getNextVoltoBlock(props.index, properties);
     if (!next || next[0]?.['@type'] !== 'slate')
       return onFocusNextBlock(block, blockNode.current);
 
     const [slateBlock, id] = next;
-    const pseudoEditor = { children: slateBlock.value };
+    const pseudoEditor = {
+      children: slateBlock.value || [createDefaultBlock()],
+    };
     const match = Node.first(pseudoEditor, []);
     if (!match) return onFocusNextBlock(block, blockNode.current);
 
@@ -64,4 +71,11 @@ export function goDown({ editor, event }) {
     props.saveSlateBlockSelection(id, selection);
     return onFocusNextBlock(block, blockNode.current);
   }
+}
+
+export function traverseBlocks(opts) {
+  const { event } = opts;
+  event.preventDefault();
+  // return event.shiftKey ? goUp(opts) : goDown(opts);
+  return true;
 }

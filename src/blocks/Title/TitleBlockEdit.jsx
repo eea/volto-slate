@@ -61,6 +61,10 @@ export const TitleBlockEdit = (props) => {
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
 
+  const { settings } = config;
+
+  const disableNewBlocks = data.disableNewBlocks || detached;
+
   const handleChange = useCallback(
     (value) => {
       if (Node.string({ children: value }) !== properties?.[formFieldName]) {
@@ -105,6 +109,67 @@ export const TitleBlockEdit = (props) => {
     }
   }, [prevSelected, selected]);
 
+  const handleKeyDown = useCallback(
+    (ev) => {
+      if (
+        formFieldName === 'description' &&
+        ev.key === 'Backspace' &&
+        Node.string(editor).length === 0
+      ) {
+        ev.preventDefault();
+        onDeleteBlock(block, true);
+      } else if (ev.key === 'Return' || ev.key === 'Enter') {
+        ev.preventDefault();
+        if (!disableNewBlocks) {
+          onSelectBlock(
+            onAddBlock(config.settings.defaultBlockType, index + 1),
+          );
+        }
+      } else if (ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        onFocusPreviousBlock(block, blockNode.current);
+      } else if (ev.key === 'ArrowDown') {
+        ev.preventDefault();
+        onFocusNextBlock(block, blockNode.current);
+      }
+    },
+    [
+      formFieldName,
+      editor,
+      onDeleteBlock,
+      disableNewBlocks,
+      onSelectBlock,
+      onAddBlock,
+      onFocusPreviousBlock,
+      onFocusNextBlock,
+      block,
+    ],
+  );
+
+  const value = useMemo(() => {
+    return [
+      {
+        type: P,
+        children: [{ text: properties?.[formFieldName] || '' }],
+      },
+    ];
+  }, [properties, formFieldName]);
+
+  const handleFocus = useCallback(() => {
+    onSelectBlock(block);
+  }, []);
+
+  const renderElement = useCallback(
+    ({ attributes, children, element }) => {
+      return (
+        <TitleOrDescription {...attributes} className={className}>
+          {children}
+        </TitleOrDescription>
+      );
+    },
+    [TitleOrDescription, className],
+  );
+
   if (__SERVER__) {
     return <div />;
   }
@@ -112,20 +177,11 @@ export const TitleBlockEdit = (props) => {
   const placeholder =
     data.placeholder || intl.formatMessage(messages[formFieldName]);
 
-  const disableNewBlocks = data.disableNewBlocks || detached;
-
-  const { settings } = config;
-
   return (
     <Slate
       editor={editor}
       onChange={handleChange}
-      value={[
-        {
-          type: P,
-          children: [{ text: properties?.[formFieldName] || '' }],
-        },
-      ]}
+      value={value}
       className={cx({
         block: formFieldName === 'description',
         description: formFieldName === 'description',
@@ -134,40 +190,10 @@ export const TitleBlockEdit = (props) => {
     >
       <Editable
         readOnly={!editable}
-        onKeyDown={(ev) => {
-          if (
-            formFieldName === 'description' &&
-            ev.key === 'Backspace' &&
-            Node.string(editor).length === 0
-          ) {
-            ev.preventDefault();
-            onDeleteBlock(block, true);
-          } else if (ev.key === 'Return' || ev.key === 'Enter') {
-            ev.preventDefault();
-            if (!disableNewBlocks) {
-              onSelectBlock(
-                onAddBlock(config.settings.defaultBlockType, index + 1),
-              );
-            }
-          } else if (ev.key === 'ArrowUp') {
-            ev.preventDefault();
-            onFocusPreviousBlock(block, blockNode.current);
-          } else if (ev.key === 'ArrowDown') {
-            ev.preventDefault();
-            onFocusNextBlock(block, blockNode.current);
-          }
-        }}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        renderElement={({ attributes, children, element }) => {
-          return (
-            <TitleOrDescription {...attributes} className={className}>
-              {children}
-            </TitleOrDescription>
-          );
-        }}
-        onFocus={() => {
-          onSelectBlock(block);
-        }}
+        renderElement={renderElement}
+        onFocus={handleFocus}
       ></Editable>
     </Slate>
   );

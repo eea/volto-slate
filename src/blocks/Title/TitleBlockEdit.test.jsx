@@ -26,13 +26,13 @@ test('renders an edit title block component', () => {
         properties={{ title: 'My Title' }}
         selected={false}
         block="1234"
-        onAddBlock={() => { }}
-        onChangeField={() => { }}
-        onSelectBlock={() => { }}
-        onDeleteBlock={() => { }}
-        onFocusPreviousBlock={() => { }}
-        onFocusNextBlock={() => { }}
-        handleKeyDown={() => { }}
+        onAddBlock={() => {}}
+        onChangeField={() => {}}
+        onSelectBlock={() => {}}
+        onDeleteBlock={() => {}}
+        onFocusPreviousBlock={() => {}}
+        onFocusNextBlock={() => {}}
+        handleKeyDown={() => {}}
         index={1}
         blockNode={{ current: null }}
         className="documentFirstHeading"
@@ -58,13 +58,13 @@ test('renders an edit description block component', () => {
         properties={{ description: 'My Description' }}
         selected={false}
         block="1234"
-        onAddBlock={() => { }}
-        onChangeField={() => { }}
-        onSelectBlock={() => { }}
-        onDeleteBlock={() => { }}
-        onFocusPreviousBlock={() => { }}
-        onFocusNextBlock={() => { }}
-        handleKeyDown={() => { }}
+        onAddBlock={() => {}}
+        onChangeField={() => {}}
+        onSelectBlock={() => {}}
+        onDeleteBlock={() => {}}
+        onFocusPreviousBlock={() => {}}
+        onFocusNextBlock={() => {}}
+        handleKeyDown={() => {}}
         index={1}
         blockNode={{ current: null }}
         className="documentDescription"

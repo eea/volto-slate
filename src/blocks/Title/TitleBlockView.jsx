@@ -11,9 +11,11 @@ import PropTypes from 'prop-types';
  * @class View
  * @extends Component
  */
-const TitleBlockView = ({ properties, className, formFieldName }) => (
-  <h1 className={className}>{properties[formFieldName] || ''}</h1>
-);
+const TitleBlockView = ({ properties, className, formFieldName }) => {
+  const Comp = formFieldName === 'title' ? 'h1' : 'p';
+
+  return <Comp className={className}>{properties[formFieldName] || ''}</Comp>;
+};
 
 /**
  * Property types.

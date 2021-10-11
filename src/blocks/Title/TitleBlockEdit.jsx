@@ -61,8 +61,6 @@ export const TitleBlockEdit = (props) => {
   const editor = useMemo(() => withReact(createEditor()), []);
   const intl = useIntl();
 
-  const { settings } = config;
-
   const disableNewBlocks = data.disableNewBlocks || detached;
 
   const handleChange = useCallback(
@@ -71,7 +69,7 @@ export const TitleBlockEdit = (props) => {
         onChangeField(formFieldName, Editor.string(editor, []));
       }
     },
-    [editor, formFieldName, onChangeField],
+    [editor, formFieldName, onChangeField, properties],
   );
 
   const TitleOrDescription = useMemo(() => {
@@ -107,7 +105,7 @@ export const TitleBlockEdit = (props) => {
         });
       }
     }
-  }, [prevSelected, selected]);
+  }, [prevSelected, selected, editor]);
 
   const handleKeyDown = useCallback(
     (ev) => {
@@ -134,6 +132,8 @@ export const TitleBlockEdit = (props) => {
       }
     },
     [
+      index,
+      blockNode,
       formFieldName,
       editor,
       onDeleteBlock,
@@ -157,7 +157,7 @@ export const TitleBlockEdit = (props) => {
 
   const handleFocus = useCallback(() => {
     onSelectBlock(block);
-  }, []);
+  }, [block, onSelectBlock]);
 
   const renderElement = useCallback(
     ({ attributes, children, element }) => {
@@ -167,10 +167,10 @@ export const TitleBlockEdit = (props) => {
         </TitleOrDescription>
       );
     },
-    [TitleOrDescription, className],
+    [TitleOrDescription, className], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  if (__SERVER__) {
+  if (typeof window.__SERVER__ !== 'undefined') {
     return <div />;
   }
 
@@ -213,6 +213,9 @@ TitleBlockEdit.propTypes = {
   data: PropTypes.objectOf(PropTypes.any).isRequired,
   editable: PropTypes.bool,
   detached: PropTypes.bool,
+  blockNode: PropTypes.any,
+  className: PropTypes.string,
+  formFieldName: PropTypes.string,
 };
 
 TitleBlockEdit.defaultProps = {

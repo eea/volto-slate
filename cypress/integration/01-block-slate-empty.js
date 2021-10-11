@@ -4,6 +4,7 @@ describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
+  // TODO: make this test useful and passed
   it('Slate Block: Empty', () => {
     cy.get('.documentFirstHeading > .public-DraftStyleDefault-block')
       .clear()

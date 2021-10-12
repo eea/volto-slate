@@ -108,8 +108,16 @@ export function asDefaultRichText(config) {
 export function asDefault(config) {
   asDefaultBlock(config);
 
-  // TODO: See cypress
   asDefaultRichText(config);
+
+  return config;
+}
+
+export function asCypressDefault(config) {
+  asDefault(config);
+
+  // config.blocks.blocksConfig.title.restricted = false;
+  config.blocks.blocksConfig.description.restricted = false;
 
   return config;
 }

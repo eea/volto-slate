@@ -111,12 +111,12 @@ class SlateEditor extends Component {
       let focused = true;
       try {
         focused = ReactEditor.isFocused(this.state.editor);
-      } catch {}
+      } catch { }
       if (!focused) {
         setTimeout(() => {
           try {
             ReactEditor.focus(this.state.editor);
-          } catch {}
+          } catch { }
         }, 100); // flush
       }
     }

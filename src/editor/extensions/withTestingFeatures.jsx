@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactEditor } from 'slate-react';
+import { omit } from 'lodash';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
@@ -53,7 +54,10 @@ const withTestingFeatures = (WrappedComponent) => {
 
     const handleFocus = React.useCallback(() => {
       window.focusedSlateEditor = ref?.current;
-    }, []);
+      if (props.onFocus) {
+        props.onFocus();
+      }
+    }, [props]);
 
     return (
       <WrappedComponent
@@ -67,7 +71,7 @@ const withTestingFeatures = (WrappedComponent) => {
         }}
         testingEditorRef={ref}
         onFocus={handleFocus}
-        {...props}
+        {...omit(props, 'onFocus')}
       />
     );
   };

@@ -21,6 +21,7 @@ const SlateRichTextWidget = (props) => {
     block,
     placeholder,
     properties,
+    readOnly = false,
   } = props;
   const [selected, setSelected] = React.useState(focus);
 
@@ -38,6 +39,7 @@ const SlateRichTextWidget = (props) => {
       >
         <SlateEditor
           className={className}
+          readOnly={readOnly}
           id={id}
           name={id}
           value={

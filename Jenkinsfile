@@ -76,58 +76,58 @@ pipeline {
       }
     }
 
-    // stage('Integration tests') {
-    //   // Exclude Pull-Requests. Already running on branch
-    //   when {
-    //     allOf {
-    //       environment name: 'CHANGE_ID', value: ''
-    //     }
-    //   }
-    //   steps {
-    //     parallel(
+    stage('Integration tests') {
+      // Exclude Pull-Requests. Already running on branch
+      when {
+        allOf {
+          environment name: 'CHANGE_ID', value: ''
+        }
+      }
+      steps {
+        parallel(
 
-    //       "Cypress": {
-    //         node(label: 'docker') {
-    //           script {
-    //             try {
-    //               sh '''docker pull plone; docker run -d --name="$BUILD_TAG-plone" -e SITE="Plone" -e ADDONS="$PLONE_ADDONS" -e VERSIONS="$PLONE_VERSIONS" -e PROFILES="profile-plone.restapi:blocks" plone fg'''
-    //               sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
-    //             } finally {
-    //               try {
-    //                 sh '''rm -rf cypress-reports cypress-results cypress-coverage'''
-    //                 sh '''mkdir -p cypress-reports cypress-results cypress-coverage'''
-    //                 sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
-    //                 sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/reports cypress-results/'''
-    //                 coverage = sh script: '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/coverage cypress-coverage/''', returnStatus: true
-    //                 if ( coverage == 0 ) {
-    //                      publishHTML (target : [allowMissing: false,
-    //                          alwaysLinkToLastBuild: true,
-    //                          keepAll: true,
-    //                          reportDir: 'cypress-coverage/coverage/lcov-report',
-    //                          reportFiles: 'index.html',
-    //                          reportName: 'CypressCoverage',
-    //                          reportTitles: 'Integration Tests Code Coverage'])
-    //                 }
-    //                 archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
-    //                 stash name: "cypress-coverage", includes: "cypress-coverage/**", allowEmpty: true
-    //               }
-    //               finally {
-    //                 catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-    //                     junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true
-    //                 }
-    //                 sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
-    //                 sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
-    //                 sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
+          "Cypress": {
+            node(label: 'docker') {
+              script {
+                try {
+                  sh '''docker pull plone; docker run -d --name="$BUILD_TAG-plone" -e SITE="Plone" -e ADDONS="$PLONE_ADDONS" -e VERSIONS="$PLONE_VERSIONS" -e PROFILES="profile-plone.restapi:blocks" plone fg'''
+                  sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
+                } finally {
+                  try {
+                    sh '''rm -rf cypress-reports cypress-results cypress-coverage'''
+                    sh '''mkdir -p cypress-reports cypress-results cypress-coverage'''
+                    sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/videos cypress-reports/'''
+                    sh '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/cypress/reports cypress-results/'''
+                    coverage = sh script: '''docker cp $BUILD_TAG-cypress:/opt/frontend/my-volto-project/src/addons/$GIT_NAME/coverage cypress-coverage/''', returnStatus: true
+                    if ( coverage == 0 ) {
+                         publishHTML (target : [allowMissing: false,
+                             alwaysLinkToLastBuild: true,
+                             keepAll: true,
+                             reportDir: 'cypress-coverage/coverage/lcov-report',
+                             reportFiles: 'index.html',
+                             reportName: 'CypressCoverage',
+                             reportTitles: 'Integration Tests Code Coverage'])
+                    }
+                    archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
+                    stash name: "cypress-coverage", includes: "cypress-coverage/**", allowEmpty: true
+                  }
+                  finally {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        junit testResults: 'cypress-results/**/*.xml', allowEmptyResults: true
+                    }
+                    sh script: "docker stop $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-plone", returnStatus: true
+                    sh script: "docker rm -v $BUILD_TAG-cypress", returnStatus: true
 
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
+                  }
+                }
+              }
+            }
+          }
 
-    //     )
-    //   }
-    // }
+        )
+      }
+    }
 
     stage('Report to SonarQube') {
       // Exclude Pull-Requests
@@ -141,12 +141,12 @@ pipeline {
           script{
             checkout scm
             unstash "xunit-reports"
-            // unstash "cypress-coverage"
+            unstash "cypress-coverage"
             def scannerHome = tool 'SonarQubeScanner';
             def nodeJS = tool 'NodeJS11';
             withSonarQubeEnv('Sonarqube') {
               sh '''sed -i "s#/opt/frontend/my-volto-project/src/addons/${GIT_NAME}/##g" xunit-reports/coverage/lcov.info'''
-              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info -Dsonar.sources=./src -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
+              sh "export PATH=$PATH:${scannerHome}/bin:${nodeJS}/bin; sonar-scanner -Dsonar.javascript.lcov.reportPaths=./xunit-reports/coverage/lcov.info,./cypress-coverage/coverage/lcov.info -Dsonar.sources=./src -Dsonar.projectKey=$GIT_NAME-$BRANCH_NAME -Dsonar.projectVersion=$BRANCH_NAME-$BUILD_NUMBER"
               sh '''try=2; while [ \$try -gt 0 ]; do curl -s -XPOST -u "${SONAR_AUTH_TOKEN}:" "${SONAR_HOST_URL}api/project_tags/set?project=${GIT_NAME}-${BRANCH_NAME}&tags=${SONARQUBE_TAGS},${BRANCH_NAME}" > set_tags_result; if [ \$(grep -ic error set_tags_result ) -eq 0 ]; then try=0; else cat set_tags_result; echo "... Will retry"; sleep 60; try=\$(( \$try - 1 )); fi; done'''
             }
           }

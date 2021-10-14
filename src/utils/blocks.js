@@ -144,6 +144,36 @@ export function normalizeBlockNodes(editor, children) {
   return nodes;
 }
 
+/**
+ * Partially normalizes nodes of type 'a' which are inline (adds an empty Text
+ * inside them if empty) and puts an empty Text after the last 'a' inside a
+ * block. This function is recursive.
+ *
+ * In future it might be useful to create a more general normalizeInlineNodes
+ * function or even use Editor.normalize feature of Slate Editor interface after
+ * putting the `children` inside an `editor`.
+ */
+export function normalizeLinkNodes(editor, children) {
+  let lastType = null;
+
+  for (let c of children) {
+    lastType = c.type;
+    if (c.type === 'a') {
+      if (c.children.length === 0) {
+        c.children.push({ text: '' });
+      }
+    } else if (c.children) {
+      normalizeLinkNodes(editor, c.children);
+    }
+  }
+
+  if (lastType === 'a') {
+    children.push({ text: '' });
+  }
+
+  return children;
+}
+
 export function createDefaultBlock(children) {
   return {
     type: config.settings.slate.defaultBlockType,

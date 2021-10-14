@@ -125,3 +125,12 @@ export const selectSlateNodeOfWord = (el) => {
     win.document.dispatchEvent(event);
   });
 };
+
+export const selectSlateRange = (range) => {
+  return cy.window().then((win) => {
+    var event = new CustomEvent('Test_SelectRange', {
+      detail: range,
+    });
+    win.document.dispatchEvent(event);
+  });
+};

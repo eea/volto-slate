@@ -34,7 +34,9 @@ export const insertData = (editor) => {
       if (
         Editor.string(editor, []) &&
         Array.isArray(fragment) &&
-        fragment.findIndex((b) => Editor.isInline(b) || Text.isText(b)) > -1
+        fragment.findIndex(
+          (b) => Editor.isInline(editor, b) || Text.isText(b),
+        ) > -1
       ) {
         // TODO: we want normalization also when dealing with fragments
         // Transforms.insertFragment(editor, fragment);

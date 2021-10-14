@@ -103,7 +103,7 @@ export function asDefault(config) {
   asDefaultBlock(config);
 
   // TODO: See cypress
-  // asDefaultRichText(config);
+  asDefaultRichText(config);
 
   return config;
 }

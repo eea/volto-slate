@@ -1,4 +1,4 @@
-import { Editor, Transforms } from 'slate'; // Range,
+import { Editor, Transforms, Node } from 'slate'; // Range,
 
 /**
  * @description Creates or updates an existing $elementType. It also takes care
@@ -39,7 +39,13 @@ export const _insertElement = (elementType) => (editor, data) => {
       Transforms.wrapNodes(
         editor,
         { type: elementType, data },
-        { split: true, at: selection }, //,
+        {
+          split: true,
+          at: selection,
+          match: (node) => {
+            return Node.string(node).length !== 0;
+          },
+        }, //,
       );
     }
 

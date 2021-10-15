@@ -4,7 +4,7 @@ describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
-  it.only('As editor I can add text and select parts of it and see the Slate Toolbar', function () {
+  it('As editor I can add text and select parts of it and see the Slate Toolbar', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 

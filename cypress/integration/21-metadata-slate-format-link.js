@@ -58,6 +58,8 @@ describe('RichText Tests: Add links', () => {
 
     cy.clickSlateButton('Link');
 
+    // cy.pause();
+
     cy.get('.sidebar-container a.item:nth-child(3)').click();
     cy.get('input[name="external_link-0-external"]')
       .click()

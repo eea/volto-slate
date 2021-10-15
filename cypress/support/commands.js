@@ -359,6 +359,7 @@ Cypress.Commands.add(
       if (typeof query === 'string') {
         const anchorNode = getTextNode($el[0], query);
         const focusNode = endQuery ? getTextNode($el[0], endQuery) : anchorNode;
+        // console.log('anchor node:', anchorNode);
         const anchorOffset = anchorNode.wholeText.indexOf(query);
         const focusOffset = endQuery
           ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
@@ -379,9 +380,27 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getSlateEditorAndType', (type) => {
+  // cy.wait(1000);
+
+  // cy.get('.content-area .slate-editor [contenteditable=true]')
+  //   .wait(1000);
+
   cy.get('.content-area .slate-editor [contenteditable=true]')
     .focus()
-    .click()
+    .wait(1000);
+
+  // This pause makes everything work. How can I focus the viewport in Cypress
+  // instead? It is a bug in Volto-Slate since in a test projectm with a simple
+  // Slate editor and a Cypress test, the bug does not appear: there is no need
+  // to wait after focusing before typing into the Slate editor.
+
+  // cy.pause();
+
+  cy.get('.content-area .slate-editor [contenteditable=true]').dblclick({
+    force: true,
+  });
+
+  cy.get('.content-area .slate-editor [contenteditable=true]')
     .wait(1000)
     .type(type);
 });
@@ -426,6 +445,7 @@ Cypress.Commands.add(
   (subject, query, atStart) => {
     return cy.wrap(subject).selection(($el) => {
       const node = getTextNode($el[0], query);
+      // console.log('node:', node);
       const offset =
         node.wholeText.indexOf(query) + (atStart ? 0 : query.length);
       const document = node.ownerDocument;
@@ -455,6 +475,8 @@ Cypress.Commands.add(
 
 // Helper functions
 function getTextNode(el, match) {
+  // console.log('get text node:', el, match);
+
   const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
   if (!match) {
     return walk.nextNode();
@@ -462,6 +484,7 @@ function getTextNode(el, match) {
 
   let node;
   while ((node = walk.nextNode())) {
+    // console.log('taking into consideration:', node.wholeText, '->', match);
     if (node.wholeText.includes(match)) {
       return node;
     }
@@ -484,4 +507,13 @@ Cypress.Commands.add('store', () => {
 
 Cypress.Commands.add('settings', (key, value) => {
   return cy.window().its('settings');
+});
+
+Cypress.Commands.add('selectSlateRange', (range) => {
+  return cy.window().then((win) => {
+    var event = new CustomEvent('Test_SelectRange', {
+      detail: range,
+    });
+    win.document.dispatchEvent(event);
+  });
 });

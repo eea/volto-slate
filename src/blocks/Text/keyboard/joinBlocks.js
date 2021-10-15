@@ -78,12 +78,12 @@ export function joinWithPreviousBlock({ editor, event }) {
   // TODO: don't remove undo history, etc Should probably save both undo
   // histories, so that the blocks are split, the undos can be restored??
 
+  const cursor = getBlockEndAsRange(otherBlock);
   const formData = changeBlock(properties, otherBlockId, {
     '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
     value: combined,
     plaintext: serializeNodesToText(combined || []),
   });
-  const cursor = getBlockEndAsRange(formData[blocksFieldname][otherBlockId]);
   const newFormData = deleteBlock(formData, block);
 
   ReactDOM.unstable_batchedUpdates(() => {

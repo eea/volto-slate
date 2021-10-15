@@ -1,3 +1,5 @@
+// NOTE: file taken from Slate.js on 15th of October, 2021
+
 /**
  * Constants for string distance checking.
  */

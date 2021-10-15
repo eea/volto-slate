@@ -12,7 +12,7 @@ describe('Block Tests', () => {
     cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
       .click()
-      .wait(1000)
+      // .wait(1000)
       .type('hello, world')
       .type('{leftarrow}')
       .type('{leftarrow}')

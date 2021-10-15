@@ -19,12 +19,14 @@ describe('Block Tests: Bulleted lists', () => {
     cy.toolbarSave();
 
     // then the page view should contain a link
-    cy.get('[id="page-document"] ul li:first-child').contains(
+    cy.get('[id="page-document"] ul li').should('have.length', 2);
+    cy.get('[id="page-document"] ul li:nth-child(1)').contains(
       'Colorless green ideas',
     );
-    cy.get('[id="page-document"] ul li:last-child').contains(
+    cy.get('[id="page-document"] ul li:nth-child(2)').contains(
       'sleep furiously.',
     );
+    cy.pause();
   });
 
   it('As editor I can remove bulleted lists', function () {

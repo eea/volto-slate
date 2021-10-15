@@ -57,6 +57,7 @@ const withTestingFeatures = (WrappedComponent) => {
 
     return (
       <WrappedComponent
+        debug={true}
         debug-values={{
           'data-slate-value': JSON.stringify(props.value, null, 2),
           'data-slate-selection': JSON.stringify(

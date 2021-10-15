@@ -241,38 +241,30 @@ Cypress.Commands.add('removeContent', (path) => {
 });
 
 Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
-  return (
-    cy
-      .wrap(subject)
-      .then((subject) => {
-        subject[0].dispatchEvent(
-          new InputEvent('beforeinput', {
-            inputType: 'insertText',
-            data: text,
-          }),
-        );
-        return subject;
-      })
-      // TODO: do this only for Electron-based browser which does not understand instantaneously
-      // that the user inserted some text in the block
-      .wait(1000)
-  );
+  return cy.wrap(subject).then((subject) => {
+    subject[0].dispatchEvent(
+      new InputEvent('beforeinput', {
+        inputType: 'insertText',
+        data: text,
+      }),
+    );
+    return subject;
+  });
+  // TODO: do this only for Electron-based browser which does not understand instantaneously
+  // that the user inserted some text in the block
+  // .wait(1000)
 });
 
 Cypress.Commands.add('lineBreakInSlate', { prevSubject: true }, (subject) => {
-  return (
-    cy
-      .wrap(subject)
-      .then((subject) => {
-        subject[0].dispatchEvent(
-          new InputEvent('beforeinput', { inputType: 'insertLineBreak' }),
-        );
-        return subject;
-      })
-      // TODO: do this only for Electron-based browser which does not understand instantaneously
-      // that the block was split
-      .wait(1000)
-  );
+  return cy.wrap(subject).then((subject) => {
+    subject[0].dispatchEvent(
+      new InputEvent('beforeinput', { inputType: 'insertLineBreak' }),
+    );
+    return subject;
+  });
+  // TODO: do this only for Electron-based browser which does not understand instantaneously
+  // that the block was split
+  // .wait(1000)
 });
 
 // --- SET WORKFLOW ----------------------------------------------------------
@@ -343,12 +335,14 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
 
 // Low level command reused by `setSelection` and low level command `setCursor`
 Cypress.Commands.add('selection', { prevSubject: true }, (subject, fn) => {
-  cy.wrap(subject).trigger('mousedown').then(fn).trigger('mouseup');
+  // cy.wrap(subject).trigger('mousedown').then(fn).trigger('mouseup');
 
   // TODO: this does not work sometimes
-  cy.document().trigger('selectionchange');
-
-  return cy.wrap(subject);
+  // cy.document().trigger('selectionchange');
+  fn(subject);
+  return subject;
+  // return cy.wrap(subject);
+  // console.log('fn', fn);
 });
 
 Cypress.Commands.add(
@@ -357,12 +351,19 @@ Cypress.Commands.add(
   (subject, query, endQuery) => {
     return cy.wrap(subject).selection(($el) => {
       if (typeof query === 'string') {
+        // console.log('query', { subject, query, endQuery });
         const anchorNode = getTextNode($el[0], query);
         const focusNode = endQuery ? getTextNode($el[0], endQuery) : anchorNode;
         const anchorOffset = anchorNode.wholeText.indexOf(query);
         const focusOffset = endQuery
           ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
           : anchorOffset + query.length;
+        console.log('focusNode', {
+          anchorNode,
+          anchorOffset,
+          focusNode,
+          focusOffset,
+        });
         setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
       } else if (typeof query === 'object') {
         const el = $el[0];
@@ -382,7 +383,7 @@ Cypress.Commands.add('getSlateEditorAndType', (type) => {
   cy.get('.content-area .slate-editor [contenteditable=true]')
     .focus()
     .click()
-    .wait(1000)
+    // .wait(1000)
     .type(type);
 });
 
@@ -390,16 +391,16 @@ Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
   cy.get('.slate-editor.selected [contenteditable=true]')
     .focus()
     .click()
-    .setSelection(subject, query, endQuery)
-    .wait(1000);
+    .setSelection(subject, query, endQuery);
+  // .wait(1000);
 });
 
 Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
   cy.get('.slate-editor.selected [contenteditable=true]')
-    .focus()
-    .click()
-    .setCursor(subject, query, endQuery)
-    .wait(1000);
+    // .focus()
+    // .click()
+    .setCursor(subject, query, endQuery);
+  // .wait(1000);
 });
 
 Cypress.Commands.add('clickSlateButton', (button) => {
@@ -407,7 +408,7 @@ Cypress.Commands.add('clickSlateButton', (button) => {
 });
 
 Cypress.Commands.add('toolbarSave', () => {
-  cy.wait(1000);
+  // cy.wait(1000);
 
   // Save
   cy.get('#toolbar-save').click();
@@ -469,9 +470,11 @@ function getTextNode(el, match) {
 }
 
 function setBaseAndExtent(...args) {
+  console.log('set', args);
   const document = args[0].ownerDocument;
   document.getSelection().removeAllRanges();
   document.getSelection().setBaseAndExtent(...args);
+  console.log('selection', document.getSelection());
 }
 
 Cypress.Commands.add('navigate', (route = '') => {

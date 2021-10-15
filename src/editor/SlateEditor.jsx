@@ -204,7 +204,7 @@ class SlateEditor extends Component {
           'show-toolbar': this.state.showExpandedToolbar,
           selected,
         })}
-        tabIndex="-1"
+        tabIndex={-1}
       >
         <EditorContext.Provider value={editor}>
           <Slate

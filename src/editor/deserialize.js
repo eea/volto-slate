@@ -1,6 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import { normalizeBlockNodes, isWhitespace } from 'volto-slate/utils';
+import { normalizeNodes, isWhitespace } from 'volto-slate/utils';
 import {
   TD,
   TH,
@@ -110,7 +110,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
   // const isCurrentInline = editor.isInline(el);
 
   if (hasBlockChild) {
-    children = normalizeBlockNodes(editor, children);
+    children = normalizeNodes(editor, children);
   }
 
   // normalizes block elements so that they're never empty
@@ -134,9 +134,9 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
       Text.isText(child) || typeof child === 'string'
         ? jsx('text', attrs, child)
         : {
-            ...child,
-            attrs, // pass the inline attrs as separate object
-          };
+          ...child,
+          attrs, // pass the inline attrs as separate object
+        };
     return res;
   });
 };

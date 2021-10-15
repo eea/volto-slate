@@ -2,7 +2,7 @@ import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import {
   createDefaultBlock,
-  normalizeBlockNodes,
+  normalizeNodes,
   MIMETypeName,
 } from 'volto-slate/utils';
 
@@ -44,7 +44,7 @@ export const insertData = (editor) => {
         return true;
       }
 
-      const nodes = normalizeBlockNodes(editor, fragment);
+      const nodes = normalizeNodes(editor, fragment);
       Transforms.insertNodes(editor, nodes);
 
       return true;
@@ -95,7 +95,7 @@ export const insertData = (editor) => {
         }
       }
 
-      const nodes = normalizeBlockNodes(editor, fragment);
+      const nodes = normalizeNodes(editor, fragment);
       if (!containsText) {
         Transforms.insertNodes(editor, nodes);
       }

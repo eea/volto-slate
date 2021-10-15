@@ -15,11 +15,7 @@ import { serializeNodes } from 'volto-slate/editor/render';
 import makeEditor from 'volto-slate/editor/makeEditor';
 import deserialize from 'volto-slate/editor/deserialize';
 
-import {
-  createEmptyParagraph,
-  normalizeBlockNodes,
-  normalizeLinkNodes,
-} from 'volto-slate/utils';
+import { createEmptyParagraph, normalizeNodes } from 'volto-slate/utils';
 import { ErrorBoundary } from './ErrorBoundary';
 
 import './style.css';
@@ -82,9 +78,7 @@ const HtmlSlateWidget = (props) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
       let data = deserialize(editor, body);
-      data = normalizeBlockNodes(editor, data);
-
-      data = normalizeLinkNodes(editor, data);
+      data = normalizeNodes(editor, data);
 
       // editor.children = data;
       // Editor.normalize(editor);

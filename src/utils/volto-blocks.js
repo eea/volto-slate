@@ -21,10 +21,11 @@ function fromEntries(pairs) {
 
 /**
  * Taken from Slate.js.
- * 
- * @param {*} editor 
- * @param {*} path 
- * @returns 
+ * https://github.com/ianstormtaylor/slate/blob/a2558b37b020160daa7a64a98a38a84beba464dd/packages/slate/src/transforms/node.ts#L1031
+ *
+ * @param {*} editor
+ * @param {*} path
+ * @returns
  */
 const matchPath = (editor, path) => {
   const [node] = Editor.node(editor, path);
@@ -33,9 +34,11 @@ const matchPath = (editor, path) => {
 
 /**
  * Taken from Slate.js.
- * @param {*} editor 
- * @param {*} node 
- * @returns 
+ * https://github.com/ianstormtaylor/slate/blob/a2558b37b020160daa7a64a98a38a84beba464dd/packages/slate/src/transforms/node.ts#L999
+ *
+ * @param {*} editor
+ * @param {*} node
+ * @returns
  */
 const hasSingleChildNest = (editor, node) => {
   if (Element.isElement(node)) {

@@ -87,7 +87,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   const newFormData = deleteBlock(formData, block);
 
   ReactDOM.unstable_batchedUpdates(() => {
-    // saveSlateBlockSelection(otherBlockId, cursor);
+    saveSlateBlockSelection(otherBlockId, cursor);
     onChangeField(blocksFieldname, newFormData[blocksFieldname]);
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
     onSelectBlock(otherBlockId);

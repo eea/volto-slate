@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { Transforms, Editor, Node } from 'slate';
+import { Transforms, Editor, Node, Path, Element } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
@@ -18,6 +18,41 @@ function fromEntries(pairs) {
   });
   return res;
 }
+
+/**
+ * Taken from Slate.js.
+ * 
+ * @param {*} editor 
+ * @param {*} path 
+ * @returns 
+ */
+const matchPath = (editor, path) => {
+  const [node] = Editor.node(editor, path);
+  return (n) => n === node;
+};
+
+/**
+ * Taken from Slate.js.
+ * @param {*} editor 
+ * @param {*} node 
+ * @returns 
+ */
+const hasSingleChildNest = (editor, node) => {
+  if (Element.isElement(node)) {
+    const element = node;
+    if (Editor.isVoid(editor, node)) {
+      return true;
+    } else if (element.children.length === 1) {
+      return hasSingleChildNest(editor, element.children[0]);
+    } else {
+      return false;
+    }
+  } else if (Editor.isEditor(node)) {
+    return false;
+  } else {
+    return true;
+  }
+};
 
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
@@ -39,30 +74,42 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   const source = pathRef.current;
   const endPath = Editor.end(editor, [0]);
 
+  const prevv = Editor.previous(editor, { at: endPath, mode: 'all' });
+  const [, prevPath] = prevv;
+  const commonPath = Path.common(source, prevPath);
+
+  const levels = Array.from(Editor.levels(editor, { at: source }), ([n]) => n)
+    .slice(commonPath.length)
+    .slice(0, -1);
+
+  // Determine if the merge will leave an ancestor of the path empty as a
+  // result, in which case we'll want to remove it after merging.
+  const emptyAncestor = Editor.above(editor, {
+    at: source,
+    mode: 'highest',
+    match: (n) => levels.includes(n) && hasSingleChildNest(editor, n),
+  });
+
   const opts = {
     at: source,
     to: endPath.path,
     mode: 'all',
-    match: (n) => true,
+    match: matchPath(editor, source),
   };
 
   Transforms.moveNodes(editor, opts);
 
-  const x = pathRef.current;
-  const pp = pathRef.unref();
+  const emptyRef = emptyAncestor && Editor.pathRef(editor, emptyAncestor[1]);
 
-  console.log({ x, pp });
+  if (emptyRef) {
+    Transforms.removeNodes(editor, { at: emptyRef.current });
+  }
+
+  const pp = pathRef.unref();
 
   const res = Editor.point(editor, pp, { edge: 'start' });
 
-  console.log('result', res);
   return res;
-
-  // const ref = Editor.rangeRef(editor.selection);
-  // console.log('at', Editor.start(editor, []), prev);
-  // insert the contents of the previous editor into the current editor
-  // console.log(opts);
-  // console.log(JSON.parse(JSON.stringify(editor.children)));
 }
 
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {

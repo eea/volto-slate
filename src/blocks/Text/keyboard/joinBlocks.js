@@ -109,7 +109,7 @@ export function joinWithNextBlock({ editor, event }) {
   const {
     block,
     index,
-    saveSlateBlockSelection,
+    // saveSlateBlockSelection,
     onSelectBlock,
     data,
   } = blockProps;
@@ -126,7 +126,7 @@ export function joinWithNextBlock({ editor, event }) {
 
   mergeSlateWithBlockForward(editor, otherBlock);
 
-  const cursor = JSON.parse(JSON.stringify(editor.selection));
+  // const cursor = JSON.parse(JSON.stringify(editor.selection));
   const combined = JSON.parse(JSON.stringify(editor.children));
 
   // TODO: don't remove undo history, etc Should probably save both undo

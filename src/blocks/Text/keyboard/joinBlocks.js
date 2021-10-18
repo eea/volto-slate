@@ -71,14 +71,14 @@ export function joinWithPreviousBlock({ editor, event }) {
 
   // Else the editor contains characters, so we merge the current block's
   // `editor` with the block before, `otherBlock`.
-  mergeSlateWithBlockBackward(editor, otherBlock);
+  const cursor = mergeSlateWithBlockBackward(editor, otherBlock);
 
   const combined = JSON.parse(JSON.stringify(editor.children));
 
-  // TODO: don't remove undo history, etc Should probably save both undo
-  // histories, so that the blocks are split, the undos can be restored??
+  // // TODO: don't remove undo history, etc Should probably save both undo
+  // // histories, so that the blocks are split, the undos can be restored??
 
-  const cursor = getBlockEndAsRange(otherBlock);
+  // const cursor = getBlockEndAsRange(otherBlock);
   const formData = changeBlock(properties, otherBlockId, {
     '@type': 'slate', // TODO: use a constant specified in src/constants.js instead of 'slate'
     value: combined,
@@ -87,7 +87,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   const newFormData = deleteBlock(formData, block);
 
   ReactDOM.unstable_batchedUpdates(() => {
-    saveSlateBlockSelection(otherBlockId, cursor);
+    // saveSlateBlockSelection(otherBlockId, cursor);
     onChangeField(blocksFieldname, newFormData[blocksFieldname]);
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
     onSelectBlock(otherBlockId);
@@ -144,7 +144,7 @@ export function joinWithNextBlock({ editor, event }) {
   const newFormData = deleteBlock(formData, block);
 
   ReactDOM.unstable_batchedUpdates(() => {
-    saveSlateBlockSelection(otherBlockId, cursor);
+    // saveSlateBlockSelection(otherBlockId, cursor);
     onChangeField(blocksFieldname, newFormData[blocksFieldname]);
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);
     onSelectBlock(otherBlockId);
@@ -159,15 +159,10 @@ export function joinWithNextBlock({ editor, event }) {
  * the text cursor can take inside the given block.
  */
 function getBlockEndAsRange(block) {
-  // The value of the Slate Text Volto block.
   const { value } = block;
-  // The Slate Path representing the last root-level Slate block inside the
-  // Volto block.
-  const location = [value.length - 1];
-  // The Slate Node that represents all the contents of the given Volto block.
+  const location = [value.length - 1]; // adress of root node
   const editor = { children: value };
-  // The path of the last Slate Node in the last Slate Path computed above.
-  const path = Editor.last(editor, location)[1];
+  const path = Editor.last(editor, location)[1]; // last Node in the block
   // The last Text node (leaf node) entry inside the path computed just above.
   const [leaf, leafpath] = Editor.leaf(editor, path);
   // The offset of the Points in the collapsed Range computed below:

@@ -30,13 +30,39 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   // collapse the selection to its start point
   Transforms.collapse(editor, { edge: 'start' });
+  const pathRef = Editor.pathRef(editor, editor.selection.anchor.path);
 
-  // insert the contents of the previous editor into the current editor
   Transforms.insertNodes(editor, prev, {
     at: Editor.start(editor, []),
   });
 
-  Editor.deleteBackward(editor, { unit: 'character' });
+  const source = pathRef.current;
+  const endPath = Editor.end(editor, [0]);
+
+  const opts = {
+    at: source,
+    to: endPath.path,
+    mode: 'all',
+    match: (n) => true,
+  };
+
+  Transforms.moveNodes(editor, opts);
+
+  const x = pathRef.current;
+  const pp = pathRef.unref();
+
+  console.log({ x, pp });
+
+  const res = Editor.point(editor, pp, { edge: 'start' });
+
+  console.log('result', res);
+  return res;
+
+  // const ref = Editor.rangeRef(editor.selection);
+  // console.log('at', Editor.start(editor, []), prev);
+  // insert the contents of the previous editor into the current editor
+  // console.log(opts);
+  // console.log(JSON.parse(JSON.stringify(editor.children)));
 }
 
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {

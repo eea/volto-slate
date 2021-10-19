@@ -33,7 +33,8 @@ const matchPath = (editor, path) => {
 };
 
 /**
- * Taken from Slate.js.
+ * Taken from Slate.js and modified to detect inlines with empty Texts and a
+ * single node between them.
  * https://github.com/ianstormtaylor/slate/blob/a2558b37b020160daa7a64a98a38a84beba464dd/packages/slate/src/transforms/node.ts#L999
  *
  * @param {*} editor
@@ -47,6 +48,13 @@ const hasSingleChildNest = (editor, node) => {
       return true;
     } else if (element.children.length === 1) {
       return hasSingleChildNest(editor, element.children[0]);
+    } else if (
+      Editor.isBlock(editor, element) &&
+      element.children.length === 3 &&
+      element.children[0].text === '' &&
+      element.children[2].text === ''
+    ) {
+      return hasSingleChildNest(editor, element.children[1]);
     } else {
       return false;
     }
@@ -68,29 +76,38 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   // collapse the selection to its start point
   Transforms.collapse(editor, { edge: 'start' });
-  const pathRef = Editor.pathRef(editor, editor.selection.anchor.path);
 
   Transforms.insertNodes(editor, prev, {
     at: Editor.start(editor, []),
   });
 
-  const source = pathRef.current;
+  const rangeRef = Editor.rangeRef(editor, {
+    anchor: Editor.start(editor, [1]),
+    focus: Editor.end(editor, [1]),
+  });
+
+  console.log('rangeRef', rangeRef);
+
+  const source = rangeRef.current;
   const endPath = Editor.end(editor, [0]);
 
   const prevv = Editor.previous(editor, { at: endPath, mode: 'lowest' });
   const [, prevPath] = prevv;
   const commonPath = Path.common(source, prevPath);
 
-  const levels = Array.from(Editor.levels(editor, { at: [1] }), ([n]) => n)
+  const levels = Array.from(Editor.levels(editor, { at: [1, 0] }), ([n]) => n)
     .slice(commonPath.length)
     .slice(0, -1);
 
   // Determine if the merge will leave an ancestor of the path empty as a
   // result, in which case we'll want to remove it after merging.
   const emptyAncestor = Editor.above(editor, {
-    at: [1],
+    at: [1, 0],
     mode: 'highest',
-    match: (n) => levels.includes(n) && hasSingleChildNest(editor, n),
+    match: (n) => {
+      const b = levels.includes(n) && hasSingleChildNest(editor, n);
+      return b;
+    },
   });
 
   const opts = {
@@ -98,24 +115,34 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
     to: endPath.path,
     mode: 'all',
     match: ((editor, source) => {
-      const [, path] = Editor.node(editor, source);
+      // const [, path] = Editor.node(editor, source);
       return (n, p) => {
-        return Path.isDescendant(path, p);
+        if (p.length <= 1) {
+          return false;
+        }
+
+        if (p.length === 2) {
+          return true;
+        }
+
+        return false;
       };
     })(editor, source),
   };
 
-  Editor.withoutNormalizing(editor, () => {
-    Transforms.moveNodes(editor, opts);
+  // Editor.withoutNormalizing(editor, () => {
+  Transforms.moveNodes(editor, opts);
 
-    const emptyRef = emptyAncestor && Editor.pathRef(editor, emptyAncestor[1]);
+  const emptyRef = emptyAncestor && Editor.pathRef(editor, emptyAncestor[1]);
 
-    if (emptyRef) {
-      Transforms.removeNodes(editor, { at: emptyRef.current });
-    }
-  });
+  if (emptyRef) {
+    Transforms.removeNodes(editor, { at: emptyRef.current });
+  }
+  // });
 
-  const pp = pathRef.unref();
+  console.log('RES', rangeRef);
+
+  const pp = rangeRef.unref();
 
   const res = Editor.point(editor, pp, { edge: 'start' });
 

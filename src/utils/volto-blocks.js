@@ -86,12 +86,10 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
     focus: Editor.end(editor, [1]),
   });
 
-  console.log('rangeRef', rangeRef);
-
   const source = rangeRef.current;
-  const endPath = Editor.end(editor, [0]);
+  const endPoint = Editor.end(editor, [0]);
 
-  const prevv = Editor.previous(editor, { at: endPath, mode: 'lowest' });
+  const prevv = Editor.previous(editor, { at: endPoint, mode: 'lowest' });
   const [, prevPath] = prevv;
   const commonPath = Path.common(source, prevPath);
 
@@ -112,15 +110,10 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   const opts = {
     at: source,
-    to: endPath.path,
+    to: endPoint.path,
     mode: 'all',
     match: ((editor, source) => {
-      // const [, path] = Editor.node(editor, source);
       return (n, p) => {
-        if (p.length <= 1) {
-          return false;
-        }
-
         if (p.length === 2) {
           return true;
         }
@@ -130,23 +123,18 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
     })(editor, source),
   };
 
-  // Editor.withoutNormalizing(editor, () => {
   Transforms.moveNodes(editor, opts);
 
-  const emptyRef = emptyAncestor && Editor.pathRef(editor, emptyAncestor[1]);
+  const emptyAncestorPath =
+    emptyAncestor && Editor.path(editor, emptyAncestor[1]);
 
-  if (emptyRef) {
-    Transforms.removeNodes(editor, { at: emptyRef.current });
+  if (emptyAncestorPath) {
+    Transforms.removeNodes(editor, { at: emptyAncestorPath });
   }
-  // });
 
-  console.log('RES', rangeRef);
+  rangeRef.unref();
 
-  const pp = rangeRef.unref();
-
-  const res = Editor.point(editor, pp, { edge: 'start' });
-
-  return res;
+  return endPoint;
 }
 
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {

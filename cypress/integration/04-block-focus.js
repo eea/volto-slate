@@ -9,16 +9,7 @@ describe('Block Tests', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // select 'furiously'
-    cy.selectSlateRange({
-      anchor: {
-        path: [0, 0],
-        offset: 28,
-      },
-      focus: {
-        path: [0, 0],
-        offset: 37,
-      },
-    });
+    cy.setSlateSelection('furiously');
 
     cy.get('.slate-inline-toolbar').should('be.visible');
 

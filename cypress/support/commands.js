@@ -343,11 +343,7 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
 
 // Low level command reused by `setSelection` and low level command `setCursor`
 Cypress.Commands.add('selection', { prevSubject: true }, (subject, fn) => {
-  cy.wrap(subject).trigger('mousedown').then(fn).trigger('mouseup');
-
-  // TODO: this does not work sometimes
-  cy.document().trigger('selectionchange');
-
+  fn(subject);
   return cy.wrap(subject);
 });
 
@@ -380,23 +376,25 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getSlateEditorAndType', (type) => {
-  // cy.wait(1000);
-
-  // cy.get('.content-area .slate-editor [contenteditable=true]')
-  //   .wait(1000);
-
   cy.get('.content-area .slate-editor [contenteditable=true]')
     .focus()
     .wait(1000);
 
+  // Old comment:
+
   // This pause makes everything work. How can I focus the viewport in Cypress
-  // instead? It is a bug in Volto-Slate since in a test projectm with a simple
+  // instead? It is a bug in Volto-Slate since in a test project with a simple
   // Slate editor and a Cypress test, the bug does not appear: there is no need
   // to wait after focusing before typing into the Slate editor.
-
   // cy.pause();
 
-  cy.get('.content-area .slate-editor [contenteditable=true]').dblclick({
+  // the two clicks below are necessary for the focusing of the Slate editor to
+  // work well
+  cy.get('.content-area .slate-editor [contenteditable=true]').click({
+    force: true,
+  });
+  cy.wait(1000);
+  cy.get('.content-area .slate-editor [contenteditable=true]').click({
     force: true,
   });
 
@@ -435,6 +433,11 @@ Cypress.Commands.add('toolbarSave', () => {
   cy.waitForResourceToLoad('@actions');
   cy.waitForResourceToLoad('@types');
   cy.waitForResourceToLoad('my-page');
+
+  // sometimes, not frequently, the URL is not updated to be the final view page
+  // but it is the URL of the edit-page form
+  cy.wait(1000);
+
   cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 });
 

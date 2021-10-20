@@ -13,6 +13,11 @@ describe('Block Tests', () => {
       .focus()
       .click()
       .wait(1000)
+
+      // the following two lines are necessary for the focusing to work well
+      .focus()
+      .click()
+
       .type('hello, world')
       .type('{leftarrow}')
       .type('{leftarrow}')

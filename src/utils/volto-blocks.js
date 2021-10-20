@@ -89,47 +89,19 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   const source = rangeRef.current;
   const endPoint = Editor.end(editor, [0]);
 
-  const prevv = Editor.previous(editor, { at: endPoint, mode: 'lowest' });
-  const [, prevPath] = prevv;
-  const commonPath = Path.common(source, prevPath);
-
-  const levels = Array.from(Editor.levels(editor, { at: [1, 0] }), ([n]) => n)
-    .slice(commonPath.length)
-    .slice(0, -1);
-
-  // Determine if the merge will leave an ancestor of the path empty as a
-  // result, in which case we'll want to remove it after merging.
-  const emptyAncestor = Editor.above(editor, {
-    at: [1, 0],
-    mode: 'highest',
-    match: (n) => {
-      const b = levels.includes(n) && hasSingleChildNest(editor, n);
-      return b;
-    },
-  });
-
   const opts = {
     at: source,
     to: endPoint.path,
     mode: 'all',
-    match: ((editor, source) => {
-      return (n, p) => {
-        if (p.length === 2) {
-          return true;
-        }
-
-        return false;
-      };
-    })(editor, source),
+    match: (n, p) => p.length === 2,
   };
 
   Transforms.moveNodes(editor, opts);
 
-  const emptyAncestorPath =
-    emptyAncestor && Editor.path(editor, emptyAncestor[1]);
+  const [n] = Editor.node(editor, [1]);
 
-  if (emptyAncestorPath) {
-    Transforms.removeNodes(editor, { at: emptyAncestorPath });
+  if (Editor.isEmpty(editor, n)) {
+    Transforms.removeNodes(editor, { at: [1] });
   }
 
   rangeRef.unref();

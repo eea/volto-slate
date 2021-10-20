@@ -3,6 +3,8 @@ import * as slateReducers from './reducers';
 import installSlate from './editor';
 import installTextBlock from './blocks/Text';
 import installTableBlock from './blocks/Table';
+import installTitleBlock from './blocks/Title';
+import installDescriptionBlock from './blocks/Description';
 import RichTextWidget from './widgets/RichTextWidget';
 import RichTextWidgetView from './widgets/RichTextWidgetView';
 import { BlocksBrowserWidget } from './widgets/BlocksBrowser';
@@ -90,7 +92,11 @@ export function asDefaultBlock(config) {
   config.blocks.blocksConfig.text.restricted = true;
   config.blocks.blocksConfig.table.restricted = true;
 
-  // TODO: handle title and description blocks
+  config = [installTitleBlock, installDescriptionBlock].reduce(
+    (acc, apply) => apply(acc),
+    config,
+  );
+
   return config;
 }
 
@@ -102,8 +108,16 @@ export function asDefaultRichText(config) {
 export function asDefault(config) {
   asDefaultBlock(config);
 
-  // TODO: See cypress
   asDefaultRichText(config);
+
+  return config;
+}
+
+export function asCypressDefault(config) {
+  asDefault(config);
+
+  // config.blocks.blocksConfig.title.restricted = false;
+  config.blocks.blocksConfig.description.restricted = false;
 
   return config;
 }

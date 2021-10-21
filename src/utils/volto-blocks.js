@@ -19,52 +19,6 @@ function fromEntries(pairs) {
   return res;
 }
 
-/**
- * Taken from Slate.js.
- * https://github.com/ianstormtaylor/slate/blob/a2558b37b020160daa7a64a98a38a84beba464dd/packages/slate/src/transforms/node.ts#L1031
- *
- * @param {*} editor
- * @param {*} path
- * @returns
- */
-const matchPath = (editor, path) => {
-  const [node] = Editor.node(editor, path);
-  return (n) => n === node;
-};
-
-/**
- * Taken from Slate.js and modified to detect inlines with empty Texts and a
- * single node between them.
- * https://github.com/ianstormtaylor/slate/blob/a2558b37b020160daa7a64a98a38a84beba464dd/packages/slate/src/transforms/node.ts#L999
- *
- * @param {*} editor
- * @param {*} node
- * @returns
- */
-const hasSingleChildNest = (editor, node) => {
-  if (Element.isElement(node)) {
-    const element = node;
-    if (Editor.isVoid(editor, node)) {
-      return true;
-    } else if (element.children.length === 1) {
-      return hasSingleChildNest(editor, element.children[0]);
-    } else if (
-      Editor.isBlock(editor, element) &&
-      element.children.length === 3 &&
-      element.children[0].text === '' &&
-      element.children[2].text === ''
-    ) {
-      return hasSingleChildNest(editor, element.children[1]);
-    } else {
-      return false;
-    }
-  } else if (Editor.isEditor(node)) {
-    return false;
-  } else {
-    return true;
-  }
-};
-
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // To work around current architecture limitations, read the value from

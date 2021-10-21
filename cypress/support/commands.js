@@ -341,37 +341,31 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
   });
 });
 
-// Low level command reused by `setSelection` and low level command `setCursor`
-Cypress.Commands.add('selection', { prevSubject: true }, (subject, fn) => {
-  fn(subject);
-  return cy.wrap(subject);
-});
-
 Cypress.Commands.add(
   'setSelection',
   { prevSubject: true },
   (subject, query, endQuery) => {
-    return cy.wrap(subject).selection(($el) => {
-      if (typeof query === 'string') {
-        const anchorNode = getTextNode($el[0], query);
-        const focusNode = endQuery ? getTextNode($el[0], endQuery) : anchorNode;
-        // console.log('anchor node:', anchorNode);
-        const anchorOffset = anchorNode.wholeText.indexOf(query);
-        const focusOffset = endQuery
-          ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
-          : anchorOffset + query.length;
-        setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
-      } else if (typeof query === 'object') {
-        const el = $el[0];
-        const anchorNode = getTextNode(el.querySelector(query.anchorQuery));
-        const anchorOffset = query.anchorOffset || 0;
-        const focusNode = query.focusQuery
-          ? getTextNode(el.querySelector(query.focusQuery))
-          : anchorNode;
-        const focusOffset = query.focusOffset || 0;
-        setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
-      }
-    });
+    if (typeof query === 'string') {
+      const anchorNode = getTextNode(subject[0], query);
+      const focusNode = endQuery
+        ? getTextNode(subject[0], endQuery)
+        : anchorNode;
+      const anchorOffset = anchorNode.wholeText.indexOf(query);
+      const focusOffset = endQuery
+        ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
+        : anchorOffset + query.length;
+      setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    } else if (typeof query === 'object') {
+      const el = subject[0];
+      const anchorNode = getTextNode(el.querySelector(query.anchorQuery));
+      const anchorOffset = query.anchorOffset || 0;
+      const focusNode = query.focusQuery
+        ? getTextNode(el.querySelector(query.focusQuery))
+        : anchorNode;
+      const focusOffset = query.focusOffset || 0;
+      setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
+    return subject;
   },
 );
 
@@ -380,27 +374,16 @@ Cypress.Commands.add('getSlateEditorAndType', (type) => {
     .focus()
     .wait(1000);
 
-  // Old comment:
-
-  // This pause makes everything work. How can I focus the viewport in Cypress
-  // instead? It is a bug in Volto-Slate since in a test project with a simple
-  // Slate editor and a Cypress test, the bug does not appear: there is no need
-  // to wait after focusing before typing into the Slate editor.
-  // cy.pause();
-
   // the two clicks below are necessary for the focusing of the Slate editor to
   // work well
   cy.get('.content-area .slate-editor [contenteditable=true]').click({
-    force: true,
+    force: true, // not sure if 'force: true' needed
   });
-  cy.wait(1000);
   cy.get('.content-area .slate-editor [contenteditable=true]').click({
-    force: true,
+    force: true, // not sure if 'force: true' needed
   });
 
-  cy.get('.content-area .slate-editor [contenteditable=true]')
-    .wait(1000)
-    .type(type);
+  cy.get('.content-area .slate-editor [contenteditable=true]').type(type);
 });
 
 Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
@@ -424,8 +407,6 @@ Cypress.Commands.add('clickSlateButton', (button) => {
 });
 
 Cypress.Commands.add('toolbarSave', () => {
-  cy.wait(1000);
-
   // Save
   cy.get('#toolbar-save').click();
   cy.waitForResourceToLoad('@navigation');
@@ -446,17 +427,16 @@ Cypress.Commands.add(
   'setCursor',
   { prevSubject: true },
   (subject, query, atStart) => {
-    return cy.wrap(subject).selection(($el) => {
-      const node = getTextNode($el[0], query);
-      // console.log('node:', node);
-      const offset =
-        node.wholeText.indexOf(query) + (atStart ? 0 : query.length);
-      const document = node.ownerDocument;
-      document.getSelection().removeAllRanges();
-      document.getSelection().collapse(node, offset);
-    });
+    const node = getTextNode(subject[0], query);
+    const offset = node.wholeText.indexOf(query) + (atStart ? 0 : query.length);
+    const document = node.ownerDocument;
+    document.getSelection().removeAllRanges();
+    document.getSelection().collapse(node, offset);
+
     // Depending on what you're testing, you may need to chain a `.click()` here to ensure
     // further commands are picked up by whatever you're testing (this was required for Slate, for example).
+
+    return subject;
   },
 );
 

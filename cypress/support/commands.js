@@ -341,49 +341,49 @@ Cypress.Commands.add('waitForResourceToLoad', (fileName, type) => {
   });
 });
 
-// Low level command reused by `setSelection` and low level command `setCursor`
-Cypress.Commands.add('selection', { prevSubject: true }, (subject, fn) => {
-  cy.wrap(subject).trigger('mousedown').then(fn).trigger('mouseup');
-
-  // TODO: this does not work sometimes
-  cy.document().trigger('selectionchange');
-
-  return cy.wrap(subject);
-});
-
 Cypress.Commands.add(
   'setSelection',
   { prevSubject: true },
   (subject, query, endQuery) => {
-    return cy.wrap(subject).selection(($el) => {
-      if (typeof query === 'string') {
-        const anchorNode = getTextNode($el[0], query);
-        const focusNode = endQuery ? getTextNode($el[0], endQuery) : anchorNode;
-        const anchorOffset = anchorNode.wholeText.indexOf(query);
-        const focusOffset = endQuery
-          ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
-          : anchorOffset + query.length;
-        setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
-      } else if (typeof query === 'object') {
-        const el = $el[0];
-        const anchorNode = getTextNode(el.querySelector(query.anchorQuery));
-        const anchorOffset = query.anchorOffset || 0;
-        const focusNode = query.focusQuery
-          ? getTextNode(el.querySelector(query.focusQuery))
-          : anchorNode;
-        const focusOffset = query.focusOffset || 0;
-        setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
-      }
-    });
+    if (typeof query === 'string') {
+      const anchorNode = getTextNode(subject[0], query);
+      const focusNode = endQuery
+        ? getTextNode(subject[0], endQuery)
+        : anchorNode;
+      const anchorOffset = anchorNode.wholeText.indexOf(query);
+      const focusOffset = endQuery
+        ? focusNode.wholeText.indexOf(endQuery) + endQuery.length
+        : anchorOffset + query.length;
+      setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    } else if (typeof query === 'object') {
+      const el = subject[0];
+      const anchorNode = getTextNode(el.querySelector(query.anchorQuery));
+      const anchorOffset = query.anchorOffset || 0;
+      const focusNode = query.focusQuery
+        ? getTextNode(el.querySelector(query.focusQuery))
+        : anchorNode;
+      const focusOffset = query.focusOffset || 0;
+      setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset);
+    }
+    return subject;
   },
 );
 
 Cypress.Commands.add('getSlateEditorAndType', (type) => {
   cy.get('.content-area .slate-editor [contenteditable=true]')
     .focus()
-    .click()
-    .wait(1000)
-    .type(type);
+    .wait(1000);
+
+  // the two clicks below are necessary for the focusing of the Slate editor to
+  // work well
+  cy.get('.content-area .slate-editor [contenteditable=true]').click({
+    force: true, // not sure if 'force: true' needed
+  });
+  cy.get('.content-area .slate-editor [contenteditable=true]').click({
+    force: true, // not sure if 'force: true' needed
+  });
+
+  cy.get('.content-area .slate-editor [contenteditable=true]').type(type);
 });
 
 Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
@@ -391,7 +391,7 @@ Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
     .focus()
     .click()
     .setSelection(subject, query, endQuery)
-    .wait(1000);
+    .wait(1000); // this wait is needed for the selection change to be detected after
 });
 
 Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
@@ -399,7 +399,7 @@ Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
     .focus()
     .click()
     .setCursor(subject, query, endQuery)
-    .wait(1000);
+    .wait(1000); // this wait is needed for the selection change to be detected after
 });
 
 Cypress.Commands.add('clickSlateButton', (button) => {
@@ -407,8 +407,6 @@ Cypress.Commands.add('clickSlateButton', (button) => {
 });
 
 Cypress.Commands.add('toolbarSave', () => {
-  cy.wait(1000);
-
   // Save
   cy.get('#toolbar-save').click();
   cy.waitForResourceToLoad('@navigation');
@@ -416,6 +414,11 @@ Cypress.Commands.add('toolbarSave', () => {
   cy.waitForResourceToLoad('@actions');
   cy.waitForResourceToLoad('@types');
   cy.waitForResourceToLoad('my-page');
+
+  // sometimes, not frequently, the URL is not updated to be the final view page
+  // but it is the URL of the edit-page form
+  cy.wait(1000);
+
   cy.url().should('eq', Cypress.config().baseUrl + '/cypress/my-page');
 });
 
@@ -424,16 +427,16 @@ Cypress.Commands.add(
   'setCursor',
   { prevSubject: true },
   (subject, query, atStart) => {
-    return cy.wrap(subject).selection(($el) => {
-      const node = getTextNode($el[0], query);
-      const offset =
-        node.wholeText.indexOf(query) + (atStart ? 0 : query.length);
-      const document = node.ownerDocument;
-      document.getSelection().removeAllRanges();
-      document.getSelection().collapse(node, offset);
-    });
+    const node = getTextNode(subject[0], query);
+    const offset = node.wholeText.indexOf(query) + (atStart ? 0 : query.length);
+    const document = node.ownerDocument;
+    document.getSelection().removeAllRanges();
+    document.getSelection().collapse(node, offset);
+
     // Depending on what you're testing, you may need to chain a `.click()` here to ensure
     // further commands are picked up by whatever you're testing (this was required for Slate, for example).
+
+    return subject;
   },
 );
 
@@ -455,6 +458,8 @@ Cypress.Commands.add(
 
 // Helper functions
 function getTextNode(el, match) {
+  // console.log('get text node:', el, match);
+
   const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
   if (!match) {
     return walk.nextNode();
@@ -462,6 +467,7 @@ function getTextNode(el, match) {
 
   let node;
   while ((node = walk.nextNode())) {
+    // console.log('taking into consideration:', node.wholeText, '->', match);
     if (node.wholeText.includes(match)) {
       return node;
     }
@@ -484,4 +490,13 @@ Cypress.Commands.add('store', () => {
 
 Cypress.Commands.add('settings', (key, value) => {
   return cy.window().its('settings');
+});
+
+Cypress.Commands.add('selectSlateRange', (range) => {
+  return cy.window().then((win) => {
+    var event = new CustomEvent('Test_SelectRange', {
+      detail: range,
+    });
+    win.document.dispatchEvent(event);
+  });
 });

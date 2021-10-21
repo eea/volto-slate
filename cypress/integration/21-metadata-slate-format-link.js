@@ -51,12 +51,12 @@ describe('RichText Tests: Add links', () => {
 
     cy.wait(1000);
 
-    selectSlateRange({
-      anchor: { path: [0], offset: 10 },
-      focus: { path: [2], offset: 5 },
-    });
+    cy.setSlateSelection('green', 'furiously');
 
     cy.clickSlateButton('Link');
+
+    // this is necessary to wait till the sidebar is visible before clicking on it
+    cy.wait(1000);
 
     cy.get('.sidebar-container a.item:nth-child(3)').click();
     cy.get('input[name="external_link-0-external"]')
@@ -74,11 +74,7 @@ describe('RichText Tests: Add links', () => {
     cy.wait(1000);
 
     // Re-add link
-    selectSlateRange({
-      anchor: { path: [0], offset: 0 },
-      focus: { path: [2], offset: 15 },
-    });
-
+    cy.setSlateSelection('Colorless', 'furiously');
 
     cy.wait(1000);
 

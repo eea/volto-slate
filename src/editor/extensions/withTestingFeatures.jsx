@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ReactEditor } from 'slate-react';
 import { omit } from 'lodash';
 
@@ -59,8 +59,13 @@ const withTestingFeatures = (WrappedComponent) => {
       }
     }, [props]);
 
+    const managedProps = useMemo(() => {
+      return omit(props, 'onFocus');
+    }, [props]);
+
     return (
       <WrappedComponent
+        debug
         debug-values={{
           'data-slate-value': JSON.stringify(props.value, null, 2),
           'data-slate-selection': JSON.stringify(
@@ -71,7 +76,7 @@ const withTestingFeatures = (WrappedComponent) => {
         }}
         testingEditorRef={ref}
         onFocus={handleFocus}
-        {...omit(props, 'onFocus')}
+        {...managedProps}
       />
     );
   };

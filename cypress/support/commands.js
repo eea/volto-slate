@@ -391,7 +391,7 @@ Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
     .focus()
     .click()
     .setSelection(subject, query, endQuery)
-    .wait(1000);
+    .wait(1000); // this wait is needed for the selection change to be detected after
 });
 
 Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
@@ -399,7 +399,7 @@ Cypress.Commands.add('setSlateCursor', (subject, query, endQuery) => {
     .focus()
     .click()
     .setCursor(subject, query, endQuery)
-    .wait(1000);
+    .wait(1000); // this wait is needed for the selection change to be detected after
 });
 
 Cypress.Commands.add('clickSlateButton', (button) => {

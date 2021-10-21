@@ -87,16 +87,20 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   });
 
   const source = rangeRef.current;
+
+  Transforms.splitNodes(editor, {
+    at: Editor.end(editor, [0]),
+    always: true,
+  });
+
   const endPoint = Editor.end(editor, [0]);
 
-  const opts = {
+  Transforms.moveNodes(editor, {
     at: source,
     to: endPoint.path,
     mode: 'all',
     match: (n, p) => p.length === 2,
-  };
-
-  Transforms.moveNodes(editor, opts);
+  });
 
   const [n] = Editor.node(editor, [1]);
 

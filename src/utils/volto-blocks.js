@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { Transforms, Editor, Node, Path, Element } from 'slate';
+import { Transforms, Editor, Node, Text, Element } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
@@ -88,18 +88,25 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   const source = rangeRef.current;
 
-  Transforms.splitNodes(editor, {
-    at: Editor.end(editor, [0]),
-    always: true,
-  });
+  const end = Editor.end(editor, [0]);
 
-  const endPoint = Editor.end(editor, [0]);
+  let endPoint;
 
-  Transforms.moveNodes(editor, {
-    at: source,
-    to: endPoint.path,
-    mode: 'all',
-    match: (n, p) => p.length === 2,
+  Editor.withoutNormalizing(editor, () => {
+    Transforms.splitNodes(editor, {
+      at: end,
+      always: true,
+      match: (n) => Text.isText(n),
+    });
+
+    endPoint = Editor.end(editor, [0]);
+
+    Transforms.moveNodes(editor, {
+      at: source,
+      to: endPoint.path,
+      mode: 'all',
+      match: (n, p) => p.length === 2,
+    });
   });
 
   const [n] = Editor.node(editor, [1]);
@@ -110,7 +117,7 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   rangeRef.unref();
 
-  return endPoint;
+  return end;
 }
 
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {

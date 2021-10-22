@@ -1706,6 +1706,27 @@ const deleteRange = (editor, root, range) => {
 };
 
 /**
+ * Check if a point is the start point of a location.
+ */
+const isStart = (root, point, at) => {
+  // PERF: If the offset isn't `0` we know it's not the start.
+  if (point.offset !== 0) {
+    return false;
+  }
+
+  const _start = start(root, at);
+  return Point.equals(point, _start);
+};
+
+/**
+ * Check if a point is an edge of a location.
+ */
+const isEdge = (root, point, at) => {
+  // TODO: migrate from Editor.isStart to isStart
+  return isStart(root, point, at) || isEnd(root, point, at);
+};
+
+/**
  * Split the nodes at a specific location.
  */
 export const splitNodes = (editor, root, options = {}) => {
@@ -1745,23 +1766,23 @@ export const splitNodes = (editor, root, options = {}) => {
     return;
   }
 
-  const voidMatch = Editor.void(editor, { at, mode: 'highest' });
+  const voidMatch = voidNode(editor, root, { at, mode: 'highest' });
   const nudge = 0;
 
   if (!voids && voidMatch) {
-    const [voidNode, voidPath] = voidMatch;
+    const [_voidNode, voidPath] = voidMatch;
 
-    if (Element.isElement(voidNode) && editor.isInline(voidNode)) {
-      let after = Editor.after(editor, voidPath);
+    if (Element.isElement(_voidNode) && editor.isInline(_voidNode)) {
+      let _after = after(editor, root, voidPath);
 
-      if (!after) {
+      if (!_after) {
         const text = { text: '' };
         const afterPath = Path.next(voidPath);
-        Transforms.insertNodes(editor, text, { at: afterPath, voids });
-        after = Editor.point(editor, afterPath);
+        insertNodes(editor, root, text, { at: afterPath, voids });
+        _after = point(root, afterPath);
       }
 
-      at = after;
+      at = _after;
       always = true;
     }
 
@@ -1770,13 +1791,13 @@ export const splitNodes = (editor, root, options = {}) => {
     always = true;
   }
 
-  const afterRef = Editor.pointRef(editor, at);
+  const afterRef = pointRef(editor, root, at);
   const depth = at.path.length - height;
   const [, highestPath] = highest;
   const lowestPath = at.path.slice(0, depth);
   let position = height === 0 ? at.offset : at.path[depth] + nudge;
 
-  for (const [node, path] of Editor.levels(editor, {
+  for (const [node, path] of levels(editor, root, {
     at: lowestPath,
     reverse: true,
     voids,
@@ -1792,9 +1813,9 @@ export const splitNodes = (editor, root, options = {}) => {
     }
 
     const point = beforeRef.current;
-    const isEnd = Editor.isEnd(editor, point, path);
+    const _isEnd = isEnd(root, point, path);
 
-    if (always || !beforeRef || !Editor.isEdge(editor, point, path)) {
+    if (always || !beforeRef || !isEdge(root, point, path)) {
       split = true;
       const properties = Node.extractProps(node);
       editor.apply({
@@ -1805,13 +1826,13 @@ export const splitNodes = (editor, root, options = {}) => {
       });
     }
 
-    position = path[path.length - 1] + (split || isEnd ? 1 : 0);
+    position = path[path.length - 1] + (split || _isEnd ? 1 : 0);
   }
 
-  if (options.at == null) {
-    const point = afterRef.current || Editor.end(editor, []);
-    Transforms.select(editor, point);
-  }
+  // if (options.at == null) {
+  // const point = afterRef.current || Editor.end(editor, []);
+  // Transforms.select(editor, point);
+  // }
 
   beforeRef.unref();
   afterRef.unref();
@@ -1909,7 +1930,7 @@ export const insertNodes = (editor, root, _nodes, options = {}) => {
     const path = parentPath.concat(index);
     index++;
     editor.apply(editor, root, { type: 'insert_node', path, node });
-    at = Path.next(at);
+    // at = Path.next(at);
   }
   // at = Path.previous(at);
 
@@ -1945,7 +1966,6 @@ export const normalizeNode = (editor, root, entry) => {
     ? false
     : Element.isElement(node) &&
     (editor.isInline(node) ||
-      node.children.length === 0 ||
       Text.isText(node.children[0]) ||
       editor.isInline(node.children[0]));
 
@@ -2022,27 +2042,6 @@ export const normalizeNodes = (editor, nodes) => {
   const root = { children: nodes };
 
   const n = Array.from(Node.nodes(root), ([, p]) => p);
-
-  /*
-    Fix dirty elements with no children.
-    editor.normalizeNode() does fix this, but some normalization fixes also require it to work.
-    Running an initial pass avoids the catch-22 race condition.
-  */
-  for (const p of n) {
-    const entry = Node.get(root, p);
-    const node = entry;
-
-    /*
-      The default normalizer inserts an empty text node in this scenario, but it can be customised.
-      So there is some risk here.
-
-      As long as the normalizer only inserts child nodes for this case it is safe to do in any order;
-      by definition adding children to an empty node can't cause other paths to change.
-    */
-    if (Element.isElement(node) && node.children.length === 0) {
-      normalizeNode(editor, root, [node, p]);
-    }
-  }
 
   const max = n.length * 42; // HACK: better way?
   let m = 0;

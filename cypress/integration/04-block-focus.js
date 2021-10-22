@@ -1,4 +1,4 @@
-import { slateBeforeEach, slateAfterEach } from '../support';
+import { slateBeforeEach, slateAfterEach, selectSlateRange } from '../support';
 
 describe('Block Tests', () => {
   beforeEach(slateBeforeEach);
@@ -7,17 +7,11 @@ describe('Block Tests', () => {
   it('As editor I can add text and select parts of it and see the Slate Toolbar', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
+
+    // select 'furiously'
     cy.setSlateSelection('furiously');
 
-    // This also works
-    cy.getSlateEditorAndType(
-      'Colorless green ideas sleep furiously.',
-    ).setSelection('furiously');
-
-    // This also works
-    cy.getSlateEditorAndType(
-      'Colorless green ideas sleep furiously.',
-    ).setSlateSelection('furiously');
+    cy.get('.slate-inline-toolbar').should('be.visible');
 
     // Save
     cy.toolbarSave();

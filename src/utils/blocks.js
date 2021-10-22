@@ -1722,7 +1722,6 @@ const isStart = (root, point, at) => {
  * Check if a point is an edge of a location.
  */
 const isEdge = (root, point, at) => {
-  // TODO: migrate from Editor.isStart to isStart
   return isStart(root, point, at) || isEnd(root, point, at);
 };
 

@@ -134,9 +134,9 @@ export const inlineTagDeserializer = (attrs) => (editor, el) => {
       Text.isText(child) || typeof child === 'string'
         ? jsx('text', attrs, child)
         : {
-          ...child,
-          attrs, // pass the inline attrs as separate object
-        };
+            ...child,
+            attrs, // pass the inline attrs as separate object
+          };
     return res;
   });
 };

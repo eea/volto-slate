@@ -1756,10 +1756,10 @@ export const splitNodes = (editor, root, options = {}) => {
     return;
   }
 
-  const beforeRef = Editor.pointRef(editor, at, {
+  const beforeRef = pointRef(editor, root, at, {
     affinity: 'backward',
   });
-  const [highest] = Editor.nodes(editor, { at, match, mode, voids });
+  const [highest] = nodes(editor, root, { at, match, mode, voids });
 
   if (!highest) {
     return;

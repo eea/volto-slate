@@ -34,11 +34,11 @@ export const withSimpleLink = (editor) => {
 export const simpleLinkDeserializer = (editor, el) => {
   let parent = el;
 
-  let children = Array.from(parent.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
+  let children = Array.from(parent.childNodes, (el) =>
+    deserialize(editor, el),
+  ).flat();
 
-  if (!children.length) children = [''];
+  if (!children.length) children = [{ text: '' }];
 
   const attrs = {
     type: SIMPLELINK,

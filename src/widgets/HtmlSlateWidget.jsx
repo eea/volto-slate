@@ -90,6 +90,25 @@ const HtmlSlateWidget = (props) => {
     [editor],
   );
 
+  const valueFromHtml = React.useMemo(() => {
+    return fromHtml(value);
+  }, [value, fromHtml]);
+
+  const handleChange = React.useCallback(
+    (newValue) => {
+      onChange(id, toHtml(newValue));
+    },
+    [onChange, toHtml, id],
+  );
+
+  const renderExtensions = React.useMemo(() => {
+    return [];
+  }, []);
+
+  const handleClick = React.useCallback(() => {
+    setSelected(true);
+  }, []);
+
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -97,9 +116,7 @@ const HtmlSlateWidget = (props) => {
         role="textbox"
         tabIndex="-1"
         style={{ boxSizing: 'initial' }}
-        onClick={() => {
-          setSelected(true);
-        }}
+        onClick={handleClick}
         onKeyDown={() => {}}
       >
         <ErrorBoundary name={intl.formatMessage(messages.error, { name: id })}>
@@ -107,12 +124,10 @@ const HtmlSlateWidget = (props) => {
             className={className}
             id={id}
             name={id}
-            value={fromHtml(value)}
-            onChange={(newValue) => {
-              onChange(id, toHtml(newValue));
-            }}
+            value={valueFromHtml}
+            onChange={handleChange}
             block={block}
-            renderExtensions={[]}
+            renderExtensions={renderExtensions}
             selected={selected}
             properties={properties}
             placeholder={placeholder}

@@ -16,6 +16,8 @@ const isInline = (node) =>
 
 /**
  * Deserialize to an object or an Array.
+ *
+ * This returns a Slate Node or null.
  */
 export const deserialize = (editor, el) => {
   // console.log('deserialize el:', el);
@@ -50,18 +52,20 @@ export const deserialize = (editor, el) => {
       // });
       // if it's empty text between 2 tags, it should be ignored
       return isInline(el.previousSibling) || isInline(el.nextSibling)
-        ? el.textContent // perceptually multiple whitespace render as a single space
+        ? { text: el.textContent } // perceptually multiple whitespace render as a single space
         : null;
     }
-    return el.textContent
-      .replace(/\n$/g, ' ')
-      .replace(/\n/g, ' ')
-      .replace(/\t/g, '');
+    return {
+      text: el.textContent
+        .replace(/\n$/g, ' ')
+        .replace(/\n/g, ' ')
+        .replace(/\t/g, ''),
+    };
   } else if (el.nodeType !== ELEMENT_NODE) {
     return null;
   } else if (el.nodeName === 'BR') {
     // TODO: is handling <br> like this ok in all cases ?
-    return '\n';
+    return { text: '\n' };
   }
 
   if (el.getAttribute('data-slate-data')) {
@@ -84,9 +88,7 @@ export const typeDeserialize = (editor, el) => {
 };
 
 export const deserializeChildren = (parent, editor) =>
-  Array.from(parent.childNodes)
-    .map((el) => deserialize(editor, el))
-    .flat();
+  Array.from(parent.childNodes, (el) => deserialize(editor, el)).flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   // if (tagname === 'h2') debugger;
@@ -104,23 +106,15 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     children = [p];
   }
 
-  const isInline = (n) =>
-    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
-  const hasBlockChild = children.filter((n) => !isInline(n)).length > 0;
-  // const isCurrentInline = editor.isInline(el);
-
-  if (hasBlockChild) {
-    children = normalizeNodes(editor, children);
-  }
+  children = normalizeNodes(editor, children);
 
   // normalizes block elements so that they're never empty
   // Avoids a hard crash from the Slate editor
   const hasValidChildren = children.length && children.find((c) => !!c);
-  if (!(editor.isInline(el) || editor.isVoid(el)) && !hasValidChildren) {
+  if (!hasValidChildren) {
     children = [{ text: '' }];
   }
 
-  // console.log('children', children);
   return jsx('element', { type: tagname }, children);
 };
 

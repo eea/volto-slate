@@ -565,7 +565,7 @@ export const levels = function* (editor, root, options = {}) {
   const levels = [];
   const _path = path(root, at);
 
-  for (const [n, p] of Node.levels(editor, _path)) {
+  for (const [n, p] of Node.levels(root, _path)) {
     if (!match(n, p)) {
       continue;
     }
@@ -1423,7 +1423,7 @@ export const mergeNodes = (editor, root, options = {}) => {
   ) {
     removeNodes(editor, { at: prevPath, voids });
   } else {
-    apply({
+    apply(editor, root, {
       type: 'merge_node',
       path: newPath,
       position,

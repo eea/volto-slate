@@ -1254,8 +1254,7 @@ export const moveNodes = (editor, root, options) => {
     const newPath = toRef.current;
 
     if (path.length !== 0) {
-      // TODO:
-      editor.apply({ type: 'move_node', path, newPath });
+      apply(editor, root, { type: 'move_node', path, newPath });
     }
 
     if (
@@ -1302,7 +1301,7 @@ export const removeNodes = (editor, root, options = {}) => {
 
     if (path) {
       const [_node] = node(root, path);
-      editor.apply({ type: 'remove_node', path, node: _node });
+      apply(editor, root, { type: 'remove_node', path, node: _node });
     }
   }
 };
@@ -1649,7 +1648,7 @@ export const deleteText = (editor, root, options = {}) => {
     const offset = isSingleText ? _start.offset : 0;
     const text = node.text.slice(offset, _end.offset);
     if (text.length > 0)
-      editor.apply(editor, root, { type: 'remove_text', path, offset, text });
+      apply(editor, root, { type: 'remove_text', path, offset, text });
   }
 
   if (!isSingleText && isAcrossBlocks && endRef.current && startRef.current) {
@@ -1803,7 +1802,7 @@ export const splitNodes = (editor, root, options = {}) => {
     if (always || !beforeRef || !isEdge(root, point, path)) {
       split = true;
       const properties = Node.extractProps(node);
-      editor.apply({
+      apply(editor, root, {
         type: 'split_node',
         path,
         position,
@@ -1914,7 +1913,7 @@ export const insertNodes = (editor, root, _nodes, options = {}) => {
   for (const node of _nodes) {
     const path = parentPath.concat(index);
     index++;
-    editor.apply(editor, root, { type: 'insert_node', path, node });
+    apply(editor, root, { type: 'insert_node', path, node });
     // at = Path.next(at);
   }
   // at = Path.previous(at);

@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { Transforms, Editor, Node } from 'slate';
+import { Transforms, Editor, Node, Text } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
@@ -31,12 +31,47 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // collapse the selection to its start point
   Transforms.collapse(editor, { edge: 'start' });
 
-  // insert the contents of the previous editor into the current editor
   Transforms.insertNodes(editor, prev, {
     at: Editor.start(editor, []),
   });
 
-  Editor.deleteBackward(editor, { unit: 'character' });
+  const rangeRef = Editor.rangeRef(editor, {
+    anchor: Editor.start(editor, [1]),
+    focus: Editor.end(editor, [1]),
+  });
+
+  const source = rangeRef.current;
+
+  const end = Editor.end(editor, [0]);
+
+  let endPoint;
+
+  Editor.withoutNormalizing(editor, () => {
+    Transforms.splitNodes(editor, {
+      at: end,
+      always: true,
+      match: (n) => Text.isText(n),
+    });
+
+    endPoint = Editor.end(editor, [0]);
+
+    Transforms.moveNodes(editor, {
+      at: source,
+      to: endPoint.path,
+      mode: 'all',
+      match: (n, p) => p.length === 2,
+    });
+  });
+
+  const [n] = Editor.node(editor, [1]);
+
+  if (Editor.isEmpty(editor, n)) {
+    Transforms.removeNodes(editor, { at: [1] });
+  }
+
+  rangeRef.unref();
+
+  return end;
 }
 
 export function mergeSlateWithBlockForward(editor, nextBlock, event) {

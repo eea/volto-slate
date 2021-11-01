@@ -44,7 +44,7 @@ export const insertData = (editor) => {
         return true;
       }
 
-      const nodes = normalizeNodes(editor, fragment);
+      const nodes = normalizeNodes(editor, fragment, true);
       Transforms.insertNodes(editor, nodes);
 
       return true;
@@ -95,7 +95,7 @@ export const insertData = (editor) => {
         }
       }
 
-      const nodes = normalizeNodes(editor, fragment);
+      const nodes = normalizeNodes(editor, fragment, true);
       if (!containsText) {
         Transforms.insertNodes(editor, nodes);
       }

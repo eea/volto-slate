@@ -114,7 +114,7 @@ export const toggleInlineFormat = (editor, format) => {
     // editor.savedSelection = newSel;
     return;
   }
-  const block = { type: defaultFormat, children: [] };
+  const block = { type: defaultFormat, children: [{ text: '' }] };
   Transforms.wrapNodes(editor, block, { split: true });
 };
 

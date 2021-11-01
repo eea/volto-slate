@@ -182,6 +182,7 @@ export function toggleList(
   unwrapList(editor, willWrapAgain, { unwrapFromList: isBulletedActive });
 
   // a new list is created and everything in the editor is put in it
+  // TODO: should here be an empty Text inside children?
   const list = { type: typeList, children: [] };
   Transforms.wrapNodes(editor, list);
 

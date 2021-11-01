@@ -106,7 +106,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     children = [p];
   }
 
-  children = normalizeNodes(editor, children);
+  children = normalizeNodes(editor, children, false);
 
   // normalizes block elements so that they're never empty
   // Avoids a hard crash from the Slate editor

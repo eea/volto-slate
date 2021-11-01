@@ -185,6 +185,7 @@ export function increaseItemDepth(editor, event) {
   function wrapListItem() {
     Transforms.wrapNodes(
       editor,
+      // TODO: should here be an empty Text inside children?
       { type: type, children: [] },
       {
         at: listItemPath,

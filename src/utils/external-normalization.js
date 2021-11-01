@@ -2007,6 +2007,7 @@ const wrapNodes = (editor, root, element, options = {}) => {
       const [commonNode] = commonNodeEntry;
       const depth = commonPath.length + 1;
       const wrapperPath = Path.next(lastPath.slice(0, depth));
+      // TODO: should here be an empty Text inside children?
       const wrapper = { ...element, children: [] };
       insertNodes(editor, root, wrapper, { at: wrapperPath, voids });
 
@@ -2021,7 +2022,7 @@ const wrapNodes = (editor, root, element, options = {}) => {
   }
 };
 
-export const normalizeNode = (editor, root, entry) => {
+export const normalizeNode = (editor, root, isRoot, entry) => {
   const [node, path] = entry;
 
   // There are no core normalizations for text nodes.
@@ -2041,12 +2042,12 @@ export const normalizeNode = (editor, root, entry) => {
 
   // Determine whether the node should have block or inline children.
   const shouldHaveInlines =
-    /* Editor.isEditor(node) || */ node === root
+    /* Editor.isEditor(node) || */ isRoot && node === root
       ? false
       : Element.isElement(node) &&
-      (editor.isInline(node) ||
-        Text.isText(node.children[0]) ||
-        editor.isInline(node.children[0]));
+        (editor.isInline(node) ||
+          Text.isText(node.children[0]) ||
+          editor.isInline(node.children[0]));
 
   // Since we'll be applying operations while iterating, keep track of an
   // index that accounts for any added/removed nodes.
@@ -2083,6 +2084,7 @@ export const normalizeNode = (editor, root, entry) => {
         wrapNodes(
           editor,
           root,
+          // TODO: should here be an empty Text inside children?
           { type: 'p', children: [] },
           {
             at: path.concat(n),
@@ -2141,7 +2143,7 @@ const IS_EXTERNAL_NORMALIZING = new WeakMap();
 /**
  * Normalize any dirty objects in the editor.
  */
-export const normalizeNodes = (editor, nodes) => {
+export const normalizeNodes = (editor, nodes, isRoot) => {
   if (IS_EXTERNAL_NORMALIZING.get(nodes)) {
     return;
   }
@@ -2167,7 +2169,7 @@ export const normalizeNodes = (editor, nodes) => {
     const dirtyPath = n.pop();
 
     const entry = Node.get(root, dirtyPath);
-    normalizeNode(editor, root, [entry, dirtyPath]);
+    normalizeNode(editor, root, isRoot, [entry, dirtyPath]);
 
     ++m;
   }

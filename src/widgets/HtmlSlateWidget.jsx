@@ -78,7 +78,7 @@ const HtmlSlateWidget = (props) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
       let data = deserialize(editor, body);
-      data = normalizeNodes(editor, data);
+      data = normalizeNodes(editor, data, true);
 
       // editor.children = data;
       // Editor.normalize(editor);

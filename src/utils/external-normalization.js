@@ -1203,7 +1203,7 @@ export const apply = (editor, root, op) => {
   DIRTY_PATHS.set(root, dirtyPaths);
   GeneralTransforms.transform(root, op);
 
-  root.children = normalizeNodes(editor, root.children);
+  // root.children = normalizeNodes(editor, root.children);
 
   // editor.operations.push(op);
   // Editor.normalize(editor);
@@ -1927,6 +1927,100 @@ export const insertNodes = (editor, root, _nodes, options = {}) => {
   // }
 };
 
+/**
+ * Wrap the nodes at a location in a new container node, splitting the edges
+ * of the range first to ensure that only the content in the range is wrapped.
+ */
+const wrapNodes = (editor, root, element, options = {}) => {
+  const { mode = 'lowest', split = false, voids = false } = options;
+  let { match, at /*  = editor.selection */ } = options;
+
+  if (!at) {
+    return;
+  }
+
+  if (match == null) {
+    if (Path.isPath(at)) {
+      match = matchPath(root, at);
+    } else if (editor.isInline(element)) {
+      match = (n) => Editor.isInline(editor, n) || Text.isText(n);
+    } else {
+      match = (n) => Editor.isBlock(editor, n);
+    }
+  }
+
+  if (split && Range.isRange(at)) {
+    const [start, end] = Range.edges(at);
+    // const _rangeRef = rangeRef(editor, at, {
+    //   affinity: 'inward',
+    // });
+    splitNodes(editor, root, { at: end, match, voids });
+    splitNodes(editor, root, { at: start, match, voids });
+    // at = _rangeRef.unref();
+
+    // if (options.at == null) {
+    //   Transforms.select(editor, at);
+    // }
+  }
+
+  const roots = Array.from(
+    nodes(editor, root, {
+      at,
+      match: editor.isInline(element)
+        ? (n) => Editor.isBlock(editor, n)
+        : (n) => n === root,
+      mode: 'lowest',
+      voids,
+    }),
+  );
+
+  for (const [, rootPath] of roots) {
+    const a = Range.isRange(at)
+      ? Range.intersection(at, range(root, rootPath))
+      : at;
+
+    if (!a) {
+      continue;
+    }
+
+    const matches = Array.from(
+      nodes(editor, root, { at: a, match, mode, voids }),
+    );
+
+    if (matches.length > 0) {
+      const [first] = matches;
+      const last = matches[matches.length - 1];
+      const [, firstPath] = first;
+      const [, lastPath] = last;
+
+      if (firstPath.length === 0 && lastPath.length === 0) {
+        // if there's no matching parent - usually means the node is an editor - don't do anything
+        continue;
+      }
+
+      const commonPath = Path.equals(firstPath, lastPath)
+        ? Path.parent(firstPath)
+        : Path.common(firstPath, lastPath);
+
+      const _range = range(root, firstPath, lastPath);
+      const commonNodeEntry = node(root, commonPath);
+      const [commonNode] = commonNodeEntry;
+      const depth = commonPath.length + 1;
+      const wrapperPath = Path.next(lastPath.slice(0, depth));
+      const wrapper = { ...element, children: [] };
+      insertNodes(editor, root, wrapper, { at: wrapperPath, voids });
+
+      moveNodes(editor, root, {
+        at: _range,
+        match: (n) =>
+          Element.isAncestor(commonNode) && commonNode.children.includes(n),
+        to: wrapperPath.concat(0),
+        voids,
+      });
+    }
+  }
+};
+
 export const normalizeNode = (editor, root, entry) => {
   const [node, path] = entry;
 
@@ -1946,25 +2040,33 @@ export const normalizeNode = (editor, root, entry) => {
   }
 
   // Determine whether the node should have block or inline children.
-  const shouldHaveInlines = Editor.isEditor(node)
-    ? false
-    : Element.isElement(node) &&
+  const shouldHaveInlines =
+    /* Editor.isEditor(node) || */ node === root
+      ? false
+      : Element.isElement(node) &&
       (editor.isInline(node) ||
         Text.isText(node.children[0]) ||
         editor.isInline(node.children[0]));
 
   // Since we'll be applying operations while iterating, keep track of an
   // index that accounts for any added/removed nodes.
-  let n = 0;
+  // let n = 0;
 
-  for (let i = 0; i < node.children.length; i++, n++) {
-    const currentNode = Node.get(root, path);
+  let currentNode = Node.get(root, path);
+  for (let n = 0; n < currentNode.children.length; /* i++,  */ n++) {
+    currentNode = Node.get(root, path);
     if (Text.isText(currentNode)) {
       continue;
     }
-    const child = node.children[i];
+
+    // NOTE: changed i to n here:
+    const child = currentNode.children[n];
+
     const prev = currentNode.children[n - 1];
-    const isLast = i === node.children.length - 1;
+
+    // NOTE: changed i to n here:
+    const isLast = n === currentNode.children.length - 1;
+
     const isInlineOrText =
       Text.isText(child) ||
       (Element.isElement(child) && editor.isInline(child));
@@ -1974,8 +2076,23 @@ export const normalizeNode = (editor, root, entry) => {
     // other inline nodes, or parent blocks that only contain inlines and
     // text.
     if (isInlineOrText !== shouldHaveInlines) {
-      removeNodes(editor, root, { at: path.concat(n), voids: true });
-      --n;
+      // The pasted content can have Text-s directly inside the root, so we do
+      // not remove these Text-s but wrap them inside a 'p'.
+      if (isInlineOrText) {
+        // TODO: replace with custom wrapNodes that works on a root
+        wrapNodes(
+          editor,
+          root,
+          { type: 'p', children: [] },
+          {
+            at: path.concat(n),
+            voids: true,
+          },
+        );
+      } else {
+        removeNodes(editor, root, { at: path.concat(n), voids: true });
+        --n;
+      }
     } else if (Element.isElement(child)) {
       // Ensure that inline nodes are surrounded by text nodes.
       if (editor.isInline(child)) {
@@ -1985,14 +2102,14 @@ export const normalizeNode = (editor, root, entry) => {
             at: path.concat(n),
             voids: true,
           });
-          n++;
+          n++; // NOTE: if I remove this it works better... sometimes!
         } else if (isLast) {
           const newChild = { text: '' };
           insertNodes(editor, root, newChild, {
             at: path.concat(n + 1),
             voids: true,
           });
-          n++;
+          n++; // NOTE: if I remove this it works better... sometimes!
         }
       }
     } else {
@@ -2019,15 +2136,19 @@ export const normalizeNode = (editor, root, entry) => {
   }
 };
 
+const IS_EXTERNAL_NORMALIZING = new WeakMap();
+
 /**
  * Normalize any dirty objects in the editor.
  */
 export const normalizeNodes = (editor, nodes) => {
-  // return nodes;
+  if (IS_EXTERNAL_NORMALIZING.get(nodes)) {
+    return;
+  }
 
-  // debugger;
+  IS_EXTERNAL_NORMALIZING.set(nodes, true);
 
-  console.log('BEFORE', JSON.stringify(nodes, null, 2));
+  // console.log('BEFORE', JSON.stringify(nodes, null, 2));
 
   const root = { children: nodes };
 
@@ -2051,7 +2172,10 @@ export const normalizeNodes = (editor, nodes) => {
     ++m;
   }
 
-  console.log('AFTER', JSON.stringify(nodes, null, 2));
+  // console.log('AFTER', JSON.stringify(nodes, null, 2));
 
-  return nodes;
+  IS_EXTERNAL_NORMALIZING.set(nodes, false);
+
+  return root.children;
+  // return nodes; // not working since nodes is not mutated
 };

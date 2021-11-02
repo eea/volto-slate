@@ -15,6 +15,8 @@
 // TODO: make this plugin work:
 // https://stackoverflow.com/questions/69798980/how-to-use-the-blob-constructor-inside-a-cypress-plugin
 
+const webpack = require('@cypress/webpack-preprocessor');
+
 // NOTE: cannot upgrade to ESM-only clipboardy 3 since Cypress plugins must
 // still use require() to import packages.
 const clipboard = require('clipboardy');
@@ -27,6 +29,11 @@ const clipboardPolyfill = require('clipboard-polyfill');
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+
+  on('file:preprocessor', webpack({
+    webpackOptions: require('../../../../../omelette/'),
+    watchOptions: {},
+  }));
 
   on('task', {
     // Clipboard test plugin

@@ -6,6 +6,36 @@ import {
   MIMETypeName,
 } from 'volto-slate/utils';
 
+export const insertHtmlIntoEditor = (editor, dt) => {
+  const parsed = new DOMParser().parseFromString(dt, 'text/html');
+
+  const body =
+    parsed.getElementsByTagName('google-sheets-html-origin').length > 0
+      ? parsed.querySelector('google-sheets-html-origin > table')
+      : parsed.body;
+
+  let fragment; //  = deserialize(editor, body);
+
+  const val = deserialize(editor, body);
+  fragment = Array.isArray(val) ? val : [val];
+
+  // When there's already text in the editor, insert a fragment, not nodes
+  if (
+    !Editor.isEmpty(editor, editor) &&
+    fragment.findIndex((b) => Editor.isInline(editor, b) || Text.isText(b)) > -1
+  ) {
+    // TODO: we want normalization also when dealing with fragments
+    // Transforms.insertFragment(editor, fragment);
+    editor.insertFragment(fragment);
+    return true;
+  }
+
+  const nodes = normalizeNodes(editor, fragment, true);
+  Transforms.insertNodes(editor, nodes);
+
+  return true;
+};
+
 export const insertData = (editor) => {
   editor.dataTransferHandlers = {
     ...editor.dataTransferHandlers,
@@ -18,36 +48,7 @@ export const insertData = (editor) => {
       return true;
     },
     'text/html': (dt, fullMime) => {
-      const parsed = new DOMParser().parseFromString(dt, 'text/html');
-
-      const body =
-        parsed.getElementsByTagName('google-sheets-html-origin').length > 0
-          ? parsed.querySelector('google-sheets-html-origin > table')
-          : parsed.body;
-
-      let fragment; //  = deserialize(editor, body);
-
-      const val = deserialize(editor, body);
-      fragment = Array.isArray(val) ? val : [val];
-
-      // When there's already text in the editor, insert a fragment, not nodes
-      if (
-        Editor.string(editor, []) &&
-        Array.isArray(fragment) &&
-        fragment.findIndex(
-          (b) => Editor.isInline(editor, b) || Text.isText(b),
-        ) > -1
-      ) {
-        // TODO: we want normalization also when dealing with fragments
-        // Transforms.insertFragment(editor, fragment);
-        editor.insertFragment(fragment);
-        return true;
-      }
-
-      const nodes = normalizeNodes(editor, fragment, true);
-      Transforms.insertNodes(editor, nodes);
-
-      return true;
+      return insertHtmlIntoEditor(editor, dt);
     },
     'text/plain': (dt, fullMime) => {
       const text = dt;

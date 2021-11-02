@@ -27,8 +27,8 @@
     "react-visibility-sensor": "5.1.1",
     "slate": "^0.66.5",
     "slate-history": "^0.66.0",
-    "slate-hyperscript": "^0.67.0",
-    "slate-react": "^0.69.0",
+    "slate-hyperscript": "^0.66.0",
+    "slate-react": "^0.66.4",
     "weak-key": "^1.0.2"
   },
   "peerDependencies": {
@@ -38,10 +38,7 @@
     "@cypress/code-coverage": "^3.9.5",
     "@testing-library/react": "9.5.0",
     "@types/jest": "^25.2.3",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "blob-polyfill": "6.0.20211015",
-    "clipboard-polyfill": "3.0.3",
-    "clipboardy": "2.3.0"
+    "babel-plugin-transform-class-properties": "^6.24.1"
   },
   "resolutions": {
     "jest-environment-jsdom": "^26.0.1"

@@ -2045,9 +2045,9 @@ export const normalizeNode = (editor, root, isRoot, entry) => {
     /* Editor.isEditor(node) || */ isRoot && node === root
       ? false
       : Element.isElement(node) &&
-        (editor.isInline(node) ||
-          Text.isText(node.children[0]) ||
-          editor.isInline(node.children[0]));
+      (editor.isInline(node) ||
+        Text.isText(node.children[0]) ||
+        editor.isInline(node.children[0]));
 
   // Since we'll be applying operations while iterating, keep track of an
   // index that accounts for any added/removed nodes.
@@ -2079,7 +2079,7 @@ export const normalizeNode = (editor, root, isRoot, entry) => {
     if (isInlineOrText !== shouldHaveInlines) {
       // The pasted content can have Text-s directly inside the root, so we do
       // not remove these Text-s but wrap them inside a 'p'.
-      if (isInlineOrText) {
+      if (isInlineOrText && child.text !== '') {
         // TODO: replace with custom wrapNodes that works on a root
         wrapNodes(
           editor,

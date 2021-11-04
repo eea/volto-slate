@@ -1,9 +1,18 @@
-import { Editor, Text, Transforms } from 'slate';
+import { cloneDeep } from 'lodash';
+import { Editor, Text, Transforms, Range, Path, Node } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import {
   createDefaultBlock,
   normalizeNodes,
   MIMETypeName,
+  nodes,
+  voidNode,
+  insertNodes,
+  point,
+  levels,
+  apply,
+  after,
+  end,
 } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
@@ -31,21 +40,150 @@ export const insertData = (editor) => {
       fragment = Array.isArray(val) ? val : [val];
 
       // When there's already text in the editor, insert a fragment, not nodes
-      if (
-        Editor.string(editor, []) &&
-        Array.isArray(fragment) &&
-        fragment.findIndex(
-          (b) => Editor.isInline(editor, b) || Text.isText(b),
-        ) > -1
-      ) {
-        // TODO: we want normalization also when dealing with fragments
-        // Transforms.insertFragment(editor, fragment);
-        editor.insertFragment(fragment);
-        return true;
+      // if (
+      //   Editor.string(editor, []) &&
+      //   Array.isArray(fragment) &&
+      //   fragment.findIndex(
+      //     (b) => Editor.isInline(editor, b) || Text.isText(b),
+      //   ) > -1
+      // ) {
+      //   // TODO: we want normalization also when dealing with fragments
+      //   // Transforms.insertFragment(editor, fragment);
+      //   editor.insertFragment(fragment);
+      //   return true;
+      // }
+
+      const { selection } = editor;
+      if (selection && Range.isExpanded(selection)) {
+        Transforms.delete(editor);
       }
 
-      const nodes = normalizeNodes(editor, fragment, true);
-      Transforms.insertNodes(editor, nodes);
+      const [a] = Editor.above(editor, {
+        match: (n) => Editor.isBlock(editor, n),
+      });
+
+      let _nodes = fragment;
+      let root = { children: [{ type: a.type, children: _nodes }] };
+
+      for (let i = 0; i < _nodes.length; ++i) {
+        // TODO: handle other types of Slate blocks too:
+        if (_nodes[i].type === 'p') {
+          // the number of children inside the paragraph
+          const ni = _nodes[i].children.length;
+
+          // not sure how to avoid this cloning (it throws error if removing it)
+          _nodes = cloneDeep(_nodes);
+
+          // unwrap the p's contents
+          _nodes.splice(i, 1, ..._nodes[i].children);
+
+          // NOTE: maybe requiring some partial normalization here?
+          // _nodes = normalizeNodes(editor, _nodes, false);
+
+          // a temporary root node for splitting & normalization purposes
+          root = { children: [{ type: a.type, children: _nodes }] };
+
+          // the end point of the last node in the unwrapped nodes' array
+          let at = end(root, [0, i + ni - 1]);
+
+          // the number of levels to split
+          let height = 2; // does this improve?: `= 1;`
+
+          // TODO: merge inlines that have the same properties and are separated
+          // by empty {text: ''}'s.
+
+          let match = (n) => Editor.isBlock(editor, n);
+
+          // the closest non-void block to the root starting from the point
+          // where a paragraph break should be inserted
+          const [highest] = nodes(editor, root, {
+            at,
+            match,
+            mode: 'lowest',
+            voids: false,
+          });
+
+          if (highest) {
+            const voidMatch = voidNode(editor, root, {
+              at,
+              mode: 'highest',
+            });
+
+            if (voidMatch) {
+              const [vn, vp] = voidMatch;
+
+              if (editor.isInline(vn)) {
+                let _after = after(editor, root, vp);
+
+                if (!_after) {
+                  const text = { text: '' };
+                  const afterPath = Path.next(vp);
+                  insertNodes(editor, root, text, {
+                    at: afterPath,
+                    voids: false,
+                  });
+                  _after = point(root, afterPath);
+                }
+
+                at = _after;
+              }
+
+              const siblingHeight = at.path.length - vp.length;
+              height = siblingHeight + 1;
+            }
+
+            // depth at which a paragraph break will be inserted
+            const depth = at.path.length - height;
+
+            // the path of the block in which the break will be inserted
+            const [, highestPath] = highest;
+
+            // the depth at which to start splitting
+            const lowestPath = at.path.slice(0, depth);
+
+            let position =
+              /* height === 0 ?  */ at.offset; /* : at.path[depth] */
+
+            // for each non-void node entry from lowestPath to root
+            for (const [node, path] of levels(editor, root, {
+              at: lowestPath,
+              reverse: true,
+              voids: false,
+            })) {
+              // if highestPath (of the block in which the break will be
+              // inserted) is longer than the current path or current path is of
+              // editor or current path is of a void node
+              if (
+                path.length < highestPath.length ||
+                path.length === 0 ||
+                Editor.isVoid(editor, node)
+              ) {
+                break;
+              }
+
+              const properties = Node.extractProps(node);
+
+              // BUG: the first call to this modifies `root`1 in a wrong way
+              // (compare root before and after the call to `apply` below)
+              apply(editor, root, {
+                type: 'split_node',
+                path,
+                position,
+                properties,
+              });
+
+              position = path[path.length - 1] + 1;
+            }
+          }
+          --i;
+        }
+      }
+
+      // external normalization
+      normalizeNodes(editor, root.children[0].children, false);
+
+      // the actual pasting
+      Transforms.insertNodes(editor, root.children[0].children);
 
       return true;
     },

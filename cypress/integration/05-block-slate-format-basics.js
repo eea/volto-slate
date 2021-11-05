@@ -54,6 +54,8 @@ describe('Block Tests: Basic text format', () => {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
+    // cy.pause();
+
     // Underline
     cy.setSlateSelection('Colorless', 'green');
     cy.clickSlateButton('Underline');

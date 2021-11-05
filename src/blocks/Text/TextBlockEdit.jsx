@@ -297,7 +297,6 @@ export const DetachedTextBlockEditor = (props) => {
   } = props;
   const { value } = data;
 
-  const schema = TextBlockSchema(data);
   const intl = useIntl();
   const placeholder =
     data.placeholder || formTitle || intl.formatMessage(messages.text);
@@ -338,30 +337,6 @@ export const DetachedTextBlockEditor = (props) => {
         placeholder={placeholder}
         onKeyDown={handleKeyDetached}
       />
-      <SidebarPortal selected={selected}>
-        <div id="slate-plugin-sidebar"></div>
-        {instructions ? (
-          <Segment attached>
-            <div dangerouslySetInnerHTML={{ __html: instructions }} />
-          </Segment>
-        ) : (
-          <>
-            <ShortcutListing />
-            <MarkdownIntroduction />
-            <InlineForm
-              schema={schema}
-              title={schema.title}
-              onChangeField={(id, value) => {
-                onChangeBlock(block, {
-                  ...data,
-                  [id]: value,
-                });
-              }}
-              formData={data}
-            />
-          </>
-        )}
-      </SidebarPortal>
     </div>
   );
 };

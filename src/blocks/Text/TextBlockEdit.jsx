@@ -288,7 +288,6 @@ export const DetachedTextBlockEditor = (props) => {
   } = props;
   const { value } = data;
 
-  const schema = TextBlockSchema(data);
   const intl = useIntl();
   const placeholder =
     data.placeholder || formTitle || intl.formatMessage(messages.text);

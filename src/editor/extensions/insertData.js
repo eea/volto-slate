@@ -1,155 +1,10 @@
-import { Editor, Text, Transforms, Node, createEditor, Element } from 'slate';
+import { Editor, Text, Transforms, Node } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
-import { createDefaultBlock, MIMETypeName } from 'volto-slate/utils';
-import { normalizeNode } from 'volto-slate/editor/extensions/normalizeNode';
-
-/**
- * The default editor.normalizeNode implementation, modified to put Text's
- * inside p-s when they are directly inside the root node of the editor.
- * @param {*} editor
- * @returns
- */
-const generateNormalizeNode = (editor) => (entry) => {
-  const [node, path] = entry;
-
-  // There are no core normalizations for text nodes.
-  if (Text.isText(node)) {
-    return;
-  }
-
-  // Ensure that block and inline nodes have at least one text child.
-  if (Element.isElement(node) && node.children.length === 0) {
-    const child = { text: '' };
-    Transforms.insertNodes(editor, child, {
-      at: path.concat(0),
-      voids: true,
-    });
-    return;
-  }
-
-  // Determine whether the node should have block or inline children.
-  const shouldHaveInlines = Editor.isEditor(node)
-    ? false
-    : Element.isElement(node) &&
-      (editor.isInline(node) ||
-        node.children.length === 0 ||
-        Text.isText(node.children[0]) ||
-        editor.isInline(node.children[0]));
-
-  // Since we'll be applying operations while iterating, keep track of an
-  // index that accounts for any added/removed nodes.
-  let n = 0;
-
-  for (let i = 0; i < node.children.length; i++, n++) {
-    const currentNode = Node.get(editor, path);
-    if (Text.isText(currentNode)) continue;
-    const child = node.children[i];
-    const prev = currentNode.children[n - 1];
-    const isLast = i === node.children.length - 1;
-    const isInlineOrText =
-      Text.isText(child) ||
-      (Element.isElement(child) && editor.isInline(child));
-
-    // Only allow block nodes in the top-level children and parent blocks
-    // that only contain block nodes. Similarly, only allow inline nodes in
-    // other inline nodes, or parent blocks that only contain inlines and
-    // text.
-    if (isInlineOrText !== shouldHaveInlines) {
-      // The pasted content can have Text-s directly inside the root, so we do
-      // not remove these Text-s but wrap them inside a 'p'.
-      if (isInlineOrText && child.text !== '') {
-        Transforms.wrapNodes(
-          editor,
-          // TODO: should here be an empty Text inside children?
-          { type: 'p', children: [] },
-          {
-            at: path.concat(n),
-            voids: true,
-          },
-        );
-      } else {
-        Transforms.removeNodes(editor, {
-          at: path.concat(n),
-          voids: true,
-        });
-        --n;
-      }
-    } else if (Element.isElement(child)) {
-      // Ensure that inline nodes are surrounded by text nodes.
-      if (editor.isInline(child)) {
-        if (prev == null || !Text.isText(prev)) {
-          const newChild = { text: '' };
-          Transforms.insertNodes(editor, newChild, {
-            at: path.concat(n),
-            voids: true,
-          });
-          n++;
-        } else if (isLast) {
-          const newChild = { text: '' };
-          Transforms.insertNodes(editor, newChild, {
-            at: path.concat(n + 1),
-            voids: true,
-          });
-          n++;
-        }
-      }
-    } else {
-      // Merge adjacent text nodes that are empty or match.
-      if (prev != null && Text.isText(prev)) {
-        if (Text.equals(child, prev, { loose: true })) {
-          Transforms.mergeNodes(editor, { at: path.concat(n), voids: true });
-          n--;
-        } else if (prev.text === '') {
-          Transforms.removeNodes(editor, {
-            at: path.concat(n - 1),
-            voids: true,
-          });
-          n--;
-        } else if (child.text === '') {
-          Transforms.removeNodes(editor, {
-            at: path.concat(n),
-            voids: true,
-          });
-          n--;
-        }
-      }
-    }
-  }
-};
-
-const normalizeExternalData = (editor, nodes, asInRoot = true) => {
-  const [a] = Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
-  });
-
-  const type = a.type;
-
-  let fakeEditor = createEditor();
-  fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
-  fakeEditor.isInline = editor.isInline;
-  fakeEditor.isVoid = editor.isVoid;
-  fakeEditor.fake = true;
-  fakeEditor.normalizeNode = generateNormalizeNode(fakeEditor);
-  fakeEditor = normalizeNode(fakeEditor);
-
-  if (fakeEditor.children.some((o) => Editor.isBlock(fakeEditor, o))) {
-    Array.from(Node.children(fakeEditor, [])).forEach((v, i, a) => {
-      if (!Editor.isBlock(fakeEditor, v)) {
-        Transforms.wrapNodes(
-          fakeEditor,
-          { type: 'p' },
-          {
-            at: [i],
-          },
-        );
-      }
-    });
-  }
-
-  Editor.normalize(fakeEditor, { force: true });
-
-  return fakeEditor.children;
-};
+import {
+  createDefaultBlock,
+  MIMETypeName,
+  normalizeExternalData,
+} from 'volto-slate/utils';
 
 export const insertData = (editor) => {
   editor.dataTransferHandlers = {
@@ -217,6 +72,8 @@ export const insertData = (editor) => {
             });
 
             // TODO: fix this call to not extend the blockquote in the example so much
+            // TODO: to test this, create a sample HTML document with a
+            // blockquote that is extended too much
             //
             // case 1: empty 'a' in a 'p' -> unwrap a
             // case 2: Text in a p -> do nothing

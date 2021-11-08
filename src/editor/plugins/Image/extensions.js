@@ -18,7 +18,7 @@ export const deserializeImageTag = (editor, el) => {
     return null;
   }
 
-  return [jsx('element', attrs, [{ text: '' }])];
+  return jsx('element', { type: 'p' }, jsx('element', attrs, [{ text: '' }]));
 };
 
 /**

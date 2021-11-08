@@ -1,19 +1,151 @@
 import { cloneDeep } from 'lodash';
-import { Editor, Text, Transforms, Range, Path, Node } from 'slate';
-import { deserialize } from 'volto-slate/editor/deserialize';
 import {
-  createDefaultBlock,
-  normalizeNodes,
-  MIMETypeName,
-  nodes,
-  voidNode,
-  insertNodes,
-  point,
-  levels,
-  apply,
-  after,
-  end,
-} from 'volto-slate/utils';
+  Editor,
+  Text,
+  Transforms,
+  Range,
+  Path,
+  Node,
+  createEditor,
+  Element,
+} from 'slate';
+import { deserialize } from 'volto-slate/editor/deserialize';
+import { createDefaultBlock, MIMETypeName } from 'volto-slate/utils';
+import { normalizeNode } from 'volto-slate/editor/extensions/normalizeNode';
+
+/**
+ * The default editor.normalizeNode implementation, modified to put Text's
+ * inside p-s when they are directly inside the root node of the editor.
+ * @param {*} editor
+ * @returns
+ */
+const generateNormalizeNode = (editor) => (entry) => {
+  const [node, path] = entry;
+
+  // There are no core normalizations for text nodes.
+  if (Text.isText(node)) {
+    return;
+  }
+
+  // Ensure that block and inline nodes have at least one text child.
+  if (Element.isElement(node) && node.children.length === 0) {
+    const child = { text: '' };
+    Transforms.insertNodes(editor, child, {
+      at: path.concat(0),
+      voids: true,
+    });
+    return;
+  }
+
+  // Determine whether the node should have block or inline children.
+  const shouldHaveInlines = Editor.isEditor(node)
+    ? false
+    : Element.isElement(node) &&
+    (editor.isInline(node) ||
+      node.children.length === 0 ||
+      Text.isText(node.children[0]) ||
+      editor.isInline(node.children[0]));
+
+  // Since we'll be applying operations while iterating, keep track of an
+  // index that accounts for any added/removed nodes.
+  let n = 0;
+
+  for (let i = 0; i < node.children.length; i++, n++) {
+    const currentNode = Node.get(editor, path);
+    if (Text.isText(currentNode)) continue;
+    const child = node.children[i];
+    const prev = currentNode.children[n - 1];
+    const isLast = i === node.children.length - 1;
+    const isInlineOrText =
+      Text.isText(child) ||
+      (Element.isElement(child) && editor.isInline(child));
+
+    // Only allow block nodes in the top-level children and parent blocks
+    // that only contain block nodes. Similarly, only allow inline nodes in
+    // other inline nodes, or parent blocks that only contain inlines and
+    // text.
+    if (isInlineOrText !== shouldHaveInlines) {
+      // The pasted content can have Text-s directly inside the root, so we do
+      // not remove these Text-s but wrap them inside a 'p'.
+      if (isInlineOrText && child.text !== '') {
+        Transforms.wrapNodes(
+          editor,
+          // TODO: should here be an empty Text inside children?
+          { type: 'p', children: [] },
+          {
+            at: path.concat(n),
+            voids: true,
+          },
+        );
+      } else {
+        Transforms.removeNodes(editor, {
+          at: path.concat(n),
+          voids: true,
+        });
+        --n;
+      }
+    } else if (Element.isElement(child)) {
+      // Ensure that inline nodes are surrounded by text nodes.
+      if (editor.isInline(child)) {
+        if (prev == null || !Text.isText(prev)) {
+          const newChild = { text: '' };
+          Transforms.insertNodes(editor, newChild, {
+            at: path.concat(n),
+            voids: true,
+          });
+          n++;
+        } else if (isLast) {
+          const newChild = { text: '' };
+          Transforms.insertNodes(editor, newChild, {
+            at: path.concat(n + 1),
+            voids: true,
+          });
+          n++;
+        }
+      }
+    } else {
+      // Merge adjacent text nodes that are empty or match.
+      if (prev != null && Text.isText(prev)) {
+        if (Text.equals(child, prev, { loose: true })) {
+          Transforms.mergeNodes(editor, { at: path.concat(n), voids: true });
+          n--;
+        } else if (prev.text === '') {
+          Transforms.removeNodes(editor, {
+            at: path.concat(n - 1),
+            voids: true,
+          });
+          n--;
+        } else if (child.text === '') {
+          Transforms.removeNodes(editor, {
+            at: path.concat(n),
+            voids: true,
+          });
+          n--;
+        }
+      }
+    }
+  }
+};
+
+const normalizeExternalData = (editor, nodes, asInRoot = true) => {
+  const [a] = Editor.above(editor, {
+    match: (n) => Editor.isBlock(editor, n),
+  });
+
+  const type = a.type;
+
+  let fakeEditor = createEditor();
+  fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
+  fakeEditor.isInline = editor.isInline;
+  fakeEditor.isVoid = editor.isVoid;
+  fakeEditor.fake = true;
+  fakeEditor.normalizeNode = generateNormalizeNode(fakeEditor);
+  fakeEditor = normalizeNode(fakeEditor);
+
+  Editor.normalize(fakeEditor, { force: true });
+
+  return fakeEditor.children;
+};
 
 export const insertData = (editor) => {
   editor.dataTransferHandlers = {
@@ -53,137 +185,152 @@ export const insertData = (editor) => {
       //   return true;
       // }
 
-      const { selection } = editor;
-      if (selection && Range.isExpanded(selection)) {
-        Transforms.delete(editor);
-      }
+      // const { selection } = editor;
+      // if (selection && Range.isExpanded(selection)) {
+      //   Transforms.delete(editor);
+      // }
 
-      const [a] = Editor.above(editor, {
-        match: (n) => Editor.isBlock(editor, n),
-      });
+      // const [a] = Editor.above(editor, {
+      //   match: (n) => Editor.isBlock(editor, n),
+      // });
 
-      let _nodes = fragment;
-      let root = { children: [{ type: a.type, children: _nodes }] };
+      // let _nodes = fragment;
+      // let root = { children: [{ type: a.type, children: _nodes }] };
 
-      for (let i = 0; i < _nodes.length; ++i) {
-        // TODO: handle other types of Slate blocks too:
-        if (_nodes[i].type === 'p') {
-          // the number of children inside the paragraph
-          const ni = _nodes[i].children.length;
+      // for (let i = 0; i < _nodes.length; ++i) {
+      //   // TODO: handle other types of Slate blocks too:
+      //   if (_nodes[i].type === 'p') {
+      //     // the number of children inside the paragraph
+      //     const ni = _nodes[i].children.length;
 
-          // not sure how to avoid this cloning (it throws error if removing it)
-          _nodes = cloneDeep(_nodes);
+      //     // not sure how to avoid this cloning (it throws error if removing it)
+      //     _nodes = cloneDeep(_nodes);
 
-          // unwrap the p's contents
-          _nodes.splice(i, 1, ..._nodes[i].children);
+      //     // unwrap the p's contents
+      //     _nodes.splice(i, 1, ..._nodes[i].children);
 
-          // NOTE: maybe requiring some partial normalization here?
-          // _nodes = normalizeNodes(editor, _nodes, false);
+      //     // NOTE: maybe requiring some partial normalization here?
+      //     // _nodes = normalizeNodes(editor, _nodes, false);
 
-          // a temporary root node for splitting & normalization purposes
-          root = { children: [{ type: a.type, children: _nodes }] };
+      //     // a temporary root node for splitting & normalization purposes
+      //     root = { children: [{ type: a.type, children: _nodes }] };
 
-          // the end point of the last node in the unwrapped nodes' array
-          let at = end(root, [0, i + ni - 1]);
+      //     // the end point of the last node in the unwrapped nodes' array
+      //     let at = end(root, [0, i + ni - 1]);
 
-          // the number of levels to split
-          let height = 2; // does this improve?: `= 1;`
+      //     // the number of levels to split
+      //     let height = 2; // does this improve?: `= 1;`
 
-          // TODO: merge inlines that have the same properties and are separated
-          // by empty {text: ''}'s.
+      //     // TODO: merge inlines that have the same properties and are separated
+      //     // by empty {text: ''}'s.
 
-          let match = (n) => Editor.isBlock(editor, n);
+      //     let match = (n) => Editor.isBlock(editor, n);
 
-          // the closest non-void block to the root starting from the point
-          // where a paragraph break should be inserted
-          const [highest] = nodes(editor, root, {
-            at,
-            match,
-            mode: 'lowest',
-            voids: false,
-          });
+      //     // the closest non-void block to the root starting from the point
+      //     // where a paragraph break should be inserted
+      //     const [highest] = nodes(editor, root, {
+      //       at,
+      //       match,
+      //       mode: 'lowest',
+      //       voids: false,
+      //     });
 
-          if (highest) {
-            const voidMatch = voidNode(editor, root, {
-              at,
-              mode: 'highest',
-            });
+      //     if (highest) {
+      //       const voidMatch = voidNode(editor, root, {
+      //         at,
+      //         mode: 'highest',
+      //       });
 
-            if (voidMatch) {
-              const [vn, vp] = voidMatch;
+      //       if (voidMatch) {
+      //         const [vn, vp] = voidMatch;
 
-              if (editor.isInline(vn)) {
-                let _after = after(editor, root, vp);
+      //         if (editor.isInline(vn)) {
+      //           let _after = after(editor, root, vp);
 
-                if (!_after) {
-                  const text = { text: '' };
-                  const afterPath = Path.next(vp);
-                  insertNodes(editor, root, text, {
-                    at: afterPath,
-                    voids: false,
-                  });
-                  _after = point(root, afterPath);
-                }
+      //           if (!_after) {
+      //             const text = { text: '' };
+      //             const afterPath = Path.next(vp);
+      //             insertNodes(editor, root, text, {
+      //               at: afterPath,
+      //               voids: false,
+      //             });
+      //             _after = point(root, afterPath);
+      //           }
 
-                at = _after;
-              }
+      //           at = _after;
+      //         }
 
-              const siblingHeight = at.path.length - vp.length;
-              height = siblingHeight + 1;
-            }
+      //         const siblingHeight = at.path.length - vp.length;
+      //         height = siblingHeight + 1;
+      //       }
 
-            // depth at which a paragraph break will be inserted
-            const depth = at.path.length - height;
+      //       // depth at which a paragraph break will be inserted
+      //       const depth = at.path.length - height;
 
-            // the path of the block in which the break will be inserted
-            const [, highestPath] = highest;
+      //       // the path of the block in which the break will be inserted
+      //       const [, highestPath] = highest;
 
-            // the depth at which to start splitting
-            const lowestPath = at.path.slice(0, depth);
+      //       // the depth at which to start splitting
+      //       const lowestPath = at.path.slice(0, depth);
 
-            let position =
-              /* height === 0 ?  */ at.offset; /* : at.path[depth] */
+      //       let position =
+      //         /* height === 0 ?  */ at.offset; /* : at.path[depth] */
 
-            // for each non-void node entry from lowestPath to root
-            for (const [node, path] of levels(editor, root, {
-              at: lowestPath,
-              reverse: true,
-              voids: false,
-            })) {
-              // if highestPath (of the block in which the break will be
-              // inserted) is longer than the current path or current path is of
-              // editor or current path is of a void node
-              if (
-                path.length < highestPath.length ||
-                path.length === 0 ||
-                Editor.isVoid(editor, node)
-              ) {
-                break;
-              }
+      //       // for each non-void node entry from lowestPath to root
+      //       for (const [node, path] of levels(editor, root, {
+      //         at: lowestPath,
+      //         reverse: true,
+      //         voids: false,
+      //       })) {
+      //         // if highestPath (of the block in which the break will be
+      //         // inserted) is longer than the current path or current path is of
+      //         // editor or current path is of a void node
+      //         if (
+      //           path.length < highestPath.length ||
+      //           path.length === 0 ||
+      //           Editor.isVoid(editor, node)
+      //         ) {
+      //           break;
+      //         }
 
-              const properties = Node.extractProps(node);
+      //         const properties = Node.extractProps(node);
 
-              // BUG: the first call to this modifies `root`1 in a wrong way
-              // (compare root before and after the call to `apply` below)
-              apply(editor, root, {
-                type: 'split_node',
-                path,
-                position,
-                properties,
-              });
+      //         // BUG: the first call to this modifies `root`1 in a wrong way
+      //         // (compare root before and after the call to `apply` below)
+      //         apply(editor, root, {
+      //           type: 'split_node',
+      //           path,
+      //           position,
+      //           properties,
+      //         });
 
-              position = path[path.length - 1] + 1;
-            }
-          }
-          --i;
-        }
-      }
+      //         position = path[path.length - 1] + 1;
+      //       }
+      //     }
+      //     --i;
+      //   }
+      // }
+
+      console.log('before normalization', fragment);
 
       // external normalization
-      normalizeNodes(editor, root.children[0].children, false);
+      fragment = normalizeExternalData(editor, fragment, true);
+
+      console.log('after normalization', fragment);
+
+      // const r = Editor.rangeRef(editor, editor.selection, {
+      //   affinity: 'outward',
+      // });
+
+      // Volto-Slate paste does introduce a new 'p' so there are 2 'p'-s inside
+      // the document and the selection is about the second one, but
+      // deconstructToVoltoBlocks has been called so now the selection is
+      // invalid.
 
       // the actual pasting
-      Transforms.insertNodes(editor, root.children[0].children);
+      Transforms.insertNodes(editor, fragment);
+
+      // Transforms.select(editor, r.current);
 
       return true;
     },
@@ -233,7 +380,7 @@ export const insertData = (editor) => {
         }
       }
 
-      const nodes = normalizeNodes(editor, fragment, true);
+      const nodes = normalizeExternalData(editor, fragment);
       if (!containsText) {
         Transforms.insertNodes(editor, nodes);
       }

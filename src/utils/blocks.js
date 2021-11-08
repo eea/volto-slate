@@ -7,8 +7,6 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 
-export * from './external-normalization';
-
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats
 const formatAliases = [

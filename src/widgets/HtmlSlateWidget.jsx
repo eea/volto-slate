@@ -12,7 +12,7 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
-import makeEditor from 'volto-slate/editor/makeEditor';
+import { makeEditor } from 'volto-slate/utils';
 import deserialize from 'volto-slate/editor/deserialize';
 
 import { createEmptyParagraph, normalizeExternalData } from 'volto-slate/utils';

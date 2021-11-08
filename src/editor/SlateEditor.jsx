@@ -9,10 +9,9 @@ import { v4 as uuid } from 'uuid';
 import config from '@plone/volto/registry';
 
 import { Element, Leaf } from './render';
-import makeEditor from './makeEditor';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { toggleInlineFormat, toggleMark } from 'volto-slate/utils';
+import { makeEditor, toggleInlineFormat, toggleMark } from 'volto-slate/utils';
 import { InlineToolbar } from './ui';
 import EditorContext from './EditorContext';
 

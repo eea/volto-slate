@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Node, createEditor, Text, Element } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node, Text, Element } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
@@ -7,6 +7,7 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 import { normalizeNode } from 'volto-slate/editor/extensions/normalizeNode';
+import { makeEditor } from './editor';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats
@@ -137,7 +138,7 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
 
   const type = a.type;
 
-  let fakeEditor = createEditor();
+  let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
   fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
   fakeEditor.isInline = editor.isInline;
   fakeEditor.isVoid = editor.isVoid;

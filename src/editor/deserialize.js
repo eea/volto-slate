@@ -1,6 +1,6 @@
 import { jsx } from 'slate-hyperscript';
 import { Text } from 'slate';
-import { normalizeExternalData, isWhitespace } from 'volto-slate/utils';
+import { isWhitespace } from 'volto-slate/utils';
 import {
   TD,
   TH,
@@ -106,7 +106,7 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     children = [p];
   }
 
-  children = normalizeExternalData(editor, children, false);
+  // children = normalizeExternalData(editor, children, false);
 
   // normalizes block elements so that they're never empty
   // Avoids a hard crash from the Slate editor

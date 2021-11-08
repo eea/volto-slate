@@ -52,35 +52,44 @@ export const insertData = (editor) => {
       // });
 
       Editor.withoutNormalizing(editor, () => {
-        // let x = 0;
-
         // for each block
         Array.from(Node.children({ children: fragment }, [])).forEach(
           (v, i, a) => {
-            Array.from(Node.children(v[0], [])).forEach((vv, ii, aa) => {
-              Transforms.insertNodes(editor, vv[0]);
-              // ++x;
-            });
+            // TODO: sometimes the paragraph ('p') should be kept (e.g. on this
+            // page:
+            // https://www.bbc.com/travel/article/20211024-the-little-known-hiking-trail-that-built-canada
+            // , copy the blockquote and the paragraph below it at once and
+            // paste it in an empty Volto-Slate block, you can notice the bug in
+            // what's rendered then)
+            if (v[0].type === 'p') {
+              Array.from(Node.children(v[0], [])).forEach((vv, ii, aa) => {
+                if (!Text.isText(vv[0]) || vv[0].text !== '') {
+                  Transforms.insertNodes(editor, vv[0]);
+                }
+              });
 
-            // TODO: make these 2 transform calls work on the correct position
-            // when pasting text not on the first character or the last
-            // character of the Slate tree
-            Transforms.splitNodes(editor, {
-              always: true,
-              match: (n) => Editor.isBlock(editor, n),
-              at: Editor.end(editor, []),
-            });
+              // TODO: make these 2 transform calls work on the correct position
+              // when pasting text not on the first character or the last
+              // character of the Slate tree
+              Transforms.splitNodes(editor, {
+                always: true,
+                match: (n) => Editor.isBlock(editor, n),
+                at: Editor.end(editor, []),
+              });
 
-            // TODO: fix this call to not extend the blockquote in the example so much
-            // TODO: to test this, create a sample HTML document with a
-            // blockquote that is extended too much
-            //
-            // case 1: empty 'a' in a 'p' -> unwrap a
-            // case 2: Text in a p -> do nothing
-            Transforms.unwrapNodes(editor, {
-              match: (n) => n.type === 'a' && Editor.isEmpty(editor, n),
-              at: Editor.end(editor, []), //Editor.last(editor, [x - 1]),
-            });
+              // TODO: fix this call to not extend the blockquote in the example so much
+              // TODO: to test this, create a sample HTML document with a
+              // blockquote that is extended too much
+              //
+              // case 1: empty 'a' in a 'p' -> unwrap a
+              // case 2: Text in a p -> do nothing
+              Transforms.unwrapNodes(editor, {
+                match: (n) => n.type === 'a' && Editor.isEmpty(editor, n),
+                at: Editor.end(editor, []), //Editor.last(editor, [x - 1]),
+              });
+            } else {
+              Transforms.insertNodes(editor, v[0]);
+            }
           },
         );
       });

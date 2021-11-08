@@ -147,7 +147,7 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
 
   if (fakeEditor.children.some((o) => Editor.isBlock(fakeEditor, o))) {
     Array.from(Node.children(fakeEditor, [])).forEach((v, i, a) => {
-      if (!Editor.isBlock(fakeEditor, v)) {
+      if (!Editor.isBlock(fakeEditor, v[0])) {
         Transforms.wrapNodes(
           fakeEditor,
           { type: 'p' },

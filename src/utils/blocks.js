@@ -146,9 +146,15 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
   // fakeEditor.normalizeNode = generateNormalizeNode(fakeEditor);
   // fakeEditor = normalizeNode(fakeEditor);
 
-  if (fakeEditor.children.some((o) => Editor.isBlock(fakeEditor, o))) {
-    Array.from(Node.children(fakeEditor, [])).forEach((v, i, a) => {
-      if (!Editor.isBlock(fakeEditor, v[0])) {
+  // if the fake editor contains at least 1 block element, put all the remaining
+  // non-blocks inside p-s
+  if (Editor.hasBlocks(fakeEditor, fakeEditor)) {
+    let i = 0;
+    const c = Array.from(Node.children(fakeEditor, []));
+    for (const v of c) {
+      const [n] = v;
+
+      if (!Editor.isBlock(fakeEditor, n)) {
         Transforms.wrapNodes(
           fakeEditor,
           { type: 'p' },
@@ -157,7 +163,8 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
           },
         );
       }
-    });
+      ++i;
+    }
   }
 
   Editor.normalize(fakeEditor, { force: true });

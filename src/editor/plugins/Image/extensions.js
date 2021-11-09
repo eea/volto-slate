@@ -2,7 +2,7 @@
 // The TextBlockEdit extensions will come and then split the images into
 // separate dedicated Volto image blocks.
 
-import { IMAGE } from 'volto-slate/constants';
+import { IMAGE, P } from 'volto-slate/constants';
 import { jsx } from 'slate-hyperscript';
 
 export const deserializeImageTag = (editor, el) => {
@@ -18,7 +18,9 @@ export const deserializeImageTag = (editor, el) => {
     return null;
   }
 
-  return jsx('element', { type: 'p' }, jsx('element', attrs, [{ text: '' }]));
+  // TODO: a wrapping P tag is needed since an 'image' is an inline Slate
+  // Element that cannot be directly inside the editor.children array
+  return jsx('element', { type: P }, jsx('element', attrs, [{ text: '' }]));
 };
 
 /**

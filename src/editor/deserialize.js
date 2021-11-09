@@ -88,7 +88,9 @@ export const typeDeserialize = (editor, el) => {
 };
 
 export const deserializeChildren = (parent, editor) =>
-  Array.from(parent.childNodes, (el) => deserialize(editor, el)).flat();
+  Array.from(parent.childNodes)
+    .map((el) => deserialize(editor, el))
+    .flat();
 
 export const blockTagDeserializer = (tagname) => (editor, el) => {
   // if (tagname === 'h2') debugger;
@@ -105,8 +107,6 @@ export const blockTagDeserializer = (tagname) => (editor, el) => {
     p.children[0].text = children[0];
     children = [p];
   }
-
-  // children = normalizeExternalData(editor, children, false);
 
   // normalizes block elements so that they're never empty
   // Avoids a hard crash from the Slate editor

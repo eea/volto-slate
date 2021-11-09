@@ -101,10 +101,6 @@ const HtmlSlateWidget = (props) => {
     [onChange, toHtml, id],
   );
 
-  const renderExtensions = React.useMemo(() => {
-    return [];
-  }, []);
-
   const handleClick = React.useCallback(() => {
     setSelected(true);
   }, []);
@@ -127,7 +123,6 @@ const HtmlSlateWidget = (props) => {
             value={valueFromHtml}
             onChange={handleChange}
             block={block}
-            renderExtensions={renderExtensions}
             selected={selected}
             properties={properties}
             placeholder={placeholder}

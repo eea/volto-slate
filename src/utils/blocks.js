@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Node, Text, Element } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
@@ -18,118 +18,55 @@ const formatAliases = [
 ];
 
 /**
- * The default editor.normalizeNode implementation, modified to put Text's
- * inside p-s when they are directly inside the root node of the editor.
- * @param {*} editor
- * @returns
+ * Excerpt from Slate documentation, kept here for posterity:
+ * See https://docs.slatejs.org/concepts/11-normalizing#built-in-constraints
+
+## Built-in Constraints
+
+Slate editors come with a few built-in constraints out of the box. These
+constraints are there to make working with content much more predictable than
+standard contenteditable. All of the built-in logic in Slate depends on these
+constraints, so unfortunately you cannot omit them. They are...
+
+- All Element nodes must contain at least one Text descendant. If an element node
+does not contain any children, an empty text node will be added as its only
+child. This constraint exists to ensure that the selection's anchor and focus
+points (which rely on referencing text nodes) can always be placed inside any
+node. With this, empty elements (or void elements) wouldn't be selectable.
+
+- Two adjacent texts with the same custom properties will be merged. If two
+adjacent text nodes have the same formatting, they're merged into a single text
+node with a combined text string of the two. This exists to prevent the text
+nodes from only ever expanding in count in the document, since both adding and
+removing formatting results in splitting text nodes.
+
+- Block nodes can only contain other blocks, or inline and text nodes. For
+example, a paragraph block cannot have another paragraph block element and
+a link inline element as children at the same time. The type of children
+allowed is determined by the first child, and any other non-conforming children
+are removed. This ensures that common richtext behaviors like "splitting
+a block in two" function consistently.
+
+- Inline nodes cannot be the first or last child of a parent block, nor can it
+be next to another inline node in the children array. If this is the case, an
+empty text node will be added to correct this to be in compliance with the
+constraint.
+
+- The top-level editor node can only contain block nodes. If any of the
+top-level children are inline or text nodes they will be removed. This ensures
+that there are always block nodes in the editor so that behaviors like
+"splitting a block in two" work as expected.
+
+- These default constraints are all mandated because they make working with
+Slate documents much more predictable.
+
+Although these constraints are the best we've come up with now, we're always
+looking for ways to have Slate's built-in constraints be less constraining if
+possible—as long as it keeps standard behaviors easy to reason about. If you
+come up with a way to reduce or remove a built-in constraint with a different
+approach, we're all ears!
+ *
  */
-export const generateNormalizeNode = (editor) => (entry) => {
-  const [node, path] = entry;
-
-  // There are no core normalizations for text nodes.
-  if (Text.isText(node)) {
-    return;
-  }
-
-  // Ensure that block and inline nodes have at least one text child.
-  if (Element.isElement(node) && node.children.length === 0) {
-    const child = { text: '' };
-    Transforms.insertNodes(editor, child, {
-      at: path.concat(0),
-      voids: true,
-    });
-    return;
-  }
-
-  // Determine whether the node should have block or inline children.
-  const shouldHaveInlines = Editor.isEditor(node)
-    ? false
-    : Element.isElement(node) &&
-      (editor.isInline(node) ||
-        node.children.length === 0 ||
-        Text.isText(node.children[0]) ||
-        editor.isInline(node.children[0]));
-
-  // Since we'll be applying operations while iterating, keep track of an
-  // index that accounts for any added/removed nodes.
-  let n = 0;
-
-  for (let i = 0; i < node.children.length; i++, n++) {
-    const currentNode = Node.get(editor, path);
-    if (Text.isText(currentNode)) continue;
-    const child = node.children[i];
-    const prev = currentNode.children[n - 1];
-    const isLast = i === node.children.length - 1;
-    const isInlineOrText =
-      Text.isText(child) ||
-      (Element.isElement(child) && editor.isInline(child));
-
-    // Only allow block nodes in the top-level children and parent blocks
-    // that only contain block nodes. Similarly, only allow inline nodes in
-    // other inline nodes, or parent blocks that only contain inlines and
-    // text.
-    if (isInlineOrText !== shouldHaveInlines) {
-      // The pasted content can have Text-s directly inside the root, so we do
-      // not remove these Text-s but wrap them inside a 'p'.
-      if (isInlineOrText && child.text !== '') {
-        Transforms.wrapNodes(
-          editor,
-          // TODO: should here be an empty Text inside children?
-          { type: 'p', children: [] },
-          {
-            at: path.concat(n),
-            voids: true,
-          },
-        );
-      } else {
-        Transforms.removeNodes(editor, {
-          at: path.concat(n),
-          voids: true,
-        });
-        --n;
-      }
-    } else if (Element.isElement(child)) {
-      // Ensure that inline nodes are surrounded by text nodes.
-      if (editor.isInline(child)) {
-        if (prev == null || !Text.isText(prev)) {
-          const newChild = { text: '' };
-          Transforms.insertNodes(editor, newChild, {
-            at: path.concat(n),
-            voids: true,
-          });
-          n++;
-        } else if (isLast) {
-          const newChild = { text: '' };
-          Transforms.insertNodes(editor, newChild, {
-            at: path.concat(n + 1),
-            voids: true,
-          });
-          n++;
-        }
-      }
-    } else {
-      // Merge adjacent text nodes that are empty or match.
-      if (prev != null && Text.isText(prev)) {
-        if (Text.equals(child, prev, { loose: true })) {
-          Transforms.mergeNodes(editor, { at: path.concat(n), voids: true });
-          n--;
-        } else if (prev.text === '') {
-          Transforms.removeNodes(editor, {
-            at: path.concat(n - 1),
-            voids: true,
-          });
-          n--;
-        } else if (child.text === '') {
-          Transforms.removeNodes(editor, {
-            at: path.concat(n),
-            voids: true,
-          });
-          n--;
-        }
-      }
-    }
-  }
-};
 
 export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
   const [a] = Editor.above(editor, {
@@ -140,11 +77,6 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
 
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
   fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
-  // fakeEditor.isInline = editor.isInline;
-  // fakeEditor.isVoid = editor.isVoid;
-  // fakeEditor.fake = true;
-  // fakeEditor.normalizeNode = generateNormalizeNode(fakeEditor);
-  // fakeEditor = normalizeNode(fakeEditor);
 
   // if the fake editor contains at least 1 block element, put all the remaining
   // non-blocks inside p-s
@@ -339,7 +271,10 @@ export const changeBlockToList = (editor, format) => {
       // id: nanoid(8),
     });
   }
-  const block = { type: format, children: [] };
+
+  // `children` property is added automatically as an empty array then
+  // normalized
+  const block = { type: format };
   Transforms.wrapNodes(editor, block);
 };
 

@@ -181,9 +181,10 @@ export function toggleList(
   const willWrapAgain = !isBulletedActive;
   unwrapList(editor, willWrapAgain, { unwrapFromList: isBulletedActive });
 
-  // a new list is created and everything in the editor is put in it
-  // TODO: should here be an empty Text inside children?
-  const list = { type: typeList, children: [] };
+  // a new list is created and everything in the editor is put in it;
+  // `children` property is added automatically as an empty array then
+  // normalized
+  const list = { type: typeList };
   Transforms.wrapNodes(editor, list);
 
   // get all the selected paragraphs

@@ -18,9 +18,7 @@ export const deserializeImageTag = (editor, el) => {
     return null;
   }
 
-  // TODO: a wrapping P tag is needed since an 'image' is an inline Slate
-  // Element that cannot be directly inside the editor.children array
-  return jsx('element', { type: P }, jsx('element', attrs, [{ text: '' }]));
+  return jsx('element', attrs, [{ text: '' }]);
 };
 
 /**

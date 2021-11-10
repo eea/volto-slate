@@ -9,6 +9,7 @@ describe('Block Tests: Basic text format', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // Bold
+    // FIXME
     cy.setSlateSelection('Colorless', 'green');
     cy.clickSlateButton('Bold');
 

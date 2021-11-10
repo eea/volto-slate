@@ -379,17 +379,28 @@ Cypress.Commands.add('getSlateEditorAndType', (type) => {
   cy.get('.content-area .slate-editor [contenteditable=true]').click({
     force: true, // not sure if 'force: true' needed
   });
+
+  // required for focusing of the editor above to work:
+  cy.wait(1000);
+
   cy.get('.content-area .slate-editor [contenteditable=true]').click({
     force: true, // not sure if 'force: true' needed
   });
+
+  // required for focusing of the editor above to work:
+  cy.wait(1000);
 
   cy.get('.content-area .slate-editor [contenteditable=true]').type(type);
 });
 
 Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
+  // required for the next command to work:
+  cy.wait(1000);
+
   cy.get('.slate-editor.selected [contenteditable=true]')
     .focus()
     .click()
+    .wait(1000)
     .setSelection(subject, query, endQuery)
     .wait(1000); // this wait is needed for the selection change to be detected after
 });

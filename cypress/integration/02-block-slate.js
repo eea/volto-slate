@@ -9,6 +9,7 @@ describe('Block Tests', () => {
       .focus()
       .click()
       .wait(1000)
+      .click()
       .type('Hello Slate World')
       .type('{enter}');
 

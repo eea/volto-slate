@@ -79,24 +79,26 @@ export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
   fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
 
   // if the fake editor contains at least 1 block element, put all the remaining
-  // non-blocks inside p-s
+  // non-blocks (e.g. images which are inline Elements) inside p-s
   if (Editor.hasBlocks(fakeEditor, fakeEditor)) {
-    let i = 0;
-    const c = Array.from(Node.children(fakeEditor, []));
-    for (const v of c) {
-      const [n] = v;
+    Editor.withoutNormalizing(fakeEditor, () => {
+      let i = 0;
+      const c = Array.from(Node.children(fakeEditor, []));
+      for (const v of c) {
+        const [n] = v;
 
-      if (!Editor.isBlock(fakeEditor, n)) {
-        Transforms.wrapNodes(
-          fakeEditor,
-          { type: 'p' },
-          {
-            at: [i],
-          },
-        );
+        if (!Editor.isBlock(fakeEditor, n)) {
+          Transforms.wrapNodes(
+            fakeEditor,
+            { type: 'p' },
+            {
+              at: [i],
+            },
+          );
+        }
+        ++i;
       }
-      ++i;
-    }
+    });
   }
 
   Editor.normalize(fakeEditor, { force: true });

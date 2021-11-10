@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-import { Node, Transforms } from 'slate'; // , Transforms
+import { Node, Transforms, Editor } from 'slate'; // , Transforms
 import { Slate, Editable, ReactEditor } from 'slate-react';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -110,12 +110,12 @@ class SlateEditor extends Component {
       let focused = true;
       try {
         focused = ReactEditor.isFocused(this.state.editor);
-      } catch {}
+      } catch { }
       if (!focused) {
         setTimeout(() => {
           try {
             ReactEditor.focus(this.state.editor);
-          } catch {}
+          } catch { }
         }, 100); // flush
       }
     }
@@ -133,21 +133,27 @@ class SlateEditor extends Component {
 
     const { editor } = this.state;
 
-    if (!prevProps.selected && this.props.selected) {
-      if (!ReactEditor.isFocused(this.state.editor)) {
-        //  || !editor.selection
-        setTimeout(() => {
-          if (window.getSelection().type === 'None') {
-            const match = Node.first(this.state.editor, []);
-            const path = match[1];
-            const point = { path, offset: 0 };
-            const selection = { anchor: point, focus: point };
-            Transforms.select(this.state.editor, selection);
-          }
+    // FIXME: first click not making selection in SlateEditor
 
-          ReactEditor.focus(this.state.editor);
-        }, 100); // flush
+    // if the SlateEditor becomes selected from unselected
+    if (!prevProps.selected && this.props.selected) {
+      // if the SlateEditor is not already selected
+      // if (!ReactEditor.isFocused(this.state.editor)) {
+      //  || !editor.selection
+
+      // TODO: why is this setTimeout wrapping the code in it?
+      // setTimeout(() => {
+      // TODO: why is this condition checked?
+      if (window.getSelection().type === 'None') {
+        Transforms.select(
+          this.state.editor,
+          Editor.range(this.state.editor, Editor.start(this.state.editor, [])),
+        );
       }
+
+      ReactEditor.focus(this.state.editor);
+      // }, 100); // flush
+      // }
     }
 
     // if (this.props.selected && this.editor && this.editor.selection) {
@@ -228,14 +234,19 @@ class SlateEditor extends Component {
                 this.props.onBlur && this.props.onBlur();
                 return null;
               }}
+              // FIXME: first click not making selection in SlateEditor
               onClick={this.props.onClick}
+              // FIXME: first click not making selection in SlateEditor
               onSelect={(e) => {
                 if (!selected && this.props.onFocus) {
                   // we can't overwrite the onFocus of Editable, as the onFocus
                   // in Slate has too much builtin behaviour that's not
                   // accessible otherwise. Instead we try to detect such an
                   // event based on observing selected state
-                  if (!editor.selection) setTimeout(this.props.onFocus, 100);
+                  // if (!editor.selection)
+                  //   setTimeout(() => {
+                  //     this.props.onFocus();
+                  //   }, 100);
                 }
 
                 if (this.selectionTimeout) clearTimeout(this.selectionTimeout);

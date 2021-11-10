@@ -68,15 +68,18 @@ approach, we're all ears!
  *
  */
 
-export const normalizeExternalData = (editor, nodes, asInRoot = true) => {
-  const [a] = Editor.above(editor, {
-    match: (n) => Editor.isBlock(editor, n),
-  });
+export const normalizeExternalData = (
+  editor,
+  nodes /* , asInRoot = true */,
+) => {
+  // const [a] = Editor.above(editor, {
+  //   match: (n) => Editor.isBlock(editor, n),
+  // });
 
-  const type = a.type;
+  // const type = a.type;
 
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
-  fakeEditor.children = asInRoot ? nodes : [{ type, children: nodes }];
+  fakeEditor.children = /* asInRoot ?  */ nodes /*  : [{ type, children: nodes }] */;
 
   // if the fake editor contains at least 1 block element, put all the remaining
   // non-blocks (e.g. images which are inline Elements) inside p-s

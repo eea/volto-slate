@@ -372,9 +372,8 @@ Cypress.Commands.add(
 Cypress.Commands.add('getSlateEditorAndType', (type) => {
   cy.get('.content-area .slate-editor [contenteditable=true]').focus();
 
-  cy.get('.content-area .slate-editor [contenteditable=true]').click({
-    force: true, // not sure if 'force: true' needed
-  });
+  // without this, the first character of `type` is sometimes omitted
+  cy.get('.content-area .slate-editor [contenteditable=true]').click();
 
   cy.get('.content-area .slate-editor [contenteditable=true]').type(type);
 });

@@ -379,9 +379,6 @@ Cypress.Commands.add('getSlateEditorAndType', (type) => {
 });
 
 Cypress.Commands.add('setSlateSelection', (subject, query, endQuery) => {
-  // required for the next command to work:
-  cy.wait(1000);
-
   cy.get('.slate-editor.selected [contenteditable=true]')
     .focus()
     .click()

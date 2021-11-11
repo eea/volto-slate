@@ -6,7 +6,6 @@ import {
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 import _ from 'lodash';
-// import { normalizeNode } from 'volto-slate/editor/extensions/normalizeNode';
 import { makeEditor } from './editor';
 
 // case sensitive; first in an inner array is the default and preffered format
@@ -68,16 +67,7 @@ approach, we're all ears!
  *
  */
 
-export const normalizeExternalData = (
-  editor,
-  nodes /* , asInRoot = true */,
-) => {
-  // const [a] = Editor.above(editor, {
-  //   match: (n) => Editor.isBlock(editor, n),
-  // });
-
-  // const type = a.type;
-
+export const normalizeExternalData = (editor, nodes) => {
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
   fakeEditor.children = /* asInRoot ?  */ nodes /*  : [{ type, children: nodes }] */;
 
@@ -206,7 +196,10 @@ export const toggleInlineFormat = (editor, format) => {
     // editor.savedSelection = newSel;
     return;
   }
-  const block = { type: defaultFormat, children: [{ text: '' }] };
+
+  // `children` property is added automatically as an empty array then
+  // normalized
+  const block = { type: defaultFormat };
   Transforms.wrapNodes(editor, block, { split: true });
 };
 

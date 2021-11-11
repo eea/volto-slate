@@ -31,7 +31,7 @@ export const insertData = (editor) => {
       fragment = Array.isArray(val) ? val : [val];
 
       // external normalization
-      fragment = normalizeExternalData(editor, fragment, true);
+      fragment = normalizeExternalData(editor, fragment);
 
       editor.insertFragment(fragment);
 

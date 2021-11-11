@@ -135,7 +135,6 @@ export const DefaultTextBlockEditor = (props) => {
     prevReq.current = loaded;
   }, [props, loaded, loading, prevLoaded, imageId, newImageId, index]);
 
-  // FIXME: first click not making selection in SlateEditor
   const handleUpdate = React.useCallback(
     (editor) => {
       // defaultSelection is used for things such as "restoring" the selection
@@ -186,7 +185,6 @@ export const DefaultTextBlockEditor = (props) => {
     rootMargin: '0px 0px 200px 0px',
   });
 
-  // FIXME: first click not making selection in SlateEditor
   const handleFocus = React.useCallback(() => {
     if (!selected) {
       onSelectBlock(block);

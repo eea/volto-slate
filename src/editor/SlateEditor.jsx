@@ -133,8 +133,6 @@ class SlateEditor extends Component {
 
     const { editor } = this.state;
 
-    // FIXME: first click not making selection in SlateEditor
-
     // if the SlateEditor becomes selected from unselected
     if (!prevProps.selected && this.props.selected) {
       // if the SlateEditor is not already selected
@@ -234,9 +232,7 @@ class SlateEditor extends Component {
                 this.props.onBlur && this.props.onBlur();
                 return null;
               }}
-              // FIXME: first click not making selection in SlateEditor
               onClick={this.props.onClick}
-              // FIXME: first click not making selection in SlateEditor
               onSelect={(e) => {
                 if (!selected && this.props.onFocus) {
                   // we can't overwrite the onFocus of Editable, as the onFocus
@@ -246,7 +242,7 @@ class SlateEditor extends Component {
                   if (!editor.selection) {
                     setTimeout(() => {
                       this.props.onFocus();
-                    }, 100);
+                    }, 100); // TODO: why 100 is chosen here?
                   }
                 }
 

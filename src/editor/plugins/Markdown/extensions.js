@@ -1,5 +1,6 @@
 import { castArray, map } from 'lodash';
 import { Editor, Path, Point, Range, Transforms } from 'slate';
+import { toggleInlineFormat } from '../../../utils/blocks';
 
 /**
  * Get range from {@link getPointBefore} to the end point of `at`.
@@ -168,11 +169,10 @@ export const autoformatInline = (
     });
   }
 
-  // add mark to the text between the markups
+  // add mark as inline element to the text between the markups
   Transforms.select(editor, markupRange);
-  editor.addMark(type, true);
+  toggleInlineFormat(editor, type);
   Transforms.collapse(editor, { edge: 'end' });
-  editor.removeMark(type);
 
   // delete start markup
   const startMarkupPointBefore = getPointBefore(editor, selection, {

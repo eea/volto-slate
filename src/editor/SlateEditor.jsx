@@ -243,10 +243,11 @@ class SlateEditor extends Component {
                   // in Slate has too much builtin behaviour that's not
                   // accessible otherwise. Instead we try to detect such an
                   // event based on observing selected state
-                  // if (!editor.selection)
-                  //   setTimeout(() => {
-                  //     this.props.onFocus();
-                  //   }, 100);
+                  if (!editor.selection) {
+                    setTimeout(() => {
+                      this.props.onFocus();
+                    }, 100);
+                  }
                 }
 
                 if (this.selectionTimeout) clearTimeout(this.selectionTimeout);

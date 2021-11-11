@@ -1,6 +1,6 @@
 import cx from 'classnames';
 import { isEqual } from 'lodash';
-import { Node, Transforms, Editor } from 'slate'; // , Transforms
+import { Transforms, Editor } from 'slate'; // , Transforms
 import { Slate, Editable, ReactEditor } from 'slate-react';
 import React, { Component } from 'react'; // , useState
 import { connect } from 'react-redux';
@@ -110,12 +110,12 @@ class SlateEditor extends Component {
       let focused = true;
       try {
         focused = ReactEditor.isFocused(this.state.editor);
-      } catch { }
+      } catch {}
       if (!focused) {
         setTimeout(() => {
           try {
             ReactEditor.focus(this.state.editor);
-          } catch { }
+          } catch {}
         }, 100); // flush
       }
     }

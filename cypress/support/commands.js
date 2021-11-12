@@ -370,18 +370,10 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getSlateEditorAndType', (type) => {
-  cy.get('.content-area .slate-editor [contenteditable=true]')
-    .focus()
-    .wait(1000);
+  cy.get('.content-area .slate-editor [contenteditable=true]').focus();
 
-  // the two clicks below are necessary for the focusing of the Slate editor to
-  // work well
-  cy.get('.content-area .slate-editor [contenteditable=true]').click({
-    force: true, // not sure if 'force: true' needed
-  });
-  cy.get('.content-area .slate-editor [contenteditable=true]').click({
-    force: true, // not sure if 'force: true' needed
-  });
+  // without this, the first character of `type` is sometimes omitted
+  cy.get('.content-area .slate-editor [contenteditable=true]').click();
 
   cy.get('.content-area .slate-editor [contenteditable=true]').type(type);
 });

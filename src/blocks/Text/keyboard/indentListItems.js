@@ -185,7 +185,9 @@ export function increaseItemDepth(editor, event) {
   function wrapListItem() {
     Transforms.wrapNodes(
       editor,
-      { type: type, children: [] },
+      // `children` property is added automatically as an empty array then
+      // normalized
+      { type: type },
       {
         at: listItemPath,
       },

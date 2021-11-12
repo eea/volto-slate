@@ -99,10 +99,13 @@ export const TitleBlockEdit = (props) => {
         ReactEditor.focus(editor);
       } else {
         // nothing is selected, move focus to end
-        setTimeout(() => {
-          ReactEditor.focus(editor);
-          Transforms.select(editor, Editor.end(editor, []));
-        });
+        // with this setTimeout uncommented, the focusing of other Volto-Slate
+        // blocks breaks, not sure what was its initial role, but maybe we can
+        // delete it one day
+        // setTimeout(() => {
+        ReactEditor.focus(editor);
+        Transforms.select(editor, Editor.end(editor, []));
+        // });
       }
     }
   }, [prevSelected, selected, editor]);

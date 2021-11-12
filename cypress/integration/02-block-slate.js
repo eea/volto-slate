@@ -8,7 +8,6 @@ describe('Block Tests', () => {
     cy.get('.content-area .slate-editor [contenteditable=true]')
       .focus()
       .click()
-      .wait(1000)
       .type('Hello Slate World')
       .type('{enter}');
 

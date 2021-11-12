@@ -26,5 +26,5 @@ export const extractImages = (editor, pathRef) => {
     match: (node) => node.type === IMAGE,
   });
 
-  return images.map((el) => syncCreateImageBlock(el.src));
+  return images.map((el) => syncCreateImageBlock(el.url));
 };

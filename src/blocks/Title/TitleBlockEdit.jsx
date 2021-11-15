@@ -52,7 +52,7 @@ export const TitleBlockEdit = (props) => {
     blockNode,
     className,
     formFieldName,
-    properties,
+    metadata,
     data,
     detached,
     editable,
@@ -65,11 +65,11 @@ export const TitleBlockEdit = (props) => {
 
   const handleChange = useCallback(
     (value) => {
-      if (Node.string({ children: value }) !== properties?.[formFieldName]) {
+      if (Node.string({ children: value }) !== metadata?.[formFieldName]) {
         onChangeField(formFieldName, Editor.string(editor, []));
       }
     },
-    [editor, formFieldName, onChangeField, properties],
+    [editor, formFieldName, onChangeField, metadata],
   );
 
   const TitleOrDescription = useMemo(() => {
@@ -153,10 +153,10 @@ export const TitleBlockEdit = (props) => {
     return [
       {
         type: P,
-        children: [{ text: properties?.[formFieldName] || '' }],
+        children: [{ text: metadata?.[formFieldName] || '' }],
       },
     ];
-  }, [properties, formFieldName]);
+  }, [metadata, formFieldName]);
 
   const handleFocus = useCallback(() => {
     onSelectBlock(block);

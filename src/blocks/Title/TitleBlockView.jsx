@@ -11,10 +11,14 @@ import PropTypes from 'prop-types';
  * @class View
  * @extends Component
  */
-const TitleBlockView = ({ properties, className, formFieldName }) => {
+const TitleBlockView = ({ properties, metadata, className, formFieldName }) => {
   const Comp = formFieldName === 'title' ? 'h1' : 'p';
 
-  return <Comp className={className}>{properties[formFieldName] || ''}</Comp>;
+  return (
+    <Comp className={className}>
+      {(metadata || properties)[formFieldName] || ''}
+    </Comp>
+  );
 };
 
 /**
@@ -24,6 +28,7 @@ const TitleBlockView = ({ properties, className, formFieldName }) => {
  */
 TitleBlockView.propTypes = {
   properties: PropTypes.objectOf(PropTypes.any).isRequired,
+  metadata: PropTypes.objectOf(PropTypes.any),
   className: PropTypes.string.isRequired,
   formFieldName: PropTypes.string.isRequired,
 };

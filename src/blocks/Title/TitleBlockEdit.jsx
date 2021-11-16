@@ -66,8 +66,8 @@ export const TitleBlockEdit = (props) => {
   const disableNewBlocks = data.disableNewBlocks || detached;
 
   const text =
-    properties?.[formFieldName] ||
     metadata?.[formFieldName] ||
+    properties?.[formFieldName] ||
     ''; /*useMemo(() => {
     return properties?.[formFieldName] || metadata?.[formFieldName];
   }, [metadata, properties, formFieldName]);*/

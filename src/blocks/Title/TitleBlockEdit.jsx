@@ -11,6 +11,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import config from '@plone/volto/registry';
 import { P } from '../../constants';
 import cx from 'classnames';
+import { cloneDeep } from 'lodash';
 
 const messages = defineMessages({
   description: {
@@ -52,6 +53,7 @@ export const TitleBlockEdit = (props) => {
     blockNode,
     className,
     formFieldName,
+    properties,
     metadata,
     data,
     detached,
@@ -63,13 +65,26 @@ export const TitleBlockEdit = (props) => {
 
   const disableNewBlocks = data.disableNewBlocks || detached;
 
+  const text =
+    properties?.[formFieldName] ||
+    metadata?.[formFieldName] ||
+    ''; /*useMemo(() => {
+    return properties?.[formFieldName] || metadata?.[formFieldName];
+  }, [metadata, properties, formFieldName]);*/
+
+  // console.log(index, formFieldName, 'TEXT', text);
+  // console.log(cloneDeep(properties), cloneDeep(metadata));
+
   const handleChange = useCallback(
     (value) => {
-      if (Node.string({ children: value }) !== metadata?.[formFieldName]) {
-        onChangeField(formFieldName, Editor.string(editor, []));
+      const newText = Node.string(editor);
+      // console.log('COMPARE', value);
+      if (newText !== text) {
+        console.log(index, newText);
+        onChangeField(formFieldName, newText);
       }
     },
-    [editor, formFieldName, onChangeField, metadata],
+    [editor, formFieldName, onChangeField, text, index],
   );
 
   const TitleOrDescription = useMemo(() => {
@@ -149,14 +164,14 @@ export const TitleBlockEdit = (props) => {
     ],
   );
 
-  const value = useMemo(() => {
+  const val = useMemo(() => {
     return [
       {
         type: P,
-        children: [{ text: metadata?.[formFieldName] || '' }],
+        children: [{ text }],
       },
     ];
-  }, [metadata, formFieldName]);
+  }, [text]);
 
   const handleFocus = useCallback(() => {
     onSelectBlock(block);
@@ -184,7 +199,7 @@ export const TitleBlockEdit = (props) => {
     <Slate
       editor={editor}
       onChange={handleChange}
-      value={value}
+      value={val}
       className={cx({
         block: formFieldName === 'description',
         description: formFieldName === 'description',

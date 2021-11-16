@@ -11,7 +11,6 @@ import { defineMessages, useIntl } from 'react-intl';
 import config from '@plone/volto/registry';
 import { P } from '../../constants';
 import cx from 'classnames';
-import { cloneDeep } from 'lodash';
 
 const messages = defineMessages({
   description: {
@@ -65,26 +64,16 @@ export const TitleBlockEdit = (props) => {
 
   const disableNewBlocks = data.disableNewBlocks || detached;
 
-  const text =
-    metadata?.[formFieldName] ||
-    properties?.[formFieldName] ||
-    ''; /*useMemo(() => {
-    return properties?.[formFieldName] || metadata?.[formFieldName];
-  }, [metadata, properties, formFieldName]);*/
-
-  // console.log(index, formFieldName, 'TEXT', text);
-  // console.log(cloneDeep(properties), cloneDeep(metadata));
+  const text = metadata?.[formFieldName] || properties?.[formFieldName] || '';
 
   const handleChange = useCallback(
     (value) => {
       const newText = Node.string(editor);
-      // console.log('COMPARE', value);
       if (newText !== text) {
-        console.log(index, newText);
         onChangeField(formFieldName, newText);
       }
     },
-    [editor, formFieldName, onChangeField, text, index],
+    [editor, formFieldName, onChangeField, text],
   );
 
   const TitleOrDescription = useMemo(() => {

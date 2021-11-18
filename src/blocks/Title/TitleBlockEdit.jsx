@@ -53,6 +53,7 @@ export const TitleBlockEdit = (props) => {
     className,
     formFieldName,
     properties,
+    metadata,
     data,
     detached,
     editable,
@@ -63,13 +64,16 @@ export const TitleBlockEdit = (props) => {
 
   const disableNewBlocks = data.disableNewBlocks || detached;
 
+  const text = metadata?.[formFieldName] || properties?.[formFieldName] || '';
+
   const handleChange = useCallback(
     (value) => {
-      if (Node.string({ children: value }) !== properties?.[formFieldName]) {
-        onChangeField(formFieldName, Editor.string(editor, []));
+      const newText = Node.string(editor);
+      if (newText !== text) {
+        onChangeField(formFieldName, newText);
       }
     },
-    [editor, formFieldName, onChangeField, properties],
+    [editor, formFieldName, onChangeField, text],
   );
 
   const TitleOrDescription = useMemo(() => {
@@ -149,14 +153,14 @@ export const TitleBlockEdit = (props) => {
     ],
   );
 
-  const value = useMemo(() => {
+  const val = useMemo(() => {
     return [
       {
         type: P,
-        children: [{ text: properties?.[formFieldName] || '' }],
+        children: [{ text }],
       },
     ];
-  }, [properties, formFieldName]);
+  }, [text]);
 
   const handleFocus = useCallback(() => {
     onSelectBlock(block);
@@ -184,7 +188,7 @@ export const TitleBlockEdit = (props) => {
     <Slate
       editor={editor}
       onChange={handleChange}
-      value={value}
+      value={val}
       className={cx({
         block: formFieldName === 'description',
         description: formFieldName === 'description',

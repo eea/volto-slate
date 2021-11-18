@@ -2,8 +2,8 @@ import { Editor, Text, Transforms } from 'slate';
 import { deserialize } from 'volto-slate/editor/deserialize';
 import {
   createDefaultBlock,
-  normalizeBlockNodes,
   MIMETypeName,
+  normalizeExternalData,
 } from 'volto-slate/utils';
 
 export const insertData = (editor) => {
@@ -25,27 +25,15 @@ export const insertData = (editor) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
 
-      let fragment; //  = deserialize(editor, body);
+      let fragment;
 
       const val = deserialize(editor, body);
       fragment = Array.isArray(val) ? val : [val];
 
-      // When there's already text in the editor, insert a fragment, not nodes
-      if (
-        Editor.string(editor, []) &&
-        Array.isArray(fragment) &&
-        fragment.findIndex(
-          (b) => Editor.isInline(editor, b) || Text.isText(b),
-        ) > -1
-      ) {
-        // TODO: we want normalization also when dealing with fragments
-        // Transforms.insertFragment(editor, fragment);
-        editor.insertFragment(fragment);
-        return true;
-      }
+      // external normalization
+      fragment = normalizeExternalData(editor, fragment);
 
-      const nodes = normalizeBlockNodes(editor, fragment);
-      Transforms.insertNodes(editor, nodes);
+      editor.insertFragment(fragment);
 
       return true;
     },
@@ -95,7 +83,7 @@ export const insertData = (editor) => {
         }
       }
 
-      const nodes = normalizeBlockNodes(editor, fragment);
+      const nodes = normalizeExternalData(editor, fragment);
       if (!containsText) {
         Transforms.insertNodes(editor, nodes);
       }

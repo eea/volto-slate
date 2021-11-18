@@ -14,9 +14,12 @@ export const deserializeImageTag = (editor, el) => {
   }
 
   // TODO: recognize more unsupported protocols
-  if (attrs.src.startsWith('file:///')) {
+  if (typeof attrs.src === 'undefined' || attrs.src.startsWith('file:///')) {
     return null;
   }
+
+  attrs.url = attrs.src;
+  delete attrs.src;
 
   return [jsx('element', attrs, [{ text: '' }])];
 };

@@ -12,14 +12,10 @@ import { defineMessages, injectIntl } from 'react-intl';
 import { FormFieldWrapper } from '@plone/volto/components';
 import SlateEditor from 'volto-slate/editor/SlateEditor';
 import { serializeNodes } from 'volto-slate/editor/render';
-import makeEditor from 'volto-slate/editor/makeEditor';
+import { makeEditor } from 'volto-slate/utils';
 import deserialize from 'volto-slate/editor/deserialize';
 
-import {
-  createEmptyParagraph,
-  normalizeBlockNodes,
-  normalizeLinkNodes,
-} from 'volto-slate/utils';
+import { createEmptyParagraph, normalizeExternalData } from 'volto-slate/utils';
 import { ErrorBoundary } from './ErrorBoundary';
 
 import './style.css';
@@ -82,9 +78,7 @@ const HtmlSlateWidget = (props) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
       let data = deserialize(editor, body);
-      data = normalizeBlockNodes(editor, data);
-
-      data = normalizeLinkNodes(editor, data);
+      data = normalizeExternalData(editor, data);
 
       // editor.children = data;
       // Editor.normalize(editor);
@@ -96,6 +90,21 @@ const HtmlSlateWidget = (props) => {
     [editor],
   );
 
+  const valueFromHtml = React.useMemo(() => {
+    return fromHtml(value);
+  }, [value, fromHtml]);
+
+  const handleChange = React.useCallback(
+    (newValue) => {
+      onChange(id, toHtml(newValue));
+    },
+    [onChange, toHtml, id],
+  );
+
+  const handleClick = React.useCallback(() => {
+    setSelected(true);
+  }, []);
+
   return (
     <FormFieldWrapper {...props} draggable={false} className="slate_wysiwyg">
       <div
@@ -103,9 +112,7 @@ const HtmlSlateWidget = (props) => {
         role="textbox"
         tabIndex="-1"
         style={{ boxSizing: 'initial' }}
-        onClick={() => {
-          setSelected(true);
-        }}
+        onClick={handleClick}
         onKeyDown={() => {}}
       >
         <ErrorBoundary name={intl.formatMessage(messages.error, { name: id })}>
@@ -113,12 +120,9 @@ const HtmlSlateWidget = (props) => {
             className={className}
             id={id}
             name={id}
-            value={fromHtml(value)}
-            onChange={(newValue) => {
-              onChange(id, toHtml(newValue));
-            }}
+            value={valueFromHtml}
+            onChange={handleChange}
             block={block}
-            renderExtensions={[]}
             selected={selected}
             properties={properties}
             placeholder={placeholder}

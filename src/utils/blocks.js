@@ -1,11 +1,12 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
 import _ from 'lodash';
+import { makeEditor } from './editor';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats
@@ -14,17 +15,6 @@ const formatAliases = [
   ['em', 'i'],
   ['del', 's'],
 ];
-
-/**
- * Is it text? Is it whitespace (space, newlines, tabs) ?
- *
- */
-export const isWhitespace = (c) => {
-  return (
-    typeof c === 'string' &&
-    c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
-  );
-};
 
 /**
  * Excerpt from Slate documentation, kept here for posterity:
@@ -77,102 +67,45 @@ approach, we're all ears!
  *
  */
 
-const normalizeToSlateConstraints = (editor, nodes) => {
-  // Normalizes a slate value (a list of nodes) to slate constraints
-  //
-  // Slate built-in constraint:
-  // - Inline nodes cannot be the first or last child of a parent block, nor
-  // can it be next to another inline node in the children array. If this is
-  // the case, an empty text node will be added to correct this to be in
-  // compliance with the constraint.
+export const normalizeExternalData = (editor, nodes) => {
+  let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
+  fakeEditor.children = nodes;
 
-  nodes.forEach((node) => {
-    const { children = [] } = node;
+  // put all the non-blocks (e.g. images which are inline Elements) inside p-s
+  Editor.withoutNormalizing(fakeEditor, () => {
+    let i = 0;
+    const c = Array.from(Node.children(fakeEditor, []));
+    for (const v of c) {
+      const [n] = v;
 
-    if (children.length) {
-      node.children = normalizeToSlateConstraints(
-        editor,
-        children.reduce((acc, node, index) => {
-          const isFirstInline = index === 0 && editor.isInline(node);
-          const isLastInline =
-            index === children.length - 1 && editor.isInline(node);
-          const isBetweenInlines =
-            index > 0 &&
-            editor.isInline(children[index - 1]) &&
-            editor.isInline(node);
-
-          return isFirstInline
-            ? [{ text: '' }, node]
-            : isLastInline
-            ? [...acc, node, { text: '' }]
-            : isBetweenInlines
-            ? [...acc, { text: '' }, node]
-            : [...acc, node];
-        }, []),
-      );
+      if (!Editor.isBlock(fakeEditor, n)) {
+        Transforms.wrapNodes(
+          fakeEditor,
+          { type: 'p' },
+          {
+            at: [i],
+          },
+        );
+      }
+      ++i;
     }
   });
-  return nodes;
+
+  Editor.normalize(fakeEditor, { force: true });
+
+  return fakeEditor.children;
 };
 
-export function normalizeBlockNodes(editor, children) {
-  // Top-level normalization of slate content.
-  // Make sure that no inline element is alone, without a block element parent.
-
-  const isInline = (n) =>
-    typeof n === 'string' || Text.isText(n) || editor.isInline(n);
-
-  let nodes = [];
-  let currentBlockNode = null;
-
-  children.forEach((node) => {
-    if (isInline(node)) {
-      node = typeof node === 'string' ? { text: node } : node;
-      if (!currentBlockNode) {
-        currentBlockNode = createDefaultBlock([node]);
-        nodes.push(currentBlockNode);
-      } else {
-        currentBlockNode.children.push(node);
-      }
-    } else {
-      currentBlockNode = null;
-      nodes.push(node);
-    }
-  });
-
-  nodes = normalizeToSlateConstraints(editor, nodes);
-  return nodes;
-}
-
 /**
- * Partially normalizes nodes of type 'a' which are inline (adds an empty Text
- * inside them if empty) and puts an empty Text after the last 'a' inside a
- * block. This function is recursive.
+ * Is it text? Is it whitespace (space, newlines, tabs) ?
  *
- * In future it might be useful to create a more general normalizeInlineNodes
- * function or even use Editor.normalize feature of Slate Editor interface after
- * putting the `children` inside an `editor`.
  */
-export function normalizeLinkNodes(editor, children) {
-  let lastType = null;
-
-  for (let c of children) {
-    lastType = c.type;
-    if (c.type === 'a') {
-      if (c.children.length === 0) {
-        c.children.push({ text: '' });
-      }
-    } else if (c.children) {
-      normalizeLinkNodes(editor, c.children);
-    }
-  }
-
-  if (lastType === 'a') {
-    children.push({ text: '' });
-  }
-
-  return children;
-}
+export const isWhitespace = (c) => {
+  return (
+    typeof c === 'string' &&
+    c.replace(/\s/g, '').replace(/\t/g, '').replace(/\n/g, '').length === 0
+  );
+};
 
 export function createDefaultBlock(children) {
   return {
@@ -260,7 +193,10 @@ export const toggleInlineFormat = (editor, format) => {
     // editor.savedSelection = newSel;
     return;
   }
-  const block = { type: defaultFormat, children: [] };
+
+  // `children` property is added automatically as an empty array then
+  // normalized
+  const block = { type: defaultFormat };
   Transforms.wrapNodes(editor, block, { split: true });
 };
 
@@ -330,7 +266,10 @@ export const changeBlockToList = (editor, format) => {
       // id: nanoid(8),
     });
   }
-  const block = { type: format, children: [] };
+
+  // `children` property is added automatically as an empty array then
+  // normalized
+  const block = { type: format };
   Transforms.wrapNodes(editor, block);
 };
 

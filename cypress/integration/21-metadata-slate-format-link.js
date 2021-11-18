@@ -49,6 +49,8 @@ describe('RichText Tests: Add links', () => {
       'Colorless green ideas{enter}{enter}sleep furiously.',
     );
 
+    // TODO: check to see if these cy.wait calls are really needed
+
     cy.wait(1000);
 
     cy.setSlateSelection('green', 'furiously');

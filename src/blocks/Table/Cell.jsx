@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { EditorReference, SlateEditor } from 'volto-slate/editor';
 import { ReactEditor } from 'slate-react';
 import config from '@plone/volto/registry';
+import { withWrapper } from '../../editor/withWrapper';
+
+const WrappedSlateEditor = withWrapper(SlateEditor);
 
 class Cell extends Component {
   static propTypes = {
@@ -63,7 +66,7 @@ class Cell extends Component {
   render() {
     return (
       __CLIENT__ && (
-        <SlateEditor
+        <WrappedSlateEditor
           tabIndex={0}
           onChange={this.onChange}
           extensions={this.tableblockExtensions}
@@ -78,7 +81,7 @@ class Cell extends Component {
               !this.state.editor && this.setState({ editor })
             }
           />
-        </SlateEditor>
+        </WrappedSlateEditor>
       )
     );
   }

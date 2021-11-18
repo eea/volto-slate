@@ -74,7 +74,7 @@ const withTestingFeatures = (WrappedComponent) => {
             2,
           ),
         }}
-        testingEditorRef={ref}
+        editorRef={ref}
         onFocus={handleFocus}
         {...managedProps}
       />

@@ -18,6 +18,7 @@ import EditorContext from './EditorContext';
 import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
+import { withWrapper } from './withWrapper';
 
 const handleHotKeys = (editor, event, config) => {
   let wasHotkey = false;
@@ -110,12 +111,12 @@ class SlateEditor extends Component {
       let focused = true;
       try {
         focused = ReactEditor.isFocused(this.state.editor);
-      } catch {}
+      } catch { }
       if (!focused) {
         setTimeout(() => {
           try {
             ReactEditor.focus(this.state.editor);
-          } catch {}
+          } catch { }
         }, 100); // flush
       }
     }
@@ -178,7 +179,7 @@ class SlateEditor extends Component {
       value,
       placeholder,
       onKeyDown,
-      testingEditorRef,
+      editorRef,
       readOnly,
       className,
       renderExtensions = [],
@@ -194,8 +195,8 @@ class SlateEditor extends Component {
     );
     this.editor = editor;
 
-    if (testingEditorRef) {
-      testingEditorRef.current = editor;
+    if (editorRef) {
+      editorRef.current = editor;
     }
 
     // debug-values are `data-` HTML attributes in withTestingFeatures HOC
@@ -303,6 +304,6 @@ export default connect((state, props) => {
   return {};
 })(
   __CLIENT__ && window?.Cypress
-    ? withTestingFeatures(SlateEditor)
-    : SlateEditor,
+    ? withTestingFeatures(withWrapper(SlateEditor))
+    : withWrapper(SlateEditor),
 );

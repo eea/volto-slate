@@ -67,8 +67,9 @@ export function toggleMark(editor, format) {
 }
 
 /*
- * Replaces inline text elements with a wrapper result
+ * Replaces inline text elements with a wrapper result:
  *
+ * Leaves are wrapped and non-leaves are cloned. Empty leaves are removed.
  */
 export function wrapInlineMarkupText(children, wrapper) {
   if (typeof children === 'string') {
@@ -78,22 +79,26 @@ export function wrapInlineMarkupText(children, wrapper) {
   // TODO: find the deepest child that needs to be replaced.
   // TODO: note: this might trigger warnings about keys
   if (Array.isArray(children)) {
-    return children.map((child, index) => {
-      if (typeof child === 'string' && child) {
-        return wrapper(children);
-      } else {
+    return children
+      .map((child) => {
+        if (typeof child === 'string' && child.length >= 1) {
+          return wrapper(children);
+        }
+        if (typeof child === 'string' && child.length === 0) {
+          return null;
+        }
         return React.cloneElement(
           child,
           child.props,
           wrapInlineMarkupText(child.props.children, wrapper),
         );
-      }
-    });
-  } else {
-    return React.cloneElement(
-      children,
-      children.props,
-      wrapInlineMarkupText(children.props.children, wrapper),
-    );
+      })
+      .filter((child) => !!child);
   }
+
+  return React.cloneElement(
+    children,
+    children.props,
+    wrapInlineMarkupText(children.props.children, wrapper),
+  );
 }

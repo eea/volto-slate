@@ -23,6 +23,14 @@ export function isMarkActive(editor, format) {
   return marks ? marks[format] === true : false;
 }
 
+/**
+ * Taken from Slate.js without any reason that is still relevant now:
+ * https://github.com/ianstormtaylor/slate/blob/3ad3aaccad5b3aae335eea21e03866e2c266f5a6/packages/slate/src/create-editor.ts#L92-L114
+ *
+ * @param {Editor} editor
+ * @param {string} key
+ * @param {any} value
+ */
 function addMark(editor, key, value) {
   const { selection } = editor;
 
@@ -33,8 +41,9 @@ function addMark(editor, key, value) {
         { [key]: value },
         {
           match: (node) => {
-            // console.log('node', node);
-            return Text.isText(node) || editor.isVoid(node);
+            // TODO: why to use this transform for void nodes too?
+            // || editor.isVoid(node)
+            return Text.isText(node);
           },
           split: true,
         },
@@ -46,7 +55,11 @@ function addMark(editor, key, value) {
       };
 
       editor.marks = marks;
+
+      // TODO: I think I am unable to access FLUSHING here
+      // if (!FLUSHING.get(editor)) {
       editor.onChange();
+      // }
     }
   }
 }

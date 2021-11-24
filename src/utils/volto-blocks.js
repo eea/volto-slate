@@ -86,8 +86,6 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   end = Editor.start(editor, Path.parent(lastPath));
 
-  editor.changeHandled = true;
-
   return end;
 }
 

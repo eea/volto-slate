@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { Transforms, Editor, Node, Text } from 'slate';
+import { Transforms, Editor, Node, Text, Path } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
@@ -31,26 +31,37 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // collapse the selection to its start point
   Transforms.collapse(editor, { edge: 'start' });
 
-  Transforms.insertNodes(editor, prev, {
-    at: Editor.start(editor, []),
-  });
-
-  const rangeRef = Editor.rangeRef(editor, {
-    anchor: Editor.start(editor, [1]),
-    focus: Editor.end(editor, [1]),
-  });
-
-  const source = rangeRef.current;
-
-  const end = Editor.end(editor, [0]);
-
-  let endPoint;
+  let rangeRef;
+  let end;
 
   Editor.withoutNormalizing(editor, () => {
+    // insert block #0 contents in block #1 contents, at the beginning
+    Transforms.insertNodes(editor, prev, {
+      at: Editor.start(editor, []),
+    });
+
+    // the contents that should be moved into the `ul`, as the last `li`
+    rangeRef = Editor.rangeRef(editor, {
+      anchor: Editor.start(editor, [1]),
+      focus: Editor.end(editor, [1]),
+    });
+
+    const source = rangeRef.current;
+
+    end = Editor.end(editor, [0]);
+
+    let endPoint;
+
+    Transforms.insertNodes(editor, { text: '' }, { at: end });
+
+    end = Editor.end(editor, [0]);
+
     Transforms.splitNodes(editor, {
       at: end,
       always: true,
-      match: (n) => Text.isText(n),
+      height: 1,
+      mode: 'highest',
+      match: (n) => n.type === 'li' || Text.isText(n),
     });
 
     endPoint = Editor.end(editor, [0]);
@@ -70,6 +81,12 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   }
 
   rangeRef.unref();
+
+  const [, lastPath] = Editor.last(editor, [0]);
+
+  end = Editor.start(editor, Path.parent(lastPath));
+
+  editor.changeHandled = true;
 
   return end;
 }

@@ -226,9 +226,9 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
   rangeRef.unref();
 
-  // Transforms.select(editor, Editor.end(editor, [0]));
+  const [, lastPath] = Editor.last(editor, [0]);
 
-  end = Editor.end(editor, [0]);
+  end = Editor.start(editor, Path.parent(lastPath));
 
   return end;
 }

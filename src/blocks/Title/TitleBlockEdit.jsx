@@ -177,11 +177,13 @@ export const TitleBlockEdit = (props) => {
     [TitleOrDescription, className], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  if (val !== editor.current.children) {
-    if (!editor.changeHandled) {
-      editor.children = val;
-      editor.changeHandled = true;
-    }
+  if (val !== editor.children) {
+    // NOTE: not needed since there is no block merging behaviour yet:
+    // if (!editor.changeHandled) {
+    editor.children = val;
+    // NOTE: not needed since there is no block merging behaviour yet:
+    // editor.changeHandled = true;
+    // }
   }
 
   if (typeof window.__SERVER__ !== 'undefined') {

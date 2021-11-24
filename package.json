@@ -25,7 +25,7 @@
     "jsdom": "^16.6.0",
     "react-intersection-observer": "^8.32.0",
     "react-visibility-sensor": "5.1.1",
-    "slate": "file:.yalc/slate",
+    "slate": "^0.71.0",
     "slate-history": "^0.66.0",
     "slate-hyperscript": "^0.67.0",
     "slate-react": "^0.71.0",

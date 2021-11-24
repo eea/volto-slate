@@ -5,11 +5,7 @@ export const withWrapper = (SlateEditor) => {
     const ref = useRef();
 
     useEffect(() => {
-      if (
-        ref.current // &&
-        // typeof value !== 'undefined' &&
-        // ref.current.children !== value
-      ) {
+      if (ref.current) {
         ref.current.children = value;
       }
     }, [value]);

@@ -6,7 +6,7 @@ import {
   getBlocksFieldname,
   getBlocksLayoutFieldname,
 } from '@plone/volto/helpers';
-import { Transforms, Editor, Node, Text } from 'slate';
+import { Transforms, Editor, Node, Text, Path, Range } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
@@ -18,6 +18,150 @@ function fromEntries(pairs) {
   });
   return res;
 }
+
+/**
+ * Convert a range into a point by deleting it's content.
+ */
+
+const deleteRange = (editor, range) => {
+  if (Range.isCollapsed(range)) {
+    return range.anchor;
+  } else {
+    const [, end] = Range.edges(range);
+    const pointRef = Editor.pointRef(editor, end);
+    Transforms.delete(editor, { at: range });
+    return pointRef.unref();
+  }
+};
+
+/**
+ * Split the nodes at a specific location.
+ */
+const splitNodes = (editor, options = {}) => {
+  Editor.withoutNormalizing(editor, () => {
+    const { mode = 'lowest', voids = false } = options;
+    let { match, at = editor.selection, height = 0, always = false } = options;
+
+    console.log('TAREEEEEEEE');
+
+    if (match == null) {
+      match = (n) => Editor.isBlock(editor, n);
+    }
+
+    if (Range.isRange(at)) {
+      at = deleteRange(editor, at);
+    }
+
+    // If the target is a path, the default height-skipping and position
+    // counters need to account for us potentially splitting at a non-leaf.
+    if (Path.isPath(at)) {
+      const path = at;
+      const point = Editor.point(editor, path);
+      const [parent] = Editor.parent(editor, path);
+      match = (n) => n === parent;
+      height = point.path.length - path.length + 1;
+      at = point;
+      always = true;
+    }
+
+    if (!at) {
+      return;
+    }
+
+    const beforeRef = Editor.pointRef(editor, at, {
+      affinity: 'backward',
+    });
+    const [highest] = Editor.nodes(editor, { at, match, mode, voids });
+
+    if (!highest) {
+      return;
+    }
+
+    const voidMatch = Editor.void(editor, { at, mode: 'highest' });
+    const nudge = 0;
+
+    if (!voids && voidMatch) {
+      const [voidNode, voidPath] = voidMatch;
+
+      if (Element.isElement(voidNode) && editor.isInline(voidNode)) {
+        let after = Editor.after(editor, voidPath);
+
+        if (!after) {
+          const text = { text: '' };
+          const afterPath = Path.next(voidPath);
+          Transforms.insertNodes(editor, text, { at: afterPath, voids });
+          after = Editor.point(editor, afterPath);
+        }
+
+        at = after;
+        always = true;
+      }
+
+      const siblingHeight = at.path.length - voidPath.length;
+      height = siblingHeight + 1;
+      always = true;
+    }
+
+    const afterRef = Editor.pointRef(editor, at);
+    const depth = at.path.length - height;
+    const [, highestPath] = highest;
+    const lowestPath = at.path.slice(0, depth);
+    let position =
+      /* height === 0 ? */ at.offset; /* : at.path[depth] + nudge */
+
+    const ns = Editor.levels(editor, {
+      at: lowestPath,
+      reverse: true,
+      voids,
+    });
+
+    // console.log('nodes', Array.from(ns));
+
+    for (const [node, path] of ns) {
+      let split = false;
+
+      if (
+        // path.length < highestPath.length ||
+        path.length === 0 ||
+        (!voids && Editor.isVoid(editor, node))
+      ) {
+        break;
+      }
+
+      const point = beforeRef.current;
+      const isEnd = Editor.isEnd(editor, point, path);
+
+      console.log('ETC:', [
+        node,
+        path,
+        point,
+        Editor.isEdge(editor, point, path),
+      ]);
+
+      // if point is at start/end of path don't split - why?
+      if (true || always || !beforeRef || !Editor.isEdge(editor, point, path)) {
+        split = true;
+        const properties = Node.extractProps(node);
+        editor.apply({
+          type: 'split_node',
+          path,
+          position,
+          properties,
+        });
+      }
+
+      position = path[path.length - 1] + (split || isEnd ? 1 : 0);
+    }
+
+    if (options.at == null) {
+      const point = afterRef.current || Editor.end(editor, []);
+      Transforms.select(editor, point);
+    }
+
+    beforeRef.unref();
+    afterRef.unref();
+  });
+};
 
 // TODO: should be made generic, no need for "prevBlock.value"
 export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
@@ -31,26 +175,37 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   // collapse the selection to its start point
   Transforms.collapse(editor, { edge: 'start' });
 
-  Transforms.insertNodes(editor, prev, {
-    at: Editor.start(editor, []),
-  });
-
-  const rangeRef = Editor.rangeRef(editor, {
-    anchor: Editor.start(editor, [1]),
-    focus: Editor.end(editor, [1]),
-  });
-
-  const source = rangeRef.current;
-
-  const end = Editor.end(editor, [0]);
-
-  let endPoint;
+  let rangeRef;
+  let end;
 
   Editor.withoutNormalizing(editor, () => {
+    // insert block #0 contents in block #1 contents, at the beginning
+    Transforms.insertNodes(editor, prev, {
+      at: Editor.start(editor, []),
+    });
+
+    // the contents that should be moved into the `ul`, as the last `li`
+    rangeRef = Editor.rangeRef(editor, {
+      anchor: Editor.start(editor, [1]),
+      focus: Editor.end(editor, [1]),
+    });
+
+    const source = rangeRef.current;
+
+    end = Editor.end(editor, [0]);
+
+    let endPoint;
+
+    Transforms.insertNodes(editor, { text: '' }, { at: end });
+
+    end = Editor.end(editor, [0]);
+
     Transforms.splitNodes(editor, {
       at: end,
       always: true,
-      match: (n) => Text.isText(n),
+      height: 1,
+      mode: 'highest',
+      match: (n) => n.type === 'li' || Text.isText(n),
     });
 
     endPoint = Editor.end(editor, [0]);
@@ -70,6 +225,10 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   }
 
   rangeRef.unref();
+
+  // Transforms.select(editor, Editor.end(editor, [0]));
+
+  end = Editor.end(editor, [0]);
 
   return end;
 }

@@ -38,9 +38,9 @@ export const withImage = (editor) => {
 
   // If it's not marked as inline, Slate will strip the {type:'img"} nodes when
   // it finds them next to {text: ''} nodes
-  // editor.isInline = (element) => {
-  //   return element && element.type === IMAGE ? true : isInline(element);
-  // };
+  editor.isInline = (element) => {
+    return element && element.type === IMAGE ? true : isInline(element);
+  };
 
   editor.htmlTagsToSlate = {
     ...editor.htmlTagsToSlate,

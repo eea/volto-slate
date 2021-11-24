@@ -177,9 +177,12 @@ export const TitleBlockEdit = (props) => {
     [TitleOrDescription, className], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  useEffect(() => {
-    editor.children = val;
-  }, [editor, val]);
+  if (val !== editor.current.children) {
+    if (!editor.changeHandled) {
+      editor.children = val;
+      editor.changeHandled = true;
+    }
+  }
 
   if (typeof window.__SERVER__ !== 'undefined') {
     return <div />;

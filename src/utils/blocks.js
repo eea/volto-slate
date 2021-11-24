@@ -69,7 +69,7 @@ approach, we're all ears!
 
 export const normalizeExternalData = (editor, nodes) => {
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
-  fakeEditor.children = /* [{ type: 'li', children: */ nodes /* }] */;
+  fakeEditor.children = nodes;
 
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {
@@ -93,7 +93,7 @@ export const normalizeExternalData = (editor, nodes) => {
 
   Editor.normalize(fakeEditor, { force: true });
 
-  return fakeEditor.children /* [0].children */;
+  return fakeEditor.children;
 };
 
 /**

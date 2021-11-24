@@ -5,6 +5,7 @@ exports[`renders edit blocks renders an edit description block component 1`] = `
   autoCapitalize="false"
   autoCorrect="false"
   contentEditable={true}
+  data-gramm={false}
   data-slate-editor={true}
   data-slate-node="value"
   onBeforeInput={[Function]}
@@ -34,7 +35,6 @@ exports[`renders edit blocks renders an edit description block component 1`] = `
     }
   }
   suppressContentEditableWarning={true}
-  zindex={-1}
 >
   <div
     className="documentDescription"
@@ -62,6 +62,7 @@ exports[`renders edit blocks renders an edit title block component 1`] = `
   autoCapitalize="false"
   autoCorrect="false"
   contentEditable={true}
+  data-gramm={false}
   data-slate-editor={true}
   data-slate-node="value"
   onBeforeInput={[Function]}
@@ -91,7 +92,6 @@ exports[`renders edit blocks renders an edit title block component 1`] = `
     }
   }
   suppressContentEditableWarning={true}
-  zindex={-1}
 >
   <h1
     className="documentFirstHeading"

@@ -223,6 +223,7 @@ export const DefaultTextBlockEditor = (props) => {
                   renderExtensions={[withBlockProperties]}
                   value={value}
                   block={block /* is this needed? */}
+                  defaultSelection={defaultSelection}
                   onUpdate={handleUpdate}
                   debug={DEBUG}
                   onFocus={handleFocus}

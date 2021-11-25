@@ -17,7 +17,9 @@ import {
 } from '@plone/volto/helpers';
 
 /**
- * Joins the current block with the previous block to make a single block.
+ * Joins the current block (which has an active Slate Editor)
+ * with the previous block, to make a single block.
+ *
  * @param {Editor} editor
  * @param {KeyboardEvent} event
  */

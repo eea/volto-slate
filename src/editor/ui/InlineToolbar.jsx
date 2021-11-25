@@ -22,7 +22,12 @@ const InlineToolbar = (props) => {
   );
 
   React.useEffect(() => {
-    const el = ReactEditor.toDOMNode(editor, editor);
+    let el;
+    try {
+      el = ReactEditor.toDOMNode(editor, editor);
+    } catch {
+      return;
+    }
     const toggleToolbar = () => {
       const selection = window.getSelection();
       const { activeElement } = window.document;

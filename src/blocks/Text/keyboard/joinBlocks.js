@@ -77,8 +77,6 @@ export function joinWithPreviousBlock({ editor, event }) {
 
   const combined = JSON.parse(JSON.stringify(editor.children));
 
-  // console.log('combined', combined);
-
   // // TODO: don't remove undo history, etc Should probably save both undo
   // // histories, so that the blocks are split, the undos can be restored??
 

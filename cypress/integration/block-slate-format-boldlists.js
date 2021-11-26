@@ -4,6 +4,22 @@ describe('Block Tests: Bold Bulleted lists', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
+  it('gives clipboard permission to browser ', { browser: 'chrome' }, () => {
+    // use the Chrome debugger protocol to grant the current browser window
+    // access to the clipboard from the current origin
+    cy.wrap(
+      Cypress.automation('remote:debugger:protocol', {
+        command: 'Browser.grantPermissions',
+        params: {
+          permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+          // make the permission tighter by allowing the current origin only
+          // like "http://localhost:56978"
+          origin: window.location.origin,
+        },
+      }),
+    );
+  });
+
   it('As editor I can add bold bulleted lists', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
@@ -28,29 +44,29 @@ describe('Block Tests: Bold Bulleted lists', () => {
       'sleep furiously.',
     );
   });
-
   it('As editor I can paste internal(slate formatted) bold formatted bulleted lists', function () {
     // Complete chained commands
     cy.getSlateEditorAndType('This is slate"s own bold content');
     cy.setSlateSelection('This is slate"s own');
-    cy.clickSlateButton('Bold');
-    cy.get('.content-area .slate-editor [contenteditable=true]  strong').then(
-      ($temp) => {
-        const txt = $temp.text();
-        cy.setSlateSelection('This is slate"s own');
-        cy.clickSlateButton('Bulleted list');
-        cy.setSlateCursor('own').type('{enter}').type(txt).type('{enter}');
-      },
-    );
 
-    //clipboard methods
-    // // cy.window()
-    // //   .its('navigator.clipboard')
-    // //   .invoke('write', '<b>This is slate"s own bold content</b>');
-    // cy.window()
-    //   .its('navigator.clipboard')
-    //   .invoke('readText')
-    //   .should('equal', 'This is slate"s own bold content');
+    //create a bold bullted list
+    cy.clickSlateButton('Bulleted list');
+    cy.clickSlateButton('Bold');
+
+    //copy content "This is slate"s own"
+
+    cy.setSlateCursor('own');
+    cy.setSlateSelection('This is slate"s own').type('{cmd+c}');
+
+    //check the clipboard contents
+
+    cy.window()
+      .its('navigator.clipboard')
+      .invoke('readText')
+      .should('equal', 'This is slate"s own');
+
+    // paste the content in second list
+    cy.setSlateCursor('content').type('{enter}').type('{cmd+v}');
 
     // Save
     cy.toolbarSave();

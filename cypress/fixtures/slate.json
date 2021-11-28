@@ -1,0 +1,135 @@
+{
+  "@components": {
+    "actions": {
+      "@id": "http://localhost:3000/jnjn/@actions"
+    },
+    "breadcrumbs": {
+      "@id": "http://localhost:3000/jnjn/@breadcrumbs"
+    },
+    "contextnavigation": {
+      "@id": "http://localhost:3000/jnjn/@contextnavigation"
+    },
+    "navigation": {
+      "@id": "http://localhost:3000/jnjn/@navigation"
+    },
+    "types": {
+      "@id": "http://localhost:3000/jnjn/@types"
+    },
+    "workflow": {
+      "@id": "http://localhost:3000/jnjn/@workflow"
+    }
+  },
+  "@id": "http://localhost:3000/jnjn",
+  "@type": "Document",
+  "UID": "f6189bf6a89846f1ac1f7170ba03df45",
+  "allow_discussion": false,
+  "blocks": {
+    "199903ea-d303-4c7b-8471-22afa4ac26b8": {
+      "@type": "slate",
+      "plaintext": " kmkmkmk kmkmkm  kmkmkmk ",
+      "value": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "text": ""
+                },
+                {
+                  "children": [
+                    {
+                      "text": "This is slate\"s own"
+                    }
+                  ],
+                  "type": "strong"
+                },
+                {
+                  "text": " bold content"
+                }
+              ],
+              "type": "li"
+            },
+            {
+              "children": [
+                {
+                  "text": ""
+                },
+                {
+                  "children": [
+                    {
+                      "text": "This is slate\"s own"
+                    }
+                  ],
+                  "type": "strong"
+                },
+                {
+                  "text": ""
+                }
+              ],
+              "type": "li"
+            }
+          ],
+          "type": "ul"
+        }
+      ]
+    },
+    "689ca9ed-9668-40ad-8d7d-3a1f1dd7b724": {
+      "@type": "title"
+    }
+  },
+  "blocks_layout": {
+    "items": [
+      "689ca9ed-9668-40ad-8d7d-3a1f1dd7b724",
+      "199903ea-d303-4c7b-8471-22afa4ac26b8"
+    ]
+  },
+  "changeNote": "",
+  "contributors": [],
+  "created": "2021-11-25T13:46:52+00:00",
+  "creators": ["admin"],
+  "description": "",
+  "effective": null,
+  "exclude_from_nav": false,
+  "expires": null,
+  "id": "jnjn",
+  "is_folderish": false,
+  "language": {
+    "title": "English",
+    "token": "en"
+  },
+  "layout": "document_view",
+  "lock": {
+    "locked": false,
+    "stealable": true
+  },
+  "modified": "2021-11-28T17:35:10+00:00",
+  "next_item": {
+    "@id": "http://localhost:3000/cypress",
+    "@type": "Folder",
+    "description": "",
+    "title": "Cypress"
+  },
+  "parent": {
+    "@id": "http://localhost:3000",
+    "@type": "Plone Site",
+    "description": "",
+    "title": ""
+  },
+  "previous_item": {
+    "@id": "http://localhost:3000/Members",
+    "@type": "Folder",
+    "description": "Site Users",
+    "title": "Users"
+  },
+  "relatedItems": [],
+  "review_state": "private",
+  "rights": "",
+  "subjects": [],
+  "table_of_contents": null,
+  "text": null,
+  "title": "jnjn",
+  "version": "current",
+  "versioning_enabled": true,
+  "working_copy": null,
+  "working_copy_of": null
+}

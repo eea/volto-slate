@@ -46,7 +46,7 @@ describe('Block Tests: Bold Bulleted lists', () => {
   it('As editor I can paste internal(slate formatted) bold formatted bulleted lists', function () {
     //First intercept the GET_CONTENT. This is needed because we cannot change slate's props from cypress.
     // https://github.com/abhinaba-ghosh/cypress-react-selector/issues/23
-    cy.intercept('GET', '/cypress/my-page', {
+    cy.intercept('GET', '**/cypress/my-page', {
       statusCode: 200,
       fixture: 'slate.json',
     }).as('mutateSlate');

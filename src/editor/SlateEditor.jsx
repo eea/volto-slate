@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import cx from 'classnames';
 import { isEqual } from 'lodash';
 import { Transforms, Editor } from 'slate'; // , Transforms
@@ -11,7 +12,12 @@ import config from '@plone/volto/registry';
 import { Element, Leaf } from './render';
 
 import withTestingFeatures from './extensions/withTestingFeatures';
-import { makeEditor, toggleInlineFormat, toggleMark } from 'volto-slate/utils';
+import {
+  makeEditor,
+  toggleInlineFormat,
+  toggleMark,
+  parseDefaultSelection,
+} from 'volto-slate/utils';
 import { InlineToolbar } from './ui';
 import EditorContext from './EditorContext';
 
@@ -54,11 +60,14 @@ class SlateEditor extends Component {
 
     this.savedSelection = null;
 
-    const uid = uuid();
+    const uid = uuid(); // used to namespace the editor's plugins
+
+    const { slate } = config.settings;
 
     this.state = {
       editor: this.createEditor(uid),
       showExpandedToolbar: config.settings.slate.showExpandedToolbar,
+      internalValue: this.props.value || slate.defaultValue(),
       uid,
     };
 
@@ -89,9 +98,12 @@ class SlateEditor extends Component {
   }
 
   handleChange(value) {
-    if (this.props.onChange && !isEqual(value, this.props.value)) {
-      this.props.onChange(value, this.editor);
-    }
+    ReactDOM.unstable_batchedUpdates(() => {
+      this.setState({ internalValue: value });
+      if (this.props.onChange && !isEqual(value, this.props.value)) {
+        this.props.onChange(value, this.editor);
+      }
+    });
   }
 
   multiDecorator([node, path]) {
@@ -131,18 +143,37 @@ class SlateEditor extends Component {
       return;
     }
 
+    if (
+      this.props.value &&
+      !isEqual(this.props.value, this.state.internalValue)
+    ) {
+      const { editor } = this.state;
+      editor.children = this.props.value;
+
+      if (this.props.defaultSelection) {
+        const selection = parseDefaultSelection(
+          editor,
+          this.props.defaultSelection,
+        );
+
+        ReactEditor.focus(editor);
+        Transforms.select(editor, selection);
+      }
+
+      this.setState({
+        // editor,
+        internalValue: this.props.value,
+      });
+      return;
+    }
+
     const { editor } = this.state;
 
-    // if the SlateEditor becomes selected from unselected
     if (!prevProps.selected && this.props.selected) {
-      // if the SlateEditor is not already selected
-      // if (!ReactEditor.isFocused(this.state.editor)) {
-      //  || !editor.selection
+      // if the SlateEditor becomes selected from unselected
 
-      // TODO: why is this setTimeout wrapping the code in it?
-      // setTimeout(() => {
-      // TODO: why is this condition checked?
       if (window.getSelection().type === 'None') {
+        // TODO: why is this condition checked?
         Transforms.select(
           this.state.editor,
           Editor.range(this.state.editor, Editor.start(this.state.editor, [])),
@@ -150,12 +181,7 @@ class SlateEditor extends Component {
       }
 
       ReactEditor.focus(this.state.editor);
-      // }, 100); // flush
-      // }
     }
-
-    // if (this.props.selected && this.editor && this.editor.selection) {
-    //   this.editor.setSavedSelection(this.editor.selection);
 
     if (this.props.selected && this.props.onUpdate) {
       this.props.onUpdate(editor);
@@ -175,7 +201,6 @@ class SlateEditor extends Component {
   render() {
     const {
       selected,
-      value,
       placeholder,
       onKeyDown,
       testingEditorRef,
@@ -212,7 +237,7 @@ class SlateEditor extends Component {
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
-            value={value || slate.defaultValue()}
+            value={this.props.value || slate.defaultValue()}
             onChange={this.handleChange}
           >
             {selected ? (

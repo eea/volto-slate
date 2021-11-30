@@ -50,7 +50,7 @@ describe('Block Tests', () => {
   });
   it('should show block chooser btn on adding new text block created from the previous block with the formatted content ', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously').type(
-      '{meta+a}{meta+b}',
+      '{command+a}{command+b}{ctrl+a}{ctrl+b}',
     );
     cy.setSlateCursor('furiously').type('{enter}');
     cy.get('.text-slate-editor-inner button').should('have.length', 1);

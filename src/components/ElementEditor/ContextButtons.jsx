@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl'; // , defineMessages
 
@@ -14,6 +14,7 @@ export default (options) => (editor) => {
   const {
     isActiveElement,
     unwrapElement,
+    clearFormatting,
     pluginId,
     messages,
     toolbarButtonIcon,
@@ -24,6 +25,10 @@ export default (options) => (editor) => {
   const showEditor = useSelector(
     (state) => state['slate_plugins']?.[pid]?.show_sidebar_editor,
   );
+
+  const doClearFormatting = useCallback(() => {
+    clearFormatting(editor);
+  }, [clearFormatting, editor]);
 
   return isActiveElement(editor) ? (
     <React.Fragment key={pluginId}>
@@ -39,6 +44,13 @@ export default (options) => (editor) => {
             }),
           );
         }}
+      />
+      <ToolbarButton
+        title="Clear formatting"
+        icon={clearSVG}
+        aria-label="Clear formatting"
+        alt="Clear formatting"
+        onMouseDown={doClearFormatting}
       />
       <ToolbarButton
         title={intl.formatMessage(messages.delete)}

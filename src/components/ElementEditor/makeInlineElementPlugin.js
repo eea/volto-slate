@@ -7,6 +7,7 @@ import {
   _unwrapElement,
   _isActiveElement,
   _getActiveElement,
+  _clearFormatting,
 } from './utils';
 import messages from './messages';
 import ToolbarButton from './ToolbarButton';
@@ -35,6 +36,7 @@ export const makeInlineElementPlugin = (options) => {
     getActiveElement: _getActiveElement(elementType),
     isActiveElement: _isActiveElement(elementType),
     unwrapElement: _unwrapElement(elementType),
+    clearFormatting: _clearFormatting(elementType),
     messages,
     toolbarButtonIcon: tagSVG,
     title,

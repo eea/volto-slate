@@ -1,4 +1,4 @@
-import { Editor, Transforms, Node } from 'slate'; // Range,
+import { Editor, Transforms, Node, Text } from 'slate'; // Range,
 
 /**
  * @description Creates or updates an existing $elementType. It also takes care
@@ -78,6 +78,63 @@ export const _unwrapElement = (elementType) => (editor) => {
   });
 
   const current = ref.current;
+  ref.unref();
+
+  return current;
+};
+
+/**
+ * Will clear formatting of the selection.
+ */
+export const _clearFormatting = () => (editor) => {
+  const selection = editor.selection || editor.getSavedSelection();
+  const ref = Editor.rangeRef(editor, selection);
+
+  Transforms.select(editor, selection);
+
+  const s = Editor.string(editor, selection);
+  Editor.withoutNormalizing(editor, () => {
+    Transforms.splitNodes(editor, {
+      match: (n) => Text.isText(n),
+      at: ref.current.anchor,
+      // match: (n) => Editor.isBlock(editor, n),
+      always: true,
+      // mode: 'lowest',
+      height: 0,
+    });
+
+    Transforms.splitNodes(editor, {
+      match: (n) => Text.isText(n),
+      at: ref.current.focus,
+      // match: (n) => Editor.isBlock(editor, n),
+      always: true,
+      // mode: 'lowest',
+      height: 0,
+    });
+
+    Transforms.delete(editor, ref.current);
+
+    const pt = Editor.point(editor, ref.current, { edge: 'start' });
+
+    Transforms.liftNodes(editor, {
+      at: pt,
+      match: (n) => Text.isText(n),
+    });
+
+    // const pt2 = Editor.point(editor, ref.current, { edge: 'start' });
+
+    Editor.insertText(editor, s);
+
+    // NOTE: this would work perfectly but it does not set text propery on Text objects
+    // Transforms.setNodes(editor, { text: s }, { at: pt2.path });
+
+    // Transforms.insertNodes(editor, { text: s });
+  });
+
+  const current = ref.current;
+
+  Transforms.select(editor, current);
+
   ref.unref();
 
   return current;

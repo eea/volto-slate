@@ -86,8 +86,10 @@ describe('Block Tests: Bold Bulleted lists', () => {
         '.slate-editor.selected [contenteditable=true] ul li:nth-child(2)',
       );
       const boldElement = win.document.createElement('strong');
+      const spanElement = win.document.createElement('span');
+      boldElement.appendChild(spanElement);
       const content = win.document.createTextNode('This is slate"s own');
-      boldElement.appendChild(content);
+      spanElement.appendChild(content);
 
       listElement.appendChild(boldElement);
     });

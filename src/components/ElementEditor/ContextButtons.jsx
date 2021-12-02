@@ -6,6 +6,7 @@ import clearSVG from '@plone/volto/icons/delete.svg';
 
 import { ToolbarButton } from 'volto-slate/editor/ui';
 import { setPluginOptions } from 'volto-slate/actions';
+import { Range } from 'slate';
 
 /*
  * Note: this is a weirder component, it should be called as a native function
@@ -45,13 +46,15 @@ export default (options) => (editor) => {
           );
         }}
       />
-      <ToolbarButton
-        title="Clear formatting"
-        icon={clearSVG}
-        aria-label="Clear formatting"
-        alt="Clear formatting"
-        onMouseDown={doClearFormatting}
-      />
+      {Range.isExpanded(editor.selection) && (
+        <ToolbarButton
+          title="Clear formatting"
+          icon={clearSVG}
+          aria-label="Clear formatting"
+          alt="Clear formatting"
+          onMouseDown={doClearFormatting}
+        />
+      )}
       <ToolbarButton
         title={intl.formatMessage(messages.delete)}
         icon={clearSVG}

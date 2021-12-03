@@ -68,6 +68,11 @@ msgstr ""
 msgid "Choose Target"
 msgstr ""
 
+#: components/ElementEditor/ContextButtons
+# defaultMessage: Clear formatting
+msgid "Clear formatting"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 # defaultMessage: Delete
 msgid "Delete"

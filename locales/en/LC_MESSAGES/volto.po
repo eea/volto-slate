@@ -55,6 +55,10 @@ msgstr ""
 msgid "Choose Target"
 msgstr ""
 
+#: components/ElementEditor/ContextButtons
+msgid "Clear formatting"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Delete"
 msgstr ""

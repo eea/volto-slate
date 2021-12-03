@@ -44,13 +44,6 @@ describe('Block Tests: Bold Bulleted lists', () => {
     );
   });
   it('As editor I can paste internal(slate formatted) bold formatted bulleted lists', function () {
-    //First intercept the GET_CONTENT. This is needed because we cannot change slate's props from cypress.
-    // https://github.com/abhinaba-ghosh/cypress-react-selector/issues/23
-    cy.intercept('GET', '**/cypress/my-page', {
-      statusCode: 200,
-      fixture: 'slate.json',
-    }).as('mutateSlate');
-
     // Complete chained commands
     cy.getSlateEditorAndType('This is slate"s own bold content');
     cy.setSlateSelection('This is slate"s own');
@@ -58,46 +51,13 @@ describe('Block Tests: Bold Bulleted lists', () => {
     //create a bold bullted list
     cy.clickSlateButton('Bulleted list');
     cy.clickSlateButton('Bold');
-
+    cy.setSlateSelection('This is slate"s own').type('{cmd+c}');
     //copy content "This is slate"s own"
-
-    cy.window().then(async (doc) => {
-      let clipboardItems = [];
-      cy.get('.slate-editor.selected [contenteditable=true] strong');
-      clipboardItems.push(
-        new doc.ClipboardItem({
-          'text/html': new Blob(
-            [cy.get('.slate-editor.selected [contenteditable=true] strong')],
-            { type: 'text/html' },
-          ),
-        }),
-      );
-      await doc.navigator.clipboard.write(clipboardItems);
-    });
 
     cy.setSlateCursor('content').type('{enter}').type('{cmd+v}');
 
-    cy.window().then(async (win) => {
-      //TODO: read clipboard items
-      let clipboardItems = await win.navigator.clipboard.read();
-      Cypress.log(clipboardItems);
-
-      const listElement = win.document.querySelector(
-        '.slate-editor.selected [contenteditable=true] ul li:nth-child(2)',
-      );
-      const boldElement = win.document.createElement('strong');
-      const spanElement = win.document.createElement('span');
-      boldElement.appendChild(spanElement);
-      const content = win.document.createTextNode('This is slate"s own');
-      spanElement.appendChild(content);
-
-      listElement.appendChild(boldElement);
-    });
-
     // Save
     cy.toolbarSave();
-
-    cy.wait('@mutateSlate');
 
     cy.get('[id="page-document"] ul li:nth-child(1) strong').contains(
       'This is slate"s own',

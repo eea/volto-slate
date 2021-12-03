@@ -290,6 +290,12 @@ class SlateEditor extends Component {
                 if (handled) return;
                 onKeyDown && onKeyDown({ editor, event });
               }}
+              onPaste={(event) => {
+                if (this.props.onPaste) this.props.onPaste({ editor, event });
+              }}
+              onCopy={(event) => {
+                if (this.props.onCopy) this.props.onCopy({ editor, event });
+              }}
             />
             {selected &&
               slate.persistentHelpers.map((Helper, i) => {

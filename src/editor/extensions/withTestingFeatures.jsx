@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { ReactEditor } from 'slate-react';
 import { omit } from 'lodash';
+import { insertData } from './insertData';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
@@ -52,6 +53,21 @@ const withTestingFeatures = (WrappedComponent) => {
       };
     });
 
+    // React.useEffect(() => {
+    //   const editor = ref?.current;
+
+    // }, [props]);
+
+    const handlePaste = ({ editor, event }) => {
+      event.preventDefault();
+      editor.insertText(event.clipboardData.getData('text/html'));
+    };
+
+    const handleCopy = ({ editor, event }) => {
+      event.preventDefault();
+      editor.setFragmentData(editor, event.clipboardData);
+    };
+
     const handleFocus = React.useCallback(() => {
       window.focusedSlateEditor = ref?.current;
       if (props.onFocus) {
@@ -77,6 +93,8 @@ const withTestingFeatures = (WrappedComponent) => {
         testingEditorRef={ref}
         onFocus={handleFocus}
         {...managedProps}
+        onPaste={handlePaste}
+        onCopy={handleCopy}
       />
     );
   };

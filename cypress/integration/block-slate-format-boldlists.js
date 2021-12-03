@@ -4,7 +4,7 @@ describe('Block Tests: Bold Bulleted lists', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
-  it('gives clipboard permission to browser ', { browser: 'chrome' }, () => {
+  it('gives clipboard permission to browser ', { browser: 'electron' }, () => {
     // use the Chrome debugger protocol to grant the current browser window
     // access to the clipboard from the current origin
     cy.wrap(

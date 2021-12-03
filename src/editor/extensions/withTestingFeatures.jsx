@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ReactEditor } from 'slate-react';
 import { omit } from 'lodash';
-import { insertData } from './insertData';
+//import { insertData } from './insertData';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {

@@ -11,6 +11,10 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#: blocks/Title/TitleBlockEdit
+msgid "Add a description…"
+msgstr ""
+
 #: editor/plugins/SimpleLink/index
 msgid "Add link"
 msgstr "Link hinzufügen"
@@ -42,6 +46,10 @@ msgstr "Zelle"
 #: widgets/BlocksBrowser/BlocksBrowserBody
 msgid "Choose Target"
 msgstr "Ziel auswählen"
+
+#: components/ElementEditor/ContextButtons
+msgid "Clear formatting"
+msgstr ""
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Delete"
@@ -144,9 +152,14 @@ msgstr "Tabelle"
 msgid "Table color inverted"
 msgstr "Tabellenfarbe invertiert"
 
-#: blocks/Text/TextBlockEdit
+#: blocks/Text/DefaultTextBlockEditor
+#: blocks/Text/DetachedTextBlockEditor
 msgid "Type text…"
 msgstr "Text eingeben"
+
+#: blocks/Title/TitleBlockEdit
+msgid "Type the title…"
+msgstr ""
 
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"

@@ -8,7 +8,7 @@ describe('Block Tests: Bold Bulleted lists', () => {
     Cypress.log(Cypress.browser);
   });
 
-  it('gives clipboard permission to browser ', { browser: 'chrome' }, () => {
+  it('gives clipboard permission to browser ', () => {
     // use the Chrome debugger protocol to grant the current browser window
     // access to the clipboard from the current origin
     cy.wrap(

@@ -23,11 +23,4 @@ module.exports = (on, config) => {
   on('file:preprocessor', require('@cypress/code-coverage/use-babelrc'))
   return config
   coverage-end */
-  on('before:browser:launch', (browser, launchOptions) => {
-    if (browser.family === 'chromium' && browser.name !== 'electron') {
-      launchOptions.args.push('--deny-permission-prompts');
-
-      return launchOptions;
-    }
-  });
 };

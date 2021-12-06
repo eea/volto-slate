@@ -46,6 +46,8 @@ const withTestingFeatures = (WrappedComponent) => {
     React.useEffect(() => {
       document.addEventListener('Test_SelectWord', onTestSelectWord);
       document.addEventListener('Test_SelectRange', onTestSelectRange);
+      document.addEventListener('copy', handleCopy);
+      document.addEventListener('paste', handlePaste);
 
       return () => {
         document.removeEventListener('Test_SelectWord', onTestSelectWord);
@@ -60,12 +62,12 @@ const withTestingFeatures = (WrappedComponent) => {
 
     const handlePaste = ({ editor, event }) => {
       event.preventDefault();
-      editor.insertText(event.clipboardData.getData('text/html'));
+      editor.insertText(event.clipboardData.getData('text/plain'));
     };
 
     const handleCopy = ({ editor, event }) => {
       event.preventDefault();
-      editor.setFragmentData(editor, event.clipboardData);
+      editor.setFragmentData(event?.clipboardData);
     };
 
     const handleFocus = React.useCallback(() => {

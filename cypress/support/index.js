@@ -14,6 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import 'cypress-real-events/support';
 import './commands';
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -123,5 +124,21 @@ export const selectSlateNodeOfWord = (el) => {
       detail: el[0],
     });
     win.document.dispatchEvent(event);
+  });
+};
+
+export const copyToClipboard = (el) => {
+  return cy.window().then((win) => {
+    const source = win.document.querySelector(el);
+    var event = new Event('copy', { bubbles: true, cancelable: true });
+    source.dispatchEvent(event);
+  });
+};
+
+export const pasteClipboard = (el) => {
+  return cy.window().then((win) => {
+    const target = win.document.querySelector(el);
+    var event = new Event('paste', { bubbles: true, cancelable: true });
+    target.dispatchEvent(event);
   });
 };

@@ -4,6 +4,10 @@ describe('Block Tests: Bold Bulleted lists', () => {
   beforeEach(slateBeforeEach);
   afterEach(slateAfterEach);
 
+  it('log browser info', () => {
+    Cypress.log(Cypress.browser);
+  });
+
   it('gives clipboard permission to browser ', { browser: 'chrome' }, () => {
     // use the Chrome debugger protocol to grant the current browser window
     // access to the clipboard from the current origin

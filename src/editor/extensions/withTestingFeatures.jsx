@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { ReactEditor } from 'slate-react';
 import { omit } from 'lodash';
-//import { insertData } from './insertData';
 
 const withTestingFeatures = (WrappedComponent) => {
   return (props) => {
@@ -46,29 +45,11 @@ const withTestingFeatures = (WrappedComponent) => {
     React.useEffect(() => {
       document.addEventListener('Test_SelectWord', onTestSelectWord);
       document.addEventListener('Test_SelectRange', onTestSelectRange);
-      document.addEventListener('copy', handleCopy);
-      document.addEventListener('paste', handlePaste);
-
       return () => {
         document.removeEventListener('Test_SelectWord', onTestSelectWord);
         document.removeEventListener('Test_SelectRange', onTestSelectRange);
       };
     });
-
-    // React.useEffect(() => {
-    //   const editor = ref?.current;
-
-    // }, [props]);
-
-    const handlePaste = ({ editor, event }) => {
-      event.preventDefault();
-      editor.insertText(event.clipboardData.getData('text/plain'));
-    };
-
-    const handleCopy = ({ editor, event }) => {
-      event.preventDefault();
-      editor.setFragmentData(event?.clipboardData);
-    };
 
     const handleFocus = React.useCallback(() => {
       window.focusedSlateEditor = ref?.current;
@@ -95,8 +76,6 @@ const withTestingFeatures = (WrappedComponent) => {
         testingEditorRef={ref}
         onFocus={handleFocus}
         {...managedProps}
-        onPaste={handlePaste}
-        onCopy={handleCopy}
       />
     );
   };

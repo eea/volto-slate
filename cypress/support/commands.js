@@ -433,6 +433,17 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'pasteClipboard',
+  { prevSubject: true },
+  (query, htmlContent) => {
+    return cy
+      .wrap(query)
+      .type(' ')
+      .trigger('paste', createHtmlPasteEvent(htmlContent));
+  },
+);
+
+Cypress.Commands.add(
   'setCursorBefore',
   { prevSubject: true },
   (subject, query) => {
@@ -465,6 +476,13 @@ function getTextNode(el, match) {
     }
   }
 }
+const createHtmlPasteEvent = (htmlContent) =>
+  Object.assign(new Event('paste', { bubbles: true, cancelable: true }), {
+    clipboardData: {
+      getData: (type = 'text/html') => htmlContent,
+      types: ['text/html'],
+    },
+  });
 
 function setBaseAndExtent(...args) {
   const document = args[0].ownerDocument;

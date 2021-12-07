@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2021-09-24T11:55:11.197Z\n"
+"POT-Creation-Date: 2021-12-07T09:17:22.447Z\n"
 "Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -12,6 +12,11 @@ msgstr ""
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8\n"
 "Domain: volto\n"
+
+#: blocks/Title/TitleBlockEdit
+# defaultMessage: Add a description…
+msgid "Add a description…"
+msgstr ""
 
 #: editor/plugins/SimpleLink/index
 # defaultMessage: Add link
@@ -66,6 +71,11 @@ msgstr ""
 #: blocks/Table/TableBlockEdit
 # defaultMessage: Delete row
 msgid "Delete row"
+msgstr ""
+
+#: editor/plugins/Table/index
+# defaultMessage: Delete table
+msgid "Delete table"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
@@ -179,9 +189,15 @@ msgstr ""
 msgid "Table color inverted"
 msgstr ""
 
-#: blocks/Text/TextBlockEdit
+#: blocks/Text/DefaultTextBlockEditor
+#: blocks/Text/DetachedTextBlockEditor
 # defaultMessage: Type text…
 msgid "Type text…"
+msgstr ""
+
+#: blocks/Title/TitleBlockEdit
+# defaultMessage: Type the title…
+msgid "Type the title…"
 msgstr ""
 
 #: components/themes/View/DefaultSlateView

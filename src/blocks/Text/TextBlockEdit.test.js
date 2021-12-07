@@ -36,6 +36,7 @@ beforeAll(() => {
       contextToolbarButtons: [],
       textblockExtensions: [],
       extensions: [],
+      elementToolbarButtons: {},
     },
   };
   config.blocks.blocksConfig.slate = {

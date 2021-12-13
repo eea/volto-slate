@@ -221,11 +221,11 @@ volto-slate provides several optional configuration:
 
 ## Plugins
 
-To write a new plugin, please refer [plugins](volto-slate-plugins.md)
+To write a new plugin, please refer [plugins](https://github.com/eea/volto-slate/tree/master/docs/source/volto-slate-plugins.md)
 
 ## Cypress
 
-We aim to achieve a good coverage for cypress. Please refer to commands listed [here](testing.md) to ease the process of writing new tests.
+We aim to achieve a good coverage for cypress. Please refer to commands listed [here](https://github.com/eea/volto-slate/tree/master/docs/source/testing.md) to ease the process of writing new tests.
 
 ## How to contribute
 

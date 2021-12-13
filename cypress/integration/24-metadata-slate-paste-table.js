@@ -5,15 +5,53 @@ describe('Metadata Slate JSON Tests: Paste table', () => {
   afterEach(slateJsonAfterEach);
 
   it('As editor I can paste table copied from csv', function () {
-    // Complete chained commands
-    cy.getSlateEditorAndType('Pasting a copied table');
-    cy.setSlateCursor('table')
-      .type('{shift+enter}')
-      .pasteClipboard(
-        '<table class="ui celled fixed table slate-table-block"><tbody class=""><tr class=""><th class=""><p>demo</p></th><th class=""><p>demo</p></th></tr><tr class=""><td class=""><p>demo</p></td><td class=""><p>demo</p></td></tr></tbody></table>',
-      );
+    cy.get('.slate-editor [contenteditable=true]').pasteClipboard(
+      `HTML Table start
+      <table>
+        <tbody>
+         <tr>
+          <th>Firstname</th>
+          <th>Lastname</th>
+         </tr>
+         <tr>
+          <td>Jill</td>
+          <td>Smith</td>
+         </tr>
+        </tbody>
+       </table>
+       Table end
+        `,
+    );
     cy.toolbarSave();
 
-    //cy.get('[id="page-document"] table').its('length').to.be.greaterThan(1);
+    cy.get('[id="page-document"] table').should('have.length', 1);
+  });
+
+  it('As editor I can delete table copied to editor', function () {
+    cy.get('.slate-editor [contenteditable=true]').pasteClipboard(
+      `HTML Table start
+      <table>
+        <tbody>
+         <tr>
+          <th>Firstname</th>
+          <th>Lastname</th>
+         </tr>
+         <tr>
+          <td>Jill</td>
+          <td>Smith</td>
+         </tr>
+        </tbody>
+       </table>
+       Table end
+        `,
+    );
+
+    cy.setSlateCursor('Firstname')
+      .get('.slate-inline-toolbar .button-wrapper a[title="Delete table"]')
+      .click();
+
+    cy.toolbarSave();
+
+    cy.get('[id="page-document"] table').should('not.exist');
   });
 });

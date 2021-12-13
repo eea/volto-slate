@@ -238,7 +238,7 @@ export const DefaultTextBlockEditor = (props) => {
           }}
         </Dropzone>
 
-        {selected && !data.plaintext && !disableNewBlocks && (
+        {selected && !data.plaintext.trim() && !disableNewBlocks && (
           <BlockChooserButton
             data={data}
             block={block}

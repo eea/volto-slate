@@ -25,6 +25,8 @@ import isHotkey from 'is-hotkey';
 
 import './less/editor.less';
 
+import Toolbar from './ui/Toolbar';
+
 const handleHotKeys = (editor, event, config) => {
   let wasHotkey = false;
 
@@ -241,7 +243,18 @@ class SlateEditor extends Component {
             onChange={this.handleChange}
           >
             {selected ? (
-              <InlineToolbar editor={editor} className={className} />
+              <>
+                <InlineToolbar editor={editor} className={className} />
+                {Object.keys(slate.elementToolbarButtons).map((t) => {
+                  return (
+                    <Toolbar elementType={t}>
+                      {slate.elementToolbarButtons[t].map((Btn) => {
+                        return <Btn editor={editor} />;
+                      })}
+                    </Toolbar>
+                  );
+                })}
+              </>
             ) : (
               ''
             )}

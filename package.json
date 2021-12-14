@@ -46,7 +46,7 @@
   },
   "scripts": {
     "release": "release-it",
-    "bootstrap": "node bootstrap",
+    "bootstrap": "npm install -g ejs; npm link ejs; node bootstrap",
     "test": "make test",
     "test:fix": "make test-update",
     "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",

@@ -11,6 +11,10 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#: blocks/Title/TitleBlockEdit
+msgid "Add a description…"
+msgstr ""
+
 #: editor/plugins/SimpleLink/index
 msgid "Add link"
 msgstr "Link hinzufügen"
@@ -54,6 +58,10 @@ msgstr "Spalte löschen"
 #: blocks/Table/TableBlockEdit
 msgid "Delete row"
 msgstr "Zeile löschen"
+
+#: editor/plugins/Table/index
+msgid "Delete table"
+msgstr ""
 
 #: blocks/Table/TableBlockEdit
 msgid "Divide each row into separate cells"
@@ -144,9 +152,14 @@ msgstr "Tabelle"
 msgid "Table color inverted"
 msgstr "Tabellenfarbe invertiert"
 
-#: blocks/Text/TextBlockEdit
+#: blocks/Text/DefaultTextBlockEditor
+#: blocks/Text/DetachedTextBlockEditor
 msgid "Type text…"
 msgstr "Text eingeben"
+
+#: blocks/Title/TitleBlockEdit
+msgid "Type the title…"
+msgstr ""
 
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"

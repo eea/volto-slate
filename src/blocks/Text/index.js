@@ -117,7 +117,7 @@ export default (config) => {
     },
     blockHasValue: (data) => {
       // TODO: this should be handled better
-      return !!data?.plaintext?.trim();
+      return data && !!data.plaintext?.trim();
     },
     tocEntry: (block = {}, tocData) => {
       // integration with volto-block-toc

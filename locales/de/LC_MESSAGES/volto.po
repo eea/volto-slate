@@ -63,6 +63,10 @@ msgstr "Spalte löschen"
 msgid "Delete row"
 msgstr "Zeile löschen"
 
+#: editor/plugins/Table/index
+msgid "Delete table"
+msgstr ""
+
 #: blocks/Table/TableBlockEdit
 msgid "Divide each row into separate cells"
 msgstr "Jede Zeile in einzelne Zellen teilen"

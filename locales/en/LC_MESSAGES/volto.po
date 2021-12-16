@@ -63,6 +63,10 @@ msgstr ""
 msgid "Delete row"
 msgstr ""
 
+#: editor/plugins/Table/index
+msgid "Delete table"
+msgstr ""
+
 #: blocks/Table/TableBlockEdit
 msgid "Divide each row into separate cells"
 msgstr ""

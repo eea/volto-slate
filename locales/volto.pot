@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2021-12-03T08:20:12.571Z\n"
+"POT-Creation-Date: 2021-12-07T09:17:22.447Z\n"
 "Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -76,6 +76,11 @@ msgstr ""
 #: blocks/Table/TableBlockEdit
 # defaultMessage: Delete row
 msgid "Delete row"
+msgstr ""
+
+#: editor/plugins/Table/index
+# defaultMessage: Delete table
+msgid "Delete table"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit

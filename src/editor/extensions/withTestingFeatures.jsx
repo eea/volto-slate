@@ -45,7 +45,6 @@ const withTestingFeatures = (WrappedComponent) => {
     React.useEffect(() => {
       document.addEventListener('Test_SelectWord', onTestSelectWord);
       document.addEventListener('Test_SelectRange', onTestSelectRange);
-
       return () => {
         document.removeEventListener('Test_SelectWord', onTestSelectWord);
         document.removeEventListener('Test_SelectRange', onTestSelectRange);

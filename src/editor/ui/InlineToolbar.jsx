@@ -4,6 +4,7 @@ import SlateContextToolbar from './SlateContextToolbar';
 import config from '@plone/volto/registry';
 import { hasRangeSelection } from 'volto-slate/utils';
 import { ReactEditor } from 'slate-react';
+import cx from 'classnames';
 
 /**
  * The main Slate toolbar. All the others are just wrappers, UI or used here
@@ -42,10 +43,16 @@ const InlineToolbar = (props) => {
     return () => document.removeEventListener('selectionchange', toggleToolbar);
   }, [editor, showMainToolbar]);
 
+  const showContextToolbar =
+    slate.contextToolbarButtons.map((plug) => plug(editor)).filter((c) => !!c)
+      .length > 0;
+
   return (
     <>
       <SlateToolbar
-        className={className}
+        className={cx(className, {
+          upper: showContextToolbar,
+        })}
         selected={true}
         enableExpando={slate.enableExpandedToolbar}
         showExpandedToolbar={showExpandedToolbar}
@@ -55,6 +62,7 @@ const InlineToolbar = (props) => {
       <SlateContextToolbar
         editor={editor}
         plugins={slate.contextToolbarButtons}
+        show={showContextToolbar}
       />
     </>
   );

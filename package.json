@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "5.1.3",
+  "version": "5.2.0",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",
@@ -46,7 +46,9 @@
   },
   "scripts": {
     "release": "release-it",
-    "bootstrap": "node bootstrap",
+    "release-major-beta": "release-it major --preRelease=beta",
+    "release-beta": "release-it --preRelease=beta",
+    "bootstrap": "npm install -g ejs; npm link ejs; node bootstrap",
     "test": "make test",
     "test:fix": "make test-update",
     "stylelint": "../../../node_modules/stylelint/bin/stylelint.js --allow-empty-input 'src/**/*.{css,less}'",

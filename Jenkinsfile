@@ -5,7 +5,7 @@ pipeline {
         GIT_NAME = "volto-slate"
         NAMESPACE = ""
         DEPENDENCIES = "volto-slate:asCypressDefault"
-        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims,sustainability.eionet.europa.eu,clms.land.copernicus.eu,industry.eea.europa.eu"
+        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims,sustainability.eionet.europa.eu,clms.land.copernicus.eu,industry.eea.europa.eu,water.europa.eu-freshwater"
         PLONE_VERSIONS = "plone.schema=1.3.0 plone.restapi=8.9.1"
         PLONE_ADDONS = "eea.schema.slate"
     }
@@ -33,8 +33,8 @@ pipeline {
       when {
         allOf {
           environment name: 'CHANGE_ID', value: ''
-          not { branch 'master' }
           not { changelog '.*^Automated release [0-9\\.]+$' }
+          not { branch 'master' }
         }
       }
       steps {
@@ -65,7 +65,10 @@ pipeline {
       when {
         allOf {
           environment name: 'CHANGE_ID', value: ''
-          not { changelog '.*^Automated release [0-9\\.]+$' }
+          anyOf {
+           not { changelog '.*^Automated release [0-9\\.]+$' }
+           branch 'master'
+          }
         }
       }
       steps {
@@ -110,7 +113,10 @@ pipeline {
       when {
         allOf {
           environment name: 'CHANGE_ID', value: ''
-          not { changelog '.*^Automated release [0-9\\.]+$' }
+          anyOf {
+           not { changelog '.*^Automated release [0-9\\.]+$' }
+           branch 'master'
+          }
         }
       }
       steps {
@@ -161,12 +167,16 @@ pipeline {
 
     stage('Report to SonarQube') {
       when {
+        allOf {
           environment name: 'CHANGE_ID', value: ''
           anyOf {
             branch 'master'
-            branch 'develop'
+            allOf {
+              branch 'develop'
+              not { changelog '.*^Automated release [0-9\\.]+$' }
+            }
           }
-          not { changelog '.*^Automated release [0-9\\.]+$' }
+        }
       }
       steps {
         node(label: 'swarm') {

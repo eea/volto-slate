@@ -150,6 +150,12 @@ export const expandedToolbarButtons = [...defaultToolbarButtons];
 // to render the toolbar at all if there's no children (due to CSS reasons).
 export const contextToolbarButtons = [];
 
+// Each Element node type available in the editor can be configured to have
+// specific toolbar buttons shown above the element of that type when it
+// contains the selection. The Table plugin of SlateEditor uses this to put a
+// Delete table button above the currently selected table.
+export const elementToolbarButtons = {};
+
 // A set of components that are always rendered, unlike the button variety.
 // They make it possible to orchestrate form-based editing of components
 export const persistentHelpers = [];

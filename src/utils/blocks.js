@@ -84,7 +84,7 @@ export const normalizeExternalData = (editor, nodes) => {
           { type: 'p' },
           {
             at: [i],
-            match: (node, path) => Text.isText(node),
+            match: (node, path) => editor.isInline(node) || Text.isText(node),
           },
         );
       }

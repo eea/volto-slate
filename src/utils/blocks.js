@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node, Text } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
@@ -84,6 +84,7 @@ export const normalizeExternalData = (editor, nodes) => {
           { type: 'p' },
           {
             at: [i],
+            match: (node, path) => Text.isText(node),
           },
         );
       }

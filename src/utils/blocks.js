@@ -69,7 +69,10 @@ approach, we're all ears!
 
 export const normalizeExternalData = (editor, nodes) => {
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
-  fakeEditor.children = nodes.filter((node) => Text.isText(node));
+  fakeEditor.children = nodes.map((node) => ({
+    ...node,
+    children: node.children?.length === 0 ? [{ text: '' }] : node.children,
+  }));
 
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {

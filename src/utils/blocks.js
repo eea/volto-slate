@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Node, Text } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,

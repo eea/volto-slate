@@ -7,7 +7,6 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 import { makeEditor } from './editor';
-import { isInline } from '../editor/extensions';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats

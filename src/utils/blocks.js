@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
@@ -7,6 +7,7 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 import { makeEditor } from './editor';
+import { isInline } from '../editor/extensions';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats
@@ -69,34 +70,17 @@ approach, we're all ears!
 
 export const normalizeExternalData = (editor, nodes) => {
   let fakeEditor = makeEditor({ extensions: editor._installedPlugins });
-  let normalizedNodes = nodes.map((node) => ({
-    ...node,
-    children: node.children?.length === 0 ? [{ text: '' }] : node.children,
-  }));
-  fakeEditor.children = normalizedNodes.map((node) => {
-    if (!node.children) {
-      delete node.children;
-    }
-    return node;
-  });
+  fakeEditor.children = nodes;
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {
-    let i = 0;
-    const c = Array.from(Node.children(fakeEditor, []));
-    for (const v of c) {
-      const [n] = v;
-
-      if (!Editor.isBlock(fakeEditor, n)) {
-        Transforms.wrapNodes(
-          fakeEditor,
-          { type: 'p' },
-          {
-            at: [i],
-          },
-        );
-      }
-      ++i;
-    }
+    Transforms.wrapNodes(
+      fakeEditor,
+      { type: 'p' },
+      {
+        at: [],
+        match: (node) => Text.isText(node),
+      },
+    );
   });
 
   Editor.normalize(fakeEditor, { force: true });

@@ -137,7 +137,6 @@ export default (config) => {
         icon={isElement ? unlinkSVG : linkSVG}
         active={isElement}
         onMouseDown={(e) => {
-          // if (!isElement) insertElement(editor, {});
           e.stopPropagation();
           e.preventDefault();
           const pid = `${editor.uid}-${PLUGINID}`;

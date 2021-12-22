@@ -136,8 +136,9 @@ export default (config) => {
         title={isElement ? messages.edit : messages.add}
         icon={isElement ? unlinkSVG : linkSVG}
         active={isElement}
-        onMouseDown={() => {
-          // if (!isElement) insertElement(editor, {});
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
           const pid = `${editor.uid}-${PLUGINID}`;
           editor.savedSelection = JSON.parse(JSON.stringify(editor.selection));
           dispatch(setPluginOptions(pid, { show_sidebar_editor: true }));

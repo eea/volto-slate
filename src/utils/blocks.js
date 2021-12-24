@@ -78,9 +78,8 @@ export const normalizeExternalData = (editor, nodes) => {
       { type: 'p' },
       {
         at: [],
-        match: (node, path) =>
-          (!Editor.isEditor(node) && !Editor.isBlock(fakeEditor, node)) ||
-          Text.isText(node),
+        match: (node, path) => fakeEditor.isInline(node) || Text.isText(node),
+        mode: 'highest',
       },
     );
   });

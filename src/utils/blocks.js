@@ -7,6 +7,7 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 import { makeEditor } from './editor';
+import { BLOCK_ELEMENTS } from 'volto-slate/constants';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats
@@ -73,7 +74,7 @@ export const normalizeExternalData = (editor, nodes) => {
 
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {
-    if (nodes && nodes[0]?.type !== 'p')
+    if (nodes && !BLOCK_ELEMENTS.includes(nodes[0]?.type.toUpperCase()))
       Transforms.wrapNodes(
         fakeEditor,
         { type: 'p' },

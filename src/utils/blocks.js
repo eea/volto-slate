@@ -1,5 +1,5 @@
 /* eslint no-console: ["error", { allow: ["error", "warn"] }] */
-import { Editor, Transforms, Text } from 'slate'; // Range, RangeRef
+import { Editor, Transforms, Node } from 'slate'; // Range, RangeRef
 import config from '@plone/volto/registry';
 import {
   getBlocksFieldname,
@@ -73,15 +73,18 @@ export const normalizeExternalData = (editor, nodes) => {
 
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {
-    Transforms.wrapNodes(
-      fakeEditor,
-      { type: 'p' },
-      {
-        at: [],
-        match: (node, path) => fakeEditor.isInline(node) || Text.isText(node),
-        mode: 'highest',
-      },
-    );
+    if (nodes && nodes[0]?.type !== 'p')
+      Transforms.wrapNodes(
+        fakeEditor,
+        { type: 'p' },
+        {
+          at: [],
+          match: (node, path) =>
+            (!Editor.isEditor(node) && !Editor.isBlock(fakeEditor, node)) ||
+            fakeEditor.isInline(node),
+          mode: 'highest',
+        },
+      );
   });
 
   Editor.normalize(fakeEditor, { force: true });

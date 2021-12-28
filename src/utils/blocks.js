@@ -7,7 +7,6 @@ import {
 } from '@plone/volto/helpers';
 import _ from 'lodash';
 import { makeEditor } from './editor';
-import { BLOCK_ELEMENTS } from 'volto-slate/constants';
 
 // case sensitive; first in an inner array is the default and preffered format
 // in that array of formats

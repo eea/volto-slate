@@ -74,7 +74,8 @@ export const normalizeExternalData = (editor, nodes) => {
 
   // put all the non-blocks (e.g. images which are inline Elements) inside p-s
   Editor.withoutNormalizing(fakeEditor, () => {
-    if (nodes && !BLOCK_ELEMENTS.includes(nodes[0]?.type?.toUpperCase()))
+    //for htmlSlateWidget
+    if (nodes && !Editor.isBlock(fakeEditor, nodes[0]))
       Transforms.wrapNodes(
         fakeEditor,
         { type: 'p' },

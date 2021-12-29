@@ -126,7 +126,7 @@ pipeline {
             node(label: 'docker') {
               script {
                 try {
-                  sh '''docker pull plone; docker run -d --name="$BUILD_TAG-plone" -e SITE="Plone" -e ADDONS="$PLONE_ADDONS" -e VERSIONS="$PLONE_VERSIONS" -e PROFILES="profile-plone.restapi:blocks" plone fg'''
+                  sh '''docker pull plone; docker run -d --rm --name="$BUILD_TAG-plone" -e SITE="Plone" -e ADDONS="$PLONE_ADDONS" -e VERSIONS="$PLONE_VERSIONS" -e PROFILES="profile-plone.restapi:blocks" plone fg'''
                   sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
                 } finally {
                   try {
@@ -144,7 +144,8 @@ pipeline {
                              reportName: 'CypressCoverage',
                              reportTitles: 'Integration Tests Code Coverage'])
                     }
-                    archiveArtifacts artifacts: 'cypress-reports/videos/*.mp4', fingerprint: true
+                    sh '''touch empty_file; for ok_test in $(grep -E 'file=.*failures="0"' $(grep 'testsuites .*failures="0"' $(find cypress-results -name *.xml) empty_file | awk -F: '{print $1}') empty_file | sed 's/.* file="\\(.*\\)" time.*/\\1/' | sed 's#^cypress/integration/##g' | sed 's#^../../../node_modules/@eeacms/##g'); do rm -f cypress-reports/videos/$ok_test.mp4; rm -f cypress-reports/$ok_test.mp4; done'''
+                    archiveArtifacts artifacts: 'cypress-reports/**/*.mp4', fingerprint: true, allowEmptyArchive: true
                     stash name: "cypress-coverage", includes: "cypress-coverage/**", allowEmpty: true
                   }
                   finally {

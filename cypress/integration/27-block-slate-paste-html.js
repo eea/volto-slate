@@ -15,7 +15,6 @@ describe('Block Tests: external text containing html contents/tags ', () => {
 
     cy.get('[id="page-document"] p:nth-child(3)').should('have.length', 1);
   });
-
   it('should paste external formatted text and does not split the blocks', function () {
     cy.getSlateEditorAndType('Let"s paste external html texts');
     cy.wait(1000);
@@ -23,10 +22,8 @@ describe('Block Tests: external text containing html contents/tags ', () => {
     // The idea is pasteClipboard should only apply on its attached slate block
     // by not splitting them into blocks.
     createSlateBlock().pasteClipboard(
-      `<p><strong>Lorem Ipsum</strong>
-      <p> 
+      `<p><strong>Lorem Ipsum</strong> 
        is simply dummy text of the printing and typesetting industry.
-      </p>
       </p>
       `,
     );
@@ -34,12 +31,14 @@ describe('Block Tests: external text containing html contents/tags ', () => {
     // Save
     cy.toolbarSave();
 
-    cy.get('[id="page-document"] p:nth-child(2)')
+    cy.get('[id="page-document"] > p:nth-child(3)')
+      .children()
       .its('length')
       .should('be.gte', 1);
-    cy.get('[id="page-document"] p:nth-child(3)').should('have.length', 0);
+    cy.get('[id="page-document"] > p:nth-child(4)')
+      .children()
+      .should('have.length', 0);
   });
-
   it('should paste external text containing empty anchor links', function () {
     cy.getSlateEditorAndType(
       'Let"s paste external html texts with empty anchor links',

@@ -6,20 +6,8 @@ describe('Metadata Slate JSON Tests: Paste table', () => {
 
   it('As editor I can paste table copied from csv', function () {
     cy.get('.slate-editor [contenteditable=true]').pasteClipboard(
-      `HTML Table start
-      <table>
-        <tbody>
-         <tr>
-          <th>Firstname</th>
-          <th>Lastname</th>
-         </tr>
-         <tr>
-          <td>Jill</td>
-          <td>Smith</td>
-         </tr>
-        </tbody>
-       </table>
-       Table end
+      `
+ <p><div><table class="slate-table"><thead><tr><th>Character</th><th>UTF-8 Hex Equivalent</th></tr></thead><tbody><tr><td>+</td><td><a href="" rel="noopener noreferrer">0x2B</a></td></tr><tr><td>#</td><td><a href="" rel="noopener noreferrer">0x23</a></td></tr><tr><td>%</td><td><a href="" rel="noopener noreferrer">0x25</a></td></tr></tbody></table> </div></p>
         `,
     );
     cy.toolbarSave();
@@ -29,26 +17,13 @@ describe('Metadata Slate JSON Tests: Paste table', () => {
 
   it('As editor I can delete table copied to editor', function () {
     cy.get('.slate-editor [contenteditable=true]').pasteClipboard(
-      `HTML Table start
-      <table>
-        <tbody>
-         <tr>
-          <th>Firstname</th>
-          <th>Lastname</th>
-         </tr>
-         <tr>
-          <td>Jill</td>
-          <td>Smith</td>
-         </tr>
-        </tbody>
-       </table>
-       Table end
+      `<p><div><table class="slate-table"><thead><tr><th>Character</th><th>UTF-8 Hex Equivalent</th></tr></thead><tbody><tr><td>+</td><td><a href="" rel="noopener noreferrer">0x2B</a></td></tr><tr><td>#</td><td><a href="" rel="noopener noreferrer">0x23</a></td></tr><tr><td>%</td><td><a href="" rel="noopener noreferrer">0x25</a></td></tr></tbody></table> </div></p>
         `,
     );
-
-    cy.setSlateCursor('Firstname')
-      .get('.slate-inline-toolbar .button-wrapper a[title="Delete table"]')
-      .click();
+    cy.get('table').click();
+    cy.get(
+      '.slate-inline-toolbar .button-wrapper a[title="Delete table"]',
+    ).click();
 
     cy.toolbarSave();
 

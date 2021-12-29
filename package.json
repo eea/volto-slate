@@ -1,6 +1,6 @@
 {
   "name": "volto-slate",
-  "version": "5.2.2",
+  "version": "5.3.0",
   "description": "Slate.js integration with Volto",
   "main": "src/index.js",
   "author": "European Environment Agency: IDM2 A-Team",

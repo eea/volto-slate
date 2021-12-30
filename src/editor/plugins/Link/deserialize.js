@@ -1,6 +1,7 @@
 import { jsx } from 'slate-hyperscript';
 import { LINK } from 'volto-slate/constants';
 import { deserialize } from 'volto-slate/editor/deserialize';
+import { isEmpty } from 'lodash';
 // import { Editor } from 'slate';
 
 /**
@@ -22,9 +23,14 @@ const hasValidTarget = (aEl) => {
 export const linkDeserializer = (editor, el) => {
   let parent = el;
 
-  const children = Array.from(parent.childNodes)
+  let children = Array.from(parent.childNodes)
     .map((el) => deserialize(editor, el))
     .flat();
+
+  if (isEmpty(children)) {
+    //nodes must contain at least one Text descendant
+    children = [{ text: '' }];
+  }
 
   const attrs = {
     type: LINK,

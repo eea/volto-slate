@@ -172,22 +172,22 @@ describe('Block Tests: Basic text format', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // Blockquote
-    cy.setSlateSelection('Colorless', 'green');
+    cy.setSlateSelection('sleep', 'furiously');
     cy.clickSlateButton('Blockquote');
 
     // Un-Blockquote
-    cy.setSlateSelection('Colorless');
+    cy.setSlateSelection('furiously');
     cy.clickSlateButton('Blockquote');
 
     // Blockquote
-    cy.setSlateSelection('Colorless');
+    cy.setSlateSelection('furiously');
     cy.clickSlateButton('Blockquote');
 
     // Save
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] blockquote').contains('Colorless');
+    cy.get('[id="page-document"] blockquote').contains('furiously');
   });
 
   it('Superscript', function () {
@@ -218,21 +218,21 @@ describe('Block Tests: Basic text format', () => {
     cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
 
     // Subscript
-    cy.setSlateSelection('Colorless', 'green');
+    cy.setSlateSelection('sleep', 'furiously');
     cy.clickSlateButton('Subscript');
 
     // Un-Subscript
-    cy.setSlateSelection('Colorless');
+    cy.setSlateSelection('furiously');
     cy.clickSlateButton('Subscript');
 
     // Subscript
-    cy.setSlateSelection('Colorless');
+    cy.setSlateSelection('furiously');
     cy.clickSlateButton('Subscript');
 
     // Save
     cy.toolbarSave();
 
     // then the page view should contain our changes
-    cy.get('[id="page-document"] sub').contains('Colorless');
+    cy.get('[id="page-document"] sub').contains('furiously');
   });
 });

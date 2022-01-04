@@ -27,6 +27,25 @@ describe('Block Tests: Bulleted lists', () => {
       'sleep furiously.',
     );
   });
+  it('should transform to new text block on press Enter in empty lists', function () {
+    // Complete chained commands
+    cy.getSlateEditorAndType('Colorless green ideas sleep furiously.');
+
+    // List
+    cy.setSlateSelection('green');
+    cy.clickSlateButton('Bulleted list');
+
+    cy.setSlateSelection('Colorless green ideas sleep furiously.')
+      .type('{backspace}')
+      .type('{enter}');
+
+    // Save
+    cy.toolbarSave();
+    cy.wait(1000);
+
+    // then the page view should contain a link
+    cy.get('[id="page-document"] p').its('length').should('eq', 1);
+  });
 
   it('As editor I can remove bulleted lists', function () {
     // Complete chained commands

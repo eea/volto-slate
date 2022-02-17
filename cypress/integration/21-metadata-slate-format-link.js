@@ -1,7 +1,7 @@
 import { slateBeforeEach, slateAfterEach, selectSlateRange } from '../support';
 
 describe('RichText Tests: Add links', () => {
-  beforeEach(() => slateBeforeEach('News Item'));
+  beforeEach(() => slateBeforeEach('kitkat'));
   afterEach(slateAfterEach);
 
   it('As editor I can add links', function () {

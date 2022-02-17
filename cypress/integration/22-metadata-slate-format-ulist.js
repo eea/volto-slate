@@ -1,7 +1,7 @@
 import { slateBeforeEach, slateAfterEach } from '../support';
 
 describe('RichText Tests: bulleted lists', () => {
-  beforeEach(() => slateBeforeEach('News Item'));
+  beforeEach(() => slateBeforeEach('kitkat'));
   afterEach(slateAfterEach);
 
   it('As editor I can add bulleted lists', function () {

@@ -1,7 +1,7 @@
 import { slateBeforeEach, slateAfterEach } from '../support';
 
 describe('RichText Tests: format text via slate toolbar', () => {
-  beforeEach(() => slateBeforeEach('News Item'));
+  beforeEach(() => slateBeforeEach('kitkat'));
   afterEach(slateAfterEach);
 
   it('Bold', function () {

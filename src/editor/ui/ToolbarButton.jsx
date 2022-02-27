@@ -5,12 +5,15 @@ import { Button } from 'semantic-ui-react';
 import { useIntl } from 'react-intl';
 
 const ToolbarButton = React.forwardRef(
-  ({ className, active, reversed, icon, style, title = '', ...props }, ref) => {
+  (
+    { className, active, reversed, icon, style, title = '', id, ...props },
+    ref,
+  ) => {
     const intl = useIntl();
     const i18ntitle =
       typeof title !== 'string' ? intl.formatMessage(title) : title;
     return (
-      <div className="button-wrapper">
+      <div className="button-wrapper" key={id} id={id}>
         <Button
           as="a"
           {...props}

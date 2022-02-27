@@ -56,6 +56,7 @@ export const DeleteTable = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="delete-table"
       title={intl.formatMessage(messages.deleteTable)}
       icon={clearSVG}
       aria-label={intl.formatMessage(messages.deleteTable)}
@@ -74,6 +75,7 @@ export const InsertRowBefore = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="inset-row-before"
       title={intl.formatMessage(messages.insertRowBefore)}
       icon={rowBeforeSVG}
       aria-label={intl.formatMessage(messages.insertRowBefore)}
@@ -89,6 +91,7 @@ export const InsertRowAfter = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="insert-row-after"
       title={intl.formatMessage(messages.insertRowAfter)}
       icon={rowAfterSVG}
       aria-label={intl.formatMessage(messages.insertRowAfter)}
@@ -104,6 +107,7 @@ export const DeleteRow = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="delete-row"
       title={intl.formatMessage(messages.deleteRow)}
       icon={rowDeleteSVG}
       aria-label={intl.formatMessage(messages.deleteRow)}
@@ -119,6 +123,7 @@ export const InsertColBefore = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="insert-col-before"
       title={intl.formatMessage(messages.insertColBefore)}
       icon={colBeforeSVG}
       aria-label={intl.formatMessage(messages.insertColBefore)}
@@ -134,6 +139,7 @@ export const InsertColAfter = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="insert-col-after"
       title={intl.formatMessage(messages.insertColAfter)}
       icon={colAfterSVG}
       aria-label={intl.formatMessage(messages.insertColAfter)}
@@ -149,6 +155,7 @@ export const DeleteCol = ({ editor }) => {
 
   return (
     <ToolbarButton
+      id="delete-col"
       title={intl.formatMessage(messages.deleteCol)}
       icon={colDeleteSVG}
       aria-label={intl.formatMessage(messages.deleteCol)}

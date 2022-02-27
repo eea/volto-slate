@@ -13,7 +13,7 @@ export function syncCreateImageBlock(url) {
 
 // This function is used by deconstructToVoltoBlocks, so not directly by the
 // <SlateEditor>. File exists here because there's no "blocks/Image" folder
-export const extractImages = (editor, pathRef) => {
+export function extractImages(editor, pathRef) {
   const imageNodes = Array.from(
     Editor.nodes(editor, {
       at: pathRef.current,
@@ -27,4 +27,4 @@ export const extractImages = (editor, pathRef) => {
   });
 
   return images.map((el) => syncCreateImageBlock(el.url));
-};
+}

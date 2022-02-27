@@ -25,6 +25,7 @@ import {
   withSplitBlocksOnBreak,
   withIsSelected,
 } from './extensions';
+import { passThroughElements } from './deconstruct';
 import { extractImages } from 'volto-slate/editor/plugins/Image/deconstruct';
 import { extractTables } from 'volto-slate/blocks/Table/deconstruct';
 
@@ -86,6 +87,7 @@ export default (config) => {
       ...(config.settings.slate.voltoBlockEmiters || []),
       extractImages,
       extractTables,
+      passThroughElements,
     ],
 
     // These elements will get an id, to make them targets in TOC

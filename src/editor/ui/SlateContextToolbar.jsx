@@ -8,6 +8,8 @@ export default ({ editor, plugins, show }) => {
     return null;
   }
 
+  console.log('plugins', plugins);
+
   const components = plugins.map((plug) => plug(editor)).filter((c) => !!c);
   return components.length ? <Toolbar>{components}</Toolbar> : '';
 };

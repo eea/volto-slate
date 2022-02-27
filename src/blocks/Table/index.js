@@ -1,7 +1,6 @@
 import codeSVG from '@plone/volto/icons/code.svg';
 import TableBlockEdit from './TableBlockEdit';
 import TableBlockView from './TableBlockView';
-import { extractTables } from './deconstruct';
 import { normalizeTable } from './extensions/normalizeTable';
 
 /**
@@ -12,10 +11,6 @@ import { normalizeTable } from './extensions/normalizeTable';
 export default function install(config) {
   config.settings.slate = {
     ...config.settings.slate,
-    voltoBlockEmiters: [
-      ...(config.settings.slate.voltoBlockEmiters || []),
-      extractTables,
-    ],
     tableblockExtensions: [
       // First here gets executed last
       // withLists,

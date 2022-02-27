@@ -10,6 +10,7 @@ import { Transforms, Editor, Node, Text, Path } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
+import { createEmptyParagraph } from './blocks';
 
 function fromEntries(pairs) {
   const res = {};
@@ -211,6 +212,38 @@ export function getPreviousVoltoBlock(index, properties) {
 //   });
 //   return check;
 // };
+//
+
+function extractExtras(editor) {
+  // TODO: should use Editor.levels() instead of Node.children
+
+  const { slate } = config.settings;
+  const { voltoBlockEmiters } = slate;
+  let blocks = [];
+  let hasExtras = false;
+  const pathRefs = Array.from(Node.children(editor, [])).map(([, path]) =>
+    Editor.pathRef(editor, path),
+  );
+
+  for (const pathRef of pathRefs) {
+    // extra nodes are always extracted after the text node
+    let extras = voltoBlockEmiters.map((emit) => emit(editor, pathRef)).flat(1);
+    if (extras.length) hasExtras = true;
+
+    // The node might have been replaced with a Volto block
+    if (pathRef.current) {
+      const [childNode] = Editor.node(editor, pathRef.current);
+      if (childNode && !Editor.isEmpty(editor, childNode))
+        blocks.push(syncCreateSlateBlock([childNode]));
+    }
+    blocks = [...blocks, ...extras];
+  }
+
+  // this is an optimization, to detect the case when we're dealing with
+  // operations on a single block;
+
+  return blocks.length === 1 && !hasExtras ? [] : blocks;
+}
 
 /**
  * The editor has the properties `dataTransferHandlers` (object) and
@@ -244,41 +277,28 @@ export function deconstructToVoltoBlocks(editor) {
   if (!editor.getBlockProps) return;
 
   const blockProps = editor.getBlockProps();
-  const { slate } = config.settings;
-  const { voltoBlockEmiters } = slate;
 
   return new Promise((resolve, reject) => {
     if (!editor?.children) return;
 
-    if (editor.children.length === 1) {
-      return resolve([blockProps.block]);
-    }
+    // if (editor.children.length === 1) {
+    //   console.log(editor.children);
+    //   const blocks = extractExtras(editor);
+    //   return resolve(blocks); // [blockProps.block]
+    // }
+
     const { properties, onChangeField, onSelectBlock } = editor.getBlockProps();
     const blocksFieldname = getBlocksFieldname(properties);
     const blocksLayoutFieldname = getBlocksLayoutFieldname(properties);
 
     const { index } = blockProps;
-    let blocks = [];
 
-    // TODO: should use Editor.levels() instead of Node.children
-    const pathRefs = Array.from(Node.children(editor, [])).map(([, path]) =>
-      Editor.pathRef(editor, path),
-    );
-
-    for (const pathRef of pathRefs) {
-      // extra nodes are always extracted after the text node
-      let extras = voltoBlockEmiters
-        .map((emit) => emit(editor, pathRef))
-        .flat(1);
-
-      // The node might have been replaced with a Volto block
-      if (pathRef.current) {
-        const [childNode] = Editor.node(editor, pathRef.current);
-        if (childNode && !Editor.isEmpty(editor, childNode))
-          blocks.push(syncCreateSlateBlock([childNode]));
-      }
-      blocks = [...blocks, ...extras];
+    const blocks = extractExtras(editor);
+    if (!blocks.length) {
+      return;
+      // blocks.push(syncCreateSlateBlock([createEmptyParagraph()]));
     }
+    console.log('blocks', blocks);
 
     const blockids = blocks.map((b) => b[0]);
 

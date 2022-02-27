@@ -25,6 +25,7 @@ export const insertData = (editor) => {
           ? parsed.querySelector('google-sheets-html-origin > table')
           : parsed.body;
 
+      console.log('body', body);
       let fragment;
 
       const val = deserialize(editor, body);

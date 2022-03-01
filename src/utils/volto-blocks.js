@@ -10,7 +10,6 @@ import { Transforms, Editor, Node, Text, Path } from 'slate';
 import { serializeNodesToText } from 'volto-slate/editor/render';
 import { omit } from 'lodash';
 import config from '@plone/volto/registry';
-import { createEmptyParagraph } from './blocks';
 
 function fromEntries(pairs) {
   const res = {};
@@ -189,31 +188,6 @@ export function getPreviousVoltoBlock(index, properties) {
   return [prevBlock, prevBlockId];
 }
 
-// //check for existing img children
-// const checkContainImg = (elements) => {
-//   var check = false;
-//   elements.forEach((e) =>
-//     e.children.forEach((c) => {
-//       if (c && c.type && c.type === 'img') {
-//         check = true;
-//       }
-//     }),
-//   );
-//   return check;
-// };
-
-// //check for existing table children
-// const checkContainTable = (elements) => {
-//   var check = false;
-//   elements.forEach((e) => {
-//     if (e && e.type && e.type === 'table') {
-//       check = true;
-//     }
-//   });
-//   return check;
-// };
-//
-
 function extractExtras(editor) {
   // TODO: should use Editor.levels() instead of Node.children
 
@@ -296,7 +270,7 @@ export function deconstructToVoltoBlocks(editor) {
     const blocks = extractExtras(editor);
     if (!blocks.length) {
       return;
-      // blocks.push(syncCreateSlateBlock([createEmptyParagraph()]));
+      // blocks.push(syncCreateSlateBlock(config.settings.slate.defaultValue()));
     }
     console.log('blocks', blocks);
 

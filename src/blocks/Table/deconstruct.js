@@ -27,7 +27,7 @@ export function syncCreateTableBlock(rows) {
  * `slateTable` blocks.
  */
 export function extractTables(editor, pathRef) {
-  console.log('extractTables', editor, pathRef);
+  // console.log('extractTables', editor, pathRef);
   const tableNodes = Array.from(
     Editor.nodes(editor, {
       at: pathRef.current,

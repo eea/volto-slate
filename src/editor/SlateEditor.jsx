@@ -245,15 +245,13 @@ class SlateEditor extends Component {
             {selected ? (
               <>
                 <InlineToolbar editor={editor} className={className} />
-                {Object.keys(slate.elementToolbarButtons).map((t) => {
-                  return (
-                    <Toolbar elementType={t}>
-                      {slate.elementToolbarButtons[t].map((Btn) => {
-                        return <Btn editor={editor} />;
-                      })}
-                    </Toolbar>
-                  );
-                })}
+                {Object.keys(slate.elementToolbarButtons).map((t, i) => (
+                  <Toolbar elementType={t} key={`t-${i}`}>
+                    {slate.elementToolbarButtons[t].map((Btn, y) => (
+                      <Btn editor={editor} key={`b-${y}`} />
+                    ))}
+                  </Toolbar>
+                ))}
               </>
             ) : (
               ''

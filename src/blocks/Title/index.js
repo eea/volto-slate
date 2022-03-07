@@ -1,10 +1,10 @@
-import React from "react";
-import TitleBlockView from "./TitleBlockView";
-import TitleBlockEdit from "./TitleBlockEdit";
+import React from 'react';
+import TitleBlockView from './TitleBlockView';
+import TitleBlockEdit from './TitleBlockEdit';
 
 export default (config) => {
-  const className = "documentFirstHeading";
-  const formFieldName = "title";
+  const className = 'documentFirstHeading';
+  const formFieldName = 'title';
 
   config.blocks.blocksConfig.title.view = (props) => (
     <TitleBlockView

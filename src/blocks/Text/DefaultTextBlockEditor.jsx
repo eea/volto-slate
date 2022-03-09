@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
+import { filter, isEmpty, keys, remove } from 'lodash';
 import { readAsDataURL } from 'promise-file-reader';
 import Dropzone from 'react-dropzone';
 import { defineMessages, useIntl } from 'react-intl';
@@ -23,6 +24,7 @@ import {
 } from 'volto-slate/utils';
 import { Transforms } from 'slate';
 
+import SlashMenu from './SlashMenu';
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
 import { handleKey } from './keyboard';
@@ -75,6 +77,7 @@ export const DefaultTextBlockEditor = (props) => {
   const [showDropzone, setShowDropzone] = React.useState(false);
   const [uploading, setUploading] = React.useState(false);
   const [newImageId, setNewImageId] = React.useState(null);
+  const [slashMenuSelected, setSlashMenuSelected] = React.useState(0);
 
   const prevReq = React.useRef(null);
 
@@ -188,6 +191,63 @@ export const DefaultTextBlockEditor = (props) => {
     }
   }, [onSelectBlock, selected, block]);
 
+  const slashCommand = data.plaintext?.trim().match(/^\/([a-z]*)$/);
+
+  const useAllowedBlocks = !isEmpty(allowedBlocks);
+
+  const filteredBlocksConfig = filter(blocksConfig, (item) => {
+    if (useAllowedBlocks) {
+      return allowedBlocks.includes(item.id);
+    } else {
+      return typeof item.restricted === 'function'
+        ? !item.restricted({ properties, block: item })
+        : !item.restricted;
+    }
+  }).sort((a, b) => (a.title < b.title ? -1 : 1));
+
+  // Remove non matching
+  if (slashCommand) {
+    remove(
+      filteredBlocksConfig,
+      (block) => block.title.toLowerCase().indexOf(slashCommand[1]) === -1,
+    );
+  }
+
+  const slashMenuSize = keys(filteredBlocksConfig).length;
+  if (slashMenuSelected > slashMenuSize - 1) {
+    setSlashMenuSelected(slashMenuSize - 1);
+  }
+
+  const onKeyDown = ({ editor, event }) => {
+    if (slashCommand) {
+      switch (event.key) {
+        case 'ArrowUp':
+          setSlashMenuSelected(
+            slashMenuSelected === 0 ? slashMenuSize - 1 : slashMenuSelected - 1,
+          );
+          event.preventDefault();
+          break;
+        case 'ArrowDown':
+          setSlashMenuSelected(
+            slashMenuSelected >= slashMenuSize - 1 ? 0 : slashMenuSelected + 1,
+          );
+          event.preventDefault();
+          break;
+        case 'Enter':
+          onInsertBlock(block, {
+            '@type': filteredBlocksConfig[slashMenuSelected].id,
+          });
+          event.preventDefault();
+          break;
+        default:
+          handleKey({ editor, event });
+          break;
+      }
+    } else {
+      handleKey({ editor, event });
+    }
+  };
+
   return (
     <div className="text-slate-editor-inner" ref={ref}>
       <>
@@ -228,7 +288,7 @@ export const DefaultTextBlockEditor = (props) => {
                   debug={DEBUG}
                   onFocus={handleFocus}
                   onChange={(value, editor) => onEditorChange(value, editor)}
-                  onKeyDown={handleKey}
+                  onKeyDown={onKeyDown}
                   selected={selected}
                   placeholder={placeholder}
                 />
@@ -251,6 +311,22 @@ export const DefaultTextBlockEditor = (props) => {
             size="24px"
             className="block-add-button"
             properties={properties}
+          />
+        )}
+
+        {selected && slashCommand && !disableNewBlocks && (
+          <SlashMenu
+            data={data}
+            currentBlock={block}
+            onInsertBlock={(id, value) => {
+              onSelectBlock(onInsertBlock(id, value));
+            }}
+            onMutateBlock={onMutateBlock}
+            allowedBlocks={allowedBlocks}
+            blocksConfig={filteredBlocksConfig}
+            properties={properties}
+            search={slashCommand[1]}
+            selected={slashMenuSelected}
           />
         )}
 

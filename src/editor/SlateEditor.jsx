@@ -219,6 +219,19 @@ class SlateEditor extends Component {
       (acc, apply) => apply(acc),
       this.state.editor,
     );
+
+    // Reset selection if field is reset
+    if (
+      editor.selection &&
+      this.props.value.length === 1 &&
+      this.props.value[0].children.length === 1 &&
+      this.props.value[0].children[0].text === ''
+    ) {
+      Transforms.select(editor, {
+        anchor: { path: [0, 0], offset: 0 },
+        focus: { path: [0, 0], offset: 0 },
+      });
+    }
     this.editor = editor;
 
     if (testingEditorRef) {
@@ -245,11 +258,11 @@ class SlateEditor extends Component {
             {selected ? (
               <>
                 <InlineToolbar editor={editor} className={className} />
-                {Object.keys(slate.elementToolbarButtons).map((t) => {
+                {Object.keys(slate.elementToolbarButtons).map((t, i) => {
                   return (
-                    <Toolbar elementType={t}>
-                      {slate.elementToolbarButtons[t].map((Btn) => {
-                        return <Btn editor={editor} />;
+                    <Toolbar elementType={t} key={i}>
+                      {slate.elementToolbarButtons[t].map((Btn, b) => {
+                        return <Btn editor={editor} key={b} />;
                       })}
                     </Toolbar>
                   );

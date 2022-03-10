@@ -234,9 +234,27 @@ export const DefaultTextBlockEditor = (props) => {
           event.preventDefault();
           break;
         case 'Enter':
-          onInsertBlock(block, {
-            '@type': filteredBlocksConfig[slashMenuSelected].id,
-          });
+          if (slashMenuSize > 0) {
+            onInsertBlock(
+              block,
+              {
+                '@type': filteredBlocksConfig[slashMenuSelected].id,
+              },
+              {
+                value: [
+                  {
+                    children: [
+                      {
+                        text: '',
+                      },
+                    ],
+                    type: 'p',
+                  },
+                ],
+                plaintext: '',
+              },
+            );
+          }
           event.preventDefault();
           break;
         default:

@@ -51,7 +51,7 @@ SlashMenu.propTypes = {
   currentBlock: PropTypes.string.isRequired,
   onInsertBlock: PropTypes.func,
   selected: PropTypes.number,
-  blocksConfig: PropTypes.objectOf(PropTypes.any),
+  blocksConfig: PropTypes.arrayOf(PropTypes.any),
 };
 
 export default SlashMenu;

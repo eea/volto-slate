@@ -4,7 +4,7 @@ exports[`renders a view table component 1`] = `
 <table
   className="ui table slate-table-block"
 >
-  <tbody
+  <thead
     className=""
   >
     <tr
@@ -18,6 +18,6 @@ exports[`renders a view table component 1`] = `
         </h2>
       </td>
     </tr>
-  </tbody>
+  </thead>
 </table>
 `;

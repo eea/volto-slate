@@ -85,11 +85,12 @@ const View = ({ data }) => {
         >
           {data.table.showHeaders ? (
             <Table.Header>
-              <Table.Row textAlign="center">
+              <Table.Row>
                 {headers.map((cell, index) => (
                   <Table.HeaderCell
                     key={cell.key}
                     textAlign="center"
+                    verticalAlign="middle"
                     sorted={state.column === index ? state.direction : null}
                     onClick={() => {
                       if (!data.table.sortable) return;
@@ -121,7 +122,8 @@ const View = ({ data }) => {
                 {map(rows[row], (cell) => (
                   <Table.Cell
                     key={cell.key}
-                    textAlign={data.table.align || 'center'}
+                    textAlign={data.table.textAlign || 'center'}
+                    verticalAlign={data.table.verticalAlign || 'middle'}
                   >
                     {cell.value}
                   </Table.Cell>

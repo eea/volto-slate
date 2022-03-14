@@ -10,14 +10,18 @@ exports[`renders a view table component 1`] = `
     <tr
       className=""
     >
-      <td
-        className=""
+      <th
+        textAlign="center aligned middle aligned"
+        onClick={[Function]}
       >
         <h2>
           My header
         </h2>
-      </td>
+      </th>
     </tr>
   </thead>
+  <tbody
+    className=""
+  />
 </table>
 `;

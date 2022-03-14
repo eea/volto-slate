@@ -165,9 +165,13 @@ const messages = defineMessages({
     id: 'Stripe alternate rows with color',
     defaultMessage: 'Stripe alternate rows with color',
   },
-  align: {
+  textAlign: {
     id: 'Align text',
     defaultMessage: 'Align text',
+  },
+  verticalAlign: {
+    id: 'Vertical align',
+    defaultMessage: 'Vertical align',
   },
   left: {
     id: 'Left',
@@ -180,6 +184,18 @@ const messages = defineMessages({
   right: {
     id: 'Right',
     defaultMessage: 'Right',
+  },
+  bottom: {
+    id: 'Bottom',
+    defaultMessage: 'Bottom',
+  },
+  middle: {
+    id: 'Middle',
+    defaultMessage: 'Middle',
+  },
+  top: {
+    id: 'Top',
+    defaultMessage: 'Top',
   },
 });
 
@@ -236,6 +252,7 @@ class Edit extends Component {
       },
       isClient: false,
     };
+    this.onChange = this.onChange.bind(this);
     this.onSelectCell = this.onSelectCell.bind(this);
     this.onInsertRowBefore = this.onInsertRowBefore.bind(this);
     this.onInsertRowAfter = this.onInsertRowAfter.bind(this);
@@ -254,7 +271,6 @@ class Edit extends Component {
     this.toggleCelled = this.toggleCelled.bind(this);
     this.toggleInverted = this.toggleInverted.bind(this);
     this.toggleStriped = this.toggleStriped.bind(this);
-    this.setAlign = this.setAlign.bind(this);
   }
 
   /**
@@ -285,6 +301,24 @@ class Edit extends Component {
         table: initialTable,
       });
     }
+  }
+
+  /**
+   * On change
+   * @method onChange
+   * @param {string} id Id of modified property.
+   * @param {any} value New value of modified property.
+   * @returns {undefined}
+   */
+  onChange(id, value) {
+    const table = this.props.data.table;
+    this.props.onChangeBlock(this.props.block, {
+      ...this.props.data,
+      table: {
+        ...table,
+        [id]: value,
+      },
+    });
   }
 
   /**
@@ -581,22 +615,6 @@ class Edit extends Component {
     this.toggleBool('striped');
   }
 
-  /**
-   * Set align
-   * @method setAlign
-   * @returns {undefined}
-   */
-  setAlign(id, value) {
-    const table = this.props.data.table;
-    this.props.onChangeBlock(this.props.block, {
-      ...this.props.data,
-      table: {
-        ...table,
-        [id]: value,
-      },
-    });
-  }
-
   componentDidUpdate(prevProps) {
     if (prevProps.selected && !this.props.selected) {
       this.setState({ selected: null });
@@ -716,7 +734,11 @@ class Edit extends Component {
               <Table.Header>
                 <Table.Row textAlign="center">
                   {headers.map((cell, cellIndex) => (
-                    <Table.HeaderCell key={cell.key} textAlign="center">
+                    <Table.HeaderCell
+                      key={cell.key}
+                      textAlign="center"
+                      verticalAlign="middle"
+                    >
                       <Cell
                         value={cell.value}
                         row={0}
@@ -748,7 +770,10 @@ class Edit extends Component {
                   {map(row.cells, (cell, cellIndex) => (
                     <Table.Cell
                       key={cell.key}
-                      textAlign={this.props.data.table.align || 'center'}
+                      textAlign={this.props.data.table.textAlign || 'center'}
+                      verticalAlign={
+                        this.props.data.table.verticalAlign || 'middle'
+                      }
                       className={
                         this.props.selected &&
                         this.state.selected &&
@@ -857,15 +882,30 @@ class Edit extends Component {
                   onChange={this.toggleInverted}
                 />
                 <Field
-                  id="align"
-                  title={this.props.intl.formatMessage(messages.align)}
+                  id="textAlign"
+                  title={this.props.intl.formatMessage(messages.textAlign)}
                   choices={[
                     ['left', this.props.intl.formatMessage(messages.left)],
                     ['center', this.props.intl.formatMessage(messages.center)],
                     ['right', this.props.intl.formatMessage(messages.right)],
                   ]}
-                  value={this.props.data.table && this.props.data.table.align}
-                  onChange={this.setAlign}
+                  value={
+                    this.props.data.table && this.props.data.table.textAlign
+                  }
+                  onChange={this.onChange}
+                />
+                <Field
+                  id="verticalAlign"
+                  title={this.props.intl.formatMessage(messages.verticalAlign)}
+                  choices={[
+                    ['bottom', this.props.intl.formatMessage(messages.bottom)],
+                    ['middle', this.props.intl.formatMessage(messages.middle)],
+                    ['top', this.props.intl.formatMessage(messages.top)],
+                  ]}
+                  value={
+                    this.props.data.table && this.props.data.table.verticalAlign
+                  }
+                  onChange={this.onChange}
                 />
               </Segment>
             </Form>

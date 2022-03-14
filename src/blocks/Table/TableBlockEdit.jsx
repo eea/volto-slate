@@ -137,6 +137,10 @@ const messages = defineMessages({
     id: 'Make the table sortable',
     defaultMessage: 'Make the table sortable',
   },
+  sortableDescription: {
+    id: 'Visible only in view mode',
+    defaultMessage: 'Visible only in view mode',
+  },
   fixed: {
     id: 'Fixed width table cells',
     defaultMessage: 'Fixed width table cells',
@@ -164,6 +168,18 @@ const messages = defineMessages({
   align: {
     id: 'Align text',
     defaultMessage: 'Align text',
+  },
+  left: {
+    id: 'Left',
+    defaultMessage: 'Left',
+  },
+  center: {
+    id: 'Center',
+    defaultMessage: 'Center',
+  },
+  right: {
+    id: 'Right',
+    defaultMessage: 'Right',
   },
 });
 
@@ -279,7 +295,6 @@ class Edit extends Component {
    * @returns {undefined}
    */
   onSelectCell(row, cell) {
-    console.log('HERE', row, cell);
     this.setState({ selected: { row, cell } });
   }
 
@@ -788,7 +803,9 @@ class Edit extends Component {
                 <Field
                   id="sortable"
                   title={this.props.intl.formatMessage(messages.sortable)}
-                  description="Visible only in view mode"
+                  description={this.props.intl.formatMessage(
+                    messages.sortableDescription,
+                  )}
                   type="boolean"
                   value={
                     this.props.data.table && this.props.data.table.sortable
@@ -843,31 +860,14 @@ class Edit extends Component {
                   id="align"
                   title={this.props.intl.formatMessage(messages.align)}
                   choices={[
-                    ['left', 'Left'],
-                    ['center', 'Center'],
-                    ['right', 'Right'],
+                    ['left', this.props.intl.formatMessage(messages.left)],
+                    ['center', this.props.intl.formatMessage(messages.center)],
+                    ['right', this.props.intl.formatMessage(messages.right)],
                   ]}
                   value={this.props.data.table && this.props.data.table.align}
                   onChange={this.setAlign}
                 />
               </Segment>
-              {/* <Segment secondary attached>
-                <FormattedMessage id="Cell" defaultMessage="Cell" />
-              </Segment>
-              <Segment attached>
-                <Field
-                  id="celltype"
-                  title="Header cell"
-                  type="boolean"
-                  value={
-                    this.props.data.table &&
-                    this.props.data.table.rows[this.state.selected.row].cells[
-                      this.state.selected.cell
-                    ].type === 'header'
-                  }
-                  onChange={this.toggleCellType}
-                />
-              </Segment> */}
             </Form>
           </Portal>
         )}

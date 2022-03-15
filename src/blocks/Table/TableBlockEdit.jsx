@@ -64,6 +64,7 @@ const emptyRow = (cells) => ({
  * relevance only in the context in which it is used.
  */
 const initialTable = {
+  showHeaders: true,
   fixed: true,
   compact: false,
   basic: false,
@@ -627,8 +628,9 @@ class Edit extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
-    const headers = this.props.data.table.rows[0]?.cells;
-    const rows = this.props.data.table.rows.filter((_, index) => index > 0);
+    const headers = this.props.data.table?.rows?.[0]?.cells || [];
+    const rows =
+      this.props.data.table?.rows?.filter((_, index) => index > 0) || [];
 
     return (
       // TODO: use slate-table instead of table, but first copy the CSS styles

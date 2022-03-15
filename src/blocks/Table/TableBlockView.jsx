@@ -29,11 +29,12 @@ const View = ({ data }) => {
   });
 
   const headers = useMemo(() => {
-    return data.table.rows[0]?.cells;
+    return data.table.rows?.[0]?.cells;
   }, [data.table.rows]);
 
   const rows = useMemo(() => {
     const items = {};
+    if (!data.table.rows) return {};
     data.table.rows.forEach((row, index) => {
       if (index > 0) {
         items[row.key] = [];

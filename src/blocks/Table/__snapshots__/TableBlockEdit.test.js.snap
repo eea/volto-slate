@@ -7,7 +7,13 @@ exports[`renders an edit table block component 1`] = `
   <table
     className="ui table slate-table-block"
   >
-    
+    <thead
+      className=""
+    >
+      <tr
+        className="center aligned"
+      />
+    </thead>
     <tbody
       className=""
     />

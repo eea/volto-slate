@@ -64,7 +64,7 @@ const emptyRow = (cells) => ({
  * relevance only in the context in which it is used.
  */
 const initialTable = {
-  showHeaders: true,
+  hideHeaders: false,
   fixed: true,
   compact: false,
   basic: false,
@@ -130,9 +130,9 @@ const messages = defineMessages({
     id: 'Delete col',
     defaultMessage: 'Delete col',
   },
-  showHeaders: {
-    id: 'Show headers',
-    defaultMessage: 'Show headers',
+  hideHeaders: {
+    id: 'Hide headers',
+    defaultMessage: 'Hide headers',
   },
   sortable: {
     id: 'Make the table sortable',
@@ -264,7 +264,7 @@ class Edit extends Component {
     this.onChangeCell = this.onChangeCell.bind(this);
     this.toggleCellType = this.toggleCellType.bind(this);
     this.toggleBool = this.toggleBool.bind(this);
-    this.toggleShowHeaders = this.toggleShowHeaders.bind(this);
+    this.toggleHideHeaders = this.toggleHideHeaders.bind(this);
     this.toggleSortable = this.toggleSortable.bind(this);
     this.toggleFixed = this.toggleFixed.bind(this);
     this.toggleCompact = this.toggleCompact.bind(this);
@@ -546,11 +546,11 @@ class Edit extends Component {
 
   /**
    * Toggle fixed
-   * @method toggleShowHeaders
+   * @method toggleHideHeaders
    * @returns {undefined}
    */
-  toggleShowHeaders() {
-    this.toggleBool('showHeaders');
+  toggleHideHeaders() {
+    this.toggleBool('hideHeaders');
   }
 
   /**
@@ -732,7 +732,7 @@ class Edit extends Component {
             striped={this.props.data.table.striped}
             className="slate-table-block"
           >
-            {this.props.data.table.showHeaders ? (
+            {!this.props.data.table.hideHeaders ? (
               <Table.Header>
                 <Table.Row textAlign="center">
                   {headers.map((cell, cellIndex) => (
@@ -819,13 +819,13 @@ class Edit extends Component {
               </Segment>
               <Segment attached>
                 <Field
-                  id="showHeaders"
-                  title={this.props.intl.formatMessage(messages.showHeaders)}
+                  id="hideHeaders"
+                  title={this.props.intl.formatMessage(messages.hideHeaders)}
                   type="boolean"
                   value={
-                    this.props.data.table && this.props.data.table.showHeaders
+                    this.props.data.table && this.props.data.table.hideHeaders
                   }
-                  onChange={() => this.toggleShowHeaders()}
+                  onChange={() => this.toggleHideHeaders()}
                 />
                 <Field
                   id="sortable"

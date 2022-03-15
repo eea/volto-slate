@@ -84,7 +84,7 @@ const View = ({ data }) => {
           sortable={data.table.sortable}
           className="slate-table-block"
         >
-          {data.table.showHeaders ? (
+          {!data.table.hideHeaders ? (
             <Table.Header>
               <Table.Row>
                 {headers.map((cell, index) => (

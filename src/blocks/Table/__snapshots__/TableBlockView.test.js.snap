@@ -4,20 +4,24 @@ exports[`renders a view table component 1`] = `
 <table
   className="ui table slate-table-block"
 >
-  <tbody
+  <thead
     className=""
   >
     <tr
       className=""
     >
-      <td
-        className=""
+      <th
+        className="center aligned middle aligned"
+        onClick={[Function]}
       >
         <h2>
           My header
         </h2>
-      </td>
+      </th>
     </tr>
-  </tbody>
+  </thead>
+  <tbody
+    className=""
+  />
 </table>
 `;

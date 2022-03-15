@@ -886,11 +886,7 @@ class Edit extends Component {
                 <Field
                   id="textAlign"
                   title={this.props.intl.formatMessage(messages.textAlign)}
-                  choices={[
-                    ['left', this.props.intl.formatMessage(messages.left)],
-                    ['center', this.props.intl.formatMessage(messages.center)],
-                    ['right', this.props.intl.formatMessage(messages.right)],
-                  ]}
+                  widget="align"
                   value={
                     this.props.data.table && this.props.data.table.textAlign
                   }

@@ -31,11 +31,11 @@ describe('Block Tests: external text containing html contents/tags ', () => {
     // Save
     cy.toolbarSave();
 
-    cy.get('[id="page-document"] > p:nth-child(3)')
+    cy.get('[id="page-document"] > p:nth-of-type(2)')
       .children()
       .its('length')
       .should('be.gte', 1);
-    cy.get('[id="page-document"] > p:nth-child(4)')
+    cy.get('[id="page-document"] > p:nth-of-type(3)')
       .children()
       .should('have.length', 0);
   });

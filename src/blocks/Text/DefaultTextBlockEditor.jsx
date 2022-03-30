@@ -332,7 +332,7 @@ export const DefaultTextBlockEditor = (props) => {
           />
         )}
 
-        {selected && slashCommand && !disableNewBlocks && (
+        {false && selected && slashCommand && !disableNewBlocks && (
           <SlashMenu
             data={data}
             currentBlock={block}

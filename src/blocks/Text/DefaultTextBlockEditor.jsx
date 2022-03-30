@@ -41,7 +41,7 @@ const messages = defineMessages({
   },
 });
 
-const DEBUG = false;
+const DEBUG = true;
 
 export const DefaultTextBlockEditor = (props) => {
   const {
@@ -139,6 +139,7 @@ export const DefaultTextBlockEditor = (props) => {
       // split
       if (defaultSelection) {
         const selection = parseDefaultSelection(editor, defaultSelection);
+        console.log('default selection', selection);
         if (selection) {
           setTimeout(() => {
             Transforms.select(editor, selection);

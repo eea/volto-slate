@@ -35,7 +35,7 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
   let end;
 
   Editor.withoutNormalizing(editor, () => {
-    // insert block #0 contents in block #1 contents, at the beginning
+    // insert block #0 (previous block) contents in block #1 (current block) contents, at the beginning
     Transforms.insertNodes(editor, prev, {
       at: Editor.start(editor, []),
     });
@@ -50,8 +50,6 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
 
     end = Editor.end(editor, [0]);
 
-    let endPoint;
-
     Transforms.insertNodes(editor, { text: '' }, { at: end });
 
     end = Editor.end(editor, [0]);
@@ -64,7 +62,7 @@ export function mergeSlateWithBlockBackward(editor, prevBlock, event) {
       match: (n) => n.type === 'li' || Text.isText(n),
     });
 
-    endPoint = Editor.end(editor, [0]);
+    const endPoint = Editor.end(editor, [0]);
 
     Transforms.moveNodes(editor, {
       at: source,

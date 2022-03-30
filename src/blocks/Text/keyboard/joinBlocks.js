@@ -74,6 +74,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   // Else the editor contains characters, so we merge the current block's
   // `editor` with the block before, `otherBlock`.
   const cursor = mergeSlateWithBlockBackward(editor, otherBlock);
+  console.log('cursor', cursor);
 
   const combined = JSON.parse(JSON.stringify(editor.children));
 
@@ -89,6 +90,7 @@ export function joinWithPreviousBlock({ editor, event }) {
   const newFormData = deleteBlock(formData, block);
 
   ReactDOM.unstable_batchedUpdates(() => {
+    console.log('otherblock', otherBlockId);
     saveSlateBlockSelection(otherBlockId, cursor);
     onChangeField(blocksFieldname, newFormData[blocksFieldname]);
     onChangeField(blocksLayoutFieldname, newFormData[blocksLayoutFieldname]);

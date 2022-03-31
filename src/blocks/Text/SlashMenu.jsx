@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { map, filter, isEmpty, keys, remove } from 'lodash';
+import { map, filter, isEmpty } from 'lodash';
 import { Menu } from 'semantic-ui-react';
 import { useIntl, FormattedMessage } from 'react-intl';
 import { Icon } from '@plone/volto/components';
@@ -78,27 +78,30 @@ const PersistentSlashMenu = ({ editor }) => {
   const useAllowedBlocks = !isEmpty(allowedBlocks);
   const slashCommand = data.plaintext?.trim().match(/^\/([a-z]*)$/);
 
-  const filteredBlocksConfig = filter(blocksConfig, (item) => {
-    if (useAllowedBlocks) {
-      return allowedBlocks.includes(item.id);
-    } else {
-      return typeof item.restricted === 'function'
-        ? !item.restricted({ properties, block: item })
-        : !item.restricted;
-    }
-  })
-    .filter(
-      (block) => block.title.toLowerCase().indexOf(slashCommand[1]) === -1,
-    )
+  const availableBlocks = filter(blocksConfig, (item) =>
+    useAllowedBlocks
+      ? allowedBlocks.includes(item.id)
+      : typeof item.restricted === 'function'
+      ? !item.restricted({ properties, block: item })
+      : !item.restricted,
+  )
+    .filter((block) => slashCommand && block.id.indexOf(slashCommand[1]) === 0)
     .sort((a, b) => (a.title < b.title ? -1 : 1));
 
-  const slashMenuSize = keys(filteredBlocksConfig).length;
+  const slashMenuSize = availableBlocks.length;
   if (slashMenuSelected > slashMenuSize - 1) {
     setSlashMenuSelected(slashMenuSize - 1);
   }
 
+  const show = selected && slashCommand && !disableNewBlocks;
+
+  React.useEffect(() => {
+    editor.showSlashMenu = show;
+    return () => (editor.showSlashMenu = false);
+  }, [editor, show]);
+
   return (
-    (false && selected && slashCommand && !disableNewBlocks && (
+    show && (
       <SlashMenu
         data={data}
         currentBlock={block}
@@ -106,14 +109,12 @@ const PersistentSlashMenu = ({ editor }) => {
           onSelectBlock(onInsertBlock(id, value));
         }}
         onMutateBlock={onMutateBlock}
-        allowedBlocks={allowedBlocks}
-        blocksConfig={filteredBlocksConfig}
+        availableBlocks={availableBlocks}
         properties={properties}
         search={slashCommand[1]}
         selected={slashMenuSelected}
       />
-    )) ||
-    ''
+    )
   );
 };
 

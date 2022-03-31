@@ -85,6 +85,10 @@ class SlateEditor extends Component {
   }
 
   createEditor(uid) {
+    // extensions are "editor plugins" or "editor wrappers". It's a similar
+    // similar to OOP inheritance, where a callable creates a new copy of the
+    // editor, while replacing or adding new capabilities to that editor.
+    // Extensions are purely JS, no React components.
     const editor = makeEditor({ extensions: this.props.extensions });
 
     // When the editor loses focus it no longer has a valid selections. This

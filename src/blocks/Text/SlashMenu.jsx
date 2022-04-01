@@ -109,6 +109,7 @@ const PersistentSlashMenu = ({ editor }) => {
           : !item.restricted,
       )
         .filter(
+          // TODO: make it work with intl?
           (block) => slashCommand && block.id.indexOf(slashCommand[1]) === 0,
         )
         .sort((a, b) => (a.title < b.title ? -1 : 1)),

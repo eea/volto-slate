@@ -21,7 +21,6 @@ const emptySlateBlock = () => ({
 
 const SlashMenu = ({
   currentBlock,
-  // onInsertBlock,
   onMutateBlock,
   selected,
   availableBlocks,
@@ -108,11 +107,13 @@ const PersistentSlashMenu = ({ editor }) => {
   );
 
   const slashMenuSize = availableBlocks.length;
-  if (slashMenuSelected > slashMenuSize - 1) {
-    setSlashMenuSelected(slashMenuSize - 1);
-  }
-
   const show = selected && slashCommand && !disableNewBlocks;
+
+  React.useEffect(() => {
+    if (show && slashMenuSelected > slashMenuSize - 1) {
+      setSlashMenuSelected(slashMenuSize - 1);
+    }
+  }, [show, slashMenuSelected, slashMenuSize]);
 
   editor.showSlashMenu = show;
 

@@ -39,6 +39,7 @@ test('renders a view table component', () => {
               ],
             },
           ],
+          hideHeaders: false,
         },
       }}
     />,

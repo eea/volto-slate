@@ -19,6 +19,15 @@ const emptySlateBlock = () => ({
   plaintext: '',
 });
 
+const useIsMounted = () => {
+  const ref = React.useRef();
+  React.useEffect(() => {
+    ref.current = true;
+    return () => (ref.current = false);
+  }, []);
+  return ref.current;
+};
+
 const SlashMenu = ({
   currentBlock,
   onMutateBlock,
@@ -109,11 +118,13 @@ const PersistentSlashMenu = ({ editor }) => {
   const slashMenuSize = availableBlocks.length;
   const show = selected && slashCommand && !disableNewBlocks;
 
+  const isMounted = useIsMounted();
+
   React.useEffect(() => {
-    if (show && slashMenuSelected > slashMenuSize - 1) {
+    if (isMounted && show && slashMenuSelected > slashMenuSize - 1) {
       setSlashMenuSelected(slashMenuSize - 1);
     }
-  }, [show, slashMenuSelected, slashMenuSize]);
+  }, [show, slashMenuSelected, isMounted, slashMenuSize]);
 
   editor.showSlashMenu = show;
 
@@ -149,8 +160,4 @@ const PersistentSlashMenu = ({ editor }) => {
   );
 };
 
-const optimizer = (WrappedComponent) => (props) => {
-  return props.selected ? '' : <WrappedComponent {...props} />;
-};
-
-export default optimizer(PersistentSlashMenu);
+export default PersistentSlashMenu;

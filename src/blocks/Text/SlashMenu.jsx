@@ -149,15 +149,15 @@ const PersistentSlashMenu = ({ editor }) => {
       slashMenuSelected >= slashMenuSize - 1 ? 0 : slashMenuSelected + 1,
     );
 
-  return (
-    show && (
-      <SlashMenu
-        currentBlock={block}
-        onMutateBlock={onMutateBlock}
-        availableBlocks={availableBlocks}
-        selected={slashMenuSelected}
-      />
-    )
+  return show ? (
+    <SlashMenu
+      currentBlock={block}
+      onMutateBlock={onMutateBlock}
+      availableBlocks={availableBlocks}
+      selected={slashMenuSelected}
+    />
+  ) : (
+    ''
   );
 };
 

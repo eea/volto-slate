@@ -9,6 +9,7 @@ module.exports = {
     '@plone/volto/babel': '<rootDir>/node_modules/@plone/volto/babel',
     '@plone/volto/(.*)$': '<rootDir>/node_modules/@plone/volto/src/$1',
     '@package/(.*)$': '<rootDir>/src/$1',
+    '@root/(.*)$': '<rootDir>/src/$1',
     '@plone/volto-quanta/(.*)$': '<rootDir>/src/addons/volto-quanta/src/$1',
     '@eeacms/(.*?)/(.*)$': '<rootDir>/src/addons/$1/src/$2',
     'volto-slate/(.*)$': '<rootDir>/src/addons/volto-slate/src/$1',

@@ -64,12 +64,12 @@ class SlateEditor extends Component {
 
     const uid = uuid(); // used to namespace the editor's plugins
 
-    const { slate } = config.settings;
+    this.slateSettings = props.slateSettings || config.settings.slate;
 
     this.state = {
       editor: this.createEditor(uid),
-      showExpandedToolbar: config.settings.slate.showExpandedToolbar,
-      internalValue: this.props.value || slate.defaultValue(),
+      showExpandedToolbar: this.slateSettings.showExpandedToolbar,
+      internalValue: this.props.value || this.slateSettings.defaultValue(),
       uid,
     };
 
@@ -85,6 +85,10 @@ class SlateEditor extends Component {
   }
 
   createEditor(uid) {
+    // extensions are "editor plugins" or "editor wrappers". It's a similar
+    // similar to OOP inheritance, where a callable creates a new copy of the
+    // editor, while replacing or adding new capabilities to that editor.
+    // Extensions are purely JS, no React components.
     const editor = makeEditor({ extensions: this.props.extensions });
 
     // When the editor loses focus it no longer has a valid selections. This
@@ -110,7 +114,7 @@ class SlateEditor extends Component {
 
   multiDecorator([node, path]) {
     // Decorations (such as higlighting node types, selection, etc).
-    const { runtimeDecorators = [] } = config.settings.slate;
+    const { runtimeDecorators = [] } = this.slateSettings;
     return runtimeDecorators.reduce(
       (acc, deco) => deco(this.state.editor, [node, path], acc),
       [],
@@ -210,7 +214,7 @@ class SlateEditor extends Component {
       className,
       renderExtensions = [],
     } = this.props;
-    const { slate } = config.settings;
+    const slateSettings = this.slateSettings;
 
     // renderExtensions is needed because the editor is memoized, so if these
     // extensions need an updated state (for example to insert updated
@@ -252,21 +256,25 @@ class SlateEditor extends Component {
         <EditorContext.Provider value={editor}>
           <Slate
             editor={editor}
-            value={this.props.value || slate.defaultValue()}
+            value={this.props.value || slateSettings.defaultValue()}
             onChange={this.handleChange}
           >
             {selected ? (
               <>
                 <InlineToolbar editor={editor} className={className} />
-                {Object.keys(slate.elementToolbarButtons).map((t, i) => {
-                  return (
-                    <Toolbar elementType={t} key={i}>
-                      {slate.elementToolbarButtons[t].map((Btn, b) => {
-                        return <Btn editor={editor} key={b} />;
-                      })}
-                    </Toolbar>
-                  );
-                })}
+                {Object.keys(slateSettings.elementToolbarButtons).map(
+                  (t, i) => {
+                    return (
+                      <Toolbar elementType={t} key={i}>
+                        {slateSettings.elementToolbarButtons[t].map(
+                          (Btn, b) => {
+                            return <Btn editor={editor} key={b} />;
+                          },
+                        )}
+                      </Toolbar>
+                    );
+                  },
+                )}
               </>
             ) : (
               ''
@@ -312,13 +320,13 @@ class SlateEditor extends Component {
                 }, 200);
               }}
               onKeyDown={(event) => {
-                const handled = handleHotKeys(editor, event, slate);
+                const handled = handleHotKeys(editor, event, slateSettings);
                 if (handled) return;
                 onKeyDown && onKeyDown({ editor, event });
               }}
             />
             {selected &&
-              slate.persistentHelpers.map((Helper, i) => {
+              slateSettings.persistentHelpers.map((Helper, i) => {
                 return <Helper key={i} editor={editor} />;
               })}
             {this.props.debug ? (

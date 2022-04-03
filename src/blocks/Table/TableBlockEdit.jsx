@@ -64,6 +64,7 @@ const emptyRow = (cells) => ({
  * relevance only in the context in which it is used.
  */
 const initialTable = {
+  hideHeaders: false,
   fixed: true,
   compact: false,
   basic: false,
@@ -129,6 +130,18 @@ const messages = defineMessages({
     id: 'Delete col',
     defaultMessage: 'Delete col',
   },
+  hideHeaders: {
+    id: 'Hide headers',
+    defaultMessage: 'Hide headers',
+  },
+  sortable: {
+    id: 'Make the table sortable',
+    defaultMessage: 'Make the table sortable',
+  },
+  sortableDescription: {
+    id: 'Visible only in view mode',
+    defaultMessage: 'Visible only in view mode',
+  },
   fixed: {
     id: 'Fixed width table cells',
     defaultMessage: 'Fixed width table cells',
@@ -152,6 +165,38 @@ const messages = defineMessages({
   striped: {
     id: 'Stripe alternate rows with color',
     defaultMessage: 'Stripe alternate rows with color',
+  },
+  textAlign: {
+    id: 'Align text',
+    defaultMessage: 'Align text',
+  },
+  verticalAlign: {
+    id: 'Vertical align',
+    defaultMessage: 'Vertical align',
+  },
+  left: {
+    id: 'Left',
+    defaultMessage: 'Left',
+  },
+  center: {
+    id: 'Center',
+    defaultMessage: 'Center',
+  },
+  right: {
+    id: 'Right',
+    defaultMessage: 'Right',
+  },
+  bottom: {
+    id: 'Bottom',
+    defaultMessage: 'Bottom',
+  },
+  middle: {
+    id: 'Middle',
+    defaultMessage: 'Middle',
+  },
+  top: {
+    id: 'Top',
+    defaultMessage: 'Top',
   },
 });
 
@@ -200,12 +245,15 @@ class Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      headers: [],
+      rows: {},
       selected: {
         row: 0,
         cell: 0,
       },
       isClient: false,
     };
+    this.onChange = this.onChange.bind(this);
     this.onSelectCell = this.onSelectCell.bind(this);
     this.onInsertRowBefore = this.onInsertRowBefore.bind(this);
     this.onInsertRowAfter = this.onInsertRowAfter.bind(this);
@@ -216,6 +264,8 @@ class Edit extends Component {
     this.onChangeCell = this.onChangeCell.bind(this);
     this.toggleCellType = this.toggleCellType.bind(this);
     this.toggleBool = this.toggleBool.bind(this);
+    this.toggleHideHeaders = this.toggleHideHeaders.bind(this);
+    this.toggleSortable = this.toggleSortable.bind(this);
     this.toggleFixed = this.toggleFixed.bind(this);
     this.toggleCompact = this.toggleCompact.bind(this);
     this.toggleBasic = this.toggleBasic.bind(this);
@@ -252,6 +302,24 @@ class Edit extends Component {
         table: initialTable,
       });
     }
+  }
+
+  /**
+   * On change
+   * @method onChange
+   * @param {string} id Id of modified property.
+   * @param {any} value New value of modified property.
+   * @returns {undefined}
+   */
+  onChange(id, value) {
+    const table = this.props.data.table;
+    this.props.onChangeBlock(this.props.block, {
+      ...this.props.data,
+      table: {
+        ...table,
+        [id]: value,
+      },
+    });
   }
 
   /**
@@ -478,6 +546,24 @@ class Edit extends Component {
 
   /**
    * Toggle fixed
+   * @method toggleHideHeaders
+   * @returns {undefined}
+   */
+  toggleHideHeaders() {
+    this.toggleBool('hideHeaders');
+  }
+
+  /**
+   * Toggle sortable
+   * @method toggleSortable
+   * @returns {undefined}
+   */
+  toggleSortable() {
+    this.toggleBool('sortable');
+  }
+
+  /**
+   * Toggle fixed
    * @method toggleFixed
    * @returns {undefined}
    */
@@ -542,6 +628,10 @@ class Edit extends Component {
    * @returns {string} Markup for the component.
    */
   render() {
+    const headers = this.props.data.table?.rows?.[0]?.cells || [];
+    const rows =
+      this.props.data.table?.rows?.filter((_, index) => index > 0) || [];
+
     return (
       // TODO: use slate-table instead of table, but first copy the CSS styles
       // to the new name
@@ -642,17 +732,54 @@ class Edit extends Component {
             striped={this.props.data.table.striped}
             className="slate-table-block"
           >
+            {!this.props.data.table.hideHeaders ? (
+              <Table.Header>
+                <Table.Row textAlign="center">
+                  {headers.map((cell, cellIndex) => (
+                    <Table.HeaderCell
+                      key={cell.key}
+                      textAlign="center"
+                      verticalAlign="middle"
+                    >
+                      <Cell
+                        value={cell.value}
+                        row={0}
+                        cell={cellIndex}
+                        onSelectCell={this.onSelectCell}
+                        selected={
+                          this.props.selected &&
+                          this.state.selected &&
+                          0 === this.state.selected.row &&
+                          cellIndex === this.state.selected.cell
+                        }
+                        selectedCell={this.state.selected}
+                        isTableBlockSelected={this.props.selected}
+                        onAddBlock={this.props.onAddBlock}
+                        onSelectBlock={this.props.onSelectBlock}
+                        onChange={this.onChangeCell}
+                        index={this.props.index}
+                      />
+                    </Table.HeaderCell>
+                  ))}
+                </Table.Row>
+              </Table.Header>
+            ) : (
+              ''
+            )}
             <Table.Body>
-              {map(this.props.data.table.rows, (row, rowIndex) => (
+              {map(rows, (row, rowIndex) => (
                 <Table.Row key={row.key}>
                   {map(row.cells, (cell, cellIndex) => (
                     <Table.Cell
                       key={cell.key}
-                      as={cell.type === 'header' ? 'th' : 'td'}
+                      textAlign={this.props.data.table.textAlign || 'center'}
+                      verticalAlign={
+                        this.props.data.table.verticalAlign || 'middle'
+                      }
                       className={
                         this.props.selected &&
                         this.state.selected &&
-                        rowIndex === this.state.selected.row &&
+                        rowIndex + 1 === this.state.selected.row &&
                         cellIndex === this.state.selected.cell &&
                         this.props.selected
                           ? 'selected'
@@ -661,13 +788,13 @@ class Edit extends Component {
                     >
                       <Cell
                         value={cell.value}
-                        row={rowIndex}
+                        row={rowIndex + 1}
                         cell={cellIndex}
                         onSelectCell={this.onSelectCell}
                         selected={
                           this.props.selected &&
                           this.state.selected &&
-                          rowIndex === this.state.selected.row &&
+                          rowIndex + 1 === this.state.selected.row &&
                           cellIndex === this.state.selected.cell
                         }
                         selectedCell={this.state.selected}
@@ -691,6 +818,27 @@ class Edit extends Component {
                 <FormattedMessage id="Table" defaultMessage="Table" />
               </Segment>
               <Segment attached>
+                <Field
+                  id="hideHeaders"
+                  title={this.props.intl.formatMessage(messages.hideHeaders)}
+                  type="boolean"
+                  value={
+                    this.props.data.table && this.props.data.table.hideHeaders
+                  }
+                  onChange={() => this.toggleHideHeaders()}
+                />
+                <Field
+                  id="sortable"
+                  title={this.props.intl.formatMessage(messages.sortable)}
+                  description={this.props.intl.formatMessage(
+                    messages.sortableDescription,
+                  )}
+                  type="boolean"
+                  value={
+                    this.props.data.table && this.props.data.table.sortable
+                  }
+                  onChange={() => this.toggleSortable()}
+                />
                 <Field
                   id="fixed"
                   title={this.props.intl.formatMessage(messages.fixed)}
@@ -735,22 +883,27 @@ class Edit extends Component {
                   }
                   onChange={this.toggleInverted}
                 />
-              </Segment>
-              <Segment secondary attached>
-                <FormattedMessage id="Cell" defaultMessage="Cell" />
-              </Segment>
-              <Segment attached>
                 <Field
-                  id="celltype"
-                  title="Header cell"
-                  type="boolean"
+                  id="textAlign"
+                  title={this.props.intl.formatMessage(messages.textAlign)}
+                  widget="align"
                   value={
-                    this.props.data.table &&
-                    this.props.data.table.rows[this.state.selected.row].cells[
-                      this.state.selected.cell
-                    ].type === 'header'
+                    this.props.data.table && this.props.data.table.textAlign
                   }
-                  onChange={this.toggleCellType}
+                  onChange={this.onChange}
+                />
+                <Field
+                  id="verticalAlign"
+                  title={this.props.intl.formatMessage(messages.verticalAlign)}
+                  choices={[
+                    ['bottom', this.props.intl.formatMessage(messages.bottom)],
+                    ['middle', this.props.intl.formatMessage(messages.middle)],
+                    ['top', this.props.intl.formatMessage(messages.top)],
+                  ]}
+                  value={
+                    this.props.data.table && this.props.data.table.verticalAlign
+                  }
+                  onChange={this.onChange}
                 />
               </Segment>
             </Form>

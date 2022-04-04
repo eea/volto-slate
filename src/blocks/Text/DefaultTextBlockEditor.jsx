@@ -23,6 +23,7 @@ import {
 } from 'volto-slate/utils';
 import { Transforms } from 'slate';
 
+import PersistentSlashMenu from './SlashMenu';
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
 import { handleKey } from './keyboard';
@@ -84,6 +85,17 @@ export const DefaultTextBlockEditor = (props) => {
       return editor;
     },
     [props],
+  );
+
+  const slateSettings = React.useMemo(
+    () => ({
+      ...config.settings.slate,
+      persistentHelpers: [
+        ...config.settings.slate.persistentHelpers,
+        PersistentSlashMenu,
+      ],
+    }),
+    [],
   );
 
   const onDrop = React.useCallback(
@@ -231,6 +243,7 @@ export const DefaultTextBlockEditor = (props) => {
                   onKeyDown={handleKey}
                   selected={selected}
                   placeholder={placeholder}
+                  slateSettings={slateSettings}
                 />
                 {DEBUG ? <div>{block}</div> : ''}
               </>

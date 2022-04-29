@@ -1,44 +1,44 @@
-import ReactDOM from 'react-dom';
-import React from 'react';
-import { readAsDataURL } from 'promise-file-reader';
-import Dropzone from 'react-dropzone';
-import { defineMessages, useIntl } from 'react-intl';
-import { useInView } from 'react-intersection-observer';
-import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
+import ReactDOM from "react-dom";
+import React from "react";
+import { readAsDataURL } from "promise-file-reader";
+import Dropzone from "react-dropzone";
+import { defineMessages, useIntl } from "react-intl";
+import { useInView } from "react-intersection-observer";
+import { Dimmer, Loader, Message, Segment } from "semantic-ui-react";
 
-import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
-import config from '@plone/volto/registry';
+import { flattenToAppURL, getBaseUrl } from "@plone/volto/helpers";
+import config from "@plone/volto/registry";
 import {
-  InlineForm,
+  BlockDataForm,
   SidebarPortal,
   BlockChooserButton,
-} from '@plone/volto/components';
+} from "@plone/volto/components";
 
-import { SlateEditor } from 'volto-slate/editor';
-import { serializeNodesToText } from 'volto-slate/editor/render';
+import { SlateEditor } from "volto-slate/editor";
+import { serializeNodesToText } from "volto-slate/editor/render";
 import {
   createImageBlock,
   parseDefaultSelection,
   deconstructToVoltoBlocks,
-} from 'volto-slate/utils';
-import { Transforms } from 'slate';
+} from "volto-slate/utils";
+import { Transforms } from "slate";
 
-import PersistentSlashMenu from './SlashMenu';
-import ShortcutListing from './ShortcutListing';
-import MarkdownIntroduction from './MarkdownIntroduction';
-import { handleKey } from './keyboard';
-import TextBlockSchema from './schema';
+import PersistentSlashMenu from "./SlashMenu";
+import ShortcutListing from "./ShortcutListing";
+import MarkdownIntroduction from "./MarkdownIntroduction";
+import { handleKey } from "./keyboard";
+import TextBlockSchema from "./schema";
 
-import imageBlockSVG from '@plone/volto/components/manage/Blocks/Image/block-image.svg';
+import imageBlockSVG from "@plone/volto/components/manage/Blocks/Image/block-image.svg";
 
-import './css/editor.css';
+import "./css/editor.css";
 
 // TODO: refactor dropzone to separate component wrapper
 
 const messages = defineMessages({
   text: {
-    id: 'Type text…',
-    defaultMessage: 'Type text…',
+    id: "Type text…",
+    defaultMessage: "Type text…",
   },
 });
 
@@ -84,7 +84,7 @@ export const DefaultTextBlockEditor = (props) => {
       editor.getBlockProps = () => props;
       return editor;
     },
-    [props],
+    [props]
   );
 
   const slateSettings = React.useMemo(
@@ -95,7 +95,7 @@ export const DefaultTextBlockEditor = (props) => {
         PersistentSlashMenu,
       ],
     }),
-    [],
+    []
   );
 
   const onDrop = React.useCallback(
@@ -104,34 +104,34 @@ export const DefaultTextBlockEditor = (props) => {
       // inteligently, show progress report on uploading files
       setUploading(true);
       files.forEach((file) => {
-        const [mime] = file.type.split('/');
-        if (mime !== 'image') return;
+        const [mime] = file.type.split("/");
+        if (mime !== "image") return;
 
         readAsDataURL(file).then((data) => {
           const fields = data.match(/^data:(.*);(.*),(.*)$/);
           uploadContent(
             getBaseUrl(pathname),
             {
-              '@type': 'Image',
+              "@type": "Image",
               title: file.name,
               image: {
                 data: fields[3],
                 encoding: fields[2],
-                'content-type': fields[1],
+                "content-type": fields[1],
                 filename: file.name,
               },
             },
-            block,
+            block
           );
         });
       });
       setShowDropzone(false);
     },
-    [pathname, uploadContent, block],
+    [pathname, uploadContent, block]
   );
 
   const { loaded, loading } = uploadRequest;
-  const imageId = uploadedContent['@id'];
+  const imageId = uploadedContent["@id"];
   const prevLoaded = prevReq.current;
 
   React.useEffect(() => {
@@ -162,7 +162,7 @@ export const DefaultTextBlockEditor = (props) => {
         }
       }
     },
-    [defaultSelection, block, saveSlateBlockSelection],
+    [defaultSelection, block, saveSlateBlockSelection]
   );
 
   const onEditorChange = (value, editor) => {
@@ -179,7 +179,7 @@ export const DefaultTextBlockEditor = (props) => {
 
   // Get editing instructions from block settings or props
   let instructions = data?.instructions?.data || data?.instructions;
-  if (!instructions || instructions === '<p><br/></p>') {
+  if (!instructions || instructions === "<p><br/></p>") {
     instructions = formDescription;
   }
 
@@ -191,7 +191,7 @@ export const DefaultTextBlockEditor = (props) => {
   const disableNewBlocks = data?.disableNewBlocks || detached;
   const { ref, inView } = useInView({
     threshold: 0,
-    rootMargin: '0px 0px 200px 0px',
+    rootMargin: "0px 0px 200px 0px",
   });
 
   const handleFocus = React.useCallback(() => {
@@ -245,7 +245,7 @@ export const DefaultTextBlockEditor = (props) => {
                   placeholder={placeholder}
                   slateSettings={slateSettings}
                 />
-                {DEBUG ? <div>{block}</div> : ''}
+                {DEBUG ? <div>{block}</div> : ""}
               </>
             );
           }}
@@ -277,7 +277,7 @@ export const DefaultTextBlockEditor = (props) => {
             <>
               <ShortcutListing />
               <MarkdownIntroduction />
-              <InlineForm
+              <BlockDataForm
                 schema={schema}
                 title={schema.title}
                 onChangeField={(id, value) => {
@@ -287,6 +287,7 @@ export const DefaultTextBlockEditor = (props) => {
                   });
                 }}
                 formData={data}
+                block={block}
               />
             </>
           )}

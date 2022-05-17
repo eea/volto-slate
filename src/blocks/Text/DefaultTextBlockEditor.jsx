@@ -9,7 +9,7 @@ import { Dimmer, Loader, Message, Segment } from 'semantic-ui-react';
 import { flattenToAppURL, getBaseUrl } from '@plone/volto/helpers';
 import config from '@plone/volto/registry';
 import {
-  InlineForm,
+  BlockDataForm,
   SidebarPortal,
   BlockChooserButton,
 } from '@plone/volto/components';
@@ -23,6 +23,7 @@ import {
 } from 'volto-slate/utils';
 import { Transforms } from 'slate';
 
+import PersistentSlashMenu from './SlashMenu';
 import ShortcutListing from './ShortcutListing';
 import MarkdownIntroduction from './MarkdownIntroduction';
 import { handleKey } from './keyboard';
@@ -84,6 +85,17 @@ export const DefaultTextBlockEditor = (props) => {
       return editor;
     },
     [props],
+  );
+
+  const slateSettings = React.useMemo(
+    () => ({
+      ...config.settings.slate,
+      persistentHelpers: [
+        ...config.settings.slate.persistentHelpers,
+        PersistentSlashMenu,
+      ],
+    }),
+    [],
   );
 
   const onDrop = React.useCallback(
@@ -231,6 +243,7 @@ export const DefaultTextBlockEditor = (props) => {
                   onKeyDown={handleKey}
                   selected={selected}
                   placeholder={placeholder}
+                  slateSettings={slateSettings}
                 />
                 {DEBUG ? <div>{block}</div> : ''}
               </>
@@ -264,7 +277,7 @@ export const DefaultTextBlockEditor = (props) => {
             <>
               <ShortcutListing />
               <MarkdownIntroduction />
-              <InlineForm
+              <BlockDataForm
                 schema={schema}
                 title={schema.title}
                 onChangeField={(id, value) => {
@@ -274,6 +287,7 @@ export const DefaultTextBlockEditor = (props) => {
                   });
                 }}
                 formData={data}
+                block={block}
               />
             </>
           )}

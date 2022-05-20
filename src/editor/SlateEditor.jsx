@@ -227,7 +227,7 @@ class SlateEditor extends Component {
     // Reset selection if field is reset
     if (
       editor.selection &&
-      this.props.value.length === 1 &&
+      this.props.value?.length === 1 &&
       this.props.value[0].children.length === 1 &&
       this.props.value[0].children[0].text === ''
     ) {

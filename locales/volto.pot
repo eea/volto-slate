@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plone\n"
-"POT-Creation-Date: 2021-12-07T09:17:22.447Z\n"
+"POT-Creation-Date: 2022-05-25T17:25:07.844Z\n"
 "Last-Translator: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "Language-Team: Plone i18n <plone-i18n@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,11 @@ msgstr ""
 #: editor/plugins/SimpleLink/index
 # defaultMessage: Add link
 msgid "Add link"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Align text
+msgid "Align text"
 msgstr ""
 
 #: editor/plugins/StyleMenu/StyleMenu
@@ -43,14 +48,19 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+#: blocks/Table/schema
+# defaultMessage: Bottom
+msgid "Bottom"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 # defaultMessage: Browse
 msgid "Browse"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
-# defaultMessage: Cell
-msgid "Cell"
+#: blocks/Table/schema
+# defaultMessage: Center
+msgid "Center"
 msgstr ""
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
@@ -64,11 +74,13 @@ msgid "Delete"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Delete col
 msgid "Delete col"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Delete row
 msgid "Delete row"
 msgstr ""
@@ -78,7 +90,7 @@ msgstr ""
 msgid "Delete table"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 # defaultMessage: Divide each row into separate cells
 msgid "Divide each row into separate cells"
 msgstr ""
@@ -99,7 +111,7 @@ msgstr ""
 msgid "Edit link"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 # defaultMessage: Fixed width table cells
 msgid "Fixed width table cells"
 msgstr ""
@@ -109,29 +121,53 @@ msgstr ""
 msgid "Font Style"
 msgstr ""
 
+#: blocks/Table/schema
+# defaultMessage: Hide headers
+msgid "Hide headers"
+msgstr ""
+
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Insert col after
 msgid "Insert col after"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Insert col before
 msgid "Insert col before"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Insert row after
 msgid "Insert row after"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 # defaultMessage: Insert row before
 msgid "Insert row before"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
+# defaultMessage: Left
+msgid "Left"
+msgstr ""
+
+#: blocks/Table/schema
 # defaultMessage: Make the table compact
 msgid "Make the table compact"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Make the table sortable
+msgid "Make the table sortable"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Middle
+msgid "Middle"
 msgstr ""
 
 #: editor/plugins/StyleMenu/StyleMenu
@@ -144,6 +180,11 @@ msgstr ""
 msgid "No items selected"
 msgstr ""
 
+#: blocks/Text/SlashMenu
+# defaultMessage: No matching blocks
+msgid "No matching blocks"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 # defaultMessage: Open object browser
 msgid "Open object browser"
@@ -154,7 +195,7 @@ msgstr ""
 msgid "Paragraph Style"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 # defaultMessage: Reduce complexity
 msgid "Reduce complexity"
 msgstr ""
@@ -169,24 +210,34 @@ msgstr ""
 msgid "Remove link"
 msgstr ""
 
+#: blocks/Table/schema
+# defaultMessage: Responsive
+msgid "Responsive"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Right
+msgid "Right"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 # defaultMessage: Select
 msgid "Select"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 # defaultMessage: Stripe alternate rows with color
 msgid "Stripe alternate rows with color"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
-# defaultMessage: Table
-msgid "Table"
-msgstr ""
-
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 # defaultMessage: Table color inverted
 msgid "Table color inverted"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Top
+msgid "Top"
 msgstr ""
 
 #: blocks/Text/DefaultTextBlockEditor
@@ -203,4 +254,14 @@ msgstr ""
 #: components/themes/View/DefaultSlateView
 # defaultMessage: Unknown Block {block}
 msgid "Unknown Block"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Vertical align
+msgid "Vertical align"
+msgstr ""
+
+#: blocks/Table/schema
+# defaultMessage: Visible only in view mode
+msgid "Visible only in view mode"
 msgstr ""

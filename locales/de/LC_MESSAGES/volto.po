@@ -19,6 +19,10 @@ msgstr ""
 msgid "Add link"
 msgstr "Link hinzufügen"
 
+#: blocks/Table/schema
+msgid "Align text"
+msgstr ""
+
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "All Styles Applied"
 msgstr "Alle Formatierungen angewendet"
@@ -35,13 +39,17 @@ msgstr ""
 msgid "Back"
 msgstr "Zurück"
 
+#: blocks/Table/schema
+msgid "Bottom"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Browse"
 msgstr "Durchsuchen"
 
-#: blocks/Table/TableBlockEdit
-msgid "Cell"
-msgstr "Zelle"
+#: blocks/Table/schema
+msgid "Center"
+msgstr ""
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
 msgid "Choose Target"
@@ -52,10 +60,12 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete col"
 msgstr "Spalte löschen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete row"
 msgstr "Zeile löschen"
 
@@ -63,7 +73,7 @@ msgstr "Zeile löschen"
 msgid "Delete table"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Divide each row into separate cells"
 msgstr "Jede Zeile in einzelne Zellen teilen"
 
@@ -80,7 +90,7 @@ msgstr "Element bearbeiten"
 msgid "Edit link"
 msgstr "Link bearbeiten"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Fixed width table cells"
 msgstr "Zellen mit fester Breite"
 
@@ -88,25 +98,45 @@ msgstr "Zellen mit fester Breite"
 msgid "Font Style"
 msgstr "Schriftart"
 
+#: blocks/Table/schema
+msgid "Hide headers"
+msgstr ""
+
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col after"
 msgstr "Spalte dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col before"
 msgstr "Spalte davor einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row after"
 msgstr "Zeile dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row before"
 msgstr "Zeile davor einfügen"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
+msgid "Left"
+msgstr ""
+
+#: blocks/Table/schema
 msgid "Make the table compact"
 msgstr "Tabelle komprimieren"
+
+#: blocks/Table/schema
+msgid "Make the table sortable"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Middle"
+msgstr ""
 
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "No Style"
@@ -116,6 +146,10 @@ msgstr "Keine Formatierung"
 msgid "No items selected"
 msgstr "Keine Elemente ausgewählt"
 
+#: blocks/Text/SlashMenu
+msgid "No matching blocks"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Open object browser"
 msgstr "Objektsucher öffnen"
@@ -124,7 +158,7 @@ msgstr "Objektsucher öffnen"
 msgid "Paragraph Style"
 msgstr "Abschnittsformatierung"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Reduce complexity"
 msgstr "Komplexität vereinfachen"
 
@@ -136,21 +170,29 @@ msgstr "Element entfernen"
 msgid "Remove link"
 msgstr "Link entferenen"
 
+#: blocks/Table/schema
+msgid "Responsive"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Right"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Select"
 msgstr "Auswählen"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Stripe alternate rows with color"
 msgstr "Zeilen im Wechsel einfärben"
 
-#: blocks/Table/TableBlockEdit
-msgid "Table"
-msgstr "Tabelle"
-
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Table color inverted"
 msgstr "Tabellenfarbe invertiert"
+
+#: blocks/Table/schema
+msgid "Top"
+msgstr ""
 
 #: blocks/Text/DefaultTextBlockEditor
 #: blocks/Text/DetachedTextBlockEditor
@@ -164,3 +206,11 @@ msgstr ""
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"
 msgstr "Unbekannter Block"
+
+#: blocks/Table/schema
+msgid "Vertical align"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Visible only in view mode"
+msgstr ""

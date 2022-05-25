@@ -13,7 +13,7 @@ msgstr ""
 
 #: blocks/Title/TitleBlockEdit
 msgid "Add a description…"
-msgstr ""
+msgstr "Beschreibung hinzufügen…"
 
 #: editor/plugins/SimpleLink/index
 msgid "Add link"
@@ -21,7 +21,7 @@ msgstr "Link hinzufügen"
 
 #: blocks/Table/schema
 msgid "Align text"
-msgstr ""
+msgstr "Text ausrichten"
 
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "All Styles Applied"
@@ -41,7 +41,7 @@ msgstr "Zurück"
 
 #: blocks/Table/schema
 msgid "Bottom"
-msgstr ""
+msgstr "Unterseite"
 
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Browse"
@@ -49,7 +49,7 @@ msgstr "Durchsuchen"
 
 #: blocks/Table/schema
 msgid "Center"
-msgstr ""
+msgstr "Mittig"
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
 msgid "Choose Target"
@@ -71,7 +71,7 @@ msgstr "Zeile löschen"
 
 #: editor/plugins/Table/index
 msgid "Delete table"
-msgstr ""
+msgstr "Tabelle löschen"
 
 #: blocks/Table/schema
 msgid "Divide each row into separate cells"
@@ -100,7 +100,7 @@ msgstr "Schriftart"
 
 #: blocks/Table/schema
 msgid "Hide headers"
-msgstr ""
+msgstr "Überschriften ausblenden"
 
 #: blocks/Table/TableBlockEdit
 #: editor/plugins/Table/index
@@ -124,7 +124,7 @@ msgstr "Zeile davor einfügen"
 
 #: blocks/Table/schema
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: blocks/Table/schema
 msgid "Make the table compact"
@@ -132,11 +132,11 @@ msgstr "Tabelle komprimieren"
 
 #: blocks/Table/schema
 msgid "Make the table sortable"
-msgstr ""
+msgstr "Machen Sie die Tabelle sortierbar"
 
 #: blocks/Table/schema
 msgid "Middle"
-msgstr ""
+msgstr "Mitte"
 
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "No Style"
@@ -148,7 +148,7 @@ msgstr "Keine Elemente ausgewählt"
 
 #: blocks/Text/SlashMenu
 msgid "No matching blocks"
-msgstr ""
+msgstr "Keine passenden Blöcke"
 
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Open object browser"
@@ -172,11 +172,11 @@ msgstr "Link entferenen"
 
 #: blocks/Table/schema
 msgid "Responsive"
-msgstr ""
+msgstr "Sich anpassendes Design"
 
 #: blocks/Table/schema
 msgid "Right"
-msgstr ""
+msgstr "Richtig"
 
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Select"
@@ -192,7 +192,7 @@ msgstr "Tabellenfarbe invertiert"
 
 #: blocks/Table/schema
 msgid "Top"
-msgstr ""
+msgstr "Oberteil"
 
 #: blocks/Text/DefaultTextBlockEditor
 #: blocks/Text/DetachedTextBlockEditor
@@ -201,7 +201,7 @@ msgstr "Text eingeben"
 
 #: blocks/Title/TitleBlockEdit
 msgid "Type the title…"
-msgstr ""
+msgstr "Titel eingeben…"
 
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"
@@ -209,8 +209,8 @@ msgstr "Unbekannter Block"
 
 #: blocks/Table/schema
 msgid "Vertical align"
-msgstr ""
+msgstr "Vertikal ausrichten"
 
 #: blocks/Table/schema
 msgid "Visible only in view mode"
-msgstr ""
+msgstr "Nur im Ansichtsmodus sichtbar"

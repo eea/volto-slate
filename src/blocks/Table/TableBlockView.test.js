@@ -21,6 +21,7 @@ test('renders a view table component', () => {
   const component = renderer.create(
     <View
       data={{
+        '@type': 'slateTable',
         table: {
           rows: [
             {

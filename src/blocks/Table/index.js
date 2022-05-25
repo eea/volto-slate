@@ -3,6 +3,7 @@ import TableBlockEdit from './TableBlockEdit';
 import TableBlockView from './TableBlockView';
 import { extractTables } from './deconstruct';
 import { normalizeTable } from './extensions/normalizeTable';
+import TableVariations from './variations';
 
 /**
  * @summary Called from Volto to configure new or existing Volto block types.
@@ -38,6 +39,7 @@ export default function install(config) {
     mostUsed: false,
     blockHasOwnFocusManagement: true,
     sidebarTab: 1,
+    variations: TableVariations,
     security: {
       addPermission: [],
       view: [],

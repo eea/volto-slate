@@ -6,13 +6,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { map, remove } from 'lodash';
-import { Button, Segment, Table, Form } from 'semantic-ui-react';
-import { Portal } from 'react-portal';
+import { Button, Table } from 'semantic-ui-react';
 import cx from 'classnames';
-import { FormattedMessage, defineMessages, injectIntl } from 'react-intl';
+import { defineMessages, injectIntl } from 'react-intl';
+import { Icon, BlockDataForm, SidebarPortal } from '@plone/volto/components';
 
 import Cell from './Cell';
-import { Field, Icon } from '@plone/volto/components';
+
+import getSchema from './schema';
 
 import rowBeforeSVG from '@plone/volto/icons/row-before.svg';
 import rowAfterSVG from '@plone/volto/icons/row-after.svg';
@@ -130,74 +131,6 @@ const messages = defineMessages({
     id: 'Delete col',
     defaultMessage: 'Delete col',
   },
-  hideHeaders: {
-    id: 'Hide headers',
-    defaultMessage: 'Hide headers',
-  },
-  sortable: {
-    id: 'Make the table sortable',
-    defaultMessage: 'Make the table sortable',
-  },
-  sortableDescription: {
-    id: 'Visible only in view mode',
-    defaultMessage: 'Visible only in view mode',
-  },
-  fixed: {
-    id: 'Fixed width table cells',
-    defaultMessage: 'Fixed width table cells',
-  },
-  compact: {
-    id: 'Make the table compact',
-    defaultMessage: 'Make the table compact',
-  },
-  basic: {
-    id: 'Reduce complexity',
-    defaultMessage: 'Reduce complexity',
-  },
-  celled: {
-    id: 'Divide each row into separate cells',
-    defaultMessage: 'Divide each row into separate cells',
-  },
-  inverted: {
-    id: 'Table color inverted',
-    defaultMessage: 'Table color inverted',
-  },
-  striped: {
-    id: 'Stripe alternate rows with color',
-    defaultMessage: 'Stripe alternate rows with color',
-  },
-  textAlign: {
-    id: 'Align text',
-    defaultMessage: 'Align text',
-  },
-  verticalAlign: {
-    id: 'Vertical align',
-    defaultMessage: 'Vertical align',
-  },
-  left: {
-    id: 'Left',
-    defaultMessage: 'Left',
-  },
-  center: {
-    id: 'Center',
-    defaultMessage: 'Center',
-  },
-  right: {
-    id: 'Right',
-    defaultMessage: 'Right',
-  },
-  bottom: {
-    id: 'Bottom',
-    defaultMessage: 'Bottom',
-  },
-  middle: {
-    id: 'Middle',
-    defaultMessage: 'Middle',
-  },
-  top: {
-    id: 'Top',
-    defaultMessage: 'Top',
-  },
 });
 
 /**
@@ -253,6 +186,7 @@ class Edit extends Component {
       },
       isClient: false,
     };
+    this.schema = getSchema({ intl: props.intl });
     this.onChange = this.onChange.bind(this);
     this.onSelectCell = this.onSelectCell.bind(this);
     this.onInsertRowBefore = this.onInsertRowBefore.bind(this);
@@ -262,16 +196,6 @@ class Edit extends Component {
     this.onDeleteRow = this.onDeleteRow.bind(this);
     this.onDeleteCol = this.onDeleteCol.bind(this);
     this.onChangeCell = this.onChangeCell.bind(this);
-    this.toggleCellType = this.toggleCellType.bind(this);
-    this.toggleBool = this.toggleBool.bind(this);
-    this.toggleHideHeaders = this.toggleHideHeaders.bind(this);
-    this.toggleSortable = this.toggleSortable.bind(this);
-    this.toggleFixed = this.toggleFixed.bind(this);
-    this.toggleCompact = this.toggleCompact.bind(this);
-    this.toggleBasic = this.toggleBasic.bind(this);
-    this.toggleCelled = this.toggleCelled.bind(this);
-    this.toggleInverted = this.toggleInverted.bind(this);
-    this.toggleStriped = this.toggleStriped.bind(this);
   }
 
   /**
@@ -346,23 +270,6 @@ class Edit extends Component {
       ...table.rows[row].cells[cell],
       value: JSON.parse(JSON.stringify(slateValue)),
     };
-    this.props.onChangeBlock(this.props.block, {
-      ...this.props.data,
-      table,
-    });
-  }
-
-  /**
-   * Toggle cell type (from header to data or reverse)
-   * @method toggleCellType
-   * @returns {undefined}
-   */
-  toggleCellType() {
-    const table = { ...this.props.data.table };
-    let type =
-      table.rows[this.state.selected.row].cells[this.state.selected.cell].type;
-    table.rows[this.state.selected.row].cells[this.state.selected.cell].type =
-      type === 'header' ? 'data' : 'header';
     this.props.onChangeBlock(this.props.block, {
       ...this.props.data,
       table,
@@ -527,95 +434,6 @@ class Edit extends Component {
     });
   }
 
-  /**
-   * Toggles bool state data ('fixed', 'compact' etc. can be true or false).
-   * @method toggleBool
-   * @param {string} value Key in the table state to toggle.
-   * @returns {undefined}
-   */
-  toggleBool(value) {
-    const table = this.props.data.table;
-    this.props.onChangeBlock(this.props.block, {
-      ...this.props.data,
-      table: {
-        ...table,
-        [value]: !table[value],
-      },
-    });
-  }
-
-  /**
-   * Toggle fixed
-   * @method toggleHideHeaders
-   * @returns {undefined}
-   */
-  toggleHideHeaders() {
-    this.toggleBool('hideHeaders');
-  }
-
-  /**
-   * Toggle sortable
-   * @method toggleSortable
-   * @returns {undefined}
-   */
-  toggleSortable() {
-    this.toggleBool('sortable');
-  }
-
-  /**
-   * Toggle fixed
-   * @method toggleFixed
-   * @returns {undefined}
-   */
-  toggleFixed() {
-    this.toggleBool('fixed');
-  }
-
-  /**
-   * Toggle compact
-   * @method toggleCompact
-   * @returns {undefined}
-   */
-  toggleCompact() {
-    this.toggleBool('compact');
-  }
-
-  /**
-   * Toggle basic
-   * @method toggleBasic
-   * @returns {undefined}
-   */
-  toggleBasic() {
-    this.toggleBool('basic');
-  }
-
-  /**
-   * Toggle celled
-   * @method toggleCelled
-   * @returns {undefined}
-   */
-  toggleCelled() {
-    this.toggleBool('celled');
-  }
-
-  /**
-   * Toggle inverted
-   * @method toggleInverted
-   * @returns {undefined}
-   */
-  toggleInverted() {
-    this.toggleBool('inverted');
-  }
-
-  /**
-   * Toggle striped
-   * @method toggleStriped
-   * @returns {undefined}
-   */
-  toggleStriped() {
-    this.toggleBool('striped');
-  }
-
   componentDidUpdate(prevProps) {
     if (prevProps.selected && !this.props.selected) {
       this.setState({ selected: null });
@@ -671,7 +489,7 @@ class Edit extends Component {
                 onClick={this.onDeleteRow}
                 disabled={
                   this.props.data.table &&
-                  this.props.data.table.rows.length === 1
+                  this.props.data.table?.rows?.length === 1
                 }
                 title={this.props.intl.formatMessage(messages.deleteRow)}
                 aria-label={this.props.intl.formatMessage(messages.deleteRow)}
@@ -712,7 +530,7 @@ class Edit extends Component {
                 onClick={this.onDeleteCol}
                 disabled={
                   this.props.data.table &&
-                  this.props.data.table.rows[0].cells.length === 1
+                  this.props.data.table?.rows?.[0]?.cells?.length === 1
                 }
                 title={this.props.intl.formatMessage(messages.deleteCol)}
                 aria-label={this.props.intl.formatMessage(messages.deleteCol)}
@@ -724,15 +542,15 @@ class Edit extends Component {
         )}
         {this.props.data.table && (
           <Table
-            fixed={this.props.data.table.fixed}
-            compact={this.props.data.table.compact}
-            basic={this.props.data.table.basic ? 'very' : false}
-            celled={this.props.data.table.celled}
-            inverted={this.props.data.table.inverted}
-            striped={this.props.data.table.striped}
+            fixed={this.props.data.table?.fixed}
+            compact={this.props.data.table?.compact}
+            basic={this.props.data.table?.basic ? 'very' : false}
+            celled={this.props.data.table?.celled}
+            inverted={this.props.data.table?.inverted}
+            striped={this.props.data.table?.striped}
             className="slate-table-block"
           >
-            {!this.props.data.table.hideHeaders ? (
+            {!this.props.data.table?.hideHeaders ? (
               <Table.Header>
                 <Table.Row textAlign="center">
                   {headers.map((cell, cellIndex) => (
@@ -772,9 +590,9 @@ class Edit extends Component {
                   {map(row.cells, (cell, cellIndex) => (
                     <Table.Cell
                       key={cell.key}
-                      textAlign={this.props.data.table.textAlign || 'center'}
+                      textAlign={this.props.data.table?.textAlign || 'center'}
                       verticalAlign={
-                        this.props.data.table.verticalAlign || 'middle'
+                        this.props.data.table?.verticalAlign || 'middle'
                       }
                       className={
                         this.props.selected &&
@@ -811,104 +629,27 @@ class Edit extends Component {
             </Table.Body>
           </Table>
         )}
-        {this.props.selected && this.state.selected && this.state.isClient && (
-          <Portal node={document.getElementById('sidebar-properties')}>
-            <Form method="post" onSubmit={(event) => event.preventDefault()}>
-              <Segment secondary attached>
-                <FormattedMessage id="Table" defaultMessage="Table" />
-              </Segment>
-              <Segment attached>
-                <Field
-                  id="hideHeaders"
-                  title={this.props.intl.formatMessage(messages.hideHeaders)}
-                  type="boolean"
-                  value={
-                    this.props.data.table && this.props.data.table.hideHeaders
-                  }
-                  onChange={() => this.toggleHideHeaders()}
-                />
-                <Field
-                  id="sortable"
-                  title={this.props.intl.formatMessage(messages.sortable)}
-                  description={this.props.intl.formatMessage(
-                    messages.sortableDescription,
-                  )}
-                  type="boolean"
-                  value={
-                    this.props.data.table && this.props.data.table.sortable
-                  }
-                  onChange={() => this.toggleSortable()}
-                />
-                <Field
-                  id="fixed"
-                  title={this.props.intl.formatMessage(messages.fixed)}
-                  type="boolean"
-                  value={this.props.data.table && this.props.data.table.fixed}
-                  onChange={() => this.toggleFixed()}
-                />
-                <Field
-                  id="celled"
-                  title={this.props.intl.formatMessage(messages.celled)}
-                  type="boolean"
-                  value={this.props.data.table && this.props.data.table.celled}
-                  onChange={this.toggleCelled}
-                />
-                <Field
-                  id="striped"
-                  title={this.props.intl.formatMessage(messages.striped)}
-                  type="boolean"
-                  value={this.props.data.table && this.props.data.table.striped}
-                  onChange={this.toggleStriped}
-                />
-                <Field
-                  id="compact"
-                  title={this.props.intl.formatMessage(messages.compact)}
-                  type="boolean"
-                  value={this.props.data.table && this.props.data.table.compact}
-                  onChange={() => this.toggleCompact()}
-                />
-                <Field
-                  id="basic"
-                  title={this.props.intl.formatMessage(messages.basic)}
-                  type="boolean"
-                  value={this.props.data.table && this.props.data.table.basic}
-                  onChange={this.toggleBasic}
-                />
-                <Field
-                  id="inverted"
-                  title={this.props.intl.formatMessage(messages.inverted)}
-                  type="boolean"
-                  value={
-                    this.props.data.table && this.props.data.table.inverted
-                  }
-                  onChange={this.toggleInverted}
-                />
-                <Field
-                  id="textAlign"
-                  title={this.props.intl.formatMessage(messages.textAlign)}
-                  widget="align"
-                  value={
-                    this.props.data.table && this.props.data.table.textAlign
-                  }
-                  onChange={this.onChange}
-                />
-                <Field
-                  id="verticalAlign"
-                  title={this.props.intl.formatMessage(messages.verticalAlign)}
-                  choices={[
-                    ['bottom', this.props.intl.formatMessage(messages.bottom)],
-                    ['middle', this.props.intl.formatMessage(messages.middle)],
-                    ['top', this.props.intl.formatMessage(messages.top)],
-                  ]}
-                  value={
-                    this.props.data.table && this.props.data.table.verticalAlign
-                  }
-                  onChange={this.onChange}
-                />
-              </Segment>
-            </Form>
-          </Portal>
-        )}
+        <SidebarPortal selected={this.props.selected}>
+          <BlockDataForm
+            block={this.props.block}
+            schema={this.schema}
+            title={this.schema.title}
+            onChangeField={(id, value) => {
+              this.props.onChangeBlock(this.props.block, {
+                ...this.props.data,
+                ...(['variation'].includes(id)
+                  ? { [id]: value }
+                  : {
+                      table: {
+                        ...(this.props.data.table || {}),
+                        [id]: value,
+                      },
+                    }),
+              });
+            }}
+            formData={{ ...(this.props.data.table || {}), ...this.props.data }}
+          />
+        </SidebarPortal>
       </div>
     );
   }

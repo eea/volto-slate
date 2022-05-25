@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'Hide headers',
     defaultMessage: 'Hide headers',
   },
+  responsive: {
+    id: 'Responsive',
+    defaultMessage: 'Responsive',
+  },
   sortable: {
     id: 'Make the table sortable',
     defaultMessage: 'Make the table sortable',
@@ -83,6 +87,7 @@ export default (props) => {
         fields: [
           'hideHeaders',
           'sortable',
+          'responsive',
           'fixed',
           'celled',
           'striped',
@@ -102,6 +107,10 @@ export default (props) => {
       sortable: {
         title: intl.formatMessage(messages.sortable),
         description: 'Visible only in view mode',
+        type: 'boolean',
+      },
+      responsive: {
+        title: intl.formatMessage(messages.responsive),
         type: 'boolean',
       },
       fixed: {

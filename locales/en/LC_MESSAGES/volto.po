@@ -19,6 +19,10 @@ msgstr ""
 msgid "Add link"
 msgstr ""
 
+#: blocks/Table/schema
+msgid "Align text"
+msgstr ""
+
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "All Styles Applied"
 msgstr ""
@@ -35,12 +39,16 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
+#: blocks/Table/schema
+msgid "Bottom"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Browse"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
-msgid "Cell"
+#: blocks/Table/schema
+msgid "Center"
 msgstr ""
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
@@ -52,10 +60,12 @@ msgid "Delete"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete col"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete row"
 msgstr ""
 
@@ -63,7 +73,7 @@ msgstr ""
 msgid "Delete table"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Divide each row into separate cells"
 msgstr ""
 
@@ -80,7 +90,7 @@ msgstr ""
 msgid "Edit link"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Fixed width table cells"
 msgstr ""
 
@@ -88,24 +98,44 @@ msgstr ""
 msgid "Font Style"
 msgstr ""
 
+#: blocks/Table/schema
+msgid "Hide headers"
+msgstr ""
+
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col after"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col before"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row after"
 msgstr ""
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row before"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
+msgid "Left"
+msgstr ""
+
+#: blocks/Table/schema
 msgid "Make the table compact"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Make the table sortable"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Middle"
 msgstr ""
 
 #: editor/plugins/StyleMenu/StyleMenu
@@ -116,6 +146,10 @@ msgstr ""
 msgid "No items selected"
 msgstr ""
 
+#: blocks/Text/SlashMenu
+msgid "No matching blocks"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Open object browser"
 msgstr ""
@@ -124,7 +158,7 @@ msgstr ""
 msgid "Paragraph Style"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Reduce complexity"
 msgstr ""
 
@@ -136,20 +170,28 @@ msgstr ""
 msgid "Remove link"
 msgstr ""
 
+#: blocks/Table/schema
+msgid "Responsive"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Right"
+msgstr ""
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Select"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Stripe alternate rows with color"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
-msgid "Table"
+#: blocks/Table/schema
+msgid "Table color inverted"
 msgstr ""
 
-#: blocks/Table/TableBlockEdit
-msgid "Table color inverted"
+#: blocks/Table/schema
+msgid "Top"
 msgstr ""
 
 #: blocks/Text/DefaultTextBlockEditor
@@ -163,4 +205,12 @@ msgstr ""
 
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Vertical align"
+msgstr ""
+
+#: blocks/Table/schema
+msgid "Visible only in view mode"
 msgstr ""

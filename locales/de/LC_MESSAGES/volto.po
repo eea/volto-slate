@@ -13,11 +13,15 @@ msgstr ""
 
 #: blocks/Title/TitleBlockEdit
 msgid "Add a description…"
-msgstr ""
+msgstr "Beschreibung hinzufügen…"
 
 #: editor/plugins/SimpleLink/index
 msgid "Add link"
 msgstr "Link hinzufügen"
+
+#: blocks/Table/schema
+msgid "Align text"
+msgstr "Text ausrichten"
 
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "All Styles Applied"
@@ -35,13 +39,17 @@ msgstr ""
 msgid "Back"
 msgstr "Zurück"
 
+#: blocks/Table/schema
+msgid "Bottom"
+msgstr "Unterseite"
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Browse"
 msgstr "Durchsuchen"
 
-#: blocks/Table/TableBlockEdit
-msgid "Cell"
-msgstr "Zelle"
+#: blocks/Table/schema
+msgid "Center"
+msgstr "Mittig"
 
 #: widgets/BlocksBrowser/BlocksBrowserBody
 msgid "Choose Target"
@@ -52,18 +60,20 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete col"
 msgstr "Spalte löschen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Delete row"
 msgstr "Zeile löschen"
 
 #: editor/plugins/Table/index
 msgid "Delete table"
-msgstr ""
+msgstr "Tabelle löschen"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Divide each row into separate cells"
 msgstr "Jede Zeile in einzelne Zellen teilen"
 
@@ -80,7 +90,7 @@ msgstr "Element bearbeiten"
 msgid "Edit link"
 msgstr "Link bearbeiten"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Fixed width table cells"
 msgstr "Zellen mit fester Breite"
 
@@ -88,25 +98,45 @@ msgstr "Zellen mit fester Breite"
 msgid "Font Style"
 msgstr "Schriftart"
 
+#: blocks/Table/schema
+msgid "Hide headers"
+msgstr "Überschriften ausblenden"
+
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col after"
 msgstr "Spalte dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert col before"
 msgstr "Spalte davor einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row after"
 msgstr "Zeile dahinter einfügen"
 
 #: blocks/Table/TableBlockEdit
+#: editor/plugins/Table/index
 msgid "Insert row before"
 msgstr "Zeile davor einfügen"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
+msgid "Left"
+msgstr "Links"
+
+#: blocks/Table/schema
 msgid "Make the table compact"
 msgstr "Tabelle komprimieren"
+
+#: blocks/Table/schema
+msgid "Make the table sortable"
+msgstr "Machen Sie die Tabelle sortierbar"
+
+#: blocks/Table/schema
+msgid "Middle"
+msgstr "Mitte"
 
 #: editor/plugins/StyleMenu/StyleMenu
 msgid "No Style"
@@ -116,6 +146,10 @@ msgstr "Keine Formatierung"
 msgid "No items selected"
 msgstr "Keine Elemente ausgewählt"
 
+#: blocks/Text/SlashMenu
+msgid "No matching blocks"
+msgstr "Keine passenden Blöcke"
+
 #: widgets/BlocksBrowser/BlocksBrowserWidget
 msgid "Open object browser"
 msgstr "Objektsucher öffnen"
@@ -124,7 +158,7 @@ msgstr "Objektsucher öffnen"
 msgid "Paragraph Style"
 msgstr "Abschnittsformatierung"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Reduce complexity"
 msgstr "Komplexität vereinfachen"
 
@@ -136,21 +170,29 @@ msgstr "Element entfernen"
 msgid "Remove link"
 msgstr "Link entferenen"
 
+#: blocks/Table/schema
+msgid "Responsive"
+msgstr "Sich anpassendes Design"
+
+#: blocks/Table/schema
+msgid "Right"
+msgstr "Richtig"
+
 #: widgets/BlocksBrowser/BlocksBrowserNav
 msgid "Select"
 msgstr "Auswählen"
 
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Stripe alternate rows with color"
 msgstr "Zeilen im Wechsel einfärben"
 
-#: blocks/Table/TableBlockEdit
-msgid "Table"
-msgstr "Tabelle"
-
-#: blocks/Table/TableBlockEdit
+#: blocks/Table/schema
 msgid "Table color inverted"
 msgstr "Tabellenfarbe invertiert"
+
+#: blocks/Table/schema
+msgid "Top"
+msgstr "Oberteil"
 
 #: blocks/Text/DefaultTextBlockEditor
 #: blocks/Text/DetachedTextBlockEditor
@@ -159,8 +201,16 @@ msgstr "Text eingeben"
 
 #: blocks/Title/TitleBlockEdit
 msgid "Type the title…"
-msgstr ""
+msgstr "Titel eingeben…"
 
 #: components/themes/View/DefaultSlateView
 msgid "Unknown Block"
 msgstr "Unbekannter Block"
+
+#: blocks/Table/schema
+msgid "Vertical align"
+msgstr "Vertikal ausrichten"
+
+#: blocks/Table/schema
+msgid "Visible only in view mode"
+msgstr "Nur im Ansichtsmodus sichtbar"

@@ -19,7 +19,7 @@ test('renders an edit table block component', () => {
   const component = renderer.create(
     <Provider store={store}>
       <Edit
-        data={{ table: { rows: [] } }}
+        data={{ '@type': 'slateTable', table: { rows: [] } }}
         selected={false}
         block="1234"
         onAddBlock={() => {}}

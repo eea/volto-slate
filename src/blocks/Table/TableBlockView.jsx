@@ -3,10 +3,11 @@
  * @module volto-slate/blocks/Table/View
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { map } from 'lodash';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { Table } from 'semantic-ui-react';
-import { map } from 'lodash';
 import {
   serializeNodes,
   serializeNodesToText,
@@ -22,7 +23,8 @@ import '../../editor/plugins/Table/less/public.less';
  * @extends Component
  * @param {object} data The table data to render as a table.
  */
-const View = ({ data }) => {
+const View = (props) => {
+  const { data } = props;
   const [state, setState] = useState({
     column: null,
     direction: null,
@@ -82,7 +84,9 @@ const View = ({ data }) => {
           inverted={data.table.inverted}
           striped={data.table.striped}
           sortable={data.table.sortable}
-          className="slate-table-block"
+          className={cx('slate-table-block', {
+            responsive: data.table.responsive,
+          })}
         >
           {!data.table.hideHeaders ? (
             <Table.Header>
@@ -120,9 +124,14 @@ const View = ({ data }) => {
           <Table.Body>
             {map(sortedRows, (row) => (
               <Table.Row key={row}>
-                {map(rows[row], (cell) => (
+                {map(rows[row], (cell, cellIndex) => (
                   <Table.Cell
                     key={cell.key}
+                    data-label={
+                      data.table.responsive
+                        ? serializeNodesToText(headers[cellIndex].value)
+                        : undefined
+                    }
                     textAlign={data.table.textAlign || 'center'}
                     verticalAlign={data.table.verticalAlign || 'middle'}
                   >

@@ -1,4 +1,4 @@
-import codeSVG from '@plone/volto/icons/code.svg';
+import iconSVG from '@plone/volto/icons/table.svg';
 import TableBlockEdit from './TableBlockEdit';
 import TableBlockView from './TableBlockView';
 import { extractTables } from './deconstruct';
@@ -30,7 +30,7 @@ export default function install(config) {
   config.blocks.blocksConfig.slateTable = {
     id: 'slateTable',
     title: 'Slate Table',
-    icon: codeSVG,
+    icon: iconSVG,
     group: 'text',
     view: TableBlockView,
     edit: TableBlockEdit,

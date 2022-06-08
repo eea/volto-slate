@@ -1,5 +1,5 @@
 import React from 'react';
-import codeSVG from '@plone/volto/icons/code.svg';
+import iconSVG from '@plone/volto/icons/subtext.svg';
 import TextBlockView from './TextBlockView';
 import TextBlockEdit from './TextBlockEdit';
 import TextBlockSchema from './TextBlockSchema';
@@ -108,7 +108,7 @@ export default (config) => {
   config.blocks.blocksConfig.slate = {
     id: 'slate',
     title: 'Slate',
-    icon: codeSVG,
+    icon: iconSVG,
     group: 'text',
     view: TextBlockView,
     edit: TextBlockEdit,

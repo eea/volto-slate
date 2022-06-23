@@ -3,13 +3,19 @@
  * @module volto-slate/blocks/Title/TitleBlockEdit
  */
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Editor, createEditor, Transforms, Node, Range } from 'slate';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { Editor, Node, Transforms, Range, createEditor } from 'slate';
 import { ReactEditor, Editable, Slate, withReact } from 'slate-react';
 import PropTypes from 'prop-types';
 import { defineMessages, useIntl } from 'react-intl';
 import config from '@plone/volto/registry';
-import { P } from '../../constants';
+import { P } from 'volto-slate/constants';
 import cx from 'classnames';
 
 const messages = defineMessages({
@@ -59,22 +65,32 @@ export const TitleBlockEdit = (props) => {
     editable,
   } = props;
 
-  const editor = useMemo(() => withReact(createEditor()), []);
+  const [editor] = useState(withReact(createEditor()));
+  const [initialValue] = useState([
+    {
+      type: P,
+      children: [
+        {
+          text: metadata?.[formFieldName] || properties?.[formFieldName] || '',
+        },
+      ],
+    },
+  ]);
+
   const intl = useIntl();
 
-  const disableNewBlocks = data.disableNewBlocks || detached;
+  const prevSelected = usePrevious(selected);
 
-  const text = metadata?.[formFieldName] || properties?.[formFieldName] || '';
-
-  const handleChange = useCallback(
-    (value) => {
-      const newText = Node.string(editor);
-      if (newText !== text) {
-        onChangeField(formFieldName, newText);
-      }
-    },
-    [editor, formFieldName, onChangeField, text],
+  const text = useMemo(
+    () => metadata?.[formFieldName] || properties?.[formFieldName] || '',
+    [metadata, properties, formFieldName],
   );
+
+  const placeholder = useMemo(
+    () => data.placeholder || intl.formatMessage(messages[formFieldName]),
+    [data.placeholder, formFieldName, intl],
+  );
+  const disableNewBlocks = useMemo(() => detached, [detached]);
 
   const TitleOrDescription = useMemo(() => {
     let TitleOrDescription;
@@ -94,8 +110,6 @@ export const TitleBlockEdit = (props) => {
     return TitleOrDescription;
   }, [formFieldName]);
 
-  const prevSelected = usePrevious(selected);
-
   useEffect(() => {
     if (!prevSelected && selected) {
       if (editor.selection && Range.isCollapsed(editor.selection)) {
@@ -103,16 +117,28 @@ export const TitleBlockEdit = (props) => {
         ReactEditor.focus(editor);
       } else {
         // nothing is selected, move focus to end
-        // with this setTimeout uncommented, the focusing of other Volto-Slate
-        // blocks breaks, not sure what was its initial role, but maybe we can
-        // delete it one day
-        // setTimeout(() => {
         ReactEditor.focus(editor);
         Transforms.select(editor, Editor.end(editor, []));
-        // });
       }
     }
   }, [prevSelected, selected, editor]);
+
+  useEffect(() => {
+    // undo/redo handler
+    const oldText = Node.string(editor);
+    if (oldText !== text) {
+      Transforms.insertText(editor, text, {
+        at: [0, 0],
+      });
+    }
+  }, [editor, text]);
+
+  const handleChange = useCallback(() => {
+    const newText = Node.string(editor);
+    if (newText !== text) {
+      onChangeField(formFieldName, newText);
+    }
+  }, [editor, formFieldName, onChangeField, text]);
 
   const handleKeyDown = useCallback(
     (ev) => {
@@ -153,15 +179,6 @@ export const TitleBlockEdit = (props) => {
     ],
   );
 
-  const val = useMemo(() => {
-    return [
-      {
-        type: P,
-        children: [{ text }],
-      },
-    ];
-  }, [text]);
-
   const handleFocus = useCallback(() => {
     onSelectBlock(block);
   }, [block, onSelectBlock]);
@@ -177,20 +194,15 @@ export const TitleBlockEdit = (props) => {
     [TitleOrDescription, className], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  editor.children = val;
-
   if (typeof window.__SERVER__ !== 'undefined') {
     return <div />;
   }
-
-  const placeholder =
-    data.placeholder || intl.formatMessage(messages[formFieldName]);
 
   return (
     <Slate
       editor={editor}
       onChange={handleChange}
-      value={val}
+      value={initialValue}
       className={cx({
         block: formFieldName === 'description',
         description: formFieldName === 'description',

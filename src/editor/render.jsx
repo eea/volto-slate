@@ -15,10 +15,13 @@ export const Element = ({ element, attributes = {}, extras, ...rest }) => {
   const El = elements[element.type] || elements['default'];
 
   const out = Object.assign(
-    element.styleName ? { className: element.styleName } : {},
+    {},
     ...Object.keys(attributes || {}).map((k) =>
       !isEmpty(attributes[k]) ? { [k]: attributes[k] } : {},
     ),
+    element.styleName
+      ? { className: cx(element.styleName, attributes?.className) }
+      : {},
   );
 
   return (

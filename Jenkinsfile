@@ -5,7 +5,7 @@ pipeline {
         GIT_NAME = "volto-slate"
         NAMESPACE = ""
         DEPENDENCIES = "volto-slate:asCypressDefault"
-        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims,sustainability.eionet.europa.eu,clms.land.copernicus.eu,industry.eea.europa.eu,water.europa.eu-freshwater,demo-www.eea.europa.eu,clmsdemo.devel6cph.eea.europa.eu"
+        SONARQUBE_TAGS = "volto.eea.europa.eu,climate-energy.eea.europa.eu,forest.eea.europa.eu,biodiversity.europa.eu,www.eea.europa.eu-ims,sustainability.eionet.europa.eu,clms.land.copernicus.eu,industry.eea.europa.eu,water.europa.eu-freshwater,demo-www.eea.europa.eu,clmsdemo.devel6cph.eea.europa.eu,circularity.eea.europa.eu"
     }
 
   stages {
@@ -125,7 +125,7 @@ pipeline {
               script {
                 try {
                   sh '''docker pull eeacms/plone-backend; docker run --rm -d --name="$BUILD_TAG-plone" -e SITE="Plone" -e PROFILES="eea.kitkat:testing" eeacms/plone-backend'''
-                  sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" plone/volto-addon-ci cypress'''
+                  sh '''docker pull plone/volto-addon-ci; docker run -i --name="$BUILD_TAG-cypress" --link $BUILD_TAG-plone:plone -e NAMESPACE="$NAMESPACE" -e GIT_NAME=$GIT_NAME -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" -e DEPENDENCIES="$DEPENDENCIES" -e VOLTO="alpha" plone/volto-addon-ci cypress'''
                 } finally {
                   try {
                     sh '''rm -rf cypress-reports cypress-results cypress-coverage'''

@@ -26,7 +26,7 @@ coverage-end */
 export const slateBeforeEach = (contentType = 'Document') => {
   cy.autologin();
   cy.createContent({
-    contentType: 'Folder',
+    contentType: 'Document',
     contentId: 'cypress',
     contentTitle: 'Cypress',
   });

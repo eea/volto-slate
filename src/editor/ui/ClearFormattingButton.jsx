@@ -12,11 +12,10 @@ const ClearFormattingButton = ({ icon, ...props }) => {
       event.preventDefault();
       clearFormatting(editor);
     },
-    [editor]
+    [editor],
   );
 
   return <ToolbarButton {...props} onMouseDown={handleMouseDown} icon={icon} />;
 };
 
 export default ClearFormattingButton;
-

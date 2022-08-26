@@ -318,4 +318,3 @@ export const clearFormatting = (editor) => {
     split: false,
   });
 };
-

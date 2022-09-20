@@ -1,33 +1,40 @@
 import React from 'react';
 import StyleMenu from './StyleMenu';
 import './style.css';
+import { Icon } from '@plone/volto/components';
+import paintSVG from '@plone/volto/icons/paint.svg';
 
 export default function install(config) {
   const { slate } = config.settings;
 
   slate.buttons.styleMenu = (props) => <StyleMenu {...props} title="Styles" />;
-  slate.toolbarButtons = [...(slate.toolbarButtons || []), 'styleMenu'];
-  slate.expandedToolbarButtons = [
-    ...(slate.expandedToolbarButtons || []),
-    'styleMenu',
+
+  slate.toolbarButtons.push('styleMenu');
+  slate.expandedToolbarButtons.push('styleMenu');
+
+  /* The slate Menu configuration in an addon */
+
+  slate.styleMenu = config.settings.slate.styleMenu || {};
+  slate.styleMenu.inlineStyles = [
+    {
+      cssClass: 'cool-inline-text',
+      label: 'Cool Inline Text',
+      icon: (props) => <Icon name={paintSVG} size="24px" />,
+    },
+  ];
+  slate.styleMenu.blockStyles = [
+    {
+      cssClass: 'underline-block-text',
+      label: 'Cool Block Text',
+      icon: (props) => <Icon name={paintSVG} size="24px" />,
+    },
   ];
 
-  // The style menu definitions are set in the arrays that follow (from any
-  // addon). Examples:
-  // config.settings.slate.styleMenu.inlineStyles = [
-  //   ...config.settings.slate.styleMenu.inlineStyles,
-  //   { cssClass: 'cool-inline-text', label: 'Cool Inline Text' },
-  //   { cssClass: 'red-inline-text', label: 'Red Inline Text' },
-  // ];
-  // config.settings.slate.styleMenu.blockStyles = [
-  //   ...config.settings.slate.styleMenu.blockStyles,
-  //   { cssClass: 'green-block-text', label: 'Green Text' },
-  //   { cssClass: 'underline-block-text', label: 'Underline Text' },
-  // ];
-  slate.styleMenu = {
-    inlineStyles: [],
-    blockStyles: [],
-  };
+  // slate.styleMenu = {
+  //   inlineStyles: [],
+  //   blockStyles: [],
+  //   //themeColors = { primary: 'red' };
+  // };
 
   return config;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactEditor, useSlate } from 'slate-react';
+import { useSlate } from 'slate-react';
 import { Dropdown } from 'semantic-ui-react';
 import { useIntl, defineMessages } from 'react-intl';
 import cx from 'classnames';
@@ -27,19 +27,31 @@ const StyleMenuButton = ({ icon, active, ...props }) => (
   <ToolbarButton {...props} icon={icon} active={active} />
 );
 
-const StylingsButton = () => {
+const MenuOpts = ({ editor, toSelect, option }) => {
+  const isActive = toSelect.includes(option);
+  return (
+    <Dropdown.Item
+      as="span"
+      active={isActive}
+      className={cx({ active: isActive })}
+      {...option}
+      onClick={(event, selItem) => {
+        event.stopPropagation();
+        toggleStyle(editor, {
+          cssClass: selItem.value,
+          isBlock: selItem.isBlock,
+        });
+      }}
+    />
+  );
+};
+
+const StylingsButton = (props) => {
   const editor = useSlate();
   const intl = useIntl();
 
   // Converting the settings to a format that is required by dropdowns.
   const inlineOpts = [
-    {
-      text: intl.formatMessage(messages.inlineStyle),
-      disabled: false,
-      selected: false,
-      style: { opacity: 0.45 },
-      onClick: (event) => event.preventDefault(),
-    },
     ...config.settings.slate.styleMenu.inlineStyles.map((def) => {
       return {
         value: def.cssClass,
@@ -50,13 +62,6 @@ const StylingsButton = () => {
     }),
   ];
   const blockOpts = [
-    {
-      text: intl.formatMessage(messages.paragraphStyle),
-      disabled: false,
-      selected: false,
-      style: { opacity: 0.45 },
-      onClick: (event) => event.preventDefault(),
-    },
     ...config.settings.slate.styleMenu.blockStyles.map((def) => {
       return {
         value: def.cssClass,
@@ -84,10 +89,14 @@ const StylingsButton = () => {
     }
   }
 
+  const menuItemProps = {
+    toSelect,
+    editor,
+  };
   const showMenu = inlineOpts.length || blockOpts.length;
   return showMenu ? (
     <Dropdown
-      className="style-menu"
+      id="style-menu"
       multiple
       value={toSelect}
       disabled={config.settings.slate.styleMenu.disabled ?? false}
@@ -101,46 +110,27 @@ const StylingsButton = () => {
       }
     >
       <Dropdown.Menu>
-        {inlineOpts.map((option, index) => {
-          const isActive = toSelect.includes(option);
-          return (
-            <Dropdown.Item
-              key={`inline-style-${index}`}
-              as="span"
-              active={isActive}
-              className={cx({ active: isActive })}
-              onClick={(event, selItem) => {
-                event.stopPropagation();
-                toggleStyle(editor, {
-                  cssClass: selItem.value,
-                  isBlock: selItem.isBlock,
-                });
-                ReactEditor.focus(editor);
-              }}
-              {...option}
+        {inlineOpts.length && (
+          <>
+            <Dropdown.Header
+              content={intl.formatMessage(messages.inlineStyle)}
             />
-          );
-        })}
-        {blockOpts.map((option, index) => {
-          const isActive = toSelect.includes(option);
-          return (
-            <Dropdown.Item
-              key={`block-style-${index}`}
-              as="span"
-              active={isActive}
-              className={cx({ active: isActive })}
-              onClick={(event, selItem) => {
-                event.stopPropagation();
-                toggleStyle(editor, {
-                  cssClass: selItem.value,
-                  isBlock: selItem.isBlock,
-                });
-                ReactEditor.focus(editor);
-              }}
-              {...option}
+            {inlineOpts.map((option) => (
+              <MenuOpts {...menuItemProps} option={option} />
+            ))}
+          </>
+        )}
+
+        {blockOpts.length && (
+          <>
+            <Dropdown.Header
+              content={intl.formatMessage(messages.paragraphStyle)}
             />
-          );
-        })}
+            {blockOpts.map((option) => (
+              <MenuOpts {...menuItemProps} option={option} />
+            ))}
+          </>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   ) : (
